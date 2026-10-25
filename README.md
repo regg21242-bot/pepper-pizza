@@ -21,3 +21,5 @@ Conecta este repositorio en Netlify (o Vercel) sin comando de compilación y con
 ## Chispa — imágenes con IA
 
 `chispa/index.html` es una app aparte para crear imágenes con inteligencia artificial gratis y sin registro. Usa el servicio abierto [Pollinations](https://pollinations.ai), así que no necesita claves ni servidor. Al publicar el sitio queda en `/chispa/`.
+
+Incluye ideas por categoría, fila de espera con cuenta regresiva (el plan gratuito permite 1 imagen cada 45 segundos), favoritas, «Otra versión» de una imagen, botón para compartir por WhatsApp o redes y un visor que se desliza entre imágenes.

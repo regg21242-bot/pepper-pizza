@@ -20,6 +20,7 @@
     --accent-text: #ffffff;
     --accent-soft: #ffe6dc;
     --danger: #c62828;
+    --heart: #e0245e;
     --radius: 14px;
     --shadow: 0 1px 2px rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.06);
   }
@@ -35,6 +36,7 @@
       --accent-text: #1a0d06;
       --accent-soft: #3a2117;
       --danger: #ff6b6b;
+      --heart: #ff4f86;
       --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
     }
   }
@@ -49,6 +51,7 @@
     --accent-text: #1a0d06;
     --accent-soft: #3a2117;
     --danger: #ff6b6b;
+    --heart: #ff4f86;
     --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
   }
 
@@ -61,6 +64,7 @@
     min-height: 100vh;
   }
   button, input, textarea, select { font: inherit; color: inherit; }
+  [hidden] { display: none !important; }
   .wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
 
   header {
@@ -112,6 +116,9 @@
     background: var(--accent-soft); border-color: var(--accent); color: var(--text);
   }
 
+  .ideas { display: flex; gap: 6px; align-items: center; margin-top: 10px; overflow-x: auto; padding-bottom: 2px; }
+  .ideas .opt-label { margin: 0 4px 0 0; flex: none; }
+
   .options { display: grid; gap: 14px; margin-top: 16px; }
   .opt-label { font-size: 13px; color: var(--muted); margin-bottom: 6px; font-weight: 500; }
   .chips { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -123,42 +130,66 @@
     border-radius: 999px; padding: 12px 26px; font-weight: 600; cursor: pointer;
     display: inline-flex; align-items: center; gap: 8px;
   }
-  .primary:disabled { opacity: .6; cursor: progress; }
   .primary svg { width: 18px; height: 18px; }
+  .secondary {
+    background: none; border: 1px solid var(--border); border-radius: 999px;
+    padding: 10px 18px; cursor: pointer; font-size: 14px;
+  }
   .hint { font-size: 13px; color: var(--muted); }
   .error { color: var(--danger); font-size: 14px; margin-top: 10px; min-height: 1em; }
 
   section.results { margin: 28px 0 8px; }
   .section-head {
-    display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; gap: 12px;
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 12px; flex-wrap: wrap;
   }
   .section-head h2 { font-family: "Space Grotesk", sans-serif; margin: 0; font-size: 22px; }
+  .head-right { display: flex; gap: 12px; align-items: center; }
   .link-btn { background: none; border: 0; color: var(--muted); cursor: pointer; font-size: 14px; text-decoration: underline; }
 
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
   .card {
     background: var(--surface); border: 1px solid var(--border);
     border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column;
+    animation: pop .25s ease-out;
   }
+  @keyframes pop { from { transform: scale(.97); opacity: 0; } }
   .frame { position: relative; background: var(--surface-2); }
   .frame img { display: block; width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; }
   .loading {
-    position: absolute; inset: 0; display: grid; place-items: center;
+    position: absolute; inset: 0; display: flex; flex-direction: column; gap: 10px;
+    align-items: center; justify-content: center;
     color: var(--muted); font-size: 14px; text-align: center; padding: 12px;
     background: linear-gradient(110deg, var(--surface-2) 30%, var(--border) 50%, var(--surface-2) 70%);
     background-size: 200% 100%; animation: shimmer 1.4s linear infinite;
   }
+  .loading.stopped { animation: none; }
   @keyframes shimmer { to { background-position: -200% 0; } }
-  .card-body { padding: 10px 12px; display: flex; gap: 8px; align-items: center; }
-  .card-body p {
-    margin: 0; flex: 1; font-size: 13px; color: var(--muted);
+  .bar-track { width: 60%; height: 4px; border-radius: 4px; background: var(--border); overflow: hidden; }
+  .bar-fill { height: 100%; width: 0; background: var(--accent); transition: width .5s linear; }
+  .fav {
+    position: absolute; top: 8px; right: 8px; width: 36px; height: 36px; border-radius: 999px;
+    border: 0; background: rgba(0,0,0,.45); color: #fff; cursor: pointer;
+    display: grid; place-items: center; backdrop-filter: blur(4px);
+  }
+  .fav svg { width: 18px; height: 18px; }
+  .fav[aria-pressed="true"] { color: var(--heart); background: #fff; }
+  .fav[aria-pressed="true"] svg { fill: currentColor; }
+  .card-body { padding: 10px 12px 12px; display: grid; gap: 8px; }
+  .card-prompt {
+    margin: 0; font-size: 13px; color: var(--muted); background: none; border: 0; padding: 0;
+    text-align: left; cursor: pointer;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
+  .card-prompt:hover { color: var(--text); }
+  .card-actions { display: flex; gap: 6px; }
   .mini {
     border: 1px solid var(--border); background: var(--surface); border-radius: 8px;
-    width: 32px; height: 32px; display: grid; place-items: center; cursor: pointer; flex: none;
+    height: 32px; padding: 0 8px; display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+    cursor: pointer; flex: none; font-size: 12px;
   }
-  .mini svg { width: 16px; height: 16px; }
+  .mini:hover { border-color: var(--accent); }
+  .mini.grow { flex: 1; }
+  .mini svg { width: 16px; height: 16px; flex: none; }
   .mini.del:hover { color: var(--danger); border-color: var(--danger); }
   .empty {
     border: 1px dashed var(--border); border-radius: var(--radius);
@@ -166,14 +197,32 @@
   }
 
   dialog {
-    border: 0; padding: 0; background: transparent; max-width: min(92vw, 1000px);
+    border: 0; padding: 0; background: transparent; max-width: min(92vw, 1000px); color: #fff;
   }
-  dialog::backdrop { background: rgba(0,0,0,.8); }
-  dialog img { max-width: 100%; max-height: 82vh; display: block; border-radius: 10px; }
-  dialog .bar { display: flex; gap: 8px; justify-content: flex-end; margin-top: 10px; }
+  dialog::backdrop { background: rgba(0,0,0,.85); }
+  .viewer-stage { position: relative; }
+  dialog img { max-width: 100%; max-height: 74vh; display: block; border-radius: 10px; margin: 0 auto; }
+  .nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 44px; height: 44px; border-radius: 999px; border: 0; cursor: pointer;
+    background: rgba(255,255,255,.9); color: #111; display: grid; place-items: center;
+  }
+  .nav svg { width: 20px; height: 20px; }
+  .nav.prev { left: 8px; }
+  .nav.next { right: 8px; }
+  .viewer-prompt { margin: 10px 0 0; font-size: 14px; opacity: .85; }
+  dialog .bar { display: flex; gap: 8px; justify-content: flex-end; margin-top: 10px; flex-wrap: wrap; }
   dialog .bar button {
     background: #fff; color: #111; border: 0; border-radius: 999px; padding: 8px 16px; cursor: pointer; font-weight: 600;
   }
+
+  .toast {
+    position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px);
+    background: var(--text); color: var(--bg); padding: 10px 18px; border-radius: 999px;
+    font-size: 14px; opacity: 0; pointer-events: none; transition: .25s; z-index: 10;
+    max-width: calc(100vw - 32px); text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
   footer { color: var(--muted); font-size: 13px; padding: 32px 0 40px; }
   footer a { color: inherit; }
@@ -193,7 +242,7 @@
 
   <div class="hero">
     <h1>Describe una idea.<br><em>Chispa</em> la dibuja.</h1>
-    <p>Genera imágenes con inteligencia artificial gratis, sin registro y sin límites de créditos.</p>
+    <p>Crea imágenes con inteligencia artificial gratis y sin registro. Guárdalas, márcalas como favoritas y compártelas por WhatsApp o redes.</p>
   </div>
 
   <div class="panel">
@@ -205,6 +254,7 @@
         <button class="chip" id="clearBtn" type="button">Borrar</button>
       </div>
     </div>
+    <div class="ideas" id="ideas"><span class="opt-label">Ideas:</span></div>
 
     <div class="options">
       <div>
@@ -232,6 +282,7 @@
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.9 6.1L20 10l-6.1 1.9L12 18l-1.9-6.1L4 10l6.1-1.9L12 2z"/></svg>
         <span>Generar</span>
       </button>
+      <button class="secondary" id="cancelBtn" type="button" hidden>Cancelar fila</button>
       <span class="hint" id="hint">Gratis: 1 imagen cada 45 segundos</span>
     </div>
     <div class="error" id="error" role="alert"></div>
@@ -240,10 +291,13 @@
   <section class="results">
     <div class="section-head">
       <h2>Tus imágenes</h2>
-      <button class="link-btn" id="clearHistory" type="button">Vaciar galería</button>
+      <div class="head-right">
+        <div class="chips" id="filters"></div>
+        <button class="link-btn" id="clearHistory" type="button">Vaciar</button>
+      </div>
     </div>
     <div class="grid" id="grid"></div>
-    <div class="empty" id="empty">Aún no hay imágenes. Escribe una idea y pulsa <strong>Generar</strong>.</div>
+    <div class="empty" id="empty"></div>
   </section>
 
   <footer>
@@ -252,20 +306,35 @@
 </div>
 
 <dialog id="viewer">
-  <img id="viewerImg" alt="">
+  <div class="viewer-stage">
+    <img id="viewerImg" alt="">
+    <button class="nav prev" id="viewerPrev" type="button" aria-label="Anterior">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button class="nav next" id="viewerNext" type="button" aria-label="Siguiente">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
+  <p class="viewer-prompt" id="viewerPrompt"></p>
   <div class="bar">
+    <button type="button" id="viewerShare">Compartir</button>
     <button type="button" id="viewerDownload">Descargar</button>
     <button type="button" id="viewerClose">Cerrar</button>
   </div>
 </dialog>
 
+<div class="toast" id="toast" role="status"></div>
+
 <script>
   const API = 'https://image.pollinations.ai/prompt/';
   const HISTORY_KEY = 'chispa-historial';
   const LAST_KEY = 'chispa-ultima-peticion';
+  const OPTIONS_KEY = 'chispa-opciones';
   const MAX_HISTORY = 60;
   // El plan gratuito permite 1 imagen cada 45 s por conexión; se deja 1 s de margen.
   const COOLDOWN_MS = 46000;
+  // Tiempo típico que tarda una imagen, para la barra de progreso.
+  const EXPECTED_MS = 15000;
 
   const STYLES = [
     { id: 'none', label: 'Libre', suffix: '' },
@@ -275,6 +344,7 @@
     { id: '3d', label: '3D', suffix: ', 3d render, soft studio lighting, octane, cute' },
     { id: 'pixel', label: 'Pixel art', suffix: ', pixel art, 16-bit, retro game' },
     { id: 'oil', label: 'Óleo', suffix: ', oil painting, thick brush strokes, classical' },
+    { id: 'sticker', label: 'Sticker', suffix: ', die-cut sticker, bold outline, white border, flat colors, plain background' },
     { id: 'logo', label: 'Logo', suffix: ', minimal flat vector logo, simple shapes, white background' },
   ];
   const RATIOS = [
@@ -287,22 +357,46 @@
     { id: 'flux', label: 'Alta' },
     { id: 'turbo', label: 'Rápida' },
   ];
-  const IDEAS = [
-    'un zorro con bufanda leyendo en una biblioteca antigua',
-    'ciudad flotante entre nubes al atardecer',
-    'una pizza gigante como planeta en el espacio',
-    'retrato de una abuela sonriente con flores en el pelo',
-    'un dragón pequeño durmiendo sobre una taza de café',
-    'bosque de hongos brillantes de noche',
-    'robot jardinero regando girasoles',
-    'casa de playa en Baja California con cactus y mar turquesa',
-    'un ajolote con corona en un acuario de cristal',
-    'tren antiguo cruzando un puente de piedra en la nieve',
-  ];
+  const IDEAS = {
+    '🐾 Animales': [
+      'un zorro con bufanda leyendo en una biblioteca antigua',
+      'un ajolote con corona en un acuario de cristal',
+      'un perro salchicha con capa de superhéroe volando sobre la ciudad',
+      'un gato dormido dentro de una taza gigante de chocolate caliente',
+    ],
+    '🐉 Fantasía': [
+      'ciudad flotante entre nubes al atardecer',
+      'un dragón pequeño durmiendo sobre una taza de café',
+      'bosque de hongos brillantes de noche',
+      'castillo dentro de una burbuja de jabón',
+    ],
+    '🍕 Comida': [
+      'una pizza gigante como planeta en el espacio',
+      'tacos al pastor en una mesa de madera, luz cálida',
+      'pastel de cumpleaños de tres pisos con flores comestibles',
+      'helado derritiéndose en forma de volcán',
+    ],
+    '🙂 Retratos': [
+      'retrato de una abuela sonriente con flores en el pelo',
+      'niña astronauta mirando la Tierra por la ventana',
+      'pescador mayor con barba blanca al amanecer',
+      'músico tocando guitarra bajo la lluvia, luces de neón',
+    ],
+    '🏝️ Paisajes': [
+      'casa de playa en Baja California con cactus y mar turquesa',
+      'tren antiguo cruzando un puente de piedra en la nieve',
+      'pueblo mágico mexicano con papel picado al atardecer',
+      'aurora boreal sobre un lago congelado',
+    ],
+  };
+  const ALL_IDEAS = Object.values(IDEAS).flat();
 
-  const state = { style: 'none', ratio: 'square', count: 1, model: 'flux', busy: false };
+  const defaults = { style: 'none', ratio: 'square', count: 1, model: 'flux' };
+  const saved = storageGet(OPTIONS_KEY, {});
+  const state = { ...defaults, ...saved, filter: 'all' };
   const $ = (id) => document.getElementById(id);
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const pick = (list) => list[Math.floor(Math.random() * list.length)];
 
   function storageGet(key, fallback) {
     try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch { return fallback; }
@@ -338,8 +432,18 @@
 
   let history = storageGet(HISTORY_KEY, []);
   const objectUrls = new Map();
+  const saveHistory = () => storageSet(HISTORY_KEY, history);
 
-  function renderChips(el, items, key, getId, getLabel) {
+  let toastTimer;
+  function toast(text) {
+    const t = $('toast');
+    t.textContent = text;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+  }
+
+  function renderChips(el, items, key, getId, getLabel, onChange) {
     el.innerHTML = '';
     items.forEach((item) => {
       const b = document.createElement('button');
@@ -347,15 +451,37 @@
       b.className = 'chip';
       b.textContent = getLabel(item);
       b.setAttribute('aria-pressed', String(state[key] === getId(item)));
-      b.onclick = () => { state[key] = getId(item); renderOptions(); };
+      b.onclick = () => { state[key] = getId(item); onChange(); };
       el.appendChild(b);
     });
   }
   function renderOptions() {
-    renderChips($('styles'), STYLES, 'style', (s) => s.id, (s) => s.label);
-    renderChips($('ratios'), RATIOS, 'ratio', (r) => r.id, (r) => r.label);
-    renderChips($('counts'), COUNTS, 'count', (c) => c, (c) => String(c));
-    renderChips($('models'), MODELS, 'model', (m) => m.id, (m) => m.label);
+    const changed = () => {
+      storageSet(OPTIONS_KEY, { style: state.style, ratio: state.ratio, count: state.count, model: state.model });
+      renderOptions();
+    };
+    renderChips($('styles'), STYLES, 'style', (s) => s.id, (s) => s.label, changed);
+    renderChips($('ratios'), RATIOS, 'ratio', (r) => r.id, (r) => r.label, changed);
+    renderChips($('counts'), COUNTS, 'count', (c) => c, (c) => String(c), changed);
+    renderChips($('models'), MODELS, 'model', (m) => m.id, (m) => m.label, changed);
+  }
+  function renderFilters() {
+    const favs = history.filter((h) => h.fav).length;
+    const filters = [
+      { id: 'all', label: 'Todas (' + history.length + ')' },
+      { id: 'fav', label: '♥ Favoritas (' + favs + ')' },
+    ];
+    renderChips($('filters'), filters, 'filter', (f) => f.id, (f) => f.label, () => { renderFilters(); renderHistory(); });
+  }
+  function renderIdeas() {
+    Object.keys(IDEAS).forEach((cat) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'chip';
+      b.textContent = cat;
+      b.onclick = () => { $('prompt').value = pick(IDEAS[cat]); };
+      $('ideas').appendChild(b);
+    });
   }
 
   function buildUrl(item) {
@@ -369,47 +495,25 @@
   function secondsLeft() {
     return Math.ceil((storageGet(LAST_KEY, 0) + COOLDOWN_MS - Date.now()) / 1000);
   }
-  // Espera hasta que el servicio gratuito permita otra imagen, avisando cuántos segundos faltan.
-  async function waitTurn(onTick) {
-    let left = secondsLeft();
-    while (left > 0) {
-      onTick(left);
-      await sleep(500);
-      left = secondsLeft();
-    }
-  }
-
-  async function fetchImage(item, onStatus) {
-    for (let attempt = 0; attempt < 2; attempt++) {
-      await waitTurn((s) => onStatus('En fila · empieza en ' + s + ' s'));
-      onStatus('Creando imagen…');
-      storageSet(LAST_KEY, Date.now());
-      try {
-        const res = await fetch(buildUrl(item) + (attempt ? '&r=' + Date.now() : ''));
-        if (res.ok) {
-          const blob = await res.blob();
-          if (blob.type.startsWith('image/')) return blob;
-        }
-      } catch {}
-    }
-    return null;
-  }
 
   const ICON_DOWNLOAD = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 21h16"/></svg>';
-  const ICON_REUSE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v6h6M20 20v-6h-6"/><path d="M5 15a7 7 0 0012 3M19 9A7 7 0 007 6"/></svg>';
+  const ICON_SHARE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8h16v-8M12 3v12M7 8l5-5 5 5"/></svg>';
+  const ICON_VARIANT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v6h6M20 20v-6h-6"/><path d="M5 15a7 7 0 0012 3M19 9A7 7 0 007 6"/></svg>';
   const ICON_DELETE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>';
+  const ICON_HEART = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7.5-4.6-9.5-9.2C1 8.3 3.2 4.5 7 4.5c2.1 0 3.6 1.2 5 3 1.4-1.8 2.9-3 5-3 3.8 0 6 3.8 4.5 7.3C19.5 16.4 12 21 12 21z"/></svg>';
 
-  function miniButton(title, icon, onClick, extraClass) {
+  function miniButton(title, icon, onClick, extraClass, label) {
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'mini' + (extraClass ? ' ' + extraClass : '');
     b.title = title;
     b.setAttribute('aria-label', title);
-    b.innerHTML = icon;
+    b.innerHTML = icon + (label ? '<span>' + label + '</span>' : '');
     b.onclick = onClick;
     return b;
   }
 
+  // Cada tarjeta guarda sus controles para poder actualizarla desde la fila de espera.
   function createCard(item) {
     const card = document.createElement('div');
     card.className = 'card';
@@ -420,33 +524,74 @@
     img.alt = item.prompt;
     const loading = document.createElement('div');
     loading.className = 'loading';
-    frame.append(img, loading);
+    const loadingText = document.createElement('span');
+    const track = document.createElement('div');
+    track.className = 'bar-track';
+    track.hidden = true;
+    const fill = document.createElement('div');
+    fill.className = 'bar-fill';
+    track.appendChild(fill);
+    loading.append(loadingText, track);
+
+    const fav = document.createElement('button');
+    fav.type = 'button';
+    fav.className = 'fav';
+    fav.innerHTML = ICON_HEART;
+    fav.hidden = true;
+    const syncFav = () => {
+      fav.setAttribute('aria-pressed', String(!!item.fav));
+      fav.setAttribute('aria-label', item.fav ? 'Quitar de favoritas' : 'Marcar como favorita');
+    };
+    syncFav();
+    fav.onclick = () => {
+      item.fav = !item.fav;
+      saveHistory();
+      syncFav();
+      renderFilters();
+      if (!item.fav && state.filter === 'fav') { card.remove(); updateEmpty(); }
+    };
+    frame.append(img, fav, loading);
 
     const body = document.createElement('div');
     body.className = 'card-body';
-    const p = document.createElement('p');
+    const p = document.createElement('button');
+    p.type = 'button';
+    p.className = 'card-prompt';
     p.textContent = item.prompt;
-    p.title = item.prompt;
-    body.append(
-      p,
-      miniButton('Usar esta idea', ICON_REUSE, () => {
-        $('prompt').value = item.prompt; $('prompt').focus(); window.scrollTo({ top: 0, behavior: 'smooth' });
-      }),
+    p.title = 'Usar esta idea: ' + item.prompt;
+    p.onclick = () => {
+      $('prompt').value = item.prompt; $('prompt').focus(); window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    const actions = document.createElement('div');
+    actions.className = 'card-actions';
+    actions.append(
+      miniButton('Crear otra versión', ICON_VARIANT, () => enqueue([variantOf(item)]), 'grow', 'Otra versión'),
+      miniButton('Compartir', ICON_SHARE, () => share(item)),
       miniButton('Descargar', ICON_DOWNLOAD, () => download(item)),
       miniButton('Borrar', ICON_DELETE, () => removeItem(item, card), 'del'),
     );
+    actions.hidden = true;
+    body.append(p, actions);
     card.append(frame, body);
-    img.onclick = () => openViewer(item, img.src);
+    img.onclick = () => openViewer(item);
 
     return {
       card,
-      status(text) { loading.textContent = text; },
+      status(text, progress) {
+        loadingText.textContent = text;
+        track.hidden = progress == null;
+        if (progress != null) fill.style.width = Math.round(progress * 100) + '%';
+      },
       show(src) {
-        img.onload = () => loading.remove();
-        img.onerror = () => { loading.textContent = 'No se pudo mostrar la imagen.'; loading.style.animation = 'none'; };
+        img.onload = () => { loading.remove(); fav.hidden = false; actions.hidden = false; };
+        img.onerror = () => { loadingText.textContent = 'No se pudo mostrar la imagen.'; loading.classList.add('stopped'); actions.hidden = false; };
         img.src = src;
       },
-      fail(text) { loading.textContent = text; loading.style.animation = 'none'; },
+      fail(text) {
+        loadingText.textContent = text; track.hidden = true; loading.classList.add('stopped');
+        actions.replaceChildren(miniButton('Quitar', ICON_DELETE, () => { card.remove(); updateEmpty(); }, 'del grow', 'Quitar'));
+        actions.hidden = false;
+      },
     };
   }
 
@@ -454,124 +599,261 @@
     if (!objectUrls.has(id)) objectUrls.set(id, URL.createObjectURL(blob));
     return objectUrls.get(id);
   }
+  async function srcFor(item) {
+    const blob = await blobGet(item.id);
+    // Imágenes antiguas sin copia guardada se cargan desde el servicio.
+    return blob ? urlForBlob(item.id, blob) : buildUrl(item);
+  }
+
+  function visibleHistory() {
+    return state.filter === 'fav' ? history.filter((h) => h.fav) : history;
+  }
 
   async function renderHistory() {
     const grid = $('grid');
-    grid.innerHTML = '';
+    // Las tarjetas en fila de espera se conservan arriba.
+    [...grid.children].forEach((el) => { if (!el.dataset.pending) el.remove(); });
     updateEmpty();
-    for (const item of history) {
+    for (const item of visibleHistory()) {
       const c = createCard(item);
       grid.appendChild(c.card);
-      const blob = await blobGet(item.id);
-      // Imágenes antiguas sin copia guardada se cargan desde el servicio.
-      c.show(blob ? urlForBlob(item.id, blob) : buildUrl(item));
+      c.show(await srcFor(item));
     }
   }
 
   function updateEmpty() {
-    $('empty').hidden = $('grid').children.length > 0;
+    const empty = $('empty');
+    empty.hidden = $('grid').children.length > 0 || visibleHistory().length > 0;
+    empty.innerHTML = state.filter === 'fav' && history.length
+      ? 'Aún no tienes favoritas. Toca el <strong>♥</strong> de una imagen para guardarla aquí.'
+      : 'Aún no hay imágenes. Escribe una idea o toca una de las <strong>Ideas</strong> y pulsa <strong>Generar</strong>.';
     $('clearHistory').hidden = history.length === 0;
   }
 
   async function removeItem(item, card) {
     card.remove();
     history = history.filter((h) => h.id !== item.id);
-    storageSet(HISTORY_KEY, history);
+    saveHistory();
+    renderFilters();
     updateEmpty();
     await blobDel(item.id);
     if (objectUrls.has(item.id)) { URL.revokeObjectURL(objectUrls.get(item.id)); objectUrls.delete(item.id); }
   }
 
-  async function generate() {
-    if (state.busy) return;
+  function newItem(base) {
+    return {
+      ...base,
+      id: Date.now() + '-' + Math.random().toString(36).slice(2, 7),
+      seed: Math.floor(Math.random() * 1e9),
+      fav: false,
+    };
+  }
+  function variantOf(item) {
+    const { prompt, fullPrompt, w, h, model } = item;
+    toast('Otra versión en camino');
+    return newItem({ prompt, fullPrompt, w, h, model });
+  }
+
+  // Fila de espera: el servicio gratuito solo acepta una imagen cada 45 s.
+  const queue = [];
+  let running = false;
+
+  function enqueue(items) {
+    const grid = $('grid');
+    if (state.filter === 'fav') { state.filter = 'all'; renderFilters(); renderHistory(); }
+    const jobs = items.map((item) => ({ item, ui: createCard(item), cancelled: false }));
+    jobs.forEach((j) => { j.ui.card.dataset.pending = '1'; j.ui.status('En fila…'); });
+    // Las nuevas van detrás de las que ya esperan, pero antes de la galería.
+    const firstDone = [...grid.children].find((el) => !el.dataset.pending) || null;
+    jobs.forEach((j) => grid.insertBefore(j.ui.card, firstDone));
+    queue.push(...jobs);
+    updateEmpty();
+    updateQueueUI();
+    if (!running) runQueue();
+  }
+
+  async function runQueue() {
+    running = true;
+    let failed = 0;
+    while (queue.length) {
+      const job = queue[0];
+      const blob = await fetchImage(job);
+      queue.shift();
+      delete job.ui.card.dataset.pending;
+      if (job.cancelled) { job.ui.card.remove(); continue; }
+      if (!blob) { failed++; job.ui.fail('No se pudo crear. Intenta de nuevo en un momento.'); continue; }
+      await blobPut(job.item.id, blob);
+      job.ui.show(urlForBlob(job.item.id, blob));
+      history = [job.item, ...history].slice(0, MAX_HISTORY);
+      saveHistory();
+      renderFilters();
+      updateEmpty();
+      if (navigator.vibrate) navigator.vibrate(30);
+      updateQueueUI();
+    }
+    running = false;
+    updateEmpty();
+    updateQueueUI();
+    if (failed) $('error').textContent = 'Alguna imagen no se pudo crear. Revisa tu conexión o intenta en un momento.';
+  }
+
+  async function fetchImage(job) {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      let left = secondsLeft();
+      while (left > 0) {
+        if (job.cancelled) return null;
+        job.ui.status('Empieza en ' + left + ' s');
+        await sleep(500);
+        left = secondsLeft();
+      }
+      if (job.cancelled) return null;
+      storageSet(LAST_KEY, Date.now());
+      const started = Date.now();
+      const tick = () => {
+        const secs = Math.floor((Date.now() - started) / 1000);
+        // La barra se acerca al 95 % sin llegar hasta que la imagen esté lista.
+        const progress = Math.min(0.95, 1 - Math.exp(-(Date.now() - started) / EXPECTED_MS));
+        job.ui.status('Creando imagen… ' + secs + ' s', progress);
+      };
+      tick();
+      const timer = setInterval(tick, 500);
+      try {
+        const res = await fetch(buildUrl(job.item) + (attempt ? '&r=' + Date.now() : ''));
+        if (res.ok) {
+          const blob = await res.blob();
+          if (blob.type.startsWith('image/')) { job.ui.status('¡Lista!', 1); return blob; }
+        }
+      } catch {} finally {
+        clearInterval(timer);
+      }
+    }
+    return null;
+  }
+
+  function updateQueueUI() {
+    const waiting = queue.filter((j) => !j.cancelled).length;
+    $('cancelBtn').hidden = waiting < 2;
+    $('genBtn').querySelector('span').textContent = waiting ? 'Añadir a la fila' : 'Generar';
+  }
+
+  $('cancelBtn').onclick = () => {
+    // La primera ya se está creando; se cancelan las que siguen esperando.
+    queue.slice(1).forEach((j) => { j.cancelled = true; j.ui.card.remove(); });
+    queue.splice(1);
+    updateQueueUI();
+    updateEmpty();
+    toast('Fila cancelada');
+  };
+
+  function generate() {
     const prompt = $('prompt').value.trim();
     $('error').textContent = '';
-    if (!prompt) { $('error').textContent = 'Escribe primero qué imagen quieres.'; $('prompt').focus(); return; }
-
-    const style = STYLES.find((s) => s.id === state.style);
-    const ratio = RATIOS.find((r) => r.id === state.ratio);
-    const items = Array.from({ length: state.count }, () => ({
-      id: Date.now() + '-' + Math.random().toString(36).slice(2, 7),
-      prompt,
-      fullPrompt: prompt + style.suffix,
-      w: ratio.w, h: ratio.h,
-      seed: Math.floor(Math.random() * 1e9),
-      model: state.model,
-    }));
-
-    setBusy(true);
-    const grid = $('grid');
-    const cards = items.map((item) => createCard(item));
-    cards.forEach((c) => c.status('En fila…'));
-    cards.slice().reverse().forEach((c) => grid.prepend(c.card));
-    updateEmpty();
-
-    // El servicio gratuito solo acepta una imagen cada 45 s: se piden una tras otra.
-    let failed = 0;
-    for (let i = 0; i < cards.length; i++) {
-      const blob = await fetchImage(items[i], cards[i].status);
-      if (!blob) {
-        failed++;
-        cards[i].fail('No se pudo crear. Intenta de nuevo en un momento.');
-        continue;
-      }
-      await blobPut(items[i].id, blob);
-      cards[i].show(urlForBlob(items[i].id, blob));
-      history = [items[i], ...history].slice(0, MAX_HISTORY);
-      storageSet(HISTORY_KEY, history);
-      updateEmpty();
-    }
-    if (failed) $('error').textContent = 'Alguna imagen no se pudo crear. Revisa tu conexión o intenta en un momento.';
-    setBusy(false);
+    if (!prompt) { $('error').textContent = 'Escribe primero qué imagen quieres, o toca una de las ideas.'; $('prompt').focus(); return; }
+    const style = STYLES.find((s) => s.id === state.style) || STYLES[0];
+    const ratio = RATIOS.find((r) => r.id === state.ratio) || RATIOS[0];
+    const base = { prompt, fullPrompt: prompt + style.suffix, w: ratio.w, h: ratio.h, model: state.model };
+    enqueue(Array.from({ length: state.count }, () => newItem(base)));
+    document.querySelector('.results').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  function setBusy(busy) {
-    state.busy = busy;
-    $('genBtn').disabled = busy;
-    $('genBtn').querySelector('span').textContent = busy ? 'Creando…' : 'Generar';
-  }
-
-  // Muestra en el botón cuánto falta para poder crear otra imagen.
+  // Muestra cuánto falta para poder crear otra imagen.
   setInterval(() => {
-    if (state.busy) return;
     const left = secondsLeft();
-    $('hint').textContent = left > 0
-      ? 'Siguiente imagen disponible en ' + left + ' s'
-      : 'Gratis: 1 imagen cada 45 segundos';
+    const waiting = queue.length;
+    // Las que esperan detrás de la primera muestran un tiempo aproximado.
+    queue.forEach((j, i) => { if (i > 0) j.ui.status('En fila · unos ' + (Math.max(left, 0) + i * Math.round(COOLDOWN_MS / 1000)) + ' s'); });
+    $('hint').textContent = waiting
+      ? (waiting === 1 ? '1 imagen en proceso' : waiting + ' imágenes en la fila')
+      : left > 0 ? 'Siguiente imagen disponible en ' + left + ' s' : 'Gratis: 1 imagen cada 45 segundos';
   }, 500);
 
+  function fileName(item, blob) {
+    const ext = blob && blob.type === 'image/png' ? 'png' : blob && blob.type === 'image/webp' ? 'webp' : 'jpg';
+    return 'chispa-' + item.prompt.toLowerCase().replace(/[^a-z0-9áéíóúñ]+/gi, '-').slice(0, 40) + '-' + item.seed + '.' + ext;
+  }
+
   async function download(item) {
-    const name = 'chispa-' + item.prompt.toLowerCase().replace(/[^a-z0-9áéíóúñ]+/gi, '-').slice(0, 40) + '-' + item.seed + '.jpg';
     const blob = await blobGet(item.id);
     if (!blob) { window.open(buildUrl(item), '_blank', 'noopener'); return; }
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url; a.download = name;
+    a.href = url; a.download = fileName(item, blob);
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
-  let viewerItem = null;
-  function openViewer(item, src) {
-    if (!src) return;
-    viewerItem = item;
-    $('viewerImg').src = src;
+  // Abre el menú de compartir del teléfono (WhatsApp, Instagram…); si no existe, descarga.
+  async function share(item) {
+    const blob = await blobGet(item.id);
+    if (blob && navigator.canShare) {
+      const file = new File([blob], fileName(item, blob), { type: blob.type });
+      if (navigator.canShare({ files: [file] })) {
+        try { await navigator.share({ files: [file], text: item.prompt + ' · hecha con Chispa' }); } catch {}
+        return;
+      }
+    }
+    await download(item);
+    toast('Tu navegador no permite compartir directo; la descargué para que la envíes');
+  }
+
+  let viewerIndex = -1;
+  async function showViewerAt(index) {
+    const list = visibleHistory();
+    if (index < 0 || index >= list.length) return;
+    viewerIndex = index;
+    const item = list[index];
+    $('viewerImg').src = await srcFor(item);
     $('viewerImg').alt = item.prompt;
+    $('viewerPrompt').textContent = item.prompt;
+    $('viewerPrev').hidden = index === 0;
+    $('viewerNext').hidden = index === list.length - 1;
+  }
+  function openViewer(item) {
+    const index = visibleHistory().findIndex((h) => h.id === item.id);
+    if (index < 0) return;
+    showViewerAt(index);
     $('viewer').showModal();
   }
+  const viewerItem = () => visibleHistory()[viewerIndex];
+  $('viewerPrev').onclick = () => showViewerAt(viewerIndex - 1);
+  $('viewerNext').onclick = () => showViewerAt(viewerIndex + 1);
   $('viewerClose').onclick = () => $('viewer').close();
-  $('viewerDownload').onclick = () => viewerItem && download(viewerItem);
+  $('viewerDownload').onclick = () => viewerItem() && download(viewerItem());
+  $('viewerShare').onclick = () => viewerItem() && share(viewerItem());
   $('viewer').addEventListener('click', (e) => { if (e.target === $('viewer')) $('viewer').close(); });
+  $('viewer').addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') showViewerAt(viewerIndex - 1);
+    if (e.key === 'ArrowRight') showViewerAt(viewerIndex + 1);
+  });
+  // Deslizar a los lados en el teléfono cambia de imagen.
+  let touchX = null;
+  $('viewer').addEventListener('touchstart', (e) => { touchX = e.touches[0].clientX; }, { passive: true });
+  $('viewer').addEventListener('touchend', (e) => {
+    if (touchX == null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 50) showViewerAt(viewerIndex + (dx < 0 ? 1 : -1));
+    touchX = null;
+  });
 
   $('genBtn').onclick = generate;
   $('prompt').addEventListener('keydown', (e) => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) generate(); });
-  $('surpriseBtn').onclick = () => { $('prompt').value = IDEAS[Math.floor(Math.random() * IDEAS.length)]; };
+  $('surpriseBtn').onclick = () => { $('prompt').value = pick(ALL_IDEAS); };
   $('clearBtn').onclick = () => { $('prompt').value = ''; $('prompt').focus(); };
   $('clearHistory').onclick = async () => {
-    if (state.busy || !confirm('¿Borrar todas las imágenes de la galería?')) return;
-    history = []; storageSet(HISTORY_KEY, history);
-    await blobClear();
-    objectUrls.forEach((u) => URL.revokeObjectURL(u)); objectUrls.clear();
+    const favs = history.filter((h) => h.fav);
+    const msg = favs.length
+      ? '¿Borrar las imágenes de la galería? Tus ' + favs.length + ' favoritas se conservan.'
+      : '¿Borrar todas las imágenes de la galería?';
+    if (!confirm(msg)) return;
+    const removed = history.filter((h) => !h.fav);
+    history = favs;
+    saveHistory();
+    for (const item of removed) {
+      await blobDel(item.id);
+      if (objectUrls.has(item.id)) { URL.revokeObjectURL(objectUrls.get(item.id)); objectUrls.delete(item.id); }
+    }
+    if (!favs.length) await blobClear();
+    renderFilters();
     renderHistory();
   };
 
@@ -585,7 +867,9 @@
     storageSet('chispa-tema', next);
   };
 
+  renderIdeas();
   renderOptions();
+  renderFilters();
   renderHistory();
 </script>
 </body>
