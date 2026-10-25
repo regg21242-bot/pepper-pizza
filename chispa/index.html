@@ -159,6 +159,7 @@
     width: 32px; height: 32px; display: grid; place-items: center; cursor: pointer; flex: none;
   }
   .mini svg { width: 16px; height: 16px; }
+  .mini.del:hover { color: var(--danger); border-color: var(--danger); }
   .empty {
     border: 1px dashed var(--border); border-radius: var(--radius);
     padding: 40px 16px; text-align: center; color: var(--muted);
@@ -231,7 +232,7 @@
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.9 6.1L20 10l-6.1 1.9L12 18l-1.9-6.1L4 10l6.1-1.9L12 2z"/></svg>
         <span>Generar</span>
       </button>
-      <span class="hint">Ctrl + Enter también genera</span>
+      <span class="hint" id="hint">Gratis: 1 imagen cada 45 segundos</span>
     </div>
     <div class="error" id="error" role="alert"></div>
   </div>
@@ -261,7 +262,10 @@
 <script>
   const API = 'https://image.pollinations.ai/prompt/';
   const HISTORY_KEY = 'chispa-historial';
+  const LAST_KEY = 'chispa-ultima-peticion';
   const MAX_HISTORY = 60;
+  // El plan gratuito permite 1 imagen cada 45 s por conexión; se deja 1 s de margen.
+  const COOLDOWN_MS = 46000;
 
   const STYLES = [
     { id: 'none', label: 'Libre', suffix: '' },
@@ -278,7 +282,7 @@
     { id: 'portrait', label: 'Vertical', w: 768, h: 1344 },
     { id: 'landscape', label: 'Horizontal', w: 1344, h: 768 },
   ];
-  const COUNTS = [1, 2, 4];
+  const COUNTS = [1, 2, 3];
   const MODELS = [
     { id: 'flux', label: 'Alta' },
     { id: 'turbo', label: 'Rápida' },
@@ -296,8 +300,9 @@
     'tren antiguo cruzando un puente de piedra en la nieve',
   ];
 
-  const state = { style: 'none', ratio: 'square', count: 2, model: 'flux', busy: false };
+  const state = { style: 'none', ratio: 'square', count: 1, model: 'flux', busy: false };
   const $ = (id) => document.getElementById(id);
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
   function storageGet(key, fallback) {
     try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch { return fallback; }
@@ -306,7 +311,33 @@
     try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
   }
 
+  // Las imágenes se guardan en el navegador para no volver a pedirlas (y gastar el límite) al recargar.
+  const dbReady = new Promise((resolve) => {
+    try {
+      const req = indexedDB.open('chispa', 1);
+      req.onupgradeneeded = () => req.result.createObjectStore('imagenes');
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => resolve(null);
+    } catch { resolve(null); }
+  });
+  async function dbCall(mode, fn) {
+    const db = await dbReady;
+    if (!db) return null;
+    return new Promise((resolve) => {
+      try {
+        const req = fn(db.transaction('imagenes', mode).objectStore('imagenes'));
+        req.onsuccess = () => resolve(req.result ?? null);
+        req.onerror = () => resolve(null);
+      } catch { resolve(null); }
+    });
+  }
+  const blobGet = (id) => dbCall('readonly', (s) => s.get(id));
+  const blobPut = (id, blob) => dbCall('readwrite', (s) => s.put(blob, id));
+  const blobDel = (id) => dbCall('readwrite', (s) => s.delete(id));
+  const blobClear = () => dbCall('readwrite', (s) => s.clear());
+
   let history = storageGet(HISTORY_KEY, []);
+  const objectUrls = new Map();
 
   function renderChips(el, items, key, getId, getLabel) {
     el.innerHTML = '';
@@ -335,10 +366,51 @@
     return API + encodeURIComponent(item.fullPrompt) + '?' + params;
   }
 
+  function secondsLeft() {
+    return Math.ceil((storageGet(LAST_KEY, 0) + COOLDOWN_MS - Date.now()) / 1000);
+  }
+  // Espera hasta que el servicio gratuito permita otra imagen, avisando cuántos segundos faltan.
+  async function waitTurn(onTick) {
+    let left = secondsLeft();
+    while (left > 0) {
+      onTick(left);
+      await sleep(500);
+      left = secondsLeft();
+    }
+  }
+
+  async function fetchImage(item, onStatus) {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      await waitTurn((s) => onStatus('En fila · empieza en ' + s + ' s'));
+      onStatus('Creando imagen…');
+      storageSet(LAST_KEY, Date.now());
+      try {
+        const res = await fetch(buildUrl(item) + (attempt ? '&r=' + Date.now() : ''));
+        if (res.ok) {
+          const blob = await res.blob();
+          if (blob.type.startsWith('image/')) return blob;
+        }
+      } catch {}
+    }
+    return null;
+  }
+
   const ICON_DOWNLOAD = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 21h16"/></svg>';
   const ICON_REUSE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v6h6M20 20v-6h-6"/><path d="M5 15a7 7 0 0012 3M19 9A7 7 0 007 6"/></svg>';
+  const ICON_DELETE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>';
 
-  function createCard(item, loadNow) {
+  function miniButton(title, icon, onClick, extraClass) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'mini' + (extraClass ? ' ' + extraClass : '');
+    b.title = title;
+    b.setAttribute('aria-label', title);
+    b.innerHTML = icon;
+    b.onclick = onClick;
+    return b;
+  }
+
+  function createCard(item) {
     const card = document.createElement('div');
     card.className = 'card';
     const frame = document.createElement('div');
@@ -346,10 +418,8 @@
     frame.style.aspectRatio = item.w + ' / ' + item.h;
     const img = document.createElement('img');
     img.alt = item.prompt;
-    img.loading = 'lazy';
     const loading = document.createElement('div');
     loading.className = 'loading';
-    loading.textContent = loadNow ? 'Creando imagen…' : '';
     frame.append(img, loading);
 
     const body = document.createElement('div');
@@ -357,42 +427,59 @@
     const p = document.createElement('p');
     p.textContent = item.prompt;
     p.title = item.prompt;
-    const reuse = document.createElement('button');
-    reuse.className = 'mini'; reuse.title = 'Usar esta idea'; reuse.innerHTML = ICON_REUSE;
-    reuse.onclick = () => { $('prompt').value = item.prompt; $('prompt').focus(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
-    const dl = document.createElement('button');
-    dl.className = 'mini'; dl.title = 'Descargar'; dl.innerHTML = ICON_DOWNLOAD;
-    dl.onclick = () => download(item);
-    body.append(p, reuse, dl);
+    body.append(
+      p,
+      miniButton('Usar esta idea', ICON_REUSE, () => {
+        $('prompt').value = item.prompt; $('prompt').focus(); window.scrollTo({ top: 0, behavior: 'smooth' });
+      }),
+      miniButton('Descargar', ICON_DOWNLOAD, () => download(item)),
+      miniButton('Borrar', ICON_DELETE, () => removeItem(item, card), 'del'),
+    );
     card.append(frame, body);
+    img.onclick = () => openViewer(item, img.src);
 
-    img.onclick = () => openViewer(item);
-    const done = new Promise((resolve) => {
-      let retried = false;
-      img.onload = () => { loading.remove(); resolve(true); };
-      img.onerror = () => {
-        if (!retried) {
-          retried = true;
-          loading.textContent = 'El servicio está ocupado, reintentando…';
-          setTimeout(() => { img.src = buildUrl(item) + '&r=' + Date.now(); }, 4000);
-        } else {
-          loading.textContent = 'No se pudo crear. Intenta de nuevo en unos segundos.';
-          loading.style.animation = 'none';
-          resolve(false);
-        }
-      };
-    });
-    card.start = () => { img.src = buildUrl(item); return done; };
-    if (!loadNow) card.start();
-    return card;
+    return {
+      card,
+      status(text) { loading.textContent = text; },
+      show(src) {
+        img.onload = () => loading.remove();
+        img.onerror = () => { loading.textContent = 'No se pudo mostrar la imagen.'; loading.style.animation = 'none'; };
+        img.src = src;
+      },
+      fail(text) { loading.textContent = text; loading.style.animation = 'none'; },
+    };
   }
 
-  function renderHistory() {
+  function urlForBlob(id, blob) {
+    if (!objectUrls.has(id)) objectUrls.set(id, URL.createObjectURL(blob));
+    return objectUrls.get(id);
+  }
+
+  async function renderHistory() {
     const grid = $('grid');
     grid.innerHTML = '';
-    history.forEach((item) => grid.appendChild(createCard(item, false)));
-    $('empty').hidden = history.length > 0;
+    updateEmpty();
+    for (const item of history) {
+      const c = createCard(item);
+      grid.appendChild(c.card);
+      const blob = await blobGet(item.id);
+      // Imágenes antiguas sin copia guardada se cargan desde el servicio.
+      c.show(blob ? urlForBlob(item.id, blob) : buildUrl(item));
+    }
+  }
+
+  function updateEmpty() {
+    $('empty').hidden = $('grid').children.length > 0;
     $('clearHistory').hidden = history.length === 0;
+  }
+
+  async function removeItem(item, card) {
+    card.remove();
+    history = history.filter((h) => h.id !== item.id);
+    storageSet(HISTORY_KEY, history);
+    updateEmpty();
+    await blobDel(item.id);
+    if (objectUrls.has(item.id)) { URL.revokeObjectURL(objectUrls.get(item.id)); objectUrls.delete(item.id); }
   }
 
   async function generate() {
@@ -413,20 +500,28 @@
     }));
 
     setBusy(true);
-    $('empty').hidden = true;
     const grid = $('grid');
-    const cards = items.map((item) => createCard(item, true));
-    cards.slice().reverse().forEach((c) => grid.prepend(c));
+    const cards = items.map((item) => createCard(item));
+    cards.forEach((c) => c.status('En fila…'));
+    cards.slice().reverse().forEach((c) => grid.prepend(c.card));
+    updateEmpty();
 
-    // El servicio gratuito limita peticiones simultáneas: se piden una tras otra.
-    const ok = [];
+    // El servicio gratuito solo acepta una imagen cada 45 s: se piden una tras otra.
+    let failed = 0;
     for (let i = 0; i < cards.length; i++) {
-      if (await cards[i].start()) ok.push(items[i]);
+      const blob = await fetchImage(items[i], cards[i].status);
+      if (!blob) {
+        failed++;
+        cards[i].fail('No se pudo crear. Intenta de nuevo en un momento.');
+        continue;
+      }
+      await blobPut(items[i].id, blob);
+      cards[i].show(urlForBlob(items[i].id, blob));
+      history = [items[i], ...history].slice(0, MAX_HISTORY);
+      storageSet(HISTORY_KEY, history);
+      updateEmpty();
     }
-    history = [...ok, ...history].slice(0, MAX_HISTORY);
-    storageSet(HISTORY_KEY, history);
-    $('clearHistory').hidden = history.length === 0;
-    if (!ok.length) $('error').textContent = 'No se pudo generar. Revisa tu conexión o intenta en un momento.';
+    if (failed) $('error').textContent = 'Alguna imagen no se pudo crear. Revisa tu conexión o intenta en un momento.';
     setBusy(false);
   }
 
@@ -436,25 +531,31 @@
     $('genBtn').querySelector('span').textContent = busy ? 'Creando…' : 'Generar';
   }
 
+  // Muestra en el botón cuánto falta para poder crear otra imagen.
+  setInterval(() => {
+    if (state.busy) return;
+    const left = secondsLeft();
+    $('hint').textContent = left > 0
+      ? 'Siguiente imagen disponible en ' + left + ' s'
+      : 'Gratis: 1 imagen cada 45 segundos';
+  }, 500);
+
   async function download(item) {
     const name = 'chispa-' + item.prompt.toLowerCase().replace(/[^a-z0-9áéíóúñ]+/gi, '-').slice(0, 40) + '-' + item.seed + '.jpg';
-    try {
-      const res = await fetch(buildUrl(item));
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = name;
-      document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
-    } catch {
-      window.open(buildUrl(item), '_blank', 'noopener');
-    }
+    const blob = await blobGet(item.id);
+    if (!blob) { window.open(buildUrl(item), '_blank', 'noopener'); return; }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
   let viewerItem = null;
-  function openViewer(item) {
+  function openViewer(item, src) {
+    if (!src) return;
     viewerItem = item;
-    $('viewerImg').src = buildUrl(item);
+    $('viewerImg').src = src;
     $('viewerImg').alt = item.prompt;
     $('viewer').showModal();
   }
@@ -466,9 +567,12 @@
   $('prompt').addEventListener('keydown', (e) => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) generate(); });
   $('surpriseBtn').onclick = () => { $('prompt').value = IDEAS[Math.floor(Math.random() * IDEAS.length)]; };
   $('clearBtn').onclick = () => { $('prompt').value = ''; $('prompt').focus(); };
-  $('clearHistory').onclick = () => {
-    if (!confirm('¿Borrar todas las imágenes de la galería?')) return;
-    history = []; storageSet(HISTORY_KEY, history); renderHistory();
+  $('clearHistory').onclick = async () => {
+    if (state.busy || !confirm('¿Borrar todas las imágenes de la galería?')) return;
+    history = []; storageSet(HISTORY_KEY, history);
+    await blobClear();
+    objectUrls.forEach((u) => URL.revokeObjectURL(u)); objectUrls.clear();
+    renderHistory();
   };
 
   const savedTheme = storageGet('chispa-tema', null);
