@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chispa · Imágenes con IA</title>
+<meta name="description" content="Crea imágenes con inteligencia artificial gratis, sin registro.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f6f4ef;
+    --surface: #ffffff;
+    --surface-2: #efece4;
+    --text: #1c1a17;
+    --muted: #6b665d;
+    --border: #e2ddd2;
+    --accent: #ff5a1f;
+    --accent-text: #ffffff;
+    --accent-soft: #ffe6dc;
+    --danger: #c62828;
+    --radius: 14px;
+    --shadow: 0 1px 2px rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #121110;
+      --surface: #1c1b19;
+      --surface-2: #262421;
+      --text: #f2efe9;
+      --muted: #a39d92;
+      --border: #33302b;
+      --accent: #ff7a45;
+      --accent-text: #1a0d06;
+      --accent-soft: #3a2117;
+      --danger: #ff6b6b;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #121110;
+    --surface: #1c1b19;
+    --surface-2: #262421;
+    --text: #f2efe9;
+    --muted: #a39d92;
+    --border: #33302b;
+    --accent: #ff7a45;
+    --accent-text: #1a0d06;
+    --accent-soft: #3a2117;
+    --danger: #ff6b6b;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.5 Inter, system-ui, sans-serif;
+    min-height: 100vh;
+  }
+  button, input, textarea, select { font: inherit; color: inherit; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 0;
+  }
+  .logo {
+    font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 24px;
+    display: flex; align-items: center; gap: 8px; letter-spacing: -.5px;
+  }
+  .logo svg { width: 26px; height: 26px; color: var(--accent); }
+  .icon-btn {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 999px; width: 40px; height: 40px; cursor: pointer;
+    display: grid; place-items: center;
+  }
+  .icon-btn svg { width: 18px; height: 18px; }
+
+  .hero { padding: 16px 0 24px; }
+  .hero h1 {
+    font-family: "Space Grotesk", sans-serif; font-size: clamp(32px, 6vw, 52px);
+    line-height: 1.05; margin: 0 0 10px; letter-spacing: -1.5px;
+  }
+  .hero h1 em { font-style: normal; color: var(--accent); }
+  .hero p { margin: 0; color: var(--muted); max-width: 560px; }
+
+  .panel {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); box-shadow: var(--shadow);
+    padding: 16px;
+  }
+  .prompt-row { position: relative; }
+  textarea {
+    width: 100%; min-height: 110px; resize: vertical;
+    border: 1px solid var(--border); border-radius: 10px;
+    background: var(--bg); padding: 14px 14px 44px; outline: none;
+  }
+  textarea:focus { border-color: var(--accent); }
+  .prompt-tools {
+    position: absolute; left: 10px; bottom: 10px; display: flex; gap: 6px;
+  }
+  .chip {
+    border: 1px solid var(--border); background: var(--surface);
+    border-radius: 999px; padding: 4px 12px; font-size: 13px; cursor: pointer;
+    white-space: nowrap;
+  }
+  .chip:hover { border-color: var(--accent); }
+  .chip[aria-pressed="true"] {
+    background: var(--accent-soft); border-color: var(--accent); color: var(--text);
+  }
+
+  .options { display: grid; gap: 14px; margin-top: 16px; }
+  .opt-label { font-size: 13px; color: var(--muted); margin-bottom: 6px; font-weight: 500; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .opt-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+
+  .actions { display: flex; gap: 10px; align-items: center; margin-top: 18px; flex-wrap: wrap; }
+  .primary {
+    background: var(--accent); color: var(--accent-text); border: 0;
+    border-radius: 999px; padding: 12px 26px; font-weight: 600; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .primary:disabled { opacity: .6; cursor: progress; }
+  .primary svg { width: 18px; height: 18px; }
+  .hint { font-size: 13px; color: var(--muted); }
+  .error { color: var(--danger); font-size: 14px; margin-top: 10px; min-height: 1em; }
+
+  section.results { margin: 28px 0 8px; }
+  .section-head {
+    display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; gap: 12px;
+  }
+  .section-head h2 { font-family: "Space Grotesk", sans-serif; margin: 0; font-size: 22px; }
+  .link-btn { background: none; border: 0; color: var(--muted); cursor: pointer; font-size: 14px; text-decoration: underline; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column;
+  }
+  .frame { position: relative; background: var(--surface-2); }
+  .frame img { display: block; width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; }
+  .loading {
+    position: absolute; inset: 0; display: grid; place-items: center;
+    color: var(--muted); font-size: 14px; text-align: center; padding: 12px;
+    background: linear-gradient(110deg, var(--surface-2) 30%, var(--border) 50%, var(--surface-2) 70%);
+    background-size: 200% 100%; animation: shimmer 1.4s linear infinite;
+  }
+  @keyframes shimmer { to { background-position: -200% 0; } }
+  .card-body { padding: 10px 12px; display: flex; gap: 8px; align-items: center; }
+  .card-body p {
+    margin: 0; flex: 1; font-size: 13px; color: var(--muted);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .mini {
+    border: 1px solid var(--border); background: var(--surface); border-radius: 8px;
+    width: 32px; height: 32px; display: grid; place-items: center; cursor: pointer; flex: none;
+  }
+  .mini svg { width: 16px; height: 16px; }
+  .empty {
+    border: 1px dashed var(--border); border-radius: var(--radius);
+    padding: 40px 16px; text-align: center; color: var(--muted);
+  }
+
+  dialog {
+    border: 0; padding: 0; background: transparent; max-width: min(92vw, 1000px);
+  }
+  dialog::backdrop { background: rgba(0,0,0,.8); }
+  dialog img { max-width: 100%; max-height: 82vh; display: block; border-radius: 10px; }
+  dialog .bar { display: flex; gap: 8px; justify-content: flex-end; margin-top: 10px; }
+  dialog .bar button {
+    background: #fff; color: #111; border: 0; border-radius: 999px; padding: 8px 16px; cursor: pointer; font-weight: 600;
+  }
+
+  footer { color: var(--muted); font-size: 13px; padding: 32px 0 40px; }
+  footer a { color: inherit; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.9 6.1L20 10l-6.1 1.9L12 18l-1.9-6.1L4 10l6.1-1.9L12 2zm7 12l.9 2.6 2.6.9-2.6.9L19 21l-.9-2.6-2.6-.9 2.6-.9L19 14z"/></svg>
+      Chispa
+    </div>
+    <button class="icon-btn" id="themeBtn" aria-label="Cambiar tema">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+    </button>
+  </header>
+
+  <div class="hero">
+    <h1>Describe una idea.<br><em>Chispa</em> la dibuja.</h1>
+    <p>Genera imágenes con inteligencia artificial gratis, sin registro y sin límites de créditos.</p>
+  </div>
+
+  <div class="panel">
+    <div class="prompt-row">
+      <label for="prompt" class="opt-label" style="display:block">¿Qué quieres ver?</label>
+      <textarea id="prompt" placeholder="Ej.: un gato astronauta flotando sobre la Luna, estilo acuarela"></textarea>
+      <div class="prompt-tools">
+        <button class="chip" id="surpriseBtn" type="button">🎲 Sorpréndeme</button>
+        <button class="chip" id="clearBtn" type="button">Borrar</button>
+      </div>
+    </div>
+
+    <div class="options">
+      <div>
+        <div class="opt-label">Estilo</div>
+        <div class="chips" id="styles"></div>
+      </div>
+      <div class="opt-grid">
+        <div>
+          <div class="opt-label">Formato</div>
+          <div class="chips" id="ratios"></div>
+        </div>
+        <div>
+          <div class="opt-label">Cantidad</div>
+          <div class="chips" id="counts"></div>
+        </div>
+        <div>
+          <div class="opt-label">Calidad</div>
+          <div class="chips" id="models"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="primary" id="genBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.9 6.1L20 10l-6.1 1.9L12 18l-1.9-6.1L4 10l6.1-1.9L12 2z"/></svg>
+        <span>Generar</span>
+      </button>
+      <span class="hint">Ctrl + Enter también genera</span>
+    </div>
+    <div class="error" id="error" role="alert"></div>
+  </div>
+
+  <section class="results">
+    <div class="section-head">
+      <h2>Tus imágenes</h2>
+      <button class="link-btn" id="clearHistory" type="button">Vaciar galería</button>
+    </div>
+    <div class="grid" id="grid"></div>
+    <div class="empty" id="empty">Aún no hay imágenes. Escribe una idea y pulsa <strong>Generar</strong>.</div>
+  </section>
+
+  <footer>
+    Las imágenes se generan con el servicio abierto <a href="https://pollinations.ai" target="_blank" rel="noopener">Pollinations</a>. Tu galería se guarda solo en este navegador.
+  </footer>
+</div>
+
+<dialog id="viewer">
+  <img id="viewerImg" alt="">
+  <div class="bar">
+    <button type="button" id="viewerDownload">Descargar</button>
+    <button type="button" id="viewerClose">Cerrar</button>
+  </div>
+</dialog>
+
+<script>
+  const API = 'https://image.pollinations.ai/prompt/';
+  const HISTORY_KEY = 'chispa-historial';
+  const MAX_HISTORY = 60;
+
+  const STYLES = [
+    { id: 'none', label: 'Libre', suffix: '' },
+    { id: 'photo', label: 'Fotorrealista', suffix: ', photorealistic, natural light, 35mm photo, high detail' },
+    { id: 'anime', label: 'Anime', suffix: ', anime style, vibrant colors, clean lineart' },
+    { id: 'watercolor', label: 'Acuarela', suffix: ', watercolor painting, soft edges, paper texture' },
+    { id: '3d', label: '3D', suffix: ', 3d render, soft studio lighting, octane, cute' },
+    { id: 'pixel', label: 'Pixel art', suffix: ', pixel art, 16-bit, retro game' },
+    { id: 'oil', label: 'Óleo', suffix: ', oil painting, thick brush strokes, classical' },
+    { id: 'logo', label: 'Logo', suffix: ', minimal flat vector logo, simple shapes, white background' },
+  ];
+  const RATIOS = [
+    { id: 'square', label: 'Cuadrado', w: 1024, h: 1024 },
+    { id: 'portrait', label: 'Vertical', w: 768, h: 1344 },
+    { id: 'landscape', label: 'Horizontal', w: 1344, h: 768 },
+  ];
+  const COUNTS = [1, 2, 4];
+  const MODELS = [
+    { id: 'flux', label: 'Alta' },
+    { id: 'turbo', label: 'Rápida' },
+  ];
+  const IDEAS = [
+    'un zorro con bufanda leyendo en una biblioteca antigua',
+    'ciudad flotante entre nubes al atardecer',
+    'una pizza gigante como planeta en el espacio',
+    'retrato de una abuela sonriente con flores en el pelo',
+    'un dragón pequeño durmiendo sobre una taza de café',
+    'bosque de hongos brillantes de noche',
+    'robot jardinero regando girasoles',
+    'casa de playa en Baja California con cactus y mar turquesa',
+    'un ajolote con corona en un acuario de cristal',
+    'tren antiguo cruzando un puente de piedra en la nieve',
+  ];
+
+  const state = { style: 'none', ratio: 'square', count: 2, model: 'flux', busy: false };
+  const $ = (id) => document.getElementById(id);
+
+  function storageGet(key, fallback) {
+    try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch { return fallback; }
+  }
+  function storageSet(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
+  }
+
+  let history = storageGet(HISTORY_KEY, []);
+
+  function renderChips(el, items, key, getId, getLabel) {
+    el.innerHTML = '';
+    items.forEach((item) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'chip';
+      b.textContent = getLabel(item);
+      b.setAttribute('aria-pressed', String(state[key] === getId(item)));
+      b.onclick = () => { state[key] = getId(item); renderOptions(); };
+      el.appendChild(b);
+    });
+  }
+  function renderOptions() {
+    renderChips($('styles'), STYLES, 'style', (s) => s.id, (s) => s.label);
+    renderChips($('ratios'), RATIOS, 'ratio', (r) => r.id, (r) => r.label);
+    renderChips($('counts'), COUNTS, 'count', (c) => c, (c) => String(c));
+    renderChips($('models'), MODELS, 'model', (m) => m.id, (m) => m.label);
+  }
+
+  function buildUrl(item) {
+    const params = new URLSearchParams({
+      width: item.w, height: item.h, seed: item.seed, model: item.model,
+      nologo: 'true', enhance: 'true',
+    });
+    return API + encodeURIComponent(item.fullPrompt) + '?' + params;
+  }
+
+  const ICON_DOWNLOAD = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 21h16"/></svg>';
+  const ICON_REUSE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v6h6M20 20v-6h-6"/><path d="M5 15a7 7 0 0012 3M19 9A7 7 0 007 6"/></svg>';
+
+  function createCard(item, loadNow) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    const frame = document.createElement('div');
+    frame.className = 'frame';
+    frame.style.aspectRatio = item.w + ' / ' + item.h;
+    const img = document.createElement('img');
+    img.alt = item.prompt;
+    img.loading = 'lazy';
+    const loading = document.createElement('div');
+    loading.className = 'loading';
+    loading.textContent = loadNow ? 'Creando imagen…' : '';
+    frame.append(img, loading);
+
+    const body = document.createElement('div');
+    body.className = 'card-body';
+    const p = document.createElement('p');
+    p.textContent = item.prompt;
+    p.title = item.prompt;
+    const reuse = document.createElement('button');
+    reuse.className = 'mini'; reuse.title = 'Usar esta idea'; reuse.innerHTML = ICON_REUSE;
+    reuse.onclick = () => { $('prompt').value = item.prompt; $('prompt').focus(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+    const dl = document.createElement('button');
+    dl.className = 'mini'; dl.title = 'Descargar'; dl.innerHTML = ICON_DOWNLOAD;
+    dl.onclick = () => download(item);
+    body.append(p, reuse, dl);
+    card.append(frame, body);
+
+    img.onclick = () => openViewer(item);
+    const done = new Promise((resolve) => {
+      let retried = false;
+      img.onload = () => { loading.remove(); resolve(true); };
+      img.onerror = () => {
+        if (!retried) {
+          retried = true;
+          loading.textContent = 'El servicio está ocupado, reintentando…';
+          setTimeout(() => { img.src = buildUrl(item) + '&r=' + Date.now(); }, 4000);
+        } else {
+          loading.textContent = 'No se pudo crear. Intenta de nuevo en unos segundos.';
+          loading.style.animation = 'none';
+          resolve(false);
+        }
+      };
+    });
+    card.start = () => { img.src = buildUrl(item); return done; };
+    if (!loadNow) card.start();
+    return card;
+  }
+
+  function renderHistory() {
+    const grid = $('grid');
+    grid.innerHTML = '';
+    history.forEach((item) => grid.appendChild(createCard(item, false)));
+    $('empty').hidden = history.length > 0;
+    $('clearHistory').hidden = history.length === 0;
+  }
+
+  async function generate() {
+    if (state.busy) return;
+    const prompt = $('prompt').value.trim();
+    $('error').textContent = '';
+    if (!prompt) { $('error').textContent = 'Escribe primero qué imagen quieres.'; $('prompt').focus(); return; }
+
+    const style = STYLES.find((s) => s.id === state.style);
+    const ratio = RATIOS.find((r) => r.id === state.ratio);
+    const items = Array.from({ length: state.count }, () => ({
+      id: Date.now() + '-' + Math.random().toString(36).slice(2, 7),
+      prompt,
+      fullPrompt: prompt + style.suffix,
+      w: ratio.w, h: ratio.h,
+      seed: Math.floor(Math.random() * 1e9),
+      model: state.model,
+    }));
+
+    setBusy(true);
+    $('empty').hidden = true;
+    const grid = $('grid');
+    const cards = items.map((item) => createCard(item, true));
+    cards.slice().reverse().forEach((c) => grid.prepend(c));
+
+    // El servicio gratuito limita peticiones simultáneas: se piden una tras otra.
+    const ok = [];
+    for (let i = 0; i < cards.length; i++) {
+      if (await cards[i].start()) ok.push(items[i]);
+    }
+    history = [...ok, ...history].slice(0, MAX_HISTORY);
+    storageSet(HISTORY_KEY, history);
+    $('clearHistory').hidden = history.length === 0;
+    if (!ok.length) $('error').textContent = 'No se pudo generar. Revisa tu conexión o intenta en un momento.';
+    setBusy(false);
+  }
+
+  function setBusy(busy) {
+    state.busy = busy;
+    $('genBtn').disabled = busy;
+    $('genBtn').querySelector('span').textContent = busy ? 'Creando…' : 'Generar';
+  }
+
+  async function download(item) {
+    const name = 'chispa-' + item.prompt.toLowerCase().replace(/[^a-z0-9áéíóúñ]+/gi, '-').slice(0, 40) + '-' + item.seed + '.jpg';
+    try {
+      const res = await fetch(buildUrl(item));
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = name;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch {
+      window.open(buildUrl(item), '_blank', 'noopener');
+    }
+  }
+
+  let viewerItem = null;
+  function openViewer(item) {
+    viewerItem = item;
+    $('viewerImg').src = buildUrl(item);
+    $('viewerImg').alt = item.prompt;
+    $('viewer').showModal();
+  }
+  $('viewerClose').onclick = () => $('viewer').close();
+  $('viewerDownload').onclick = () => viewerItem && download(viewerItem);
+  $('viewer').addEventListener('click', (e) => { if (e.target === $('viewer')) $('viewer').close(); });
+
+  $('genBtn').onclick = generate;
+  $('prompt').addEventListener('keydown', (e) => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) generate(); });
+  $('surpriseBtn').onclick = () => { $('prompt').value = IDEAS[Math.floor(Math.random() * IDEAS.length)]; };
+  $('clearBtn').onclick = () => { $('prompt').value = ''; $('prompt').focus(); };
+  $('clearHistory').onclick = () => {
+    if (!confirm('¿Borrar todas las imágenes de la galería?')) return;
+    history = []; storageSet(HISTORY_KEY, history); renderHistory();
+  };
+
+  const savedTheme = storageGet('chispa-tema', null);
+  if (savedTheme) document.documentElement.dataset.theme = savedTheme;
+  $('themeBtn').onclick = () => {
+    const current = document.documentElement.dataset.theme
+      || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    const next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    storageSet('chispa-tema', next);
+  };
+
+  renderOptions();
+  renderHistory();
+</script>
+</body>
+</html>

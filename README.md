@@ -17,3 +17,7 @@ En `index.html`, dentro del código del carrito:
 ## Publicar
 
 Conecta este repositorio en Netlify (o Vercel) sin comando de compilación y con `/` como carpeta de publicación. Cada cambio en `main` se publica solo.
+
+## Chispa — imágenes con IA
+
+`chispa/index.html` es una app aparte para crear imágenes con inteligencia artificial gratis y sin registro. Usa el servicio abierto [Pollinations](https://pollinations.ai), así que no necesita claves ni servidor. Al publicar el sitio queda en `/chispa/`.
