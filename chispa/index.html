@@ -137,6 +137,22 @@
   }
   .hint { font-size: 13px; color: var(--muted); }
   .error { color: var(--danger); font-size: 14px; margin-top: 10px; min-height: 1em; }
+  .check { display: flex; gap: 8px; align-items: center; font-size: 14px; color: var(--muted); margin-top: 12px; cursor: pointer; }
+  .check input { accent-color: var(--accent); width: 16px; height: 16px; }
+  .understood {
+    margin-top: 16px; border: 1px solid var(--accent); background: var(--accent-soft);
+    border-radius: 12px; padding: 14px; animation: pop .25s ease-out;
+  }
+  .und-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .und-badge { font-weight: 600; font-size: 14px; }
+  .und-summary { margin: 8px 0 10px; font-size: 16px; }
+  .understood details { font-size: 13px; color: var(--muted); }
+  .understood summary { cursor: pointer; }
+  .understood textarea { min-height: 120px; margin-top: 8px; padding: 12px; font-size: 14px; }
+  .understood .actions { margin-top: 12px; }
+  .primary:disabled { opacity: .75; cursor: progress; }
+  .primary svg.spin { animation: spin 1.2s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
   section.results { margin: 28px 0 8px; }
   .section-head {
@@ -285,6 +301,25 @@
       <button class="secondary" id="cancelBtn" type="button" hidden>Cancelar fila</button>
       <span class="hint" id="hint">Gratis: 1 imagen cada 45 segundos</span>
     </div>
+    <label class="check"><input type="checkbox" id="reviewToggle"> Mostrarme cómo entendí la idea antes de crearla</label>
+    <div class="understood" id="understood" hidden>
+      <div class="und-head">
+        <span class="und-badge">✨ Así lo entendí</span>
+        <button class="link-btn" id="undClose" type="button">Cerrar</button>
+      </div>
+      <p class="und-summary" id="undSummary"></p>
+      <details>
+        <summary>Ver la descripción detallada que recibirá la IA (puedes editarla)</summary>
+        <textarea id="undPrompt" aria-label="Descripción detallada"></textarea>
+      </details>
+      <div class="actions">
+        <button class="primary" id="undCreate" type="button">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.9 6.1L20 10l-6.1 1.9L12 18l-1.9-6.1L4 10l6.1-1.9L12 2z"/></svg>
+          <span>Sí, créala</span>
+        </button>
+        <button class="secondary" id="undFix" type="button">Corregir mi idea</button>
+      </div>
+    </div>
     <div class="error" id="error" role="alert"></div>
   </div>
 
@@ -327,6 +362,20 @@
 
 <script>
   const API = 'https://image.pollinations.ai/prompt/';
+  const TEXT_API = 'https://text.pollinations.ai/openai';
+  // Instrucciones para la IA de texto que interpreta la idea antes de dibujarla.
+  const UNDERSTAND_SYSTEM = [
+    'You turn a person\'s image idea (usually in Spanish, maybe with typos, slang or Mexican expressions) into the best possible prompt for the FLUX text-to-image model.',
+    'Rules:',
+    '- Keep EVERY element the person asks for: subjects, exact quantities, colors, clothing, positions, actions, background and mood. Never drop or change them, and do not add new main subjects.',
+    '- If they want text written in the image, keep it exactly as written, inside double quotes, in its original language.',
+    '- FLUX has no negative prompt: if they say something must NOT appear, describe the scene so it is absent and do not mention it.',
+    '- Add what makes it look professional: framing and composition, lighting, materials and textures, depth, color palette and fine detail.',
+    '- Respect the chosen style. If the style is "Libre", choose the style that best suits the idea.',
+    '- The prompt is in English, one paragraph, at most 90 words, most important things first.',
+    '- "resumen" is one short sentence in Spanish, addressing the person as "tú", saying what will be drawn so they can confirm it was understood.',
+    'Reply ONLY with JSON: {"resumen": "...", "prompt": "..."}',
+  ].join('\n');
   const HISTORY_KEY = 'chispa-historial';
   const LAST_KEY = 'chispa-ultima-peticion';
   const OPTIONS_KEY = 'chispa-opciones';
@@ -337,15 +386,15 @@
   const EXPECTED_MS = 15000;
 
   const STYLES = [
-    { id: 'none', label: 'Libre', suffix: '' },
-    { id: 'photo', label: 'Fotorrealista', suffix: ', photorealistic, natural light, 35mm photo, high detail' },
-    { id: 'anime', label: 'Anime', suffix: ', anime style, vibrant colors, clean lineart' },
-    { id: 'watercolor', label: 'Acuarela', suffix: ', watercolor painting, soft edges, paper texture' },
-    { id: '3d', label: '3D', suffix: ', 3d render, soft studio lighting, octane, cute' },
-    { id: 'pixel', label: 'Pixel art', suffix: ', pixel art, 16-bit, retro game' },
-    { id: 'oil', label: 'Óleo', suffix: ', oil painting, thick brush strokes, classical' },
-    { id: 'sticker', label: 'Sticker', suffix: ', die-cut sticker, bold outline, white border, flat colors, plain background' },
-    { id: 'logo', label: 'Logo', suffix: ', minimal flat vector logo, simple shapes, white background' },
+    { id: 'none', label: 'Libre', suffix: ', highly detailed, sharp focus, beautiful composition, professional quality' },
+    { id: 'photo', label: 'Fotorrealista', suffix: ', ultra realistic photograph, full-frame camera, 50mm lens, natural soft light, true-to-life colors, fine texture detail, sharp focus, shallow depth of field' },
+    { id: 'anime', label: 'Anime', suffix: ', high quality anime key visual, expressive eyes, clean crisp lineart, vibrant cel shading, detailed background' },
+    { id: 'watercolor', label: 'Acuarela', suffix: ', delicate watercolor painting, soft pigment blooms, visible paper grain, loose expressive brushwork, harmonious palette' },
+    { id: '3d', label: '3D', suffix: ', stylized 3D animated movie render, appealing character design, soft global illumination, smooth materials, studio lighting, high detail' },
+    { id: 'pixel', label: 'Pixel art', suffix: ', detailed pixel art, 32-bit retro game style, limited color palette, crisp pixels' },
+    { id: 'oil', label: 'Óleo', suffix: ', classical oil painting on canvas, rich impasto brush strokes, dramatic chiaroscuro lighting, museum quality' },
+    { id: 'sticker', label: 'Sticker', suffix: ', die-cut sticker design, thick white border, bold clean outline, flat vibrant colors, centered, plain white background' },
+    { id: 'logo', label: 'Logo', suffix: ', professional minimalist vector logo, flat design, simple geometric shapes, balanced negative space, centered on plain white background' },
   ];
   const RATIOS = [
     { id: 'square', label: 'Cuadrado', w: 1024, h: 1024 },
@@ -391,7 +440,7 @@
   };
   const ALL_IDEAS = Object.values(IDEAS).flat();
 
-  const defaults = { style: 'none', ratio: 'square', count: 1, model: 'flux' };
+  const defaults = { style: 'none', ratio: 'square', count: 1, model: 'flux', review: true };
   const saved = storageGet(OPTIONS_KEY, {});
   const state = { ...defaults, ...saved, filter: 'all' };
   const $ = (id) => document.getElementById(id);
@@ -455,9 +504,12 @@
       el.appendChild(b);
     });
   }
+  function saveOptions() {
+    storageSet(OPTIONS_KEY, { style: state.style, ratio: state.ratio, count: state.count, model: state.model, review: state.review });
+  }
   function renderOptions() {
     const changed = () => {
-      storageSet(OPTIONS_KEY, { style: state.style, ratio: state.ratio, count: state.count, model: state.model });
+      saveOptions();
       renderOptions();
     };
     renderChips($('styles'), STYLES, 'style', (s) => s.id, (s) => s.label, changed);
@@ -487,7 +539,7 @@
   function buildUrl(item) {
     const params = new URLSearchParams({
       width: item.w, height: item.h, seed: item.seed, model: item.model,
-      nologo: 'true', enhance: 'true',
+      nologo: 'true', enhance: String(item.enhance !== false),
     });
     return API + encodeURIComponent(item.fullPrompt) + '?' + params;
   }
@@ -649,9 +701,9 @@
     };
   }
   function variantOf(item) {
-    const { prompt, fullPrompt, w, h, model } = item;
+    const { prompt, fullPrompt, w, h, model, enhance } = item;
     toast('Otra versión en camino');
-    return newItem({ prompt, fullPrompt, w, h, model });
+    return newItem({ prompt, fullPrompt, w, h, model, enhance });
   }
 
   // Fila de espera: el servicio gratuito solo acepta una imagen cada 45 s.
@@ -733,7 +785,7 @@
   function updateQueueUI() {
     const waiting = queue.filter((j) => !j.cancelled).length;
     $('cancelBtn').hidden = waiting < 2;
-    $('genBtn').querySelector('span').textContent = waiting ? 'Añadir a la fila' : 'Generar';
+    if (!understanding) $('genBtn').querySelector('span').textContent = waiting ? 'Añadir a la fila' : 'Generar';
   }
 
   $('cancelBtn').onclick = () => {
@@ -745,16 +797,110 @@
     toast('Fila cancelada');
   };
 
-  function generate() {
+  const currentStyle = () => STYLES.find((s) => s.id === state.style) || STYLES[0];
+
+  // Pide a una IA de texto que interprete la idea y la convierta en una descripción detallada en inglés,
+  // el idioma que mejor entiende el modelo de imágenes. Si falla, se usa la idea tal cual.
+  async function understand(prompt, style) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 30000);
+    try {
+      const res = await fetch(TEXT_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'openai',
+          messages: [
+            { role: 'system', content: UNDERSTAND_SYSTEM },
+            { role: 'user', content: 'Estilo elegido: ' + style.label + '\nIdea: ' + prompt },
+          ],
+          seed: Math.floor(Math.random() * 1e6),
+        }),
+        signal: ctrl.signal,
+      });
+      if (!res.ok) return null;
+      const data = await res.json();
+      const text = data?.choices?.[0]?.message?.content || '';
+      const match = text.match(/\{[\s\S]*\}/);
+      if (!match) return null;
+      const out = JSON.parse(match[0]);
+      if (typeof out.prompt !== 'string' || out.prompt.trim().length < 10) return null;
+      return { summary: String(out.resumen || '').trim(), prompt: out.prompt.trim().slice(0, 900) };
+    } catch {
+      return null;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  let understanding = false;
+  let pendingIdea = null;
+
+  function setUnderstanding(on) {
+    understanding = on;
+    const btn = $('genBtn');
+    btn.disabled = on;
+    btn.querySelector('svg').classList.toggle('spin', on);
+    if (on) btn.querySelector('span').textContent = 'Entendiendo tu idea…';
+    else updateQueueUI();
+  }
+
+  async function generate() {
     const prompt = $('prompt').value.trim();
     $('error').textContent = '';
     if (!prompt) { $('error').textContent = 'Escribe primero qué imagen quieres, o toca una de las ideas.'; $('prompt').focus(); return; }
-    const style = STYLES.find((s) => s.id === state.style) || STYLES[0];
+    if (understanding) return;
+    hideUnderstood();
+    setUnderstanding(true);
+    const result = await understand(prompt, currentStyle());
+    setUnderstanding(false);
+    if (!result) {
+      toast('No pude analizar la idea; la creo tal como la escribiste');
+      create(prompt, null);
+      return;
+    }
+    if (state.review) showUnderstood(prompt, result);
+    else create(prompt, result.prompt);
+  }
+
+  function create(prompt, detailed) {
+    const style = currentStyle();
     const ratio = RATIOS.find((r) => r.id === state.ratio) || RATIOS[0];
-    const base = { prompt, fullPrompt: prompt + style.suffix, w: ratio.w, h: ratio.h, model: state.model };
+    const base = {
+      prompt,
+      fullPrompt: (detailed || prompt) + style.suffix,
+      // Si ya se interpretó, no hace falta que el servicio vuelva a reescribirla.
+      enhance: !detailed,
+      w: ratio.w, h: ratio.h, model: state.model,
+    };
     enqueue(Array.from({ length: state.count }, () => newItem(base)));
     document.querySelector('.results').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
+
+  function showUnderstood(prompt, result) {
+    pendingIdea = prompt;
+    $('undSummary').textContent = result.summary || 'Esto es lo que voy a dibujar:';
+    $('undPrompt').value = result.prompt;
+    $('understood').hidden = false;
+    $('undCreate').focus();
+  }
+  function hideUnderstood() {
+    $('understood').hidden = true;
+    pendingIdea = null;
+  }
+  $('undCreate').onclick = () => {
+    if (!pendingIdea) return;
+    const prompt = pendingIdea;
+    const detailed = $('undPrompt').value.trim();
+    hideUnderstood();
+    create(prompt, detailed || null);
+  };
+  $('undFix').onclick = () => { hideUnderstood(); $('prompt').focus(); };
+  $('undClose').onclick = hideUnderstood;
+  // Si cambias la idea, la interpretación anterior ya no vale.
+  $('prompt').addEventListener('input', () => { if (pendingIdea) hideUnderstood(); });
+  $('reviewToggle').checked = state.review;
+  $('reviewToggle').onchange = () => { state.review = $('reviewToggle').checked; saveOptions(); };
 
   // Muestra cuánto falta para poder crear otra imagen.
   setInterval(() => {
