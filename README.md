@@ -33,3 +33,14 @@ Otras funciones:
 - **Texto y filtros**: escribir sobre la imagen con cuatro tipos de letra, colores y siete filtros; se guarda como imagen nueva en la galería.
 - **Felicitar**: ideas listas para cumpleaños, día de las madres, buenos días, etc., con el texto sugerido para ponerle encima.
 - **Instalar como app** en el teléfono (`manifest.webmanifest`, `sw.js` e íconos en `chispa/`).
+
+## Serenity Spa — propuesta
+
+`serenity/index.html` es una propuesta de página para Serenity Spa (La Paz, B.C.S.), en español e inglés, con reservas por WhatsApp.
+
+Las fotos se agregan poniendo los archivos en `serenity/fotos/` con estos nombres; mientras no existan se ve un degradado con una etiqueta:
+
+- `portada.jpg` — horizontal, terapeuta dando masaje.
+- `sala.jpg` — vertical, sala del spa.
+- `masaje.jpg` — vertical, se muestra en forma de arco.
+- `servicio-1.jpg` a `servicio-9.jpg` — una por servicio, en el orden de la lista (relajante, tejido profundo, pareja, prenatal, exfoliación, sauna, faciales, pestañas, manicura).

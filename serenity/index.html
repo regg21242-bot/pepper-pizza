@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Serenity Spa — Propuesta</title>
+<meta name="description" content="Spa de masajes en el centro de La Paz, B.C.S.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blush:#f3e7e2; --blush-2:#ead9d2; --cream:#faf4f1;
+    --ink:#1c1716; --ink-2:#2a2321; --taupe:#8a7b74; --muted:#6f625d;
+    --line:rgba(28,23,22,.14); --on-dark:#e9dfda; --on-dark-muted:#a99a94;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:Inter,system-ui,sans-serif;background:var(--blush);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  img{display:block;max-width:100%}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+
+  /* Títulos finos en minúsculas y textos pequeños en mayúsculas */
+  .display{font-family:"Cormorant Garamond",Georgia,serif;font-weight:300;line-height:1.05;letter-spacing:.01em}
+  .caps{font-size:11px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;line-height:1.9}
+  .link-caps{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;border-bottom:1px solid currentColor;padding-bottom:3px;transition:opacity .2s}
+  .link-caps:hover{opacity:.6}
+
+  .ribbon{background:var(--ink);color:var(--on-dark-muted);font-size:11px;text-align:center;padding:6px 12px;letter-spacing:.08em}
+
+  /* Encabezado: enlaces a la izquierda, logo al centro, reservar a la derecha */
+  header{position:sticky;top:0;z-index:20;background:rgba(243,231,226,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:72px;gap:16px}
+  .links{display:flex;gap:26px}
+  .links a{font-size:10.5px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+  .links a:hover{color:var(--ink)}
+  .logo{text-align:center;font-family:"Cormorant Garamond",serif;font-weight:300;font-size:30px;line-height:.9;letter-spacing:.02em}
+  .logo span{display:block;font-family:Inter;font-size:8.5px;font-weight:500;letter-spacing:.42em;text-transform:uppercase;color:var(--taupe);margin-top:6px}
+  .right{display:flex;justify-content:flex-end;align-items:center;gap:18px}
+  .lang{background:none;border:1px solid var(--line);border-radius:99px;padding:5px 11px;font:600 10.5px Inter;letter-spacing:.12em;cursor:pointer;color:var(--ink)}
+  .menu-btn{display:none;background:none;border:0;cursor:pointer;color:var(--ink)}
+
+  /* Espacios para fotos: muestran un degradado hasta que se agrega la foto real */
+  .ph{position:relative;overflow:hidden;background-size:cover;background-position:center;display:flex;align-items:flex-end;padding:14px}
+  .ph .ph-label{position:relative;z-index:1;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.75)}
+  .ph.has-photo .ph-label{display:none}
+  .tone-1{background-color:#b9a49b;background-image:linear-gradient(115deg,#5b4a44 0%,#8f7a71 38%,#d8c7bf 70%,#efe3dd 100%)}
+  .tone-2{background-color:#a48f86;background-image:linear-gradient(160deg,#c9b4aa,#8a7168 60%,#5d4a43)}
+  .tone-3{background-color:#cbb8ae;background-image:linear-gradient(170deg,#e6d6ce,#b49d92 55%,#7e6a62)}
+  .tone-4{background-color:#6d5a53;background-image:linear-gradient(150deg,#8b766d,#4e3f3a)}
+  .tone-5{background-color:#dccbc3;background-image:linear-gradient(160deg,#f1e6e0,#cdb9af 60%,#a38d83)}
+
+  /* Portada */
+  .hero{position:relative;min-height:min(78vh,640px);display:grid;grid-template-columns:1fr 1fr}
+  .hero .ph{position:absolute;inset:0}
+  .hero-text{grid-column:2;position:relative;z-index:1;align-self:center;padding:56px 40px 56px 20px;max-width:520px}
+  .hero h1{font-size:clamp(46px,6vw,80px);color:var(--ink)}
+  .hero .caps{color:var(--muted);margin:18px 0 28px;max-width:400px}
+  .hero-cta{display:flex;gap:26px;flex-wrap:wrap;align-items:center}
+  .rating{margin-top:32px;display:flex;align-items:center;gap:12px;font-size:12px;color:var(--muted)}
+  .stars{color:var(--ink);letter-spacing:3px;font-size:12px}
+
+  /* Franja oscura */
+  .band{background:var(--ink);color:var(--on-dark)}
+  .band-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:40px;padding:34px 20px;align-items:center}
+  .band .caps{color:var(--on-dark-muted)}
+  .facts{display:grid;grid-template-columns:repeat(4,auto);gap:22px;justify-content:end}
+  .fact b{display:block;font-family:"Cormorant Garamond",serif;font-weight:300;font-size:24px;color:#fff;line-height:1.1}
+  .fact span{font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--on-dark-muted)}
+
+  /* Foto vertical + texto con imagen en arco */
+  .split{display:grid;grid-template-columns:1fr 2fr;min-height:640px}
+  .split > .ph{min-height:420px}
+  .split-text{background:var(--blush);display:flex;flex-direction:column;align-items:center;text-align:center;padding:72px 32px}
+  .split-text h2{font-size:clamp(40px,5vw,62px)}
+  .arch{width:min(240px,60vw);aspect-ratio:3/4;border-radius:999px 999px 999px 999px;margin:34px auto 30px}
+  .why-list{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;max-width:720px;margin-bottom:30px}
+  .why-list h3{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:22px;line-height:1.2;margin-bottom:6px}
+  .why-list p{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);line-height:1.8}
+
+  /* Servicios en sección oscura */
+  .services{background:var(--ink);color:var(--on-dark);padding:84px 0 92px}
+  .services-head{text-align:center;max-width:640px;margin:0 auto 52px}
+  .services-head h2{font-size:clamp(44px,6vw,72px);color:#fff}
+  .services-head .caps{color:var(--on-dark-muted);margin-top:14px}
+  .svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:40px 22px}
+  .svc h3{font-family:"Cormorant Garamond",serif;font-weight:300;font-size:25px;text-align:center;margin-bottom:12px;color:#fff;text-transform:lowercase}
+  .svc .ph{aspect-ratio:4/5}
+  .svc p{font-size:13px;color:var(--on-dark-muted);margin:14px 0 12px;text-align:center}
+  .svc-foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(233,223,218,.16);padding-top:12px;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--on-dark-muted)}
+  .svc-foot a{color:#fff;font-weight:600}
+
+  /* Reseñas */
+  .reviews{text-align:center;padding:96px 0}
+  .reviews h2{font-size:clamp(38px,5vw,60px);max-width:760px;margin:16px auto 18px}
+  .reviews .caps{color:var(--muted);max-width:520px;margin:0 auto 30px}
+
+  /* Visítanos */
+  .visit{display:grid;grid-template-columns:1fr 1fr;background:var(--cream)}
+  .visit-text{padding:80px 48px 80px max(20px,calc((100vw - 1180px)/2 + 20px))}
+  .visit h2{font-size:clamp(40px,5vw,62px);margin:12px 0 30px}
+  .info{display:grid;gap:22px;font-size:14.5px;color:var(--ink-2);margin-bottom:34px}
+  .info b{display:block;font-size:10px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--taupe);margin-bottom:4px}
+  .visit-cta{display:flex;gap:26px;flex-wrap:wrap}
+  .map{background:var(--ink-2);color:var(--on-dark-muted);display:grid;place-items:center;text-align:center;padding:40px 24px;min-height:360px}
+  .map .pin{width:46px;height:46px;border:1px solid var(--on-dark-muted);border-radius:50%;display:grid;place-items:center;margin:0 auto 14px;color:var(--on-dark)}
+
+  footer{background:var(--ink);color:var(--on-dark-muted);padding:26px 0}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase}
+
+  .wa{position:fixed;right:18px;bottom:18px;z-index:30;width:54px;height:54px;border-radius:50%;background:var(--ink);display:grid;place-items:center;box-shadow:0 10px 24px rgba(0,0,0,.25)}
+  .wa svg{width:26px;height:26px;fill:#fff}
+
+  .reveal{opacity:0;transform:translateY(16px);transition:opacity .8s ease,transform .8s ease}
+  .reveal.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+
+  @media (max-width:900px){
+    .nav{grid-template-columns:auto 1fr auto}
+    .menu-btn{display:block}
+    .logo{text-align:left}
+    .links{display:none;position:absolute;top:72px;left:0;right:0;flex-direction:column;gap:0;background:var(--blush);border-bottom:1px solid var(--line)}
+    .links.open{display:flex}
+    .links a{padding:16px 20px;border-top:1px solid var(--line)}
+    .right .link-caps{display:none}
+    .hero{display:block;min-height:0}
+    .hero .ph{position:relative;height:56vh;min-height:300px}
+    .hero-text{padding:40px 20px 52px;max-width:none}
+    .band-grid{grid-template-columns:1fr;gap:26px}
+    .facts{grid-template-columns:1fr 1fr;justify-content:stretch}
+    .split{grid-template-columns:1fr}
+    .split > .ph{min-height:300px}
+    .split-text{padding:56px 20px}
+    .why-list{grid-template-columns:1fr;gap:22px}
+    .svc-grid{grid-template-columns:1fr 1fr;gap:34px 14px}
+    .visit{grid-template-columns:1fr}
+    .visit-text{padding:64px 20px}
+  }
+  @media (max-width:520px){
+    .svc-grid{gap:30px 12px}
+    .svc h3{font-size:20px;margin-bottom:10px}
+    .svc p{font-size:12px;margin:10px 0}
+    .svc-foot{flex-direction:column;align-items:flex-start;gap:6px;font-size:9.5px}
+  }
+</style>
+</head>
+<body>
+
+<div class="ribbon" data-es="Propuesta de diseño para Serenity Spa · Fotos y precios de muestra" data-en="Design proposal for Serenity Spa · Sample photos and prices">Propuesta de diseño para Serenity Spa · Fotos y precios de muestra</div>
+
+<header>
+  <div class="wrap nav">
+    <button class="menu-btn" id="menuBtn" aria-label="Menú" aria-expanded="false">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 7h18M3 12h18M3 17h18"/></svg>
+    </button>
+    <nav class="links" id="links">
+      <a href="#inicio" data-es="Inicio" data-en="Home">Inicio</a>
+      <a href="#nosotros" data-es="Nosotros" data-en="About">Nosotros</a>
+      <a href="#servicios" data-es="Servicios" data-en="Treatments">Servicios</a>
+      <a href="#visitanos" data-es="Visítanos" data-en="Visit">Visítanos</a>
+    </nav>
+    <a href="#inicio" class="logo">serenity<span>spa · la paz</span></a>
+    <div class="right">
+      <a class="link-caps wa-link" href="#" data-es="Reservar cita" data-en="Book appointment">Reservar cita</a>
+      <button class="lang" id="lang">EN</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero" id="inicio">
+    <div class="ph tone-1" data-photo="fotos/portada.jpg"><span class="ph-label" data-es="Foto: terapeuta dando masaje (horizontal)" data-en="Photo: therapist giving a massage (landscape)">Foto: terapeuta dando masaje (horizontal)</span></div>
+    <div class="hero-text reveal">
+      <h1 class="display" data-es="tu cuerpo merece una pausa" data-en="your body deserves a pause">tu cuerpo merece una pausa</h1>
+      <p class="caps" data-es="Masajes, faciales y sauna a unos pasos del malecón. Abierto todos los días." data-en="Massages, facials and sauna steps from the malecón. Open every day.">Masajes, faciales y sauna a unos pasos del malecón. Abierto todos los días.</p>
+      <div class="hero-cta">
+        <a class="link-caps wa-link" href="#" data-es="Reservar por WhatsApp" data-en="Book on WhatsApp">Reservar por WhatsApp</a>
+        <a class="link-caps" href="#servicios" style="color:var(--muted)" data-es="Ver servicios" data-en="See treatments">Ver servicios</a>
+      </div>
+      <div class="rating"><span class="stars">★★★★★</span><span data-es="5.0 · Más de 690 reseñas en Google" data-en="5.0 · 690+ reviews on Google">5.0 · Más de 690 reseñas en Google</span></div>
+    </div>
+  </section>
+
+  <div class="band">
+    <div class="wrap band-grid">
+      <p class="caps reveal" data-es="Deja atrás el ruido del día. Un espacio pensado para soltar la tensión del cuerpo y de la mente, con terapeutas que trabajan a tu ritmo y con la presión que necesitas." data-en="Leave the noise of the day behind. A space designed to release tension from body and mind, with therapists who work at your pace and with the pressure you need.">Deja atrás el ruido del día. Un espacio pensado para soltar la tensión del cuerpo y de la mente, con terapeutas que trabajan a tu ritmo y con la presión que necesitas.</p>
+      <div class="facts reveal">
+        <div class="fact"><b>8 – 20 h</b><span data-es="Los 7 días" data-en="7 days a week">Los 7 días</span></div>
+        <div class="fact"><b>5.0 ★</b><span>Google</span></div>
+        <div class="fact"><b data-es="centro" data-en="downtown">centro</b><span data-es="Cerca del malecón" data-en="Near the malecón">Cerca del malecón</span></div>
+        <div class="fact"><b data-es="parejas" data-en="couples">parejas</b><span data-es="Misma sala" data-en="Same room">Misma sala</span></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="split" id="nosotros">
+    <div class="ph tone-2" data-photo="fotos/sala.jpg"><span class="ph-label" data-es="Foto: sala del spa (vertical)" data-en="Photo: spa room (portrait)">Foto: sala del spa (vertical)</span></div>
+    <div class="split-text">
+      <h2 class="display reveal" data-es="aquí el tiempo va más lento" data-en="here, time slows down">aquí el tiempo va más lento</h2>
+      <div class="ph tone-3 arch reveal" data-photo="fotos/masaje.jpg"><span class="ph-label" style="margin:0 auto 18px" data-es="Foto: masaje" data-en="Photo: massage">Foto: masaje</span></div>
+      <div class="why-list reveal">
+        <div><h3 data-es="terapeutas con experiencia" data-en="experienced therapists">terapeutas con experiencia</h3><p data-es="La presión justa en cada punto de tensión" data-en="The right pressure on every tension point">La presión justa en cada punto de tensión</p></div>
+        <div><h3 data-es="un espacio tranquilo" data-en="a calm space">un espacio tranquilo</h3><p data-es="Luz tenue, música suave y aire acondicionado" data-en="Soft light, calm music and air conditioning">Luz tenue, música suave y aire acondicionado</p></div>
+        <div><h3 data-es="fácil de llegar" data-en="easy to reach">fácil de llegar</h3><p data-es="En pleno centro, con estacionamiento cerca" data-en="Right downtown, with parking nearby">En pleno centro, con estacionamiento cerca</p></div>
+      </div>
+      <a class="link-caps wa-link reveal" href="#" data-es="Reservar sesión" data-en="Book a session">Reservar sesión</a>
+    </div>
+  </section>
+
+  <section class="services" id="servicios">
+    <div class="wrap">
+      <div class="services-head reveal">
+        <h2 class="display" data-es="elige cómo quieres sentirte" data-en="choose how you want to feel">elige cómo quieres sentirte</h2>
+        <p class="caps" data-es="Cada sesión se adapta a la presión y a las zonas que necesitas" data-en="Every session adapts to the pressure and areas you need">Cada sesión se adapta a la presión y a las zonas que necesitas</p>
+      </div>
+      <div class="svc-grid" id="svc"></div>
+    </div>
+  </section>
+
+  <section class="reviews">
+    <div class="wrap reveal">
+      <div class="stars" style="font-size:14px">★★★★★</div>
+      <h2 class="display" data-es="una calificación perfecta, con cientos de opiniones" data-en="a perfect rating, across hundreds of reviews">una calificación perfecta, con cientos de opiniones</h2>
+      <p class="caps" data-es="Visitantes de todo el mundo nos recomiendan" data-en="Visitors from around the world recommend us">Visitantes de todo el mundo nos recomiendan</p>
+      <a class="link-caps" target="_blank" rel="noopener" href="https://maps.google.com/?cid=8548977790325427783" data-es="Ver reseñas en Google" data-en="Read Google reviews">Ver reseñas en Google</a>
+    </div>
+  </section>
+
+  <section class="visit" id="visitanos">
+    <div class="visit-text reveal">
+      <p class="caps" style="color:var(--taupe)" data-es="Visítanos" data-en="Visit us">Visítanos</p>
+      <h2 class="display" data-es="te esperamos en el centro" data-en="see you downtown">te esperamos en el centro</h2>
+      <div class="info">
+        <div><b data-es="Dirección" data-en="Address">Dirección</b>Gral. Manuel Márquez de León 710, <span data-es="entre Gómez Farías y Héroes de Independencia" data-en="between Gómez Farías and Héroes de Independencia">entre Gómez Farías y Héroes de Independencia</span>, Zona Central, La Paz, B.C.S.</div>
+        <div><b data-es="Horario" data-en="Hours">Horario</b><span data-es="Lunes a domingo, 8:00 a 20:00" data-en="Monday to Sunday, 8 am to 8 pm">Lunes a domingo, 8:00 a 20:00</span></div>
+        <div><b data-es="Teléfono" data-en="Phone">Teléfono</b>+52 612 117 9553</div>
+        <div><b data-es="Idiomas" data-en="Languages">Idiomas</b><span data-es="Español e inglés" data-en="Spanish and English">Español e inglés</span></div>
+      </div>
+      <div class="visit-cta">
+        <a class="link-caps wa-link" href="#" data-es="Reservar por WhatsApp" data-en="Book on WhatsApp">Reservar por WhatsApp</a>
+        <a class="link-caps" style="color:var(--muted)" target="_blank" rel="noopener" href="https://maps.google.com/?cid=8548977790325427783" data-es="Cómo llegar" data-en="Get directions">Cómo llegar</a>
+      </div>
+    </div>
+    <div class="map">
+      <div>
+        <div class="pin"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/></svg></div>
+        <p class="caps" data-es="Aquí va el mapa interactivo de Google" data-en="Interactive Google map goes here">Aquí va el mapa interactivo de Google</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© Serenity Spa · La Paz, B.C.S.</span>
+    <span data-es="Diseño de propuesta" data-en="Design proposal">Diseño de propuesta</span>
+  </div>
+</footer>
+
+<a class="wa wa-link" href="#" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-3.3-.8-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l2 .9c.3.1.5.2.5.3.1.2.1.7-.1 1.2Z"/></svg>
+</a>
+
+<script>
+  const services = [
+    {photo:"fotos/servicio-1.jpg",tone:2,es:["Masaje relajante","Movimientos suaves y envolventes para soltar el estrés y descansar de verdad."],en:["Relaxing massage","Gentle, flowing strokes to release stress and truly rest."]},
+    {photo:"fotos/servicio-2.jpg",tone:4,es:["Tejido profundo","Presión firme en espalda, cuello y hombros para deshacer contracturas."],en:["Deep tissue","Firm pressure on back, neck and shoulders to release knots."]},
+    {photo:"fotos/servicio-3.jpg",tone:3,es:["Masaje en pareja","Dos terapeutas, una misma sala. Ideal para lunas de miel y aniversarios."],en:["Couples massage","Two therapists, one room. Perfect for honeymoons and anniversaries."]},
+    {photo:"fotos/servicio-4.jpg",tone:5,es:["Masaje prenatal","Posiciones cómodas y seguras para aliviar la carga del embarazo."],en:["Prenatal massage","Comfortable, safe positions to ease the weight of pregnancy."]},
+    {photo:"fotos/servicio-5.jpg",tone:2,es:["Exfoliación corporal","Piel renovada y suave, perfecta después de días de sol y playa."],en:["Body scrub","Renewed, soft skin, perfect after days of sun and beach."]},
+    {photo:"fotos/servicio-6.jpg",tone:4,es:["Sauna","Sauna tradicional e infrarrojo para relajar músculos y desintoxicar."],en:["Sauna","Traditional and infrared sauna to relax muscles and detox."]},
+    {photo:"fotos/servicio-7.jpg",tone:3,es:["Faciales","Limpieza profunda e hidratación para un rostro fresco y luminoso."],en:["Facials","Deep cleansing and hydration for a fresh, glowing face."]},
+    {photo:"fotos/servicio-8.jpg",tone:5,es:["Lifting de pestañas","Pestañas curvadas y definidas por semanas, sin extensiones."],en:["Lash lift","Curled, defined lashes for weeks, no extensions."]},
+    {photo:"fotos/servicio-9.jpg",tone:2,es:["Manicura y pedicura","Manos y pies cuidados para cerrar tu visita con detalle."],en:["Manicure & pedicure","Pampered hands and feet to finish your visit."]}
+  ];
+  const phone = "526121179553";
+  let lang = "es";
+  try{ lang = localStorage.getItem("serenity-lang") || "es"; }catch(e){}
+
+  // Si existe la foto real (por ejemplo fotos/portada.jpg), reemplaza el degradado.
+  function loadPhotos(root){
+    root.querySelectorAll("[data-photo]").forEach(el=>{
+      if(el.dataset.loaded) return;
+      el.dataset.loaded = "1";
+      const img = new Image();
+      img.onload = ()=>{ el.style.backgroundImage = `url("${el.dataset.photo}")`; el.classList.add("has-photo"); };
+      img.src = el.dataset.photo;
+    });
+  }
+
+  function renderServices(){
+    const box = document.getElementById("svc");
+    const from = lang==="es" ? "Desde" : "From";
+    const book = lang==="es" ? "Reservar →" : "Book →";
+    const photo = lang==="es" ? "Foto: " : "Photo: ";
+    box.innerHTML = services.map(s=>{
+      const [t,d] = s[lang];
+      const msg = (lang==="es"?"Hola, quiero reservar: ":"Hi, I'd like to book: ")+t;
+      return `<article class="svc">
+        <h3>${t}</h3>
+        <div class="ph tone-${s.tone}" data-photo="${s.photo}"><span class="ph-label">${photo}${t}</span></div>
+        <p>${d}</p>
+        <div class="svc-foot"><span>${from} $ ---</span><a href="https://wa.me/${phone}?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">${book}</a></div>
+      </article>`;
+    }).join("");
+    loadPhotos(box);
+  }
+
+  function applyLang(){
+    document.documentElement.lang = lang;
+    document.querySelectorAll("[data-es]").forEach(el=>{ el.innerHTML = el.dataset[lang]; });
+    document.getElementById("lang").textContent = lang==="es" ? "EN" : "ES";
+    const msg = lang==="es" ? "Hola, quiero reservar un masaje." : "Hi, I'd like to book a massage.";
+    document.querySelectorAll(".wa-link").forEach(a=>{
+      a.href = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+      a.target = "_blank"; a.rel = "noopener";
+    });
+    renderServices();
+  }
+
+  document.getElementById("lang").addEventListener("click",()=>{
+    lang = lang==="es" ? "en" : "es";
+    try{ localStorage.setItem("serenity-lang", lang); }catch(e){}
+    applyLang();
+  });
+
+  const menuBtn = document.getElementById("menuBtn");
+  const links = document.getElementById("links");
+  menuBtn.addEventListener("click",()=>{
+    const open = links.classList.toggle("open");
+    menuBtn.setAttribute("aria-expanded", String(open));
+  });
+  links.addEventListener("click",(e)=>{ if(e.target.tagName==="A"){ links.classList.remove("open"); menuBtn.setAttribute("aria-expanded","false"); } });
+
+  applyLang();
+  loadPhotos(document);
+
+  const io = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target);} }),{threshold:.12});
+  document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
