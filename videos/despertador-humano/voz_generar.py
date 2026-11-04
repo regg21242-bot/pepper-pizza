@@ -10,7 +10,7 @@ LINES = {
  8: ["Cuando los despertadores", "se volvieron baratos,", "el oficio desapareció.", "¿Tú pagarías por que te despierten así?"],
 }
 async def one(text, path):
-    c = edge_tts.Communicate(text, "es-MX-JorgeNeural", rate="+8%", proxy=os.environ["HTTPS_PROXY"])
+    c = edge_tts.Communicate(text, "es-ES-AlvaroNeural", rate="+8%", proxy=os.environ["HTTPS_PROXY"])
     await c.save(path)
 async def main():
     res = {}
