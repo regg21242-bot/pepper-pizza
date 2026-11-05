@@ -1,0 +1,21 @@
+"""Audio de 'En Japón puedes alquilar a un papá'. Uso: python3 audio.py carpeta_voz salida.wav"""
+import sys; sys.path.insert(0, '../lib')
+from sonido import Mezcla
+A = Mezcla(estilo='japon', extra_end=3.2, bpm=104)
+c = A.cap
+A.fx(A.pop(700), c(0, 0) + .9, .5); A.fx(A.register(), c(0, 1), .6); A.fx(A.stamp(), c(0, 2) + .1, .9)
+A.fx(A.pop(600), c(1, 1), .5)
+for k in range(2, 6): A.fx(A.pop(500 + k * 80), c(1, k), .6)
+A.fx(A.ding(), c(2, 0), .4); A.fx(A.pop(700), c(2, 3), .5); A.fx(A.pop(900), c(2, 4), .6)
+A.fx(A.bell(1568), c(3, 1), .5)
+for k in range(4): A.fx(A.pop(600 + k * 60), c(3, 1) + .2 + k * .3, .4)
+A.fx(A.whoosh(.4), c(3, 3) - .3, .5); A.fx(A.wink(), c(3, 3) + .8, .6)
+A.fx(A.whoosh(.4), c(3, 5) - .3, .5); A.fx(A.fanfare(), c(3, 5) + .4, .5)
+ring = A.mix(*[A.tone(1400, .08, .04, (1, .3)) for _ in range(1)])
+for k in range(6): A.fx(ring, c(4, 1) + k * .1, .6)
+for k in range(4): A.fx(A.step(), c(4, 3) - .6 + k * .2, .5)
+A.fx(A.ding(), c(4, 3) + .2, .5)
+A.fx(A.paper(), c(5, 2) + .3, .8); A.fx(A.knock(), c(5, 2) + .45, 1.0); A.fx(A.pop(800), c(5, 3), .5)
+A.fx(A.pop(500), c(6, 1), .5); A.fx(A.fanfare(), c(6, 3), .5)
+A.fx(A.pop(900), c(7, 0) + .3, .7); A.fx(A.ding(), c(7, 0) + .35, .5)
+A.guardar(sys.argv[1], sys.argv[2])
