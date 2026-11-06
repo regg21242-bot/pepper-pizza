@@ -138,12 +138,13 @@ function scene2(t) {
 /* 3 — todo gratis 14 días y te lo quedas */
 function scene3(t) {
   pirateShop(t, { free: cap(2, 1) });
-  bigNumber('14 DÍAS', 540, 380, 130, t, cap(2, 4), { color: '#FFD84A', tOut: cap(2, 5) - .3 });
-  if (t > cap(2, 5)) {
-    dim(t, cap(2, 5), .55);
+  popIn(t, cap(2, 1), k => { ctx.save(); ctx.translate(540, 1160); ctx.scale(k, k); label('¡TODA LA TIENDA GRATIS!', 0, 0, { size: 50, bg: '#5BFF8A' }); ctx.restore(); }, cap(2, 3) - .3);
+  bigNumber('14 DÍAS', 540, 380, 130, t, cap(2, 3), { color: '#FFD84A', tOut: cap(2, 4) - .3 });
+  if (t > cap(2, 4)) {
+    dim(t, cap(2, 4), .55);
     const p = person(540, 1720, 1.4, Object.assign({}, SQUAD[0], { arms: [2.5, 2.5], armLen: 140, eyes: 'happy', mouth: 'grin', face: 1 }));
-    popIn(t, cap(2, 5) + .2, k => { ctx.save(); ctx.translate(540, 560); ctx.scale(k, k); roundRect(-260, -160, 520, 320, 30); inked('#3A2418', 7); outfit(-120, 40, .8, '#2F7BE0', '#F2C53A', t, 0); outfit(0, 40, .8, '#E3352B', '#1E1E24', t, 1); outfit(120, 40, .8, '#B26BFF', '#5BFF8A', t, 2); ctx.restore(); });
-    stamp('PARA SIEMPRE', 540, 860, t, cap(2, 6) + .3, { size: 76, color: '#1F9D55' });
+    popIn(t, cap(2, 4) + .2, k => { ctx.save(); ctx.translate(540, 560); ctx.scale(k, k); roundRect(-260, -160, 520, 320, 30); inked('#3A2418', 7); outfit(-120, 40, .8, '#2F7BE0', '#F2C53A', t, 0); outfit(0, 40, .8, '#E3352B', '#1E1E24', t, 1); outfit(120, 40, .8, '#B26BFF', '#5BFF8A', t, 2); ctx.restore(); });
+    stamp('PARA SIEMPRE', 540, 860, t, cap(2, 5) + .3, { size: 76, color: '#1F9D55' });
   }
   captions(CAPS[2], t);
 }
@@ -181,15 +182,35 @@ function scene5(t) {
   if (t > cap(4, 4)) { noSign(540, 480, 140, t, cap(4, 4), () => { person(0, 110, .45, Object.assign({}, SQUAD[0], { arms: [.2, -.2], eyes: 'sleepy', mouth: 'frown' })); }); popIn(t, cap(4, 4) + .2, k => { ctx.save(); ctx.translate(540, 680); ctx.scale(k, k); label('¡NO JUEGUES SOLO!', 0, 0, { size: 50, bg: '#FFD84A' }); ctx.restore(); }); }
   captions(CAPS[4], t);
 }
-/* 6 — no sale con bots; rarísima */
+/* 6 — no sale con bots; el "1 de cada 700.000" es falso; estimación 1 de cada 2.000 */
+function oddsCard(top, big, x, y, s, col) {
+  ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+  roundRect(-380, -170, 760, 340, 30); inked('#FFF6DC', 8);
+  ctx.fillStyle = INK; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.font = `800 46px ${FONT}`; ctx.fillText(top, 0, -90);
+  ctx.font = `900 120px ${FONT}`; ctx.fillStyle = col; ctx.fillText(big, 0, 30);
+  ctx.font = `800 40px ${FONT}`; ctx.fillStyle = INK; ctx.fillText('cofres', 0, 120);
+  ctx.restore();
+}
+function chestPile(t, n) {
+  const r = rng(4);
+  for (let i = 0; i < n; i++) { const x = 60 + r() * 960, y = 1500 + r() * 380; chest(x, y, .28 + r() * .1, t, {}); }
+}
 function scene6(t) {
   sea(t, { night: true });
-  noSign(540, 700, 250, t, cap(5, 1), () => robot(0, 160, .9, t), cap(5, 3) - .3);
-  if (t > cap(5, 3) - .1) {
-    for (let i = 0; i < 3; i++) { const kk = (t * .8 + i / 3) % 1; ctx.save(); ctx.globalAlpha = Math.sin(kk * Math.PI); ctx.font = `900 ${100 + i * 16}px ${FONT}`; ctx.lineJoin = 'round'; ctx.strokeStyle = INK; ctx.lineWidth = 12; ctx.strokeText('?', 380 + i * 140, 800 - kk * 140); ctx.fillStyle = '#FFD84A'; ctx.fillText('?', 380 + i * 140, 800 - kk * 140); ctx.restore(); }
-    popIn(t, cap(5, 3), k => { ctx.save(); ctx.translate(540, 460); ctx.scale(k, k); label('Probabilidad: ???', 0, 0, { size: 52 }); ctx.restore(); });
+  if (t < cap(5, 2) - .2) {
+    noSign(540, 760, 250, t, cap(5, 1) - .2, () => robot(0, 160, .9, t));
+  } else if (t < cap(5, 7) - .2) {
+    chestPile(t, Math.floor(prog(t, cap(5, 2), cap(5, 4) + .5) * 40));
+    popIn(t, cap(5, 2), k => { ctx.save(); ctx.translate(540, 300); ctx.scale(k, k); label('Lo que dicen en internet…', 0, 0, { size: 46 }); ctx.restore(); });
+    popIn(t, cap(5, 3), k => oddsCard('1 de cada', '700.000', 540, 700, k, '#E3352B'));
+    stamp('FALSO', 540, 700, t, cap(5, 5), { size: 140 });
+    if (t > cap(5, 6) - .1) popIn(t, cap(5, 6), k => { ctx.save(); ctx.translate(540, 1000); ctx.scale(k, k); label('Epic no ha dado la cifra', 0, 0, { size: 46, bg: '#FFD84A' }); ctx.restore(); });
+  } else {
+    chestPile(t, 12);
+    popIn(t, cap(5, 7) - .1, k => { ctx.save(); ctx.translate(540, 300); ctx.scale(k, k); label('Cálculo de jugadores (no oficial)', 0, 0, { size: 42, bg: '#FFD84A' }); ctx.restore(); });
+    popIn(t, cap(5, 7), k => oddsCard('más o menos 1 de cada', '2.000', 540, 700, k, '#1F9D55'));
   }
-  stamp('RARÍSIMA', 540, 1050, t, cap(5, 5), { size: 110, color: '#B26BFF' });
   captions(CAPS[5], t);
 }
 /* 7 — hasta el 15 de diciembre; ojo con los trucos falsos */

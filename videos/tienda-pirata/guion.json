@@ -1,10 +1,14 @@
-{"voz": "es-ES-AlvaroNeural", "rate": "+12%", "escenas": [
-"Ahora mismo, en Fortnite, hay un cofre que te puede dar *toda* *la* *tienda*… *gratis*.",
-"Es la ficha de *Acceso a la Tienda Pirata*, de la nueva temporada *Cazatesoros*.",
-"Si te sale, te llevas gratis *todo* lo que se vende con pavos, durante *{14|catorce}* *días*. Y lo que reclames, te lo *quedas para siempre*.",
-"¿Dónde está? Escondida en *cofres normales*. Cuando te toca, el cofre *brilla*, *tiembla*… y explota.",
-"Y aquí está el truco: si la encuentra *alguien de tu equipo*, la recibe *todo* *el* *escuadrón*. Así que no juegues solo.",
-"Ojo: *no* sale en partidas con *bots*, y Epic no ha dicho cuántas hay. Es *rarísima*.",
-"Tienes hasta el *{15|quince}* *de* *diciembre* para activarla. Y cuidado con los vídeos que prometen *trucos*: muchos son *falsos*.",
-"¿Tú ya la encontraste? ¿Qué te llevarías *primero*?"
-]}
+{
+ "voz": "es-ES-AlvaroNeural",
+ "rate": "+12%",
+ "escenas": [
+  "Ahora mismo, en Fortnite, hay un cofre que te puede dar *toda* *la* *tienda*… *gratis*.",
+  "Es la ficha de *Acceso a la Tienda Pirata*, de la nueva temporada *Cazatesoros*.",
+  "Si te sale, te puedes llevar *toda* *la* *tienda* gratis, durante *{14|catorce}* *días*. Y lo que reclames, te lo *quedas para siempre*.",
+  "¿Dónde está? Escondida en *cofres normales*. Cuando te toca, el cofre *brilla*, *tiembla*… y explota.",
+  "Y aquí está el truco: si la encuentra *alguien de tu equipo*, la recibe *todo* *el* *escuadrón*. Así que no juegues solo.",
+  "Ojo: *no* sale con *bots*. Y en internet dicen que sale *uno* *de* *cada* *{700.000|setecientos mil}* cofres… pero eso es *falso*. Epic nunca lo ha dicho. Algunos jugadores calculan *uno* *de* *cada* *{2.000|dos mil}*.",
+  "Tienes hasta el *{15|quince}* *de* *diciembre* para activarla. Y cuidado con los vídeos que prometen *trucos*: muchos son *falsos*.",
+  "¿Tú ya la encontraste? ¿Qué te llevarías *primero*?"
+ ]
+}
