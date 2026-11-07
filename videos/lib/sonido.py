@@ -104,6 +104,23 @@ class Mezcla:
                 return s * .7
             inst = lambda m: note_sig(('a', m), lambda: acc(m))
             mel_oct, bass_g, mel_g = 1, .4, .25
+        elif estilo == 'cine':        # pads oscuros + pulso suave (estilo documental)
+            bpm = bpm or 92; beat = 60 / bpm
+            chords = [[45, 52, 57, 60, 64], [41, 48, 53, 57, 60], [43, 50, 55, 59, 62], [40, 47, 52, 55, 59]]
+            t0 = 0.0; i = 0
+            while t0 < self.DUR:
+                d = beat * 8; tt = np.arange(int(SR * d)) / SR
+                env = np.minimum(tt / 1.2, 1) * np.minimum((d - tt) / 1.0, 1)
+                pad = sum(np.sin(2 * np.pi * n2f(m) * tt) * (.6 if k else 1) + .3 * np.sin(2 * np.pi * n2f(m) * 1.003 * tt) for k, m in enumerate(chords[i % 4])) * env * .12
+                self.add(self.mus, pad, t0, 1.0, (-.2, .2)[i % 2])
+                for b in range(8):
+                    self.add(self.mus, self.tone(n2f(chords[i % 4][0] - 12), .5, .25, (1, .3)), t0 + b * beat, .35)
+                    if b % 2: self.add(self.mus, self.tone(n2f(chords[i % 4][(b // 2) % 5] + 24), .3, .12, (1,)), t0 + b * beat + beat / 2, .08, .3)
+                t0 += d; i += 1
+            fade = np.ones(self.N); fi, fo = int(SR * .5), int(SR * 2.5)
+            fade[:fi] = np.linspace(0, 1, fi); fade[-fo:] = np.linspace(1, 0, fo)
+            self.mus *= fade[:, None] * .5
+            return
         else:                         # juguetón: pizzicato
             bpm = bpm or 104; root = 50; scale = [0, 2, 3, 5, 7, 8, 10]
             mel = [0, 2, 4, 2, 0, 4, 5, 4, 2, 3, 4, 6, 5, 4, 2, 1]
