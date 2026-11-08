@@ -155,27 +155,46 @@ function sc5(t) {
 }
 /* 6 — 4 de abril: nubes ardientes borran nueve pueblos */
 function pyroCloud(xFront, gy, t, h = 1) {
-  for (let i = 0; i < 24; i++) {
-    const x = xFront - i * 60 + Math.sin(i * 3 + t * 4) * 14, rr = 70 + (i % 5) * 26;
-    const y = gy - 60 - (i % 4) * 60 * h;
-    ctx.fillStyle = i % 3 ? 'rgba(120,108,98,0.95)' : 'rgba(150,130,110,0.95)'; ctx.beginPath(); ctx.arc(x, y, rr, 0, 7); ctx.fill();
+  // nube ardiente: núcleo incandescente y ceniza encima
+  const g = ctx.createRadialGradient(xFront - 260, gy - 80, 20, xFront - 260, gy - 80, 560); g.addColorStop(0, 'rgba(255,140,40,0.75)'); g.addColorStop(1, 'rgba(255,90,20,0)'); ctx.fillStyle = g; ctx.fillRect(xFront - 900, gy - 600, 1000, 700);
+  for (let i = 0; i < 26; i++) {
+    const x = xFront - i * 58 + Math.sin(i * 3 + t * 5) * 16, rr = 70 + (i % 5) * 28;
+    const y = gy - 60 - (i % 4) * 62 * h;
+    const hot = (i % 4) === 0;
+    ctx.fillStyle = hot ? 'rgba(210,110,50,0.95)' : (i % 3 ? 'rgba(110,96,88,0.96)' : 'rgba(140,116,96,0.96)'); ctx.beginPath(); ctx.arc(x, y, rr, 0, 7); ctx.fill();
   }
-  const g = ctx.createRadialGradient(xFront - 200, gy - 40, 20, xFront - 200, gy - 40, 400); g.addColorStop(0, 'rgba(255,120,40,0.45)'); g.addColorStop(1, 'rgba(255,120,40,0)'); ctx.fillStyle = g; ctx.fillRect(xFront - 700, gy - 500, 800, 600);
+  ctx.save(); ctx.globalCompositeOperation = 'lighter';
+  for (let i = 0; i < 18; i++) { const x = xFront - 40 - i * 70, y = gy - 40 - (i % 3) * 40; const gg = ctx.createRadialGradient(x, y, 4, x, y, 70); gg.addColorStop(0, 'rgba(255,170,60,0.55)'); gg.addColorStop(1, 'rgba(255,90,20,0)'); ctx.fillStyle = gg; ctx.beginPath(); ctx.arc(x, y, 70, 0, 7); ctx.fill(); }
+  ctx.restore();
+}
+function flames(x, gy, s, t, i) {
+  ctx.save(); ctx.translate(x, gy); ctx.scale(s, s);
+  for (let k = 0; k < 3; k++) { const f = 1 + Math.sin(t * 14 + i * 2 + k) * .15; ctx.fillStyle = ['#FF6A1A', '#FFB23F', '#FFE8A0'][k]; ctx.beginPath(); ctx.moveTo(-40 + k * 12, 0); ctx.quadraticCurveTo(-50 + k * 14, -80 * f, 0, -150 * f * (1 - k * .25)); ctx.quadraticCurveTo(50 - k * 14, -80 * f, 40 - k * 12, 0); ctx.closePath(); ctx.fill(); }
+  ctx.restore();
 }
 function sc6(t) {
   tropicalSky(t, { ash: true });
-  const flowT = cap(5, 2) - .2;
-  parchment([['4 de abril', 64, FONT]], 540, 420, 420, 150, t, .2, { write: .6, tOut: cap(5, 2) - .4 });
-  chichon(300, 1250, .8, t, { crater: true, glow: .6 });
+  const c = k => cap(5, k);
+  parchment([['4 de abril', 64, FONT]], 540, 420, 420, 150, t, .2, { write: .6, tOut: c(2) - .4 });
+  const kk0 = prog(t, c(3) - .2, c(7) + .6);
+  chichon(300, 1250, .8, t, { crater: true, glow: .6, bare: kk0 > .35 });
   plume(300, 150, 920, t, .8);
   groundBand(1250, '#6A6A5A');
-  const k = prog(t, flowT, cap(5, 5) + .2);
-  const buried = k > .55;
-  village(t, 1500, { ash: buried });
-  if (k > 0) pyroCloud(lerp(300, 1500, easeIn(k)), 1520, t, 1.2);
-  if (t > cap(5, 5)) {
-    ctx.fillStyle = `rgba(30,26,22,${.5 * prog(t, cap(5, 5), cap(5, 5) + .4)})`; ctx.fillRect(0, 0, W, H);
-    bigNumber('9 PUEBLOS', 540, 760, 120, t, cap(5, 5) + .1, { color: '#FFFFFF' });
+  // "no fue la lava"
+  noSign(540, 560, 130, t, c(2), () => { ctx.fillStyle = '#FF6A1A'; ctx.beginPath(); ctx.moveTo(0, -70); ctx.bezierCurveTo(30, -30, 55, 0, 55, 25); ctx.arc(0, 25, 55, 0, Math.PI); ctx.bezierCurveTo(-55, 0, -30, -30, 0, -70); ctx.fill(); }, c(3) + .6);
+  const k = prog(t, c(3) - .2, c(7) + .6);
+  const burnt = k > .55;
+  village(t, 1500, { ash: burnt });
+  if (burnt) { [[120, .9], [330, .8], [560, 1.1], [760, .85], [950, .9]].forEach(([x, s], i) => flames(x, 1430, s * .9, t, i)); ctx.fillStyle = 'rgba(30,18,10,0.25)'; ctx.fillRect(0, 1200, W, H - 1200); }
+  if (k > 0) pyroCloud(lerp(300, 1500, easeIn(k)), 1520, t, 1.3);
+  // brasas en el aire
+  if (k > .3) { const r = rng(5); for (let i = 0; i < 40; i++) { const x = (r() * W + t * 80) % W, y = 900 + ((r() * 700 - t * 120) % 700 + 700) % 700; ctx.fillStyle = `rgba(255,${150 + r() * 80},60,${.7 * r()})`; ctx.beginPath(); ctx.arc(x, y, 3 + r() * 4, 0, 7); ctx.fill(); } }
+  // temperatura
+  popIn(t, c(5), kk => { ctx.save(); ctx.translate(540, 560); ctx.scale(kk, kk); roundRect(-300, -70, 600, 140, 30); inked('#FFF6DC', 7); ctx.fillStyle = '#C8322E'; ctx.font = `900 64px ${FONT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('🌡 cientos de °C', 0, 4); ctx.restore(); }, c(7) - .2);
+  if (t > c(7)) sfxText('¡TODO ARDIÓ!', 540, 560, t, c(7), { size: 90, color: '#FFB23F', dur: 1.3 });
+  if (t > c(8)) {
+    ctx.fillStyle = `rgba(30,26,22,${.5 * prog(t, c(8), c(8) + .4)})`; ctx.fillRect(0, 0, W, H);
+    bigNumber('9 PUEBLOS', 540, 760, 120, t, c(8) + .1, { color: '#FFFFFF' });
   }
   captions(CAPS[5], t);
 }

@@ -1,11 +1,15 @@
-{"voz": "es-ES-AlvaroNeural", "rate": "+10%", "escenas": [
-"La erupción más mortal de la historia moderna de México no fue la del Popocatépetl… fue la de un volcán que *casi* *nadie* *conocía*.",
-"Se llama *El Chichón*, o Chichonal, y está en *Chiapas*. Estaba cubierto de *selva*, y a su alrededor vivían comunidades *zoques*.",
-"Nadie lo vigilaba. Para muchos, era solo una *montaña* más.",
-"Pero la noche del {28|veintiocho} de marzo de {1982|mil novecientos ochenta y dos}, el volcán *explotó*. La columna de ceniza subió unos *{17|diecisiete}* *kilómetros*.",
-"Hubo evacuaciones… pero mucha gente seguía viviendo *cerca* del volcán.",
-"Y el {4|cuatro} de abril llegó lo peor: *nubes* *ardientes* de gas y ceniza bajaron a toda velocidad… y *borraron* *nueve* *pueblos*.",
-"Murieron cerca de *{2.000|dos mil}* *personas*. Y miles de zoques tuvieron que dejar su tierra *para* *siempre*.",
-"Lanzó tanto *azufre* al cielo, que la nube dio la *vuelta* *al* *planeta*… y hasta *enfrió* un poco la Tierra.",
-"Desde entonces quedó una lección: un volcán *dormido* no es un volcán *apagado*. ¿Tú conocías esta historia?"
-]}
+{
+ "voz": "es-ES-AlvaroNeural",
+ "rate": "+10%",
+ "escenas": [
+  "La erupción más mortal de la historia moderna de México no fue la del Popocatépetl… fue la de un volcán que *casi* *nadie* *conocía*.",
+  "Se llama *El Chichón*, o Chichonal, y está en *Chiapas*. Estaba cubierto de *selva*, y a su alrededor vivían comunidades *zoques*.",
+  "Nadie lo vigilaba. Para muchos, era solo una *montaña* más.",
+  "Pero la noche del {28|veintiocho} de marzo de {1982|mil novecientos ochenta y dos}, el volcán *explotó*. La columna de ceniza subió unos *{17|diecisiete}* *kilómetros*.",
+  "Hubo evacuaciones… pero mucha gente seguía viviendo *cerca* del volcán.",
+  "Y el {4|cuatro} de abril llegó lo peor. *No* *fue* *la* *lava*: fueron *nubes* *ardientes* de gas y ceniza, a *cientos* *de* *grados*, que bajaron a toda velocidad, *quemaron* todo a su paso… y *borraron* *nueve* *pueblos*.",
+  "Murieron cerca de *{2.000|dos mil}* *personas*. Y miles de zoques tuvieron que dejar su tierra *para* *siempre*.",
+  "Lanzó tanto *azufre* al cielo, que la nube dio la *vuelta* *al* *planeta*… y hasta *enfrió* un poco la Tierra.",
+  "Desde entonces quedó una lección: un volcán *dormido* no es un volcán *apagado*. ¿Tú conocías esta historia?"
+ ]
+}
