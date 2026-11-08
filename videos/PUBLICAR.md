@@ -1,5 +1,7 @@
 # 4 vídeos nuevos — listos para subir
 
+> Índice completo de todos los vídeos (con textos y hashtags): ver `INDICE.md`.
+
 Todos son verticales (1080×1920), duran entre 47 y 62 segundos y llevan la voz de Álvaro, música, efectos y subtítulos.
 
 ## Orden recomendado para publicar
