@@ -4,6 +4,7 @@ Todos son verticales (1080×1920), con la voz de Álvaro, música, efectos y sub
 
 | Carpeta | Título | Dura | Peso | Estilo | Estado |
 |---|---|---|---|---|---|
+| `palomitas` | ¿Por qué explotan las palomitas? (`palomitas-ligero.mp4` = 12 MB) | 72 s | 37 MB | monitos | ✅ nuevo |
 | `familia-alquiler` | En Japón puedes alquilar a un papá | 46 s | 17 MB | monitos | ✅ el favorito |
 | `pachinko` | El negocio secreto de Japón (pachinko) | 59 s | 26 MB | monitos | ✅ |
 | `despertador-humano` | El despertador humano (`despertador_humano.mp4`) | 55 s | 31 MB | monitos | ✅ |
@@ -76,4 +77,9 @@ Formato: una pregunta para que comenten y 5 hashtags. Los de Torre Eiffel, Hamel
 ```
 ¿Tú habrías salido de la casa? 👇
 #peliculas #resumen #terror #zombies #cine
+```
+**Palomitas**
+```
+¿Tú cómo te las comes: mantequilla, chile o caramelo? 👇
+#palomitas #ciencia #sabiasque #curiosidades #datoscuriosos
 ```
