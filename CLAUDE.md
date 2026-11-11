@@ -66,3 +66,14 @@ Pendiente con el cliente:
 - `videos/tienda-humanos/`: borrador sin terminar ("¿Una tienda de personas?"). Decidir si se termina o se borra.
 - `videos/cebollas/`: primer vídeo, sustituido por otros (sin MP4).
 - Resumen de película: hecho con "La noche de los muertos vivientes" (dominio público). Para usar escenas reales, el usuario tendría que bajarla de archive.org y mandarla.
+
+---
+
+## 4. Herramientas de edición (instaladas el 11-nov-2026)
+- **HyperFrames**: plugin de Claude Code (`claude plugin install hyperframes@hyperframes`) + CLI con `npx hyperframes` (init / preview / render; `--resolution portrait` = 1080×1920).
+- **Whisper** (faster-whisper) en `/root/.venvs/video` (con `av==18.1.0`; la 19 rompe faster-whisper).
+  `/root/.venvs/video/bin/python videos/lib/transcribir.py GRABACION.mp4 --modelo small --palabras 4` → `.srt` + `.json` con tiempos por palabra.
+- **yt-dlp** en el mismo venv (enlazado en `/root/.local/bin/yt-dlp`). YouTube, TikTok e Instagram están bloqueados por la red del entorno (necesitan comodines como `*.googlevideo.com` que se agregan en Settings).
+- **earshot** (`uv tool install "earshot[mcp] @ git+https://github.com/Leonxlnx/earshot"`, modelos con `earshot doctor --fetch`), MCP: `claude mcp add earshot --scope user -e EARSHOT_THREADS=3 -- earshot mcp`. `earshot measure archivo.wav` da LUFS / true peak; `earshot sfx list` / `sfx render ID -o x.wav` para whoosh, pop, clic.
+- **Blender MCP**: `claude mcp add blender --scope user uvx mcp-for-blender`. Solo sirve si Blender corre en la misma máquina que Claude Code (en la nube no hay Blender).
+- El contenedor de la nube se borra: lo instalado se reinstala con el script de configuración del entorno.
