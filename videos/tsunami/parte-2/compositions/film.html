@@ -52,12 +52,20 @@
       const hillG = new THREE.CircleGeometry(16, 28); hillG.rotateX(-Math.PI / 2);
       const hp = hillG.attributes.position, hr = rng(3); for (let i = 0; i < hp.count; i++) { const x = hp.getX(i), z = hp.getZ(i), dd = Math.hypot(x, z); const n = hr(); hp.setY(i, dd < 8.5 ? 5.6 : Math.max(0, 5.6 - (dd - 8.5) * .75) + n * .35); }
       hillG.computeVertexNormals();
-      const hill = new THREE.Mesh(hillG, mat('#24302A', { flatShading: true })); hill.position.set(0, 14, 18); s.add(hill);
+      const hcol = []; for (let i = 0; i < hp.count; i++) { const dd = Math.hypot(hp.getX(i), hp.getZ(i)), n = hr(); const c = dd < 8.5 ? new THREE.Color('#1E3A1C').lerp(new THREE.Color('#2A4824'), n) : new THREE.Color('#263A1E').lerp(new THREE.Color('#2E2418'), clamp((dd - 8.5) / 4)); hcol.push(c.r, c.g, c.b); }
+      hillG.setAttribute('color', new THREE.Float32BufferAttribute(hcol, 3));
+      const hill = new THREE.Mesh(hillG, new THREE.MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: .95 })); hill.position.set(0, 14, 18); s.add(hill);
       s.add(box(60, 14, 30, mat('#161E1C', { flatShading: true }), 0, 7, 22)); s.add(box(240, .3, 70, mat('#1A1A2A'), 0, -.1, -5));
       const hh = hut(); hh.position.set(-6.5, 19.6, 19.5); hh.rotation.y = -.4; s.add(hh);
       const hutL = new THREE.PointLight('#FFC070', 1.2, 10, 2); hutL.position.set(-6, 21, 21.5); s.add(hutL);
       const p = hero(), v = vecino(); p.position.set(-.9, 19.6, 13.4); v.position.set(.8, 19.6, 13.8); p.rotation.y = Math.PI; v.rotation.y = Math.PI - .15; s.add(p, v);
       v.userData.spot.intensity = 0; v.userData.beam.visible = false;
+      // pasto en la cima y una orilla de piedras y arbustos donde empieza la bajada
+      const gr = rng(12), grassM = mat('#5A8A3E', { flatShading: true }), grassD = mat('#3A6A2C', { flatShading: true }), rockM = mat('#6A6A72', { flatShading: true }), bushM = mat('#2E5A2A', { flatShading: true });
+      for (let i = 0; i < 110; i++) { const a = gr() * Math.PI * 2, rr = Math.sqrt(gr()) * 8.2, x = Math.sin(a) * rr, z = 18 - Math.cos(a) * rr; const tuft = new THREE.Mesh(new THREE.ConeGeometry(.035 + gr() * .03, .12 + gr() * .1, 3), gr() < .5 ? grassM : grassD); tuft.position.set(x, 19.62, z); tuft.rotation.set((gr() - .5) * .4, gr() * 3, (gr() - .5) * .4); s.add(tuft); }
+      for (let i = 0; i < 46; i++) { const a = -1.5 + i * 3 / 45 + (gr() - .5) * .05, rr = 8.7 + gr() * 1.2, x = Math.sin(a) * rr, z = 18 - Math.cos(a) * rr, y = 14 + Math.max(0, 5.6 - (rr - 8.5) * .75);
+        const rock = i % 3 === 0; const m = rock ? new THREE.Mesh(new THREE.DodecahedronGeometry(.35 + gr() * .35, 0), rockM) : new THREE.Mesh(new THREE.IcosahedronGeometry(.45 + gr() * .4, 0), bushM);
+        m.position.set(x, y + .1, z); m.scale.y = rock ? .6 : .8; m.rotation.set(gr(), gr() * 3, gr()); s.add(m); }
       // cerca de madera: divide el terreno del vecino de la bajada del cerro
       const wood = mat('#6A4428', { roughness: .85 }), woodD = mat('#4A2E1A', { roughness: .9 });
       const fp = []; for (let k = 0; k <= 16; k++) { const a = -1.05 + k * 2.1 / 16; fp.push([Math.sin(a) * 7.9, 18 - Math.cos(a) * 7.9]); }
