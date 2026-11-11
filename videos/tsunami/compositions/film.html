@@ -266,29 +266,73 @@
       return { scene: s, camera, update };
     })();
 
-    /* ================= RECUERDO: el garrafón por la escalera (luz cálida) ================= */
+    /* ================= RECUERDO: el garrafón por la escalera (luz cálida, piso de mármol veteado) ================= */
+    function marble(base, vein, seed, cells = 36) {
+      const N = 384, cv = document.createElement('canvas'); cv.width = cv.height = N; const c = cv.getContext('2d');
+      const im = c.createImageData(N, N), r = rng(seed), pts = [];
+      for (let i = 0; i < cells; i++) { const x = r() * N, y = r() * N; for (const dx of [-N, 0, N]) for (const dy of [-N, 0, N]) pts.push([x + dx, y + dy]); }
+      const B = new THREE.Color(base), V = new THREE.Color(vein), nz = rng(seed + 7);
+      const blot = []; for (let i = 0; i < 18; i++) blot.push([nz() * N, nz() * N, 20 + nz() * 50, nz() * .12]);
+      for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+        let d1 = 1e9, d2 = 1e9; for (const [px, py] of pts) { const d = (px - x) * (px - x) + (py - y) * (py - y); if (d < d1) { d2 = d1; d1 = d; } else if (d < d2) d2 = d; }
+        const e = Math.sqrt(d2) - Math.sqrt(d1), line = Math.max(0, 1 - e / 1.8) * .5 + Math.max(0, 1 - e / 8) * .12;
+        let sh = 0; for (const [bx, by, br, ba] of blot) { const dd = Math.hypot(bx - x, by - y); if (dd < br) sh += ba * (1 - dd / br); }
+        const k = Math.min(1, line), o = (y * N + x) * 4;
+        im.data[o] = (B.r * (1 - sh) * (1 - k) + V.r * k) * 255; im.data[o + 1] = (B.g * (1 - sh) * (1 - k) + V.g * k) * 255; im.data[o + 2] = (B.b * (1 - sh) * (1 - k) + V.b * k) * 255; im.data[o + 3] = 255;
+      }
+      c.putImageData(im, 0, 0);
+      const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.encoding = THREE.sRGBEncoding; return t;
+    }
     const FLASH = (() => {
-      const s = new THREE.Scene(); s.background = new THREE.Color('#C8945A'); s.fog = new THREE.Fog('#C8945A', 12, 30);
-      const sun = new THREE.DirectionalLight('#FFD8A0', 1.0); sun.position.set(6, 10, 6); sun.castShadow = true; sun.shadow.mapSize.set(1024, 1024); s.add(sun);
-      s.add(new THREE.HemisphereLight('#FFE8C8', '#6A4A30', .45));
-      const wallM = mat('#D8B888'), stepM = mat('#A8865A');
-      s.add(box(.2, 8, 14, wallM, -1.4, 3, -3));
-      for (let i = 0; i < 14; i++) s.add(box(2.6, .25, .5, stepM, 0, .125 + i * .25, 2 - i * .5));
-      s.add(box(2.6, 3.5, 3, stepM, 0, 1.74, -6.4));
-      s.add(box(.08, .08, 7.5, mat('#6A4A2A'), 1.25, 2.6, -1.2));
-      const p = hero(), v = vecino(); s.add(p, v); v.userData.spot.intensity = 0; v.userData.beam.visible = false;
-      v.position.set(.2, 3.5, -5.6); v.rotation.y = .2;
-      const j = jug(1.0); p.add(j); j.position.set(0, 2.55, -.08); j.rotation.x = .1;
-      p.userData.armL.rotation.x = -2.6; p.userData.armR.rotation.x = -2.6;
-      const camera = cam();
+      const s = new THREE.Scene(); s.background = new THREE.Color('#6A4A30'); s.fog = new THREE.Fog('#6A4A30', 14, 34);
+      const sun = new THREE.DirectionalLight('#FFE0B0', 1.0); sun.position.set(5, 12, 8); sun.castShadow = true; sun.shadow.mapSize.set(1024, 1024);
+      sun.shadow.camera.left = -8; sun.shadow.camera.right = 8; sun.shadow.camera.top = 8; sun.shadow.camera.bottom = -8; s.add(sun);
+      s.add(new THREE.HemisphereLight('#FFE8C8', '#5A3A24', .55));
+      const tm = (base, vein, seed, rx, ry) => { const t = marble(base, vein, seed); t.repeat.set(rx, ry); return new THREE.MeshStandardMaterial({ map: t, roughness: .8 }); };
+      const floorM = tm('#C9A87C', '#7A5A3C', 3, 3, 3), stepTop = tm('#C2A074', '#74553A', 5, 1.4, .3), stepFront = mat('#9A7650');
+      const wallRed = tm('#8A4A30', '#5A2A1A', 9, 2, 2), wallGreen = tm('#4E5A44', '#30382A', 11, 2, 1.2);
+      // descanso de abajo y piso
+      const fl = new THREE.Mesh(new THREE.PlaneGeometry(10, 8), floorM); fl.rotation.x = -Math.PI / 2; fl.position.set(0, 0, 5.5); fl.receiveShadow = true; s.add(fl);
+      // escalones: huella con mármol, peralte liso
+      for (let i = 0; i < 14; i++) {
+        const y = .25 * (i + 1), z = 2 - i * .5;
+        const tread = new THREE.Mesh(new THREE.BoxGeometry(2.6, .06, .5), stepTop); tread.position.set(0, y - .03, z); tread.receiveShadow = tread.castShadow = true; s.add(tread);
+        s.add(box(2.6, .25, .06, stepFront, 0, y - .155, z + .25));
+        s.add(box(2.6, y - .06, .5, mat('#6A5038'), 0, (y - .06) / 2, z));
+      }
+      const top = new THREE.Mesh(new THREE.BoxGeometry(2.6, .06, 4), stepTop); top.position.set(0, 3.5 - .03, -7); s.add(top); s.add(box(2.6, 3.44, 4, mat('#6A5038'), 0, 1.72, -7));
+      // paredes: rojo ladrillo a la izquierda, verde con lambrín a la derecha, y la del fondo
+      const wl = new THREE.Mesh(new THREE.BoxGeometry(.2, 9, 18), wallRed); wl.position.set(-1.4, 3.5, -2); wl.receiveShadow = true; s.add(wl);
+      const wr = new THREE.Mesh(new THREE.BoxGeometry(.2, 2.2, 18), wallGreen); wr.position.set(3.2, 1.1, 1); s.add(wr);
+      s.add(box(.24, .1, 18, mat('#3A2A1C'), 3.2, 2.25, 1));
+      const wb = new THREE.Mesh(new THREE.BoxGeometry(8, 9, .2), wallRed); wb.position.set(1, 3.5, -9); s.add(wb);
+      // barandal de herrería
+      const iron = mat('#2A2420', { metalness: .5, roughness: .5 });
+      for (let i = 0; i < 14; i += 2) { const y = .25 * (i + 1), z = 2 - i * .5; s.add(box(.04, 1.0, .04, iron, 1.28, y + .5, z)); }
+      const rail = box(.07, .07, 7.6, iron, 1.28, 2.55, -1.3); rail.rotation.x = Math.atan2(.25, .5); s.add(rail);
+      const p = hero(), v = vecino(); s.add(p, v); v.userData.spot.intensity = 0; v.userData.beam.visible = false; v.userData.flash.visible = false; v.userData.lamp.intensity = 0;
+      // el protagonista carga el garrafón al frente
+      const j = jug(.95); p.add(j); j.position.set(0, 1.28, .4); j.rotation.x = -.1;
+      p.userData.armL.rotation.x = -.75; p.userData.armR.rotation.x = -.75; p.userData.elbowL.rotation.x = -1.05; p.userData.elbowR.rotation.x = -1.05;
+      p.userData.armL.rotation.z = .12; p.userData.armR.rotation.z = -.12;
+      const camera = cam(40);
+      const stair = (step) => ({ z: 2.1 - step * .5, y: Math.max(0, step) * .25 + Math.abs(Math.sin(step * Math.PI)) * .05 });
+      function walk(person, step) {
+        const a = Math.sin(step * Math.PI);
+        person.userData.legL.rotation.x = -Math.max(0, a) * .9; person.userData.legR.rotation.x = -Math.max(0, -a) * .9;
+        person.userData.kneeL.rotation.x = Math.max(0, a) * 1.0; person.userData.kneeR.rotation.x = Math.max(0, -a) * 1.0;
+      }
       function update(t) {
-        const k = prog(t, 24.8, 29.8), step = k * 9;
-        const zz = 2.1 - step * .5, yy = step * .25 + Math.abs(Math.sin(step * Math.PI)) * .06;
-        p.position.set(.2, yy, zz); p.rotation.y = Math.PI;
-        p.userData.legL.rotation.x = Math.sin(step * Math.PI) * .5; p.userData.legR.rotation.x = -Math.sin(step * Math.PI) * .5;
-        v.userData.armR.rotation.x = -.6 + Math.sin(t * 3) * .15; v.userData.head.rotation.y = .1;
-        camera.position.set(5.6, yy + 3.0, zz + 4.4); camera.lookAt(-.2, yy + 1.4, zz - 1.2);
-        return { warm: 1 };
+        const k = prog(t, 24.8, 29.8), step = k * 8.5;
+        const a = stair(step), b = stair(step + 1.6);
+        p.position.set(.25, a.y, a.z); p.rotation.y = Math.PI; walk(p, step);
+        v.position.set(.85, b.y, b.z); v.rotation.y = Math.PI + .25; walk(v, step + 1.6);
+        v.userData.armL.rotation.x = Math.sin(step * Math.PI) * .35; v.userData.armR.rotation.x = -Math.sin(step * Math.PI) * .35;
+        v.userData.head.rotation.y = -.5; v.userData.head.rotation.x = .15;   // voltea a verlo
+        p.userData.head.rotation.x = -.1;
+        // cámara desde arriba, en picada, siguiendo a los dos
+        camera.position.set(2.6, a.y + 6.2, a.z + 3.4); camera.lookAt(.4, a.y + .9, a.z - 1.0);
+        return { warm: .9 };
       }
       return { scene: s, camera, update };
     })();
