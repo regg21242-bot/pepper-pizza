@@ -24,7 +24,8 @@ for i, w in enumerate(words):
     cur.append(w)
     sig = words[i + 1] if i + 1 < len(words) else None
     fin_frase = re.search(r"[.?!:;,…]$", w["palabra"])
-    if sig is None or len(cur) >= MAX_PAL or fin_frase or sig["inicio"] - w["fin"] >= PAUSA and len(cur) >= 3:
+    largo = len(" ".join(x["palabra"] for x in cur)) + (len(sig["palabra"]) + 1 if sig else 0)
+    if sig is None or len(cur) >= MAX_PAL or largo > 36 or fin_frase or sig["inicio"] - w["fin"] >= PAUSA and len(cur) >= 3:
         grupos.append(cur); cur = []
 
 out = []

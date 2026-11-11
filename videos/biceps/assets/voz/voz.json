@@ -1,0 +1,1230 @@
+{
+ "texto": "¿Por qué de repente te brinca el músculo del brazo, y por más que lo aprietas, no lo puedes parar? Tú no le diste ninguna orden, y aún así no para. Ese es tu bíceps, el músculo que se contrae cada vez que doblas el brazo. Está hecho de miles de hilos, y cada grupito de hilos tiene su propio cable, conectado al cerebro. Cuando doblas el brazo, el cerebro manda la orden y todos los cables disparan a la vez. Pero cuando brinca, el cerebro no ha mandado nada. Es un solo cable disparando por su cuenta, una y otra vez. Y cada vez jalas su grupito de hilos, eso es lo que ves saltar bajo la piel. ¿Y por qué se dispara solo? Porque el entrenamiento pesado, el café, el estrés y dormir poco dejan esos cables demasiado sensibles, como una alarma de coche que salta en cuanto alguien pasa. Así que no es tu brazo, es un cable disparando por libre mientras los demás descansan. Casi siempre se va solo en unos días. Si duras semanas o pierdes fuerza, ve al médico. Síguenos para más curiosidades cada día.",
+ "idioma": "es",
+ "duracion": 56.25,
+ "segmentos": [
+  {
+   "inicio": 0.0,
+   "fin": 4.44,
+   "texto": "¿Por qué de repente te brinca el músculo del brazo, y por más que lo aprietas, no lo puedes parar?"
+  },
+  {
+   "inicio": 5.4,
+   "fin": 7.68,
+   "texto": "Tú no le diste ninguna orden, y aún así no para."
+  },
+  {
+   "inicio": 8.14,
+   "fin": 11.52,
+   "texto": "Ese es tu bíceps, el músculo que se contrae cada vez que doblas el brazo."
+  },
+  {
+   "inicio": 11.9,
+   "fin": 16.54,
+   "texto": "Está hecho de miles de hilos, y cada grupito de hilos tiene su propio cable, conectado al cerebro."
+  },
+  {
+   "inicio": 16.88,
+   "fin": 20.92,
+   "texto": "Cuando doblas el brazo, el cerebro manda la orden y todos los cables disparan a la vez."
+  },
+  {
+   "inicio": 21.28,
+   "fin": 23.58,
+   "texto": "Pero cuando brinca, el cerebro no ha mandado nada."
+  },
+  {
+   "inicio": 24.66,
+   "fin": 27.48,
+   "texto": "Es un solo cable disparando por su cuenta, una y otra vez."
+  },
+  {
+   "inicio": 28.06,
+   "fin": 31.98,
+   "texto": "Y cada vez jalas su grupito de hilos, eso es lo que ves saltar bajo la piel."
+  },
+  {
+   "inicio": 32.52,
+   "fin": 33.52,
+   "texto": "¿Y por qué se dispara solo?"
+  },
+  {
+   "inicio": 34.32,
+   "fin": 38.78,
+   "texto": "Porque el entrenamiento pesado, el café, el estrés y dormir poco dejan esos cables"
+  },
+  {
+   "inicio": 38.78,
+   "fin": 42.64,
+   "texto": "demasiado sensibles, como una alarma de coche que salta en cuanto alguien pasa."
+  },
+  {
+   "inicio": 43.14,
+   "fin": 47.04,
+   "texto": "Así que no es tu brazo, es un cable disparando por libre mientras los demás descansan."
+  },
+  {
+   "inicio": 47.94,
+   "fin": 49.64,
+   "texto": "Casi siempre se va solo en unos días."
+  },
+  {
+   "inicio": 50.74,
+   "fin": 53.18,
+   "texto": "Si duras semanas o pierdes fuerza, ve al médico."
+  },
+  {
+   "inicio": 53.8,
+   "fin": 55.54,
+   "texto": "Síguenos para más curiosidades cada día."
+  }
+ ],
+ "palabras": [
+  {
+   "palabra": "¿Por",
+   "inicio": 0.0,
+   "fin": 0.28,
+   "prob": 0.729
+  },
+  {
+   "palabra": "qué",
+   "inicio": 0.28,
+   "fin": 0.42,
+   "prob": 0.937
+  },
+  {
+   "palabra": "de",
+   "inicio": 0.42,
+   "fin": 0.52,
+   "prob": 0.961
+  },
+  {
+   "palabra": "repente",
+   "inicio": 0.52,
+   "fin": 0.8,
+   "prob": 0.994
+  },
+  {
+   "palabra": "te",
+   "inicio": 0.8,
+   "fin": 1.02,
+   "prob": 0.996
+  },
+  {
+   "palabra": "brinca",
+   "inicio": 1.02,
+   "fin": 1.3,
+   "prob": 0.993
+  },
+  {
+   "palabra": "el",
+   "inicio": 1.3,
+   "fin": 1.4,
+   "prob": 0.997
+  },
+  {
+   "palabra": "músculo",
+   "inicio": 1.4,
+   "fin": 1.7,
+   "prob": 0.986
+  },
+  {
+   "palabra": "del",
+   "inicio": 1.7,
+   "fin": 1.84,
+   "prob": 0.996
+  },
+  {
+   "palabra": "brazo,",
+   "inicio": 1.84,
+   "fin": 2.2,
+   "prob": 0.995
+  },
+  {
+   "palabra": "y",
+   "inicio": 2.42,
+   "fin": 2.58,
+   "prob": 0.983
+  },
+  {
+   "palabra": "por",
+   "inicio": 2.58,
+   "fin": 2.7,
+   "prob": 0.995
+  },
+  {
+   "palabra": "más",
+   "inicio": 2.7,
+   "fin": 2.88,
+   "prob": 0.977
+  },
+  {
+   "palabra": "que",
+   "inicio": 2.88,
+   "fin": 3.0,
+   "prob": 0.996
+  },
+  {
+   "palabra": "lo",
+   "inicio": 3.0,
+   "fin": 3.08,
+   "prob": 0.996
+  },
+  {
+   "palabra": "aprietas,",
+   "inicio": 3.08,
+   "fin": 3.56,
+   "prob": 0.951
+  },
+  {
+   "palabra": "no",
+   "inicio": 3.8,
+   "fin": 3.88,
+   "prob": 0.783
+  },
+  {
+   "palabra": "lo",
+   "inicio": 3.88,
+   "fin": 4.0,
+   "prob": 0.993
+  },
+  {
+   "palabra": "puedes",
+   "inicio": 4.0,
+   "fin": 4.2,
+   "prob": 0.983
+  },
+  {
+   "palabra": "parar?",
+   "inicio": 4.2,
+   "fin": 4.44,
+   "prob": 0.985
+  },
+  {
+   "palabra": "Tú",
+   "inicio": 5.4,
+   "fin": 5.62,
+   "prob": 0.727
+  },
+  {
+   "palabra": "no",
+   "inicio": 5.62,
+   "fin": 5.74,
+   "prob": 0.997
+  },
+  {
+   "palabra": "le",
+   "inicio": 5.74,
+   "fin": 5.84,
+   "prob": 0.985
+  },
+  {
+   "palabra": "diste",
+   "inicio": 5.84,
+   "fin": 6.1,
+   "prob": 0.879
+  },
+  {
+   "palabra": "ninguna",
+   "inicio": 6.1,
+   "fin": 6.34,
+   "prob": 0.978
+  },
+  {
+   "palabra": "orden,",
+   "inicio": 6.34,
+   "fin": 6.7,
+   "prob": 0.993
+  },
+  {
+   "palabra": "y",
+   "inicio": 6.96,
+   "fin": 7.02,
+   "prob": 0.979
+  },
+  {
+   "palabra": "aún",
+   "inicio": 7.02,
+   "fin": 7.1,
+   "prob": 0.701
+  },
+  {
+   "palabra": "así",
+   "inicio": 7.1,
+   "fin": 7.36,
+   "prob": 0.999
+  },
+  {
+   "palabra": "no",
+   "inicio": 7.36,
+   "fin": 7.48,
+   "prob": 0.979
+  },
+  {
+   "palabra": "para.",
+   "inicio": 7.48,
+   "fin": 7.68,
+   "prob": 0.925
+  },
+  {
+   "palabra": "Ese",
+   "inicio": 8.14,
+   "fin": 8.4,
+   "prob": 0.89
+  },
+  {
+   "palabra": "es",
+   "inicio": 8.4,
+   "fin": 8.56,
+   "prob": 0.995
+  },
+  {
+   "palabra": "tu",
+   "inicio": 8.56,
+   "fin": 8.62,
+   "prob": 0.992
+  },
+  {
+   "palabra": "bíceps,",
+   "inicio": 8.62,
+   "fin": 9.0,
+   "prob": 0.987
+  },
+  {
+   "palabra": "el",
+   "inicio": 9.24,
+   "fin": 9.36,
+   "prob": 0.992
+  },
+  {
+   "palabra": "músculo",
+   "inicio": 9.36,
+   "fin": 9.72,
+   "prob": 0.968
+  },
+  {
+   "palabra": "que",
+   "inicio": 9.72,
+   "fin": 9.84,
+   "prob": 0.989
+  },
+  {
+   "palabra": "se",
+   "inicio": 9.84,
+   "fin": 9.96,
+   "prob": 0.998
+  },
+  {
+   "palabra": "contrae",
+   "inicio": 9.96,
+   "fin": 10.32,
+   "prob": 0.977
+  },
+  {
+   "palabra": "cada",
+   "inicio": 10.32,
+   "fin": 10.44,
+   "prob": 0.996
+  },
+  {
+   "palabra": "vez",
+   "inicio": 10.44,
+   "fin": 10.68,
+   "prob": 1.0
+  },
+  {
+   "palabra": "que",
+   "inicio": 10.68,
+   "fin": 10.84,
+   "prob": 0.995
+  },
+  {
+   "palabra": "doblas",
+   "inicio": 10.84,
+   "fin": 11.08,
+   "prob": 0.829
+  },
+  {
+   "palabra": "el",
+   "inicio": 11.08,
+   "fin": 11.24,
+   "prob": 0.998
+  },
+  {
+   "palabra": "brazo.",
+   "inicio": 11.24,
+   "fin": 11.52,
+   "prob": 0.999
+  },
+  {
+   "palabra": "Está",
+   "inicio": 11.9,
+   "fin": 12.14,
+   "prob": 0.94
+  },
+  {
+   "palabra": "hecho",
+   "inicio": 12.14,
+   "fin": 12.38,
+   "prob": 0.993
+  },
+  {
+   "palabra": "de",
+   "inicio": 12.38,
+   "fin": 12.5,
+   "prob": 0.999
+  },
+  {
+   "palabra": "miles",
+   "inicio": 12.5,
+   "fin": 12.66,
+   "prob": 0.986
+  },
+  {
+   "palabra": "de",
+   "inicio": 12.66,
+   "fin": 12.86,
+   "prob": 0.999
+  },
+  {
+   "palabra": "hilos,",
+   "inicio": 12.86,
+   "fin": 13.08,
+   "prob": 0.978
+  },
+  {
+   "palabra": "y",
+   "inicio": 13.36,
+   "fin": 13.48,
+   "prob": 0.995
+  },
+  {
+   "palabra": "cada",
+   "inicio": 13.48,
+   "fin": 13.64,
+   "prob": 0.998
+  },
+  {
+   "palabra": "grupito",
+   "inicio": 13.64,
+   "fin": 14.0,
+   "prob": 0.992
+  },
+  {
+   "palabra": "de",
+   "inicio": 14.0,
+   "fin": 14.12,
+   "prob": 0.992
+  },
+  {
+   "palabra": "hilos",
+   "inicio": 14.12,
+   "fin": 14.3,
+   "prob": 0.999
+  },
+  {
+   "palabra": "tiene",
+   "inicio": 14.3,
+   "fin": 14.56,
+   "prob": 0.995
+  },
+  {
+   "palabra": "su",
+   "inicio": 14.56,
+   "fin": 14.76,
+   "prob": 0.997
+  },
+  {
+   "palabra": "propio",
+   "inicio": 14.76,
+   "fin": 14.96,
+   "prob": 0.998
+  },
+  {
+   "palabra": "cable,",
+   "inicio": 14.96,
+   "fin": 15.26,
+   "prob": 0.976
+  },
+  {
+   "palabra": "conectado",
+   "inicio": 15.62,
+   "fin": 16.04,
+   "prob": 0.997
+  },
+  {
+   "palabra": "al",
+   "inicio": 16.04,
+   "fin": 16.18,
+   "prob": 0.998
+  },
+  {
+   "palabra": "cerebro.",
+   "inicio": 16.18,
+   "fin": 16.54,
+   "prob": 0.997
+  },
+  {
+   "palabra": "Cuando",
+   "inicio": 16.88,
+   "fin": 17.06,
+   "prob": 0.987
+  },
+  {
+   "palabra": "doblas",
+   "inicio": 17.06,
+   "fin": 17.4,
+   "prob": 0.834
+  },
+  {
+   "palabra": "el",
+   "inicio": 17.4,
+   "fin": 17.56,
+   "prob": 0.998
+  },
+  {
+   "palabra": "brazo,",
+   "inicio": 17.56,
+   "fin": 17.88,
+   "prob": 0.999
+  },
+  {
+   "palabra": "el",
+   "inicio": 18.22,
+   "fin": 18.34,
+   "prob": 0.995
+  },
+  {
+   "palabra": "cerebro",
+   "inicio": 18.34,
+   "fin": 18.68,
+   "prob": 0.998
+  },
+  {
+   "palabra": "manda",
+   "inicio": 18.68,
+   "fin": 18.96,
+   "prob": 0.995
+  },
+  {
+   "palabra": "la",
+   "inicio": 18.96,
+   "fin": 19.04,
+   "prob": 0.962
+  },
+  {
+   "palabra": "orden",
+   "inicio": 19.04,
+   "fin": 19.28,
+   "prob": 0.998
+  },
+  {
+   "palabra": "y",
+   "inicio": 19.28,
+   "fin": 19.42,
+   "prob": 0.965
+  },
+  {
+   "palabra": "todos",
+   "inicio": 19.42,
+   "fin": 19.58,
+   "prob": 0.995
+  },
+  {
+   "palabra": "los",
+   "inicio": 19.58,
+   "fin": 19.8,
+   "prob": 1.0
+  },
+  {
+   "palabra": "cables",
+   "inicio": 19.8,
+   "fin": 20.04,
+   "prob": 0.995
+  },
+  {
+   "palabra": "disparan",
+   "inicio": 20.04,
+   "fin": 20.58,
+   "prob": 0.981
+  },
+  {
+   "palabra": "a",
+   "inicio": 20.58,
+   "fin": 20.64,
+   "prob": 0.98
+  },
+  {
+   "palabra": "la",
+   "inicio": 20.64,
+   "fin": 20.68,
+   "prob": 0.998
+  },
+  {
+   "palabra": "vez.",
+   "inicio": 20.68,
+   "fin": 20.92,
+   "prob": 0.999
+  },
+  {
+   "palabra": "Pero",
+   "inicio": 21.28,
+   "fin": 21.5,
+   "prob": 0.981
+  },
+  {
+   "palabra": "cuando",
+   "inicio": 21.5,
+   "fin": 21.68,
+   "prob": 0.971
+  },
+  {
+   "palabra": "brinca,",
+   "inicio": 21.68,
+   "fin": 22.12,
+   "prob": 0.987
+  },
+  {
+   "palabra": "el",
+   "inicio": 22.36,
+   "fin": 22.5,
+   "prob": 0.998
+  },
+  {
+   "palabra": "cerebro",
+   "inicio": 22.5,
+   "fin": 22.82,
+   "prob": 0.998
+  },
+  {
+   "palabra": "no",
+   "inicio": 22.82,
+   "fin": 22.96,
+   "prob": 0.998
+  },
+  {
+   "palabra": "ha",
+   "inicio": 22.96,
+   "fin": 23.06,
+   "prob": 0.995
+  },
+  {
+   "palabra": "mandado",
+   "inicio": 23.06,
+   "fin": 23.38,
+   "prob": 0.998
+  },
+  {
+   "palabra": "nada.",
+   "inicio": 23.38,
+   "fin": 23.58,
+   "prob": 0.998
+  },
+  {
+   "palabra": "Es",
+   "inicio": 24.66,
+   "fin": 24.86,
+   "prob": 0.97
+  },
+  {
+   "palabra": "un",
+   "inicio": 24.86,
+   "fin": 24.98,
+   "prob": 0.995
+  },
+  {
+   "palabra": "solo",
+   "inicio": 24.98,
+   "fin": 25.18,
+   "prob": 0.927
+  },
+  {
+   "palabra": "cable",
+   "inicio": 25.18,
+   "fin": 25.44,
+   "prob": 0.997
+  },
+  {
+   "palabra": "disparando",
+   "inicio": 25.44,
+   "fin": 25.9,
+   "prob": 0.991
+  },
+  {
+   "palabra": "por",
+   "inicio": 25.9,
+   "fin": 26.08,
+   "prob": 0.97
+  },
+  {
+   "palabra": "su",
+   "inicio": 26.08,
+   "fin": 26.24,
+   "prob": 0.998
+  },
+  {
+   "palabra": "cuenta,",
+   "inicio": 26.24,
+   "fin": 26.48,
+   "prob": 0.996
+  },
+  {
+   "palabra": "una",
+   "inicio": 26.8,
+   "fin": 26.94,
+   "prob": 0.992
+  },
+  {
+   "palabra": "y",
+   "inicio": 26.94,
+   "fin": 27.06,
+   "prob": 0.998
+  },
+  {
+   "palabra": "otra",
+   "inicio": 27.06,
+   "fin": 27.18,
+   "prob": 0.999
+  },
+  {
+   "palabra": "vez.",
+   "inicio": 27.18,
+   "fin": 27.48,
+   "prob": 0.999
+  },
+  {
+   "palabra": "Y",
+   "inicio": 28.06,
+   "fin": 28.54,
+   "prob": 0.703
+  },
+  {
+   "palabra": "cada",
+   "inicio": 28.54,
+   "fin": 28.72,
+   "prob": 0.995
+  },
+  {
+   "palabra": "vez",
+   "inicio": 28.72,
+   "fin": 28.9,
+   "prob": 0.999
+  },
+  {
+   "palabra": "jalas",
+   "inicio": 28.9,
+   "fin": 29.2,
+   "prob": 0.682
+  },
+  {
+   "palabra": "su",
+   "inicio": 29.2,
+   "fin": 29.34,
+   "prob": 0.984
+  },
+  {
+   "palabra": "grupito",
+   "inicio": 29.34,
+   "fin": 29.68,
+   "prob": 0.993
+  },
+  {
+   "palabra": "de",
+   "inicio": 29.68,
+   "fin": 29.8,
+   "prob": 0.999
+  },
+  {
+   "palabra": "hilos,",
+   "inicio": 29.8,
+   "fin": 29.98,
+   "prob": 0.993
+  },
+  {
+   "palabra": "eso",
+   "inicio": 30.32,
+   "fin": 30.52,
+   "prob": 0.955
+  },
+  {
+   "palabra": "es",
+   "inicio": 30.52,
+   "fin": 30.68,
+   "prob": 0.999
+  },
+  {
+   "palabra": "lo",
+   "inicio": 30.68,
+   "fin": 30.78,
+   "prob": 0.999
+  },
+  {
+   "palabra": "que",
+   "inicio": 30.78,
+   "fin": 30.88,
+   "prob": 0.998
+  },
+  {
+   "palabra": "ves",
+   "inicio": 30.88,
+   "fin": 31.0,
+   "prob": 0.987
+  },
+  {
+   "palabra": "saltar",
+   "inicio": 31.0,
+   "fin": 31.4,
+   "prob": 0.98
+  },
+  {
+   "palabra": "bajo",
+   "inicio": 31.4,
+   "fin": 31.58,
+   "prob": 0.993
+  },
+  {
+   "palabra": "la",
+   "inicio": 31.58,
+   "fin": 31.76,
+   "prob": 0.998
+  },
+  {
+   "palabra": "piel.",
+   "inicio": 31.76,
+   "fin": 31.98,
+   "prob": 0.999
+  },
+  {
+   "palabra": "¿Y",
+   "inicio": 32.52,
+   "fin": 32.64,
+   "prob": 0.865
+  },
+  {
+   "palabra": "por",
+   "inicio": 32.64,
+   "fin": 32.78,
+   "prob": 0.964
+  },
+  {
+   "palabra": "qué",
+   "inicio": 32.78,
+   "fin": 32.88,
+   "prob": 0.969
+  },
+  {
+   "palabra": "se",
+   "inicio": 32.88,
+   "fin": 33.0,
+   "prob": 0.998
+  },
+  {
+   "palabra": "dispara",
+   "inicio": 33.0,
+   "fin": 33.34,
+   "prob": 0.992
+  },
+  {
+   "palabra": "solo?",
+   "inicio": 33.34,
+   "fin": 33.52,
+   "prob": 0.825
+  },
+  {
+   "palabra": "Porque",
+   "inicio": 34.32,
+   "fin": 34.78,
+   "prob": 0.974
+  },
+  {
+   "palabra": "el",
+   "inicio": 34.78,
+   "fin": 34.9,
+   "prob": 0.995
+  },
+  {
+   "palabra": "entrenamiento",
+   "inicio": 34.9,
+   "fin": 35.34,
+   "prob": 0.999
+  },
+  {
+   "palabra": "pesado,",
+   "inicio": 35.34,
+   "fin": 35.82,
+   "prob": 0.998
+  },
+  {
+   "palabra": "el",
+   "inicio": 36.12,
+   "fin": 36.26,
+   "prob": 0.997
+  },
+  {
+   "palabra": "café,",
+   "inicio": 36.26,
+   "fin": 36.52,
+   "prob": 0.857
+  },
+  {
+   "palabra": "el",
+   "inicio": 36.92,
+   "fin": 37.0,
+   "prob": 0.998
+  },
+  {
+   "palabra": "estrés",
+   "inicio": 37.0,
+   "fin": 37.28,
+   "prob": 0.995
+  },
+  {
+   "palabra": "y",
+   "inicio": 37.28,
+   "fin": 37.42,
+   "prob": 0.995
+  },
+  {
+   "palabra": "dormir",
+   "inicio": 37.42,
+   "fin": 37.6,
+   "prob": 0.996
+  },
+  {
+   "palabra": "poco",
+   "inicio": 37.6,
+   "fin": 37.92,
+   "prob": 0.997
+  },
+  {
+   "palabra": "dejan",
+   "inicio": 37.92,
+   "fin": 38.3,
+   "prob": 0.988
+  },
+  {
+   "palabra": "esos",
+   "inicio": 38.3,
+   "fin": 38.5,
+   "prob": 0.995
+  },
+  {
+   "palabra": "cables",
+   "inicio": 38.5,
+   "fin": 38.78,
+   "prob": 0.986
+  },
+  {
+   "palabra": "demasiado",
+   "inicio": 38.78,
+   "fin": 39.2,
+   "prob": 0.845
+  },
+  {
+   "palabra": "sensibles,",
+   "inicio": 39.2,
+   "fin": 39.84,
+   "prob": 0.998
+  },
+  {
+   "palabra": "como",
+   "inicio": 40.24,
+   "fin": 40.5,
+   "prob": 0.983
+  },
+  {
+   "palabra": "una",
+   "inicio": 40.5,
+   "fin": 40.68,
+   "prob": 0.739
+  },
+  {
+   "palabra": "alarma",
+   "inicio": 40.68,
+   "fin": 40.94,
+   "prob": 0.996
+  },
+  {
+   "palabra": "de",
+   "inicio": 40.94,
+   "fin": 41.08,
+   "prob": 0.997
+  },
+  {
+   "palabra": "coche",
+   "inicio": 41.08,
+   "fin": 41.34,
+   "prob": 0.996
+  },
+  {
+   "palabra": "que",
+   "inicio": 41.34,
+   "fin": 41.48,
+   "prob": 0.998
+  },
+  {
+   "palabra": "salta",
+   "inicio": 41.48,
+   "fin": 41.76,
+   "prob": 0.978
+  },
+  {
+   "palabra": "en",
+   "inicio": 41.76,
+   "fin": 41.88,
+   "prob": 0.995
+  },
+  {
+   "palabra": "cuanto",
+   "inicio": 41.88,
+   "fin": 41.98,
+   "prob": 0.998
+  },
+  {
+   "palabra": "alguien",
+   "inicio": 41.98,
+   "fin": 42.32,
+   "prob": 0.894
+  },
+  {
+   "palabra": "pasa.",
+   "inicio": 42.32,
+   "fin": 42.64,
+   "prob": 0.998
+  },
+  {
+   "palabra": "Así",
+   "inicio": 43.14,
+   "fin": 43.36,
+   "prob": 0.988
+  },
+  {
+   "palabra": "que",
+   "inicio": 43.36,
+   "fin": 43.52,
+   "prob": 0.998
+  },
+  {
+   "palabra": "no",
+   "inicio": 43.52,
+   "fin": 43.64,
+   "prob": 0.99
+  },
+  {
+   "palabra": "es",
+   "inicio": 43.64,
+   "fin": 43.78,
+   "prob": 0.999
+  },
+  {
+   "palabra": "tu",
+   "inicio": 43.78,
+   "fin": 43.84,
+   "prob": 0.996
+  },
+  {
+   "palabra": "brazo,",
+   "inicio": 43.84,
+   "fin": 44.14,
+   "prob": 0.996
+  },
+  {
+   "palabra": "es",
+   "inicio": 44.44,
+   "fin": 44.58,
+   "prob": 0.997
+  },
+  {
+   "palabra": "un",
+   "inicio": 44.58,
+   "fin": 44.7,
+   "prob": 0.999
+  },
+  {
+   "palabra": "cable",
+   "inicio": 44.7,
+   "fin": 44.9,
+   "prob": 0.995
+  },
+  {
+   "palabra": "disparando",
+   "inicio": 44.9,
+   "fin": 45.34,
+   "prob": 0.994
+  },
+  {
+   "palabra": "por",
+   "inicio": 45.34,
+   "fin": 45.52,
+   "prob": 0.995
+  },
+  {
+   "palabra": "libre",
+   "inicio": 45.52,
+   "fin": 45.74,
+   "prob": 0.989
+  },
+  {
+   "palabra": "mientras",
+   "inicio": 45.74,
+   "fin": 45.98,
+   "prob": 0.999
+  },
+  {
+   "palabra": "los",
+   "inicio": 45.98,
+   "fin": 46.22,
+   "prob": 0.998
+  },
+  {
+   "palabra": "demás",
+   "inicio": 46.22,
+   "fin": 46.44,
+   "prob": 0.981
+  },
+  {
+   "palabra": "descansan.",
+   "inicio": 46.44,
+   "fin": 47.04,
+   "prob": 0.995
+  },
+  {
+   "palabra": "Casi",
+   "inicio": 47.94,
+   "fin": 48.28,
+   "prob": 0.96
+  },
+  {
+   "palabra": "siempre",
+   "inicio": 48.28,
+   "fin": 48.6,
+   "prob": 0.999
+  },
+  {
+   "palabra": "se",
+   "inicio": 48.6,
+   "fin": 48.78,
+   "prob": 1.0
+  },
+  {
+   "palabra": "va",
+   "inicio": 48.78,
+   "fin": 48.9,
+   "prob": 0.991
+  },
+  {
+   "palabra": "solo",
+   "inicio": 48.9,
+   "fin": 49.14,
+   "prob": 0.881
+  },
+  {
+   "palabra": "en",
+   "inicio": 49.14,
+   "fin": 49.26,
+   "prob": 0.999
+  },
+  {
+   "palabra": "unos",
+   "inicio": 49.26,
+   "fin": 49.42,
+   "prob": 0.999
+  },
+  {
+   "palabra": "días.",
+   "inicio": 49.42,
+   "fin": 49.64,
+   "prob": 0.998
+  },
+  {
+   "palabra": "Si",
+   "inicio": 50.74,
+   "fin": 51.02,
+   "prob": 0.977
+  },
+  {
+   "palabra": "duras",
+   "inicio": 51.02,
+   "fin": 51.26,
+   "prob": 0.694
+  },
+  {
+   "palabra": "semanas",
+   "inicio": 51.26,
+   "fin": 51.5,
+   "prob": 0.999
+  },
+  {
+   "palabra": "o",
+   "inicio": 51.5,
+   "fin": 51.76,
+   "prob": 0.993
+  },
+  {
+   "palabra": "pierdes",
+   "inicio": 51.76,
+   "fin": 52.02,
+   "prob": 0.996
+  },
+  {
+   "palabra": "fuerza,",
+   "inicio": 52.02,
+   "fin": 52.32,
+   "prob": 0.993
+  },
+  {
+   "palabra": "ve",
+   "inicio": 52.74,
+   "fin": 52.82,
+   "prob": 0.764
+  },
+  {
+   "palabra": "al",
+   "inicio": 52.82,
+   "fin": 52.94,
+   "prob": 0.994
+  },
+  {
+   "palabra": "médico.",
+   "inicio": 52.94,
+   "fin": 53.18,
+   "prob": 0.986
+  },
+  {
+   "palabra": "Síguenos",
+   "inicio": 53.8,
+   "fin": 54.12,
+   "prob": 0.931
+  },
+  {
+   "palabra": "para",
+   "inicio": 54.12,
+   "fin": 54.36,
+   "prob": 0.993
+  },
+  {
+   "palabra": "más",
+   "inicio": 54.36,
+   "fin": 54.54,
+   "prob": 0.981
+  },
+  {
+   "palabra": "curiosidades",
+   "inicio": 54.54,
+   "fin": 55.06,
+   "prob": 0.996
+  },
+  {
+   "palabra": "cada",
+   "inicio": 55.06,
+   "fin": 55.32,
+   "prob": 0.996
+  },
+  {
+   "palabra": "día.",
+   "inicio": 55.32,
+   "fin": 55.54,
+   "prob": 0.997
+  }
+ ]
+}
