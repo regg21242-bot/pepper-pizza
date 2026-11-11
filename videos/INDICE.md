@@ -4,6 +4,8 @@ Todos son verticales (1080×1920), con la voz de Álvaro, música, efectos y sub
 
 | Carpeta | Título | Dura | Peso | Estilo | Estado |
 |---|---|---|---|---|---|
+| `tsunami` | Alerta de tsunami a las 3 a.m. (historia interactiva, parte 1; `tsunami-ligero.mp4` = 12 MB) | 74 s | 64 MB | 3D low-poly (HyperFrames + Three.js) | ✅ nuevo |
+| `biceps` | ¿Por qué te brinca el bíceps? | 56 s | — | HyperFrames (canvas) | ⏸️ vista previa, falta render final |
 | `palomitas` | ¿Por qué explotan las palomitas? (`palomitas-ligero.mp4` = 12 MB) | 72 s | 37 MB | monitos | ✅ nuevo |
 | `familia-alquiler` | En Japón puedes alquilar a un papá | 46 s | 17 MB | monitos | ✅ el favorito |
 | `pachinko` | El negocio secreto de Japón (pachinko) | 59 s | 26 MB | monitos | ✅ |
@@ -82,4 +84,9 @@ Formato: una pregunta para que comenten y 5 hashtags. Los de Torre Eiffel, Hamel
 ```
 ¿Tú cómo te las comes: mantequilla, chile o caramelo? 👇
 #palomitas #ciencia #sabiasque #curiosidades #datoscuriosos
+```
+**Tsunami (parte 1)**
+```
+¿Tú qué harías: te quedas en el cerro o bajas por tu mamá? 👇
+#tsunami #historiainteractiva #supervivencia #quéharías #curiosidades
 ```
