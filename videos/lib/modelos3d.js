@@ -256,6 +256,56 @@
   function shade3(hex, k) { const c = new THREE.Color(hex); if (k < 0) c.multiplyScalar(1 + k); else c.lerp(new THREE.Color('#ffffff'), k); return '#' + c.getHexString(); }
   const flaco3d = () => person3d({ shirt: '#2FA35A', pants: '#3A4A6A', skin: '#E0AA82', hair: '#22160E', hairStyle: 'rizos', height: 1.14, width: .82, faceW: .92, seed: 11 });
   const tu3d = () => person3d({ shirt: '#FF6A12', pants: '#46506A', skin: '#D49A70', hair: '#3A2416', hairStyle: 'corto', height: 1.0, width: 1.14, belly: .8, faceW: 1.05 });
+
+  /* la mamá: pelo largo mojado, chamarra roja empapada, pantalón con lodo */
+  function mom() {
+    const g = new THREE.Group(), parts = {}, r = rng(23);
+    const jacket = mat('#C8202A', { roughness: .28, metalness: .05 }), jacketD = mat('#8A1218', { roughness: .3 });
+    const pants = mat('#2E3448', { roughness: .5 }), mud = mat('#5A4026', { roughness: 1 }), skin = mat('#C98E68', { roughness: .45 });
+    const hairM = mat('#1A120C', { roughness: .22, metalness: .1 }), shoeM = mat('#3A2A1E', { roughness: 1 });
+    for (const s of [-1, 1]) {
+      const hip = new THREE.Group(); hip.position.set(s * .12, .97, 0); g.add(hip);
+      hip.add(box(.17, .48, .18, pants, 0, -.24, 0));
+      const knee = new THREE.Group(); knee.position.y = -.48; hip.add(knee);
+      knee.add(box(.15, .43, .16, pants, 0, -.21, 0)); knee.add(box(.17, .1, .3, shoeM, 0, -.44, .05));
+      for (let i = 0; i < 4; i++) knee.add(box(.152 + .01, .06 + r() * .1, .02, mud, (r() - .5) * .04, -.15 - r() * .28, .08));   // salpicaduras de lodo
+      hip.add(box(.06, .08, .02, mud, (r() - .5) * .08, -.35, .1));
+      parts[s < 0 ? 'legL' : 'legR'] = hip; parts[s < 0 ? 'kneeL' : 'kneeR'] = knee;
+    }
+    const torso = prism(.35, .34, .78, jacket, 1.18, .72); torso.position.y = 1.4; g.add(torso);
+    g.add(box(.02, .7, .02, mat('#D8D8E0', { metalness: .8, roughness: .3 }), 0, 1.4, .25));      // cierre
+    g.add(box(.5, .14, .3, jacketD, 0, 1.82, -.01));                                                // cuello alto
+    g.add(box(.38, .08, .03, mud, .05, 1.06, .25));                                                  // lodo en la chamarra
+    const neck = new THREE.Mesh(new THREE.CylinderGeometry(.07, .08, .12, 10), skin); neck.position.y = 1.86; g.add(neck);
+    for (const s of [-1, 1]) {
+      const sh = new THREE.Group(); sh.position.set(s * .35, 1.72, 0); g.add(sh);
+      sh.add(ball(.1, jacket, 0, -.02, 0, 10)); sh.add(box(.15, .42, .17, jacket, 0, -.21, 0));
+      const el = new THREE.Group(); el.position.y = -.42; el.rotation.x = -.12; sh.add(el);
+      el.add(box(.14, .36, .16, jacket, 0, -.18, 0)); el.add(box(.15, .06, .17, jacketD, 0, -.34, 0));
+      const hand = ball(.068, skin, 0, -.42, .01, 10); hand.scale.set(1, 1.3, .8); el.add(hand);
+      parts[s < 0 ? 'armL' : 'armR'] = sh; parts[s < 0 ? 'elbowL' : 'elbowR'] = el;
+    }
+    const head = new THREE.Group(); head.position.set(0, 2.1, 0); g.add(head); parts.head = head;
+    const skull = ball(.215, skin, 0, 0, 0, 22); skull.scale.set(.92, 1.12, 1); head.add(skull);
+    const nose = box(.05, .085, .075, skin, 0, -.02, .205); nose.rotation.x = -.25; head.add(nose);
+    head.add(box(.085, .016, .015, mat('#7A2A24'), 0, -.105, .2));
+    const eyes = [], brows = [];
+    for (const s of [-1, 1]) {
+      head.add(ball(.033, mat('#F4F0E8', { roughness: .4 }), s * .074, .05, .182, 10));
+      const pu = ball(.019, EYE, s * .074, .05, .211, 8); head.add(pu); eyes.push(pu);
+      const br = box(.08, .018, .03, hairM, s * .078, .112, .19); br.rotation.z = -s * .32; head.add(br); brows.push(br);   // cejas de angustia (suben al centro)
+    }
+    // pelo largo, pegado por la lluvia
+    const top = new THREE.Mesh(new THREE.SphereGeometry(.238, 20, 12, 0, Math.PI * 2, 0, Math.PI * .46), hairM); top.position.set(0, .03, -.03); top.scale.set(1, 1.14, 1.05); top.rotation.x = -.42; head.add(top);
+    const backH = box(.4, .62, .12, hairM, 0, -.22, -.15); head.add(backH);
+    for (const s of [-1, 1]) { const st = box(.07, .5, .1, hairM, s * .2, -.16, .05); st.rotation.z = s * .06; head.add(st); }
+    // gotas de agua escurriendo
+    const dropM = new THREE.MeshStandardMaterial({ color: '#BFE4FF', roughness: .05, transparent: true, opacity: .85 });
+    const drops = []; for (let i = 0; i < 7; i++) { const d = ball(.009, dropM, (r() - .5) * .5, 1.2 + r() * .9, .2 + r() * .06, 6); d.scale.y = 1.6; g.add(d); drops.push({ d, y0: d.position.y, ph: r() }); }
+    parts.drip = (t) => drops.forEach(o => { const k = (t * .6 + o.ph) % 1; o.d.position.y = o.y0 - k * .5; o.d.visible = k < .9; });
+    parts.look = (x, y) => eyes.forEach((p, i) => { p.position.x = (i ? 1 : -1) * .074 + x * .012; p.position.y = .05 + y * .012; });
+    g.userData = parts; return g;
+  }
   const hero = () => youth();
   const vecino = () => elder();
 
@@ -281,8 +331,9 @@
     g.add(win);
     g.userData = { win, base,
       /* red: 0..1 — fracción de ventanas que ya se pusieron en rojo (en orden aleatorio fijo) */
-      paint(red = 0, flicker = 0) {
-        base.forEach((b, k) => { const isRed = b.ord < red; const c = isRed ? new THREE.Color('#FF2A2A').multiplyScalar(1 - flicker * .4 + .4 * flicker * Math.sin(k)) : new THREE.Color(b.lit ? '#FFC65A' : '#262C48'); win.setColorAt(k, c); });
+      /* off: 0..1 — fracción de ventanas que ya se apagaron (se va la luz) */
+      paint(red = 0, flicker = 0, off = 0) {
+        base.forEach((b, k) => { const dark = b.ord > 1 - off; const isRed = !dark && b.ord < red; const c = dark ? new THREE.Color('#14182C') : isRed ? new THREE.Color('#FF2A2A').multiplyScalar(1 - flicker * .4 + .4 * flicker * Math.sin(k)) : new THREE.Color(b.lit ? '#FFC65A' : '#262C48'); win.setColorAt(k, c); });
         win.instanceColor.needsUpdate = true;
       } };
     g.userData.paint(0);
@@ -390,5 +441,5 @@
     g.add(box(.9, .7, .06, glow('#FFC65A'), .9, 1.5, 1.72));
     return g;
   }
-  window.M = { THREE, rng, mat, glow, box, ball, cyl, person, hero, vecino, building, sky, stars, phone, addBrows, truck, jug, wallClock, handPhone, gate, hut, person3d, flaco3d, tu3d };
+  window.M = { THREE, rng, mat, glow, box, ball, cyl, person, hero, vecino, building, sky, stars, phone, addBrows, truck, jug, wallClock, handPhone, gate, hut, person3d, flaco3d, tu3d, mom };
 })();

@@ -1,0 +1,190 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; background: #05060f; }
+    #gl { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+  </style>
+  <div id="root" data-composition-id="film" data-start="0" data-duration="60" data-width="1080" data-height="1920">
+    <canvas id="gl" width="1080" height="1920" data-layout-ignore></canvas>
+  </div>
+  <script>
+  (function () {
+    /* Tsunami — PARTE 2. Mismos modelos, ciudad, casita y estilo de la parte 1 (assets/lib/modelos.js). */
+    const { THREE, rng, mat, glow, box, ball, cyl, hero, vecino, building, sky, stars, phone, addBrows, truck, jug, wallClock, handPhone, gate, hut, person3d, mom } = window.M;
+    const W = 1080, H = 1920;
+    const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v)), lerp = (a, b, k) => a + (b - a) * k, prog = (t, a, b) => clamp((t - a) / (b - a));
+    const ease = k => (k = clamp(k), k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
+    const easeIn = k => Math.pow(clamp(k), 3), easeOut = k => 1 - Math.pow(1 - clamp(k), 3);
+    function camPath(c, t, keys) { let i = 0; while (i < keys.length - 2 && t > keys[i + 1][0]) i++; const [t0, p0, l0] = keys[i], [t1, p1, l1] = keys[Math.min(i + 1, keys.length - 1)]; const k = t1 > t0 ? ease(prog(t, t0, t1)) : 0; c.position.set(lerp(p0[0], p1[0], k), lerp(p0[1], p1[1], k), lerp(p0[2], p1[2], k)); c.lookAt(lerp(l0[0], l1[0], k), lerp(l0[1], l1[1], k), lerp(l0[2], l1[2], k)); }
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gl'), antialias: true, preserveDrawingBuffer: true });
+    renderer.setPixelRatio(1); renderer.setSize(W, H, false);
+    renderer.outputEncoding = THREE.sRGBEncoding; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = .9;
+    renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    const cam = (fov = 38) => new THREE.PerspectiveCamera(fov, W / H, .05, 900);
+    /* lluvia: segmentos que caen, deterministas */
+    function rain(n, area, seed, color = '#A8B8E8', op = .5) {
+      const r = rng(seed), pos = new Float32Array(n * 6), base = [];
+      for (let i = 0; i < n; i++) base.push([(r() - .5) * area[0], r() * area[1], (r() - .5) * area[2] + area[3], .5 + r() * .5]);
+      const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      const l = new THREE.LineSegments(g, new THREE.LineBasicMaterial({ color, transparent: true, opacity: op, fog: false }));
+      l.userData.update = (t, ox = 0, oy = 0, oz = 0) => { for (let i = 0; i < n; i++) { const [x, y, z, sp] = base[i], yy = ((y - t * 18 * sp) % area[1] + area[1]) % area[1]; pos.set([x + ox, yy + oy, z + oz, x + ox - .05, yy + oy + .45, z + oz], i * 6); } g.attributes.position.needsUpdate = true; };
+      return l;
+    }
+
+    /* ================= CIUDAD: el mar entra ================= */
+    const FL = { line: [0, 2.2], coast: 2.2, front: [2.4, 7.6] };   // tiempos locales de la toma
+    const CITY = (() => {
+      const s = new THREE.Scene(); s.fog = new THREE.FogExp2('#2A1A4A', .006);
+      const sk = sky('#0A1034', '#5A2A72'); s.add(sk); s.add(stars());
+      s.add(new THREE.HemisphereLight('#4A4AA0', '#1A0A20', .6));
+      const moon = new THREE.DirectionalLight('#8AA0FF', .6); moon.position.set(-30, 40, -20); s.add(moon);
+      const seaG = new THREE.PlaneGeometry(400, 200, 80, 40); seaG.rotateX(-Math.PI / 2);
+      const sea = new THREE.Mesh(seaG, mat('#0C1A44', { roughness: .35, metalness: .1, flatShading: true })); sea.position.set(0, -.2, -185); s.add(sea);
+      const seaPos = seaG.attributes.position, seaBase = seaPos.array.slice();
+      s.add(box(260, .4, 60, mat('#2A2238'), 0, 0, -55));
+      const city = new THREE.Group(); s.add(city); const r = rng(5), blds = [];
+      for (let i = 0; i < 70; i++) {
+        const w = 2 + r() * 3, h = 3 + r() * (i % 7 === 0 ? 18 : 9), d = 2 + r() * 3;
+        const b = building(w, h, d, 100 + i, { lit: .5 }); b.position.set(-60 + (i % 14) * 9 + r() * 3, 0, -40 - Math.floor(i / 14) * 8 - r() * 3); city.add(b); blds.push(b);
+      }
+      // coches en las calles
+      const cr = rng(31), cars = [], carCols = ['#E04848', '#F2C230', '#3FAE5A', '#3A7AE0', '#E8E8F0', '#2A2A30'];
+      for (let i = 0; i < 26; i++) { const c = new THREE.Group(); c.add(box(1.6, .5, .8, mat(carCols[i % 6], { roughness: .4, metalness: .3 }), 0, .45, 0)); c.add(box(.9, .35, .74, mat('#1A2030', { roughness: .2 }), -.1, .85, 0)); const x = -58 + cr() * 116, z = -36 - cr() * 46; c.position.set(x, 0, z); c.rotation.y = cr() < .5 ? 0 : Math.PI / 2; s.add(c); cars.push({ c, x, z, ph: cr() * 6, sp: .6 + cr() * .8 }); }
+      const hillG = new THREE.CircleGeometry(16, 28); hillG.rotateX(-Math.PI / 2);
+      const hp = hillG.attributes.position, hr = rng(3); for (let i = 0; i < hp.count; i++) { const x = hp.getX(i), z = hp.getZ(i), dd = Math.hypot(x, z); hp.setY(i, Math.max(0, 6 - dd * .42) + hr() * .35); }
+      hillG.computeVertexNormals();
+      const hill = new THREE.Mesh(hillG, mat('#24302A', { flatShading: true })); hill.position.set(0, 14, 18); s.add(hill);
+      s.add(box(60, 14, 30, mat('#161E1C', { flatShading: true }), 0, 7, 22)); s.add(box(240, .3, 70, mat('#1A1A2A'), 0, -.1, -5));
+      const hh = hut(); hh.position.set(-6.5, 19.6, 19.5); hh.rotation.y = -.4; s.add(hh);
+      const hutL = new THREE.PointLight('#FFC070', 1.2, 10, 2); hutL.position.set(-6, 21, 21.5); s.add(hutL);
+      const p = hero(), v = vecino(); p.position.set(-.9, 19.6, 13.4); v.position.set(.8, 19.5, 13.8); p.rotation.y = Math.PI; v.rotation.y = Math.PI - .15; s.add(p, v);
+      v.userData.spot.intensity = 0; v.userData.beam.visible = false;
+      // la línea blanca y el agua que entra
+      const line = new THREE.Mesh(new THREE.BoxGeometry(300, .6, 1.4), new THREE.MeshBasicMaterial({ color: '#F4F8FF', toneMapped: false, fog: false })); s.add(line);
+      const waterM = new THREE.MeshStandardMaterial({ color: '#3A5070', roughness: .15, metalness: .45, transparent: true, opacity: .95 });
+      const water = new THREE.Mesh(new THREE.BoxGeometry(300, 1, 1), waterM); s.add(water);
+      const foamM = new THREE.MeshBasicMaterial({ color: '#E8F0FF', toneMapped: false, fog: false, transparent: true, opacity: .95 });
+      const foam = new THREE.Mesh(new THREE.BoxGeometry(300, .5, 1.6), foamM); s.add(foam);
+      const sirens = []; for (let i = 0; i < 4; i++) { const L = new THREE.PointLight('#FF2020', 0, 30, 2); L.position.set(-30 + i * 20, 4, -36); s.add(L); sirens.push(L); }
+      const rn = rain(900, [60, 40, 40, 6], 4, '#8A9AD0', .28); s.add(rn);
+      const camera = cam();
+      function update(t, mode = 'flood') {
+        for (let i = 0; i < seaPos.count; i++) { const x = seaBase[i * 3], z = seaBase[i * 3 + 2]; seaPos.setY(i, Math.sin(x * .08 + t * .8) * .25 + Math.cos(z * .1 + t * .6) * .25); }
+        seaPos.needsUpdate = true; seaG.computeVertexNormals();
+        sirens.forEach((L, i) => L.intensity = 2.5 + Math.sin(t * 5 + i) * 1.5);
+        rn.userData.update(t, 0, 10, 0);
+        // la línea llega a la costa y el agua entra
+        const kl = prog(t, FL.line[0], FL.line[1]), lz = lerp(-190, -86, kl);
+        const kf = ease(prog(t, FL.front[0], FL.front[1])), front = lerp(-86, -18, kf);
+        const isWave = t < FL.coast;
+        line.visible = isWave; line.position.set(0, .4, lz);
+        const h = isWave ? 0 : lerp(.6, 3.2, kf);
+        water.visible = !isWave; water.scale.set(1, Math.max(.01, h), front + 196); water.position.set(0, h / 2 - .1, (front - 196) / 2);
+        foam.visible = !isWave; foam.position.set(0, h + .1, front); foam.scale.y = 1 + Math.sin(t * 7) * .3;
+        // coches arrastrados y luces que se apagan por zonas
+        cars.forEach(o => { const hit = !isWave && front > o.z; const k = hit ? clamp((t - (FL.front[0] + (o.z + 86) / 68 * (FL.front[1] - FL.front[0]))) * .8) : 0; o.c.position.set(o.x + Math.sin(o.ph + t) * k * 2, k * (h * .6) + Math.sin(t * 3 + o.ph) * .2 * k, o.z + k * 9 * o.sp); o.c.rotation.set(Math.sin(t * 2 + o.ph) * .4 * k, o.c.rotation.y + .02 * k, Math.cos(t * 1.7 + o.ph) * .5 * k); });
+        blds.forEach(b => { const passed = !isWave && front > b.position.z ? clamp((front - b.position.z) / 18) : 0; b.userData.paint(.45, 0, passed); });
+        sk.userData.mat.uniforms.red.value = .3 + .08 * Math.sin(t * 3);
+        camPath(camera, t, [[-.5, [1.4, 27, 27], [-1, -2, -70]], [9, [.4, 25.5, 22.5], [-1, -3, -60]]]);
+        return { red: .32 + .08 * Math.sin(t * 4) };
+      }
+      return { scene: s, camera, update };
+    })();
+
+    /* ================= EL PORTÓN: la mamá y cinco más ================= */
+    const GATE_OUT = (() => {
+      const s = new THREE.Scene(); s.background = new THREE.Color('#0A0E1E'); s.fog = new THREE.FogExp2('#141A30', .07);
+      s.add(new THREE.HemisphereLight('#5060A0', '#100A18', .55));
+      s.add(box(40, .2, 40, mat('#2A3028', { roughness: .6 }), 0, -.1, 0));
+      // charcos brillantes
+      for (const [x, z, sx] of [[-1, 2.5, 2.2], [1.6, 4.5, 1.6], [-2.4, 6, 2.0]]) { const pd = new THREE.Mesh(new THREE.CircleGeometry(.8, 20), mat('#1A2440', { roughness: .05, metalness: .6 })); pd.rotation.x = -Math.PI / 2; pd.position.set(x, .01, z); pd.scale.set(sx, 1, .6); s.add(pd); }
+      // reja y portón cerrado (los mismos de la parte 1)
+      const iron = mat('#3A3A44', { metalness: .6, roughness: .45 });
+      for (let i = -6; i <= 6; i++) if (i < -1 || i > 1) s.add(box(.12, 2.3, .12, iron, i * 1.3 - 1.3, 1.15, 0));
+      s.add(box(5.5, .08, .08, iron, -7.2, 2.1, 0)); s.add(box(5.5, .08, .08, iron, -7.2, .4, 0)); s.add(box(5.5, .08, .08, iron, 4.6, 2.1, 0)); s.add(box(5.5, .08, .08, iron, 4.6, .4, 0));
+      const gt = gate(); gt.position.set(-1.3, 0, 0); s.add(gt); s.add(box(.2, 2.6, .2, iron, 1.4, 1.3, 0));
+      // farol del portón: ilumina a la mamá
+      const lampPost = cyl(.05, .05, 3, mat('#2A2A30'), 8); lampPost.position.set(1.7, 1.5, .3); s.add(lampPost);
+      const bulb = ball(.12, glow('#FFD9A0'), 1.7, 3.0, .6, 10); s.add(bulb);
+      const lampL = new THREE.SpotLight('#FFD9A0', 5, 14, .7, .5, 1.2); lampL.position.set(1.7, 3.0, .6); const lt = new THREE.Object3D(); lt.position.set(.175, 1.9, 1.0); s.add(lt); lampL.target = lt; lampL.castShadow = true; s.add(lampL);
+      const redL = new THREE.PointLight('#FF2020', 2, 18, 1.5); redL.position.set(-4, 5, 9); s.add(redL);
+      // la mamá y cinco desconocidos detrás
+      const m = mom(); m.position.set(.175, 0, 1.0); m.rotation.y = Math.PI; s.add(m);
+      const people = [
+        person3d({ shirt: '#5A6A7A', pants: '#2A2A34', skin: '#B88464', hair: '#2A1A10', height: 1.04, width: .95 }),
+        person3d({ shirt: '#8A6A3A', pants: '#3A3A40', skin: '#D8A880', hair: '#6A4A2A', height: .82, width: .9, seed: 3, hairStyle: 'rizos' }),
+        person3d({ shirt: '#3A5A4A', pants: '#2E2E36', skin: '#A87050', hair: '#1A120C', height: 1.1, width: 1.05 }),
+        person3d({ shirt: '#6A3A5A', pants: '#2A2A30', skin: '#E0B090', hair: '#B8B4AC', height: .98, width: 1.0 }),
+        person3d({ shirt: '#4A4A6A', pants: '#30303A', skin: '#C08A64', hair: '#2A1A10', height: .7, width: .8, hairStyle: 'rizos', seed: 9 }),
+      ];
+      const spots = [[-1.4, 3.2], [1.5, 3.4], [-.4, 4.4], [.9, 5.0], [-2.1, 4.8]];
+      people.forEach((pp, i) => { pp.position.set(spots[i][0], 0, spots[i][1]); pp.rotation.y = Math.PI + (i - 2) * .08; pp.userData.brows(.8); pp.userData.mouth('flat'); s.add(pp); });
+      const rn = rain(1600, [14, 12, 12, 3], 7, '#B8C8F0', .45); s.add(rn);
+      const camera = cam(36);
+      function update(t) {
+        m.userData.drip(t); m.userData.look(0, .2);
+        m.userData.armR.rotation.x = -.9 + Math.sin(t * 2.6) * .25; m.userData.elbowR.rotation.x = -.6;   // se agarra de los barrotes
+        m.userData.armL.rotation.x = -.7; m.userData.head.rotation.set(-.08, Math.sin(t * .7) * .1, 0);
+        people.forEach((pp, i) => { pp.userData.head.rotation.y = Math.sin(t * .6 + i) * .2; pp.userData.armL.rotation.x = -.15 - (i % 2) * .3; pp.userData.look(Math.sin(t + i) * .5, .2); });
+        rn.userData.update(t, 0, 0, 0);
+        redL.intensity = 2 + Math.sin(t * 5) * 1.3;
+        camPath(camera, t, [[-.5, [.175, 1.85, -.8], [.175, 2.08, 1]], [1.5, [.175, 1.85, -.8], [.175, 2.08, 1]], [7.5, [.175, 1.8, -2.9], [.175, 1.8, 3]]]);
+        return { red: .12 + .05 * Math.sin(t * 5) };
+      }
+      return { scene: s, camera, update };
+    })();
+
+    /* ================= FINAL: primer plano, dudando (igual que la parte 1) ================= */
+    const END = (() => {
+      const s = new THREE.Scene(); s.fog = new THREE.FogExp2('#2A1440', .02);
+      const sk = sky('#0A0E30', '#6A1A3A'); s.add(sk); s.add(stars(400, 12));
+      s.add(new THREE.HemisphereLight('#6A6AC0', '#200A10', .8));
+      const key = new THREE.PointLight('#FFB070', 1.2, 8, 2); key.position.set(-1.2, 2.6, 2); s.add(key);
+      const rim = new THREE.PointLight('#FF2A2A', 3, 10, 2); rim.position.set(1.6, 2.6, -1.6); s.add(rim);
+      s.add(box(60, .2, 60, mat('#26342C', { flatShading: true }), 0, -.1, 0));
+      const r = rng(44); for (let i = 0; i < 30; i++) { const b = building(2 + r() * 2, 3 + r() * 8, 2, 300 + i, { lit: .6 }); b.position.set(-40 + i * 2.8, -14, -50 - r() * 10); b.userData.paint(.5, 0, .6); s.add(b); }
+      const p = hero(); addBrows(p); s.add(p); p.rotation.y = -.15;
+      const rn = rain(700, [8, 8, 6, -1], 13, '#B8C8F0', .35); s.add(rn);
+      const camera = cam(32);
+      function update(t) {
+        p.userData.brows(.6 + .4 * Math.max(0, Math.sin(t * 1.3)));
+        p.userData.head.rotation.y = Math.sin(t * .9) * .38; p.userData.head.rotation.x = Math.max(0, Math.sin(t * .9)) * .12;
+        p.userData.armR.rotation.x = -.2 + Math.sin(t * .7) * .05;
+        rim.intensity = 2.6 + Math.sin(t * 5) * 1.2; rn.userData.update(t, 0, 0, 0);
+        camPath(camera, t, [[-.5, [.55, 2.15, 4.4], [0, 1.75, 0]], [10, [.3, 2.2, 3.7], [0, 1.8, 0]]]);
+        return { red: .3 + .08 * Math.sin(t * 5) };
+      }
+      return { scene: s, camera, update };
+    })();
+
+    /* ================= montaje (provisional: escenas de prueba) ================= */
+    const SC = [{ a: 0, b: 8, s: CITY }, { a: 8, b: 16, s: GATE_OUT }, { a: 16, b: 60, s: END }];
+    const rtA = new THREE.WebGLRenderTarget(W, H, { samples: 4 });
+    const post = new THREE.ShaderMaterial({
+      uniforms: { a: { value: rtA.texture }, red: { value: 0 }, frame: { value: 0 } },
+      vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }',
+      fragmentShader: `uniform sampler2D a; uniform float red, frame; varying vec2 vUv;
+        float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898,78.233))) * 43758.5453); }
+        void main(){
+          vec3 c = texture2D(a, vUv).rgb; float l = dot(c, vec3(.299,.587,.114));
+          c = mix(c, vec3(l * 1.55 + c.r * .15, l * .3, l * .26), clamp(red * 1.8, 0., .92));
+          vec2 q = vUv - .5; c *= 1. - smoothstep(.35, .85, length(q * vec2(1., .62))) * .55;
+          c += (hash(vUv * vec2(1080., 1920.) + frame * 17.) - .5) * .035;
+          gl_FragColor = vec4(max(c, 0.), 1.);
+          #include <tonemapping_fragment>
+          #include <encodings_fragment>
+        }`, depthTest: false, depthWrite: false });
+    const postScene = new THREE.Scene(); postScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), post)); const postCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    function renderAt(t) {
+      const c = SC.find(x => t >= x.a && t < x.b) || SC[SC.length - 1];
+      const g = c.s.update(t - c.a) || {};
+      renderer.setRenderTarget(rtA); renderer.render(c.s.scene, c.s.camera);
+      post.uniforms.red.value = g.red || 0; post.uniforms.frame.value = Math.round(t * 30);
+      renderer.setRenderTarget(null); renderer.render(postScene, postCam);
+    }
+    window.addEventListener('hf-seek', e => renderAt(e.detail.time));
+    renderAt(0);
+    window.__timelines = window.__timelines || {};
+    window.__timelines['film'] = gsap.timeline({ paused: true });
+  })();
+  </script>
+</template>
