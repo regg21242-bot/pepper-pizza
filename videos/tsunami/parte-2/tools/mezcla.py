@@ -1,7 +1,7 @@
-"""Mezcla de audio del video del tsunami: voz + música de suspenso + efectos.
+"""Mezcla de audio de la parte 2: voz + música de suspenso grave (-20 dB bajo la voz) + efectos.
 
 Uso (desde la carpeta del proyecto):  python3 tools/mezcla.py
-Lee los tiempos de eventos de compositions/film.html (const T = {...}) y los cortes de escena (const SC).
+Lee los cortes y eventos de compositions/film.html (const T2 = {...}).
 Escribe assets/audio/mezcla_sin_master.wav, musica.wav y efectos.wav.
 """
 import json, re, wave, os
@@ -11,13 +11,13 @@ SR = 48000
 root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 P = lambda *a: os.path.join(root, *a)
 src = open(P("compositions/film.html"), encoding="utf-8").read()
-DUR = float(re.search(r'data-duration="([\d.]+)"', src).group(1))
-blk = re.search(r"const T = (\{.*?\n    \});", src, re.S).group(1)
-blk = re.sub(r"//[^\n]*", "", blk); blk = re.sub(r"([{,]\s*)([A-Za-z_]\w*)\s*:", r'\1"\2":', blk); blk = re.sub(r",\s*}", "}", blk); blk = re.sub(r"(?<![\d])\.(\d)", r"0.\1", blk)
+blk = re.search(r"const T2 = (\{.*?\});", src, re.S).group(1)
+blk = re.sub(r"([{,]\s*)([A-Za-z_]\w*)\s*:", r'\1"\2":', blk); blk = re.sub(r"(?<![\d])\.(\d)", r"0.\1", blk)
 T = json.loads(blk)
-CUTS = [float(x) for x in re.findall(r"\{ a: ([\d.]+), b:", src)][1:]
+C, DUR = T["cuts"], T["end"]
 
-N = int(DUR * SR); rs = np.random.default_rng(5)
+N = int(DUR * SR); rs = np.random.default_rng(7)
+t = np.arange(N) / SR
 def buf(): return np.zeros((N, 2))
 def st(x): return np.stack([x, x], axis=1)
 def read(path):
@@ -33,109 +33,115 @@ def place(b, sig, t0, db=0.0, pan=0.0):
     b[i:i + len(sig), 0] += sig[:, 0] * (1 - max(pan, 0)); b[i:i + len(sig), 1] += sig[:, 1] * (1 + min(pan, 0))
 def tt(d): return np.arange(int(d * SR)) / SR
 def lp(x, n): return np.convolve(x, np.ones(n) / n, mode="same")
+def hp(x, n): return x - lp(x, n)
 def fade(x, a, r):
-    t = np.arange(len(x)) / SR; d = len(x) / SR
-    return x * np.minimum(t / max(a, 1e-3), 1) * np.minimum(np.maximum(d - t, 0) / max(r, 1e-3), 1)
+    q = np.arange(len(x)) / SR; d = len(x) / SR
+    return x * np.minimum(q / max(a, 1e-3), 1) * np.minimum(np.maximum(d - q, 0) / max(r, 1e-3), 1)
+def env(points):   # curva de volumen por tramos [(t, nivel), ...]
+    xs, ys = zip(*points); return np.interp(t, xs, ys)
 S = lambda name: read(P("assets/sfx", name))
 
 voz = read(P("assets/voz/voz.wav"))[:N]; voz = np.pad(voz, ((0, N - len(voz)), (0, 0)))
 fx = buf()
+noise = rs.standard_normal(N)
+outdoor = [(0, C[1]), (C[4], C[5]), (C[6], C[8]), (C[9], DUR)]   # escenas afuera (lluvia fuerte)
 
-# --- temblor: retumbe grave + traqueteo de muebles ---
-d = T["shake"][1] - T["shake"][0]; x = tt(d)
-rumble = lp(lp(rs.standard_normal(len(x)), 300), 200) * 18 * (1 + .4 * np.sin(2 * np.pi * 3 * x))
-place(fx, st(fade(rumble, .4, .8)), T["shake"][0], -17)
-place(fx, S("retumbe.wav"), T["shake"][0], -13)
-for k in range(28):
-    tk = T["shake"][0] + .3 + k * .15 + rs.random() * .08
-    if tk < T["shake"][1] - .5: place(fx, S("tac.wav"), tk, -16 + rs.random() * 4, rs.random() - .5)
+# --- lluvia: ruido brillante continuo, más fuerte afuera ---
+rainL = hp(lp(rs.standard_normal(N), 3), 40); rainR = hp(lp(rs.standard_normal(N), 3), 40)
+drops = (rs.random(N) < .0009) * rs.standard_normal(N) * 3; drops = hp(lp(drops, 4), 30)
+rlev = np.full(N, .35)
+for a, b in outdoor: rlev[(t >= a) & (t < b)] = 1.0
+rlev = lp(rlev, int(.4 * SR))
+rain = np.stack([rainL + drops, rainR + np.roll(drops, 400)], axis=1) * rlev[:, None] * .035
+fx += rain
 
-# --- alerta del celular: doble tono alternado ---
-for k in range(6):
-    x = tt(.32); f = 853 if k % 2 == 0 else 960
-    tone = (np.sin(2 * np.pi * f * x) + .5 * np.sin(2 * np.pi * f * 2 * x)) * .25
-    place(fx, st(fade(tone, .005, .03)), T["alert"] + k * .36, -10, .15)
+# --- alarma lejana: sirena que sube y baja, filtrada y suave ---
+ph = 2 * np.pi * np.cumsum(620 + 230 * np.sin(2 * np.pi * t / 3.2)) / SR
+siren = lp(np.sin(ph) + .3 * np.sin(2 * ph), 6) * env([(0, .8), (C[1], .8), (C[1] + .3, .2), (C[4], .25), (C[4] + .3, .9), (C[5], .9), (C[5] + .3, .15), (C[7], .2), (C[7] + .3, .5), (C[8], .5), (C[8] + .3, .1), (DUR, .2)])
+fx += np.stack([siren, np.roll(siren, 900)], axis=1) * .035
 
-# --- vibración del celular ---
-def vib(d=.38):
-    x = tt(d); return st(fade(np.sign(np.sin(2 * np.pi * 150 * x)) * (.5 + .5 * np.sin(2 * np.pi * 25 * x)) * .12, .01, .04))
-for v in [T["msg1"] - .25] + T["vib"]:
-    place(fx, vib(), v, -10); place(fx, vib(), v + .5, -12)
+# --- el agua que entra: rugido grave que crece con el frente ---
+a0, a1 = C[0] - .3, C[1] + .4; x = tt(a1 - a0)
+roar = lp(rs.standard_normal(len(x)), 45) * 3 + lp(rs.standard_normal(len(x)), 180) * 9
+roar *= np.interp(x, [0, 1.6, 3.5, 6.0, a1 - a0], [.15, .5, 1.0, 1.1, .7])
+place(fx, st(fade(roar, .3, .5)), a0, -15)
+place(fx, S("retumbe.wav"), C[0] + 1.0, -12)
+place(fx, S("whoosh.wav"), C[0] + .2, -9)
+# coches arrastrados: golpes metálicos y raspones
+for k, tk in enumerate([C[0] + 2.4, C[0] + 3.1, C[0] + 3.7, C[0] + 4.6, C[0] + 5.3]):
+    place(fx, S("metal.wav"), tk, -14 + rs.random() * 3, rs.random() - .5)
+    place(fx, S("golpe.wav"), tk + .05, -16, rs.random() - .5)
+    x = tt(.7); scr = hp(lp(rs.standard_normal(len(x)), 2), 8) * np.sin(2 * np.pi * (900 + 300 * x) * x) * .2
+    place(fx, st(fade(scr, .05, .3)), tk + .1, -16)
 
-# --- toquido en la puerta y la puerta que se abre ---
-for i, k in enumerate(T["knock"]): place(fx, S("toc.wav" if i % 2 == 0 else "toc2.wav"), k, -1)
-creak = tt(1.0); cr = np.sin(2 * np.pi * (180 + 60 * np.sin(2 * np.pi * 1.3 * creak)) * creak) * (rs.random(len(creak)) < .5) * .12
-place(fx, st(fade(lp(cr, 8), .1, .4)), T["doorOpen"][0], -14)
+# --- calle inundada: corriente que corre y escombros que chocan ---
+a0, a1 = C[4] - .3, C[5] + .3; x = tt(a1 - a0)
+flow = lp(rs.standard_normal(len(x)), 20) * 2.2 * (1 + .3 * np.sin(2 * np.pi * .9 * x)) + lp(rs.standard_normal(len(x)), 120) * 5
+place(fx, st(fade(flow, .4, .5)), a0, -19)
+for tk in (C[4] + 1.1, C[4] + 2.7, C[4] + 4.2): place(fx, S("toc2.wav"), tk, -14, rs.random() - .5)
 
-# --- motor de la camioneta (costa y subida) ---
-a0, a1 = 29.3, 41.9; x = tt(a1 - a0)
-eng = (np.sin(2 * np.pi * 48 * x) + .6 * np.sin(2 * np.pi * 96 * x + np.sin(2 * np.pi * 7 * x)) + .3 * lp(rs.standard_normal(len(x)), 40)) * (.8 + .2 * np.sin(2 * np.pi * 9 * x))
-place(fx, st(fade(eng * .2, 1.0, 1.0)), a0, -10)
+# --- celular: tecleo y el aviso de "no enviado" ---
+k0, k1 = T["typing"]
+for k in range(16): place(fx, S("tic.wav"), k0 + k * (k1 - k0) / 16, -16)
+x = tt(.12); place(fx, st(fade(np.sin(2 * np.pi * 1200 * x) * .3, .005, .05)), T["sent"], -10)
+for k in range(2):
+    x = tt(.18); place(fx, st(fade(np.sin(2 * np.pi * 330 * x) * .35, .005, .05)), T["noSignal"] + k * .22, -8)
 
-# --- el mar que se retira: oleaje que se aleja y se apaga ---
-a0, a1 = T["seaOut"][0] - .6, T["seaOut"][1] + 1.5; x = tt(a1 - a0)
-surf = lp(rs.standard_normal(len(x)), 12) * (1 + .6 * np.sin(2 * np.pi * .7 * x)) * np.linspace(1, .05, len(x)) ** 1.5
-place(fx, st(fade(surf * .8, .3, .6)), a0, -8, -.2)
-place(fx, S("whoosh.wav"), T["seaOut"][0] - .2, -10)
+# --- radio: estática con voz lejana ininteligible ---
+a0, a1 = C[2] - .1, C[3] + .2; x = tt(a1 - a0)
+stat = hp(rs.standard_normal(len(x)), 6) * (.6 + .4 * (rs.random(len(x)) < .002).astype(float).cumsum() % 2)
+mumble = lp(rs.standard_normal(len(x)), 30) * 6 * (np.sin(2 * np.pi * 3.5 * x) > 0) * np.sin(2 * np.pi * 180 * x)
+place(fx, st(fade(stat * .15 + mumble * .08, .05, .2)), a0, -20)
+place(fx, st(fade(hp(rs.standard_normal(int(.25 * SR)), 4) * .5, .01, .1)), C[2] - .05, -18)   # chasquido al prender
 
-# --- oleaje lejano y la línea blanca ---
-a0, a1 = T["line"][0] - .5, T["line"][1] + .3; x = tt(a1 - a0)
-roar = lp(rs.standard_normal(len(x)), 60) * np.linspace(.3, 1, len(x)) * 2.5
-place(fx, st(fade(roar, .5, .4)), a0, -12)
+# --- reloj: tic-tac que acelera ---
+a0, a1 = C[5], C[6]; tk, step = a0 + .15, .5; k = 0
+while tk < a1 - .1:
+    place(fx, S("tic.wav" if k % 2 == 0 else "tac.wav"), tk, -5); k += 1
+    step = max(.09, step * .9); tk += step
+# las olas segunda y tercera (lejos, a través de las paredes)
+place(fx, S("retumbe.wav"), 32.5, -10); place(fx, S("retumbe.wav"), 34.0, -6)
 
-# --- reloj: tic-tac en cada segundo que se ve el reloj ---
-for k in range(7):   # 44.2 … 50.2, al ritmo del segundero
-    place(fx, S("tic.wav" if k % 2 == 0 else "tac.wav"), 44.2 + k, -6)
-for k in range(2): place(fx, S("tic.wav" if k % 2 == 0 else "tac.wav"), 60.5 + k, -5)
-for k in range(3): place(fx, S("tac.wav"), 61.3 + k * .5, -12)   # pasos de tensión
+# --- golpes metálicos en el portón ---
+for i, k in enumerate(T["knocks"]):
+    place(fx, S("metal.wav"), k, -6, .2); place(fx, S("golpe.wav"), k + .01, -8, .2)
+    place(fx, S("toc.wav" if i % 2 == 0 else "toc2.wav"), k, -10, .2)
 
-# --- candado ---
-place(fx, S("metal.wav"), T["lock"], -15); place(fx, S("golpe.wav"), T["lock"], -11)
-place(fx, S("tic.wav"), T["lock"] + .02, -2)
-# portón metálico rechinando al cerrar
-x = tt(T["gateClose"][1] - T["gateClose"][0]); sq = np.sin(2 * np.pi * (300 + 120 * np.sin(2 * np.pi * .8 * x)) * x) * .08
-place(fx, st(fade(sq, .2, .3)), T["gateClose"][0], -14)
+# --- candado: la mano del vecino ---
+place(fx, S("metal.wav"), C[9] + 1.4, -12); place(fx, S("tic.wav"), C[9] + 1.45, -6)
 
-# --- whoosh en los movimientos de cámara entre escenas ---
-for c in CUTS: place(fx, S("whoosh_corto.wav"), c - .13, -13)
-for c in (T["cityRed"][0] - .2, 39.2, 50.9, 64.6): place(fx, S("whoosh.wav"), c - .44, -11)
-# botones de elección
-for tb in (64.7, 65.6, 67.2): place(fx, S("pop.wav"), tb + .05, -6)
+# --- transiciones y botones ---
+for c in C: place(fx, S("whoosh_corto.wav"), c - .13, -14)
+for tb in (50.7, 52.1, 53.4): place(fx, S("pop.wav"), tb + .05, -6)
 
-# --- música de suspenso: dron grave + pulso + cuerdas que suben con la tensión ---
-def tension(t):
-    zones = [(5.3, 12.0, .7), (12.0, 16.2, .4), (16.2, 25.2, .55), (25.2, 29.5, .1), (29.5, 39.2, .95), (39.2, 50.9, .45), (50.9, 54.3, .9), (54.3, 64.6, 1.0), (64.6, DUR, .8)]
-    v = np.full_like(t, .3)
-    for a, b, k in zones:
-        m = (t >= a) & (t < b); v[m] = k
+# --- música de suspenso: dron grave y pulso lento ---
+def tension():
+    zones = [(0, C[0], .4), (C[0], C[1], .9), (C[1], C[3], .6), (C[3], C[4], .5), (C[4], C[5], .8), (C[5], C[6], .9), (C[6], C[8], 1.0), (C[8], C[10], .85), (C[10], DUR, .7)]
+    v = np.full(N, .4)
+    for a, b, k in zones: v[(t >= a) & (t < b)] = k
     return lp(v, int(.8 * SR))
-t = np.arange(N) / SR; ten = tension(t)
-drone = (np.sin(2 * np.pi * 55 * t) + .5 * np.sin(2 * np.pi * 82.4 * t) + .35 * np.sin(2 * np.pi * 110 * t + .3 * np.sin(2 * np.pi * .1 * t)))
-strings = sum(np.sin(2 * np.pi * f * t + 4 * np.sin(2 * np.pi * .2 * t + f)) for f in (220, 233.1, 329.6, 349.2)) * (.5 + .5 * np.sin(2 * np.pi * 6 * t))
-mus = drone * (.5 + .3 * ten) + strings * .12 * ten ** 2
-beat = 60 / 72
+ten = tension()
+drone = np.sin(2 * np.pi * 41.2 * t) + .7 * np.sin(2 * np.pi * 55 * t + .2 * np.sin(2 * np.pi * .07 * t)) + .4 * np.sin(2 * np.pi * 61.7 * t) + .25 * np.sin(2 * np.pi * 82.4 * t)
+low_str = sum(np.sin(2 * np.pi * f * t + 3 * np.sin(2 * np.pi * .15 * t + f)) for f in (110, 116.5, 164.8)) * (.6 + .4 * np.sin(2 * np.pi * .5 * t))
+mus = drone * (.6 + .3 * ten) + low_str * .1 * ten ** 2
+beat = 60 / 60
 for k in range(int(DUR / beat)):
-    tk = k * beat
-    kk = ten[min(N - 1, int(tk * SR))]
-    if kk < .5: continue
-    x = tt(.35); th = np.sin(2 * np.pi * (60 - 30 * x) * x) * np.exp(-x / .09)
-    i = int(tk * SR); seg = th[: N - i] * kk; mus[i:i + len(seg)] += seg * 1.4
-    if kk > .8:
-        i2 = int((tk + .28) * SR); seg2 = th[: max(0, N - i2)] * kk * .7; mus[i2:i2 + len(seg2)] += seg2 * 1.2
-# el flashback (recuerdo cálido): música más suave
-warm = (t >= 25.0) & (t < 29.7)
-mus[warm] *= .45
+    tk = k * beat; kk = ten[min(N - 1, int(tk * SR))]
+    if kk < .55: continue
+    x = tt(.4); th = np.sin(2 * np.pi * (52 - 22 * x) * x) * np.exp(-x / .11)
+    i = int(tk * SR); seg = th[: N - i] * kk; mus[i:i + len(seg)] += seg * 1.3
 mus = st(mus)
 
 def rms_db(x): return 20 * np.log10(np.sqrt(np.mean(x ** 2)) + 1e-12)
 active = np.abs(voz[:, 0]) > 10 ** (-40 / 20)
 vdb = rms_db(voz[active])
-mus *= 10 ** ((vdb - 20 - rms_db(mus)) / 20)
-mus *= (1 + .5 * (ten - .3))[:, None]           # sube en escenas rojas (hasta ~+3 dB)
+mus *= 10 ** ((vdb - 18 - rms_db(mus)) / 20)                     # ~-20 dB bajo la voz (sonoridad)
 v_env = np.convolve(np.abs(voz[:, 0]), np.ones(int(.25 * SR)) / int(.25 * SR), mode="same")
-mus *= (1 - .3 * np.clip(v_env / (np.percentile(v_env[active], 50) + 1e-9), 0, 1))[:, None]
-ends = np.ones(N); ends[: int(.6 * SR)] = np.linspace(0, 1, int(.6 * SR)); ends[-int(1.5 * SR):] = np.linspace(1, 0, int(1.5 * SR))
-mus *= ends[:, None]
+duck = (1 - .3 * np.clip(v_env / (np.percentile(v_env[active], 50) + 1e-9), 0, 1))[:, None]
+mus *= duck; fx *= (.6 + .4 * duck)                               # los efectos también bajan un poco bajo la voz
+ends = np.ones(N); ends[: int(.4 * SR)] = np.linspace(0, 1, int(.4 * SR)); ends[-int(1.2 * SR):] = np.linspace(1, 0, int(1.2 * SR))
+mus *= ends[:, None]; fx *= ends[:, None]
+fx *= 10 ** (-4 / 20)
 mix = voz + mus + fx
 
 os.makedirs(P("assets/audio"), exist_ok=True)
@@ -143,4 +149,4 @@ for name, x in (("mezcla_sin_master.wav", mix), ("musica.wav", mus), ("efectos.w
     y = np.clip(x, -1, 1)
     with wave.open(P("assets/audio", name), "w") as w:
         w.setnchannels(2); w.setsampwidth(2); w.setframerate(SR); w.writeframes((y * 32767).astype(np.int16).tobytes())
-print("ok", DUR, "s,", len(CUTS), "cortes; voz", round(vdb, 1), "dB")
+print("ok", DUR, "s,", len(C), "cortes; voz", round(vdb, 1), "dB, música", round(rms_db(mus), 1), "dB")

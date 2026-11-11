@@ -3,7 +3,7 @@
     #root { position: absolute; inset: 0; background: #05060f; }
     #gl { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
   </style>
-  <div id="root" data-composition-id="film" data-start="0" data-duration="60" data-width="1080" data-height="1920">
+  <div id="root" data-composition-id="film" data-start="0" data-duration="58.58" data-width="1080" data-height="1920">
     <canvas id="gl" width="1080" height="1920" data-layout-ignore></canvas>
   </div>
   <script>
@@ -31,7 +31,7 @@
     }
 
     /* ================= CIUDAD: el mar entra ================= */
-    const FL = { line: [0, 2.2], coast: 2.2, front: [2.4, 7.6] };   // tiempos locales de la toma
+    const FL = { line: [0, 1.8], coast: 1.8, front: [2.0, 6.3] };   // tiempos locales de la toma
     const CITY = (() => {
       const s = new THREE.Scene(); s.fog = new THREE.FogExp2('#2A1A4A', .006);
       const sk = sky('#0A1034', '#5A2A72'); s.add(sk); s.add(stars());
@@ -68,6 +68,13 @@
       const rn = rain(900, [60, 40, 40, 6], 4, '#8A9AD0', .28); s.add(rn);
       const camera = cam();
       function update(t, mode = 'flood') {
+        if (mode === 'aerial') {   // escena 1: toma aérea que baja hasta la casita del cerro
+          line.visible = water.visible = foam.visible = false; blds.forEach(b => b.userData.paint(.45)); cars.forEach(o => { o.c.position.set(o.x, 0, o.z); o.c.rotation.set(0, o.c.rotation.y, 0); });
+          sirens.forEach((L, i) => L.intensity = 2.5 + Math.sin(t * 5 + i) * 1.5); rn.userData.update(t, 0, 10, 0);
+          sk.userData.mat.uniforms.red.value = .3;
+          camPath(camera, t, [[-.4, [6, 62, 75], [-1, 0, -45]], [3.0, [-1.4, 26.8, 30.5], [-1, -1, -70]]]);
+          return { red: .25 };
+        }
         for (let i = 0; i < seaPos.count; i++) { const x = seaBase[i * 3], z = seaBase[i * 3 + 2]; seaPos.setY(i, Math.sin(x * .08 + t * .8) * .25 + Math.cos(z * .1 + t * .6) * .25); }
         seaPos.needsUpdate = true; seaG.computeVertexNormals();
         sirens.forEach((L, i) => L.intensity = 2.5 + Math.sin(t * 5 + i) * 1.5);
@@ -84,7 +91,7 @@
         cars.forEach(o => { const hit = !isWave && front > o.z; const k = hit ? clamp((t - (FL.front[0] + (o.z + 86) / 68 * (FL.front[1] - FL.front[0]))) * .8) : 0; o.c.position.set(o.x + Math.sin(o.ph + t) * k * 2, k * (h * .6) + Math.sin(t * 3 + o.ph) * .2 * k, o.z + k * 9 * o.sp); o.c.rotation.set(Math.sin(t * 2 + o.ph) * .4 * k, o.c.rotation.y + .02 * k, Math.cos(t * 1.7 + o.ph) * .5 * k); });
         blds.forEach(b => { const passed = !isWave && front > b.position.z ? clamp((front - b.position.z) / 18) : 0; b.userData.paint(.45, 0, passed); });
         sk.userData.mat.uniforms.red.value = .3 + .08 * Math.sin(t * 3);
-        camPath(camera, t, [[-.5, [1.4, 27, 27], [-1, -2, -70]], [9, [.4, 25.5, 22.5], [-1, -3, -60]]]);
+        camPath(camera, t, [[-.6, [-1.5, 26.5, 29], [-1, -1, -70]], [6.6, [.4, 25.5, 23.0], [-1, -3, -60]]]);
         return { red: .32 + .08 * Math.sin(t * 4) };
       }
       return { scene: s, camera, update };
@@ -127,7 +134,7 @@
         people.forEach((pp, i) => { pp.userData.head.rotation.y = Math.sin(t * .6 + i) * .2; pp.userData.armL.rotation.x = -.15 - (i % 2) * .3; pp.userData.look(Math.sin(t + i) * .5, .2); });
         rn.userData.update(t, 0, 0, 0);
         redL.intensity = 2 + Math.sin(t * 5) * 1.3;
-        camPath(camera, t, [[-.5, [.175, 1.85, -.8], [.175, 2.08, 1]], [1.5, [.175, 1.85, -.8], [.175, 2.08, 1]], [7.5, [.175, 1.8, -2.9], [.175, 1.8, 3]]]);
+        camPath(camera, t, [[-.5, [.175, 1.85, -.8], [.175, 2.08, 1]], [1.2, [.175, 1.85, -.8], [.175, 2.08, 1]], [5.6, [.175, 1.8, -2.9], [.175, 1.8, 3]]]);
         return { red: .12 + .05 * Math.sin(t * 5) };
       }
       return { scene: s, camera, update };
@@ -150,22 +157,218 @@
         p.userData.head.rotation.y = Math.sin(t * .9) * .38; p.userData.head.rotation.x = Math.max(0, Math.sin(t * .9)) * .12;
         p.userData.armR.rotation.x = -.2 + Math.sin(t * .7) * .05;
         rim.intensity = 2.6 + Math.sin(t * 5) * 1.2; rn.userData.update(t, 0, 0, 0);
-        camPath(camera, t, [[-.5, [.55, 2.15, 4.4], [0, 1.75, 0]], [10, [.3, 2.2, 3.7], [0, 1.8, 0]]]);
+        camPath(camera, t, [[-.5, [.55, 2.15, 4.4], [0, 1.75, 0]], [8.4, [.3, 2.2, 3.7], [0, 1.8, 0]]]);
         return { red: .3 + .08 * Math.sin(t * 5) };
       }
       return { scene: s, camera, update };
     })();
 
-    /* ================= montaje (provisional: escenas de prueba) ================= */
-    const SC = [{ a: 0, b: 8, s: CITY }, { a: 8, b: 16, s: GATE_OUT }, { a: 16, b: 60, s: END }];
-    const rtA = new THREE.WebGLRenderTarget(W, H, { samples: 4 });
+
+    /* tiempos de la parte 2 (de la voz) */
+    const T2 = { cuts: [2.6, 8.95, 11.45, 16.3, 24.45, 29.9, 34.95, 38.25, 43.85, 47.8, 50.45], end: 58.58,
+      typing: [9.15, 10.0], sent: 10.15, noSignal: 10.75, knocks: [35.8, 36.05, 36.3, 36.95, 37.2, 37.45] };
+    window.__TSU2 = T2;
+
+    /* ================= CELULAR: sin señal ================= */
+    function wrap(c, text, x, y, maxW, lh) { const words = text.split(' '); let line = '', lines = []; for (const w of words) { const test = line ? line + ' ' + w : w; if (c.measureText(test).width > maxW && line) { lines.push(line); line = w; } else line = test; } lines.push(line); lines.forEach((l, i) => c.fillText(l, x, y + i * lh)); return lines.length; }
+    function bubble(c, text, y, right, col, tcol) { c.font = '700 24px Nunito, sans-serif'; const words = text.split(' '); let line = '', n = 1; for (const w of words) { const test = line ? line + ' ' + w : w; if (c.measureText(test).width > 240 && line) { n++; line = w; } else line = test; } const h = 30 * n + 26, x = right ? 54 : 16; c.fillStyle = col; c.beginPath(); c.roundRect(x, y, 290, h, 20); c.fill(); c.fillStyle = tcol; wrap(c, text, x + 16, y + 38, 258, 30); return h; }
+    function drawChat2(u, t) {
+      const c = u.ctx; c.fillStyle = '#0E1220'; c.fillRect(0, 0, 360, 720);
+      c.fillStyle = '#1A2238'; c.fillRect(0, 0, 360, 112);
+      c.fillStyle = '#E8A0B8'; c.beginPath(); c.arc(52, 70, 26, 0, 7); c.fill(); c.fillStyle = '#5A2A3A'; c.font = '900 26px Nunito, sans-serif'; c.textAlign = 'center'; c.fillText('M', 52, 79);
+      c.fillStyle = '#FFFFFF'; c.textAlign = 'left'; c.font = '800 28px Nunito, sans-serif'; c.fillText('Mamá', 92, 78);
+      const noSig = t > T2.noSignal; c.font = '800 18px Nunito, sans-serif'; c.fillStyle = noSig ? '#FF4A4A' : 'rgba(255,255,255,0.7)'; c.fillText(noSig ? 'Sin servicio' : '3:41', 16, 26);
+      if (noSig) { c.strokeStyle = '#FF4A4A'; c.lineWidth = 3; for (let i = 0; i < 4; i++) { c.beginPath(); c.moveTo(300 + i * 12, 30); c.lineTo(300 + i * 12, 30 - 6 - i * 4); c.stroke(); } c.beginPath(); c.moveTo(296, 10); c.lineTo(342, 32); c.stroke(); }
+      let y = 140;
+      y += bubble(c, 'No hay taxis, seguimos en el malecón.', y, false, '#DCDCE8', '#1A1A28') + 14;
+      y += bubble(c, '¿Dónde estás?', y, false, '#DCDCE8', '#1A1A28') + 14;
+      const msg = 'Estoy en el cerro, estoy bien';
+      if (t >= T2.sent) {
+        const h = bubble(c, msg, y, true, '#3A7AE0', '#FFFFFF');
+        if (t > T2.noSignal - .2) { c.fillStyle = '#FF4A4A'; c.font = '900 20px Nunito, sans-serif'; c.textAlign = 'right'; c.fillText('⚠ No enviado', 340, y + h + 26); c.textAlign = 'left'; }
+      }
+      // barra para escribir
+      c.fillStyle = '#1A2238'; c.fillRect(0, 640, 360, 80); c.fillStyle = '#2A3456'; c.beginPath(); c.roundRect(14, 656, 290, 48, 24); c.fill();
+      const typed = t < T2.typing[0] ? '' : t < T2.sent ? msg.slice(0, Math.floor(msg.length * prog(t, T2.typing[0], T2.typing[1]))) : '';
+      c.fillStyle = '#FFFFFF'; c.font = '700 20px Nunito, sans-serif'; c.fillText(typed + (t < T2.sent && Math.sin(t * 12) > 0 ? '|' : ''), 30, 687);
+      c.fillStyle = '#3A7AE0'; c.beginPath(); c.arc(330, 680, 20, 0, 7); c.fill();
+      u.tex.needsUpdate = true;
+    }
+    const CEL = (() => {
+      const s = new THREE.Scene(); s.background = new THREE.Color('#06081A');
+      s.add(new THREE.HemisphereLight('#5060B0', '#100818', .7));
+      const key = new THREE.PointLight('#9AB0FF', 1.2, 10, 2); key.position.set(-1.5, 1.5, 2.5); s.add(key);
+      const red = new THREE.PointLight('#FF3030', 1.5, 8, 2); red.position.set(1.8, -1, 1.5); s.add(red);
+      const r = rng(31);
+      for (let i = 0; i < 26; i++) { const m = new THREE.Mesh(new THREE.CircleGeometry(.15 + r() * .35, 20), new THREE.MeshBasicMaterial({ color: r() < .5 ? '#FFB860' : '#FF3A3A', transparent: true, opacity: .22, toneMapped: false, depthWrite: false })); m.position.set((r() - .5) * 9, (r() - .5) * 14, -6 - r() * 4); s.add(m); }
+      const hp = handPhone(); hp.scale.setScalar(2.1); s.add(hp);
+      const camera = cam(34);
+      function update(t) {
+        hp.position.set(0, -.2 + Math.sin(t * .9) * .03, 0); hp.rotation.set(-.12 + Math.sin(t * .7) * .02, .18 + Math.sin(t * .5) * .03, -.05);
+        drawChat2(hp.userData, t); red.intensity = 1.5 + Math.sin(t * 5);
+        camPath(camera, t, [[8.7, [.35, .85, 4.6], [0, .6, 0]], [11.7, [.15, .85, 3.9], [0, .62, 0]]]);
+        return { red: .2 };
+      }
+      return { scene: s, camera, update };
+    })();
+
+    /* ================= CALLE INUNDADA ================= */
+    const STREET = (() => {
+      const s = new THREE.Scene(); s.background = new THREE.Color('#0A0E22'); s.fog = new THREE.FogExp2('#1A1838', .035);
+      s.add(new THREE.HemisphereLight('#4A4AA0', '#100818', .55));
+      const moon = new THREE.DirectionalLight('#8AA0FF', .5); moon.position.set(-10, 20, 5); s.add(moon);
+      const r = rng(61);
+      for (let i = 0; i < 12; i++) { const side = i % 2 ? 1 : -1, b = building(4 + r() * 2, 6 + r() * 10, 4, 500 + i, { lit: .3 }); b.position.set(side * 7.5, 0, 6 - Math.floor(i / 2) * 6.5); b.rotation.y = side > 0 ? -Math.PI / 2 : Math.PI / 2; b.userData.paint(.4, 0, .7); s.add(b); }
+      for (let i = 0; i < 5; i++) { const p = cyl(.06, .06, 4, mat('#2A2A30'), 8); p.position.set(4.8, 2, 4 - i * 8); s.add(p); }
+      // agua con textura que corre
+      const wt = (() => { const c = document.createElement('canvas'); c.width = 256; c.height = 256; const x = c.getContext('2d'); x.fillStyle = '#2E3E5E'; x.fillRect(0, 0, 256, 256); const q = rng(7); for (let i = 0; i < 70; i++) { x.strokeStyle = `rgba(200,220,255,${.15 + q() * .3})`; x.lineWidth = 1 + q() * 3; x.beginPath(); const y0 = q() * 256; x.moveTo(q() * 256, y0); x.bezierCurveTo(q() * 256, y0 + 10, q() * 256, y0 - 10, q() * 256, y0 + 4); x.stroke(); } const tx = new THREE.CanvasTexture(c); tx.wrapS = tx.wrapT = THREE.RepeatWrapping; tx.repeat.set(4, 10); tx.encoding = THREE.sRGBEncoding; return tx; })();
+      const water = new THREE.Mesh(new THREE.PlaneGeometry(16, 70, 30, 60), new THREE.MeshStandardMaterial({ map: wt, color: '#9AB0D8', roughness: .2, metalness: .35 })); water.rotation.x = -Math.PI / 2; water.position.set(0, .55, -20); s.add(water);
+      const wp = water.geometry.attributes.position, wb = wp.array.slice();
+      s.add(box(16, .1, 70, mat('#1A1A22'), 0, 0, -20));
+      // coches medio hundidos y escombros flotando
+      for (const [x, z, ry, c] of [[-3.2, -4, .3, '#E04848'], [3.4, -14, -.5, '#3A7AE0'], [-2.6, -24, .9, '#E8E8F0']]) { const g = new THREE.Group(); g.add(box(1.8, .6, .9, mat(c, { roughness: .4, metalness: .3 }), 0, .5, 0)); g.add(box(1.0, .4, .84, mat('#1A2030'), -.1, .95, 0)); g.position.set(x, 0, z); g.rotation.set(.1, ry, .08); s.add(g); }
+      const deb = []; for (let i = 0; i < 18; i++) { const k = r(), m = k < .4 ? box(.9 + r(), .08, .2, mat('#6A4A2A')) : k < .7 ? box(.4, .3, .4, mat('#8A7A5A')) : cyl(.12, .12, .5, mat(['#E04848', '#3A7AE0', '#F2C230'][i % 3]), 10); s.add(m); deb.push({ m, x: (r() - .5) * 10, z0: -40 + r() * 40, sp: 1.5 + r() * 1.5, ph: r() * 6 }); }
+      const sirens = [new THREE.PointLight('#FF2020', 3, 25, 1.5), new THREE.PointLight('#FF2020', 3, 25, 1.5)]; sirens[0].position.set(-5, 6, -6); sirens[1].position.set(5, 6, -20); s.add(...sirens);
+      const rn = rain(1400, [16, 14, 20, -6], 33, '#B8C8F0', .4); s.add(rn);
+      const camera = cam(40);
+      function update(t) {
+        wt.offset.y = t * .35;
+        for (let i = 0; i < wp.count; i++) { const x = wb[i * 3], y = wb[i * 3 + 1]; wp.setZ(i, Math.sin(x * .9 + t * 3 + y * .3) * .06 + Math.cos(y * .5 + t * 2) * .05); }
+        wp.needsUpdate = true; water.geometry.computeVertexNormals();
+        deb.forEach(o => { const z = ((o.z0 + t * o.sp) % 44 + 44) % 44 - 40; o.m.position.set(o.x + Math.sin(t + o.ph) * .3, .58 + Math.sin(t * 2 + o.ph) * .05, z); o.m.rotation.set(Math.sin(t + o.ph) * .2, t * .5 + o.ph, Math.cos(t * 1.3 + o.ph) * .2); });
+        sirens.forEach((L, i) => L.intensity = 2.5 + Math.sin(t * 5 + i * 2) * 1.5);
+        rn.userData.update(t, 0, 0, 0);
+        camPath(camera, t, [[24.2, [1.0, 1.3, 7.5], [0, .5, -10]], [30.1, [.4, .95, 4.5], [0, .55, -10]]]);
+        return { red: .3 + .08 * Math.sin(t * 5) };
+      }
+      return { scene: s, camera, update };
+    })();
+
+    const HUT = (() => {
+      const s = new THREE.Scene(); s.background = new THREE.Color('#120C10');
+      const wood = mat('#6A4A30'), dark = mat('#3A2618');
+      s.add(box(8, .1, 6, mat('#3A2A20'), 0, -.05, 0)); s.add(box(8, 4, .1, wood, 0, 2, -2)); s.add(box(.1, 4, 6, wood, -3.5, 2, 1));
+      for (let i = 0; i < 9; i++) s.add(box(.04, 4, .02, dark, -3.4 + i * .85, 2, -1.94));
+      const shelfX = -1.2;
+      for (let lv = 0; lv < 3; lv++) s.add(box(3.4, .08, .7, dark, shelfX, .6 + lv * .95, -1.6));
+      for (const sx of [-1.7, 1.7]) s.add(box(.08, 2.9, .7, dark, shelfX + sx, 1.45, -1.6));
+      const jugs = []; for (let i = 0; i < 4; i++) { const j = jug(.62); j.position.set(shelfX - 1.25 + i * .82, .64, -1.6); s.add(j); jugs.push(j); }
+      const cans = ['#E04848', '#F2C230', '#3FAE5A', '#3A7AE0', '#E87A2A', '#B04AE0'];
+      for (let i = 0; i < 14; i++) { const c = cyl(.11, .11, .26, mat(cans[i % 6], { roughness: .4, metalness: .3 }), 12); c.position.set(shelfX - 1.45 + (i % 7) * .48, 1.69, -1.6 + (i >= 7 ? .18 : -.12)); s.add(c); }
+      const radio = new THREE.Group(); radio.position.set(shelfX + .2, 2.55, -1.6); s.add(radio);
+      radio.add(box(.9, .5, .3, mat('#2A2A30', { roughness: .5 }), 0, .25, 0)); radio.add(box(.34, .34, .02, mat('#555560'), -.2, .25, .16));
+      radio.add(box(.24, .1, .02, glow('#7AFF9A'), .22, .36, .16)); radio.add(ball(.05, mat('#C8C8D0'), .22, .18, .17, 8));
+      const ant = cyl(.012, .012, .8, mat('#B8B8C0', { metalness: .8 }), 6); ant.position.set(.35, .8, 0); ant.rotation.z = -.3; radio.add(ant);
+      const led = ball(.025, glow('#FF3030'), .4, .44, .16, 6); radio.add(led);
+      const clock = wallClock(); clock.position.set(2.0, 2.4, -1.93); s.add(clock);
+      const lamp = new THREE.PointLight('#FFB060', 1.6, 9, 2); lamp.position.set(.6, 3.2, 0); lamp.castShadow = true; s.add(lamp);
+      s.add(new THREE.HemisphereLight('#6A5A8A', '#1A0E0A', .5));
+      const redW = new THREE.PointLight('#FF2A2A', 0, 8, 2); redW.position.set(3.2, 2.2, 1.5); s.add(redW);
+      // el vecino con su mapa de mareas y un cronómetro
+      const v = vecino(); s.add(v); v.userData.spot.intensity = 0; v.userData.beam.visible = false; v.userData.halo.visible = false; v.userData.lamp.intensity = 0; v.userData.flash.visible = false;
+      const mapT = (() => { const c = document.createElement('canvas'); c.width = 256; c.height = 180; const x = c.getContext('2d'); x.fillStyle = '#EFE6CC'; x.fillRect(0, 0, 256, 180); x.strokeStyle = '#3A6AB0'; x.lineWidth = 4; for (let k = 0; k < 4; k++) { x.beginPath(); for (let i = 0; i <= 256; i += 8) x.lineTo(i, 40 + k * 34 + Math.sin(i / 20 + k) * (8 + k * 3)); x.stroke(); } x.fillStyle = '#B83A2A'; x.font = '900 22px Nunito, sans-serif'; x.fillText('OLA 1   OLA 2   OLA 3', 14, 172); const tx = new THREE.CanvasTexture(c); tx.encoding = THREE.sRGBEncoding; return tx; })();
+      const mapP = new THREE.Mesh(new THREE.PlaneGeometry(.55, .38), new THREE.MeshStandardMaterial({ map: mapT, roughness: .9, side: THREE.DoubleSide })); s.add(mapP);
+      const sw = new THREE.Group(); sw.add(cyl(.08, .08, .03, mat('#2A2A30', { metalness: .5 }), 16)); const swf = new THREE.Mesh(new THREE.CircleGeometry(.065, 20), glow('#E8FFE8')); swf.rotation.x = -Math.PI / 2; swf.position.y = .016; sw.add(swf); s.add(sw);
+      const camera = cam(36);
+      function update(t, mode) {
+        const V = v.userData;
+        v.visible = mode === 'vecino' || mode === 'estantes'; mapP.visible = sw.visible = mode === 'vecino';
+        jugs.forEach((j, i) => j.visible = mode !== 'estantes' || i < 2);
+        led.visible = Math.sin(t * 6) > 0;
+        redW.intensity = .8 + Math.sin(t * 5) * .5;
+        if (mode === 'radio') {
+          clock.userData.set(3, 41, (t * 3) % 60);
+          camPath(camera, t, [[11.2, [-.2, 2.85, 1.4], [-1.0, 2.65, -1.6]], [16.6, [-.55, 2.78, .55], [-1.0, 2.65, -1.6]]]);
+          return { red: .15 };
+        }
+        if (mode === 'vecino') {
+          clock.userData.set(3, 44, ((t - 16) * 1) % 60);
+          v.position.set(1.0, 0, -.6); v.rotation.y = -.25;
+          V.armL.rotation.set(-1.1, 0, .25); V.elbowL.rotation.x = -.9; V.armR.rotation.set(-1.0, 0, -.2); V.elbowR.rotation.x = -.8;
+          V.head.rotation.set(.05, Math.sin(t * .8) * .15, 0);
+          v.updateMatrixWorld(true);
+          const pL = new THREE.Vector3(), pR = new THREE.Vector3(); V.elbowL.localToWorld(pL.set(0, -.47, .1)); V.elbowR.localToWorld(pR.set(0, -.47, .1));
+          mapP.position.copy(pL).add(new THREE.Vector3(.2, -.28, .12)); mapP.rotation.set(-.6, -.25, 0);
+          sw.position.copy(pR); sw.rotation.set(1.2, 0, 0);
+          camPath(camera, t, [[16.0, [-.3, 2.15, 2.6], [1.3, 1.75, -1.1]], [24.7, [.2, 2.05, 1.5], [1.2, 1.8, -1.1]]]);
+          return { red: .15 };
+        }
+        if (mode === 'reloj') {   // pasan seis horas: las manecillas giran rápido
+          const k = ease(prog(t, 30.0, 32.0)), mins = 45 + k * 360;
+          clock.userData.set(3 + Math.floor(mins / 60), mins % 60, (t * 40) % 60);
+          const sh = Math.max(Math.max(0, 1 - Math.abs(t - 32.7) * 2.5), Math.max(0, 1 - Math.abs(t - 34.1) * 2.0) * 1.5);
+          camera.position.set(2.0 + Math.sin(t * 50) * .02 * sh, 2.4 + Math.cos(t * 43) * .02 * sh, -.15 - prog(t, 29.9, 35) * .25); camera.lookAt(2.0, 2.4, -1.93);
+          return { red: .2 + .35 * sh };
+        }
+        // estantes: casi no queda agua
+        v.position.set(.3, 0, -.4); v.rotation.y = Math.PI * .85;
+        V.armR.rotation.set(-1.2, 0, -.1); V.elbowR.rotation.x = -.2 - (Math.floor(t * 1.6) % 2) * .15; V.armL.rotation.set(-.1, 0, .1);
+        V.head.rotation.set(.35, .2, 0);
+        clock.userData.set(9, 40, t % 60);
+        camPath(camera, t, [[43.6, [-1.6, 1.6, 2.4], [-1.8, .9, -1.6]], [48.0, [-1.9, 1.3, 1.6], [-2.0, .85, -1.6]]]);
+        return { red: .15 };
+      }
+      return { scene: s, camera, update };
+    })();
+
+    /* ================= PORTÓN POR DENTRO ================= */
+    const GATE = (() => {
+      const s = new THREE.Scene(); s.fog = new THREE.FogExp2('#1A1438', .03);
+      const sk = sky('#0A1034', '#4A2A6A'); s.add(sk); s.add(stars(300, 8));
+      s.add(new THREE.HemisphereLight('#5A5AB0', '#1A0A20', .7));
+      const moon = new THREE.DirectionalLight('#9AB0FF', .8); moon.position.set(-10, 20, 10); moon.castShadow = true; s.add(moon);
+      s.add(box(40, .2, 40, mat('#26342C', { flatShading: true }), 0, -.1, 0));
+      const iron = mat('#3A3A44', { metalness: .6, roughness: .45 });
+      for (let i = -6; i <= 6; i++) if (i < -1 || i > 1) s.add(box(.12, 2.3, .12, iron, i * 1.3 - 1.3, 1.15, 0));
+      s.add(box(5.5, .08, .08, iron, -7.2, 2.1, 0)); s.add(box(5.5, .08, .08, iron, -7.2, .4, 0)); s.add(box(5.5, .08, .08, iron, 4.6, 2.1, 0)); s.add(box(5.5, .08, .08, iron, 4.6, .4, 0));
+      const gt = gate(); gt.position.set(-1.3, 0, 0); s.add(gt);
+      s.add(box(.2, 2.6, .2, iron, 1.4, 1.3, 0));
+      const v = vecino(); s.add(v); v.userData.spot.intensity = 1.5;
+      const h = hut(); h.position.set(-3, 0, -6); s.add(h);
+      const redL = new THREE.PointLight('#FF2020', 2, 20, 1.5); redL.position.set(4, 6, 8); s.add(redL);
+      const rn = rain(1200, [16, 12, 14, 2], 21, '#B8C8F0', .4); s.add(rn);
+      gt.userData.leaf.rotation.y = 0;
+      const inL = new THREE.PointLight('#FFC890', 2.2, 9, 1.5); inL.position.set(2.2, 2.6, -2.6); s.add(inL);
+      const camera = cam(40);
+      function update(t, mode) {
+        rn.userData.update(t, 0, 0, 0);
+        redL.intensity = 2 + Math.sin(t * 5) * 1.2;
+        const V = v.userData; V.flash.visible = false; V.spot.intensity = 0; V.beam.visible = false; V.halo.visible = false; V.lamp.intensity = 0;
+        if (mode === 'golpes') {
+          let k = 0; for (const s0 of T2.knocks) { const d = t - s0; if (d >= 0 && d < .18) k = Math.max(k, 1 - d / .18); }
+          gt.userData.leaf.rotation.y = -k * .02; gt.userData.leaf.position.z = -k * .03;
+          v.position.set(-3, 0, -2.5); v.rotation.y = .6;
+          camPath(camera, t, [[34.8, [3.0, 2.0, -4.4], [.4, 1.3, 0]], [36.6, [2.3, 1.6, -2.4], [1.0, 1.25, 0]], [38.4, [1.95, 1.45, -1.5], [1.32, 1.2, 0]]]);
+          camera.position.x += Math.sin(t * 60) * .015 * k;
+          gt.userData.shackle.position.y = .14;
+          return { red: .3 + .1 * Math.sin(t * 5) };
+        }
+        // la mano del vecino sobre el candado
+        v.position.set(1.05, 0, -.62); v.rotation.y = .45;
+        V.armR.rotation.set(-1.35, 0, 0); V.elbowR.rotation.x = -.25; V.head.rotation.set(.25, .4, 0);
+        camPath(camera, t, [[47.6, [2.5, 1.85, 3.0], [1.0, 1.3, 0]], [50.6, [1.95, 1.42, 1.45], [1.32, 1.2, .05]]]);
+        return { red: .32 + .1 * Math.sin(t * 5) };
+      }
+      return { scene: s, camera, update };
+    })();
+
+    /* ================= montaje con zoom continuo ================= */
+    const C = T2.cuts;
+    const SC = [
+      { a: 0, b: C[0], s: CITY, m: 'aerial', lt: 0 }, { a: C[0], b: C[1], s: CITY, m: 'flood', lt: C[0] }, { a: C[1], b: C[2], s: CEL },
+      { a: C[2], b: C[3], s: HUT, m: 'radio' }, { a: C[3], b: C[4], s: HUT, m: 'vecino' }, { a: C[4], b: C[5], s: STREET },
+      { a: C[5], b: C[6], s: HUT, m: 'reloj' }, { a: C[6], b: C[7], s: GATE, m: 'golpes' }, { a: C[7], b: C[8], s: GATE_OUT, lt: C[7] },
+      { a: C[8], b: C[9], s: HUT, m: 'estantes' }, { a: C[9], b: C[10], s: GATE, m: 'mano' }, { a: C[10], b: 99, s: END, lt: C[10] },
+    ];
+    const rtA = new THREE.WebGLRenderTarget(W, H, { samples: 4 }), rtB = new THREE.WebGLRenderTarget(W, H, { samples: 4 });
     const post = new THREE.ShaderMaterial({
-      uniforms: { a: { value: rtA.texture }, red: { value: 0 }, frame: { value: 0 } },
+      uniforms: { a: { value: rtA.texture }, b: { value: rtB.texture }, mixk: { value: 0 }, za: { value: 1 }, zb: { value: 1 }, red: { value: 0 }, frame: { value: 0 } },
       vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }',
-      fragmentShader: `uniform sampler2D a; uniform float red, frame; varying vec2 vUv;
+      fragmentShader: `uniform sampler2D a; uniform sampler2D b; uniform float mixk, za, zb, red, frame; varying vec2 vUv;
         float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898,78.233))) * 43758.5453); }
         void main(){
-          vec3 c = texture2D(a, vUv).rgb; float l = dot(c, vec3(.299,.587,.114));
+          vec3 ca = texture2D(a, (vUv - .5) / za + .5).rgb, cb = texture2D(b, (vUv - .5) / zb + .5).rgb;
+          vec3 c = mix(ca, cb, mixk); float l = dot(c, vec3(.299,.587,.114));
           c = mix(c, vec3(l * 1.55 + c.r * .15, l * .3, l * .26), clamp(red * 1.8, 0., .92));
           vec2 q = vUv - .5; c *= 1. - smoothstep(.35, .85, length(q * vec2(1., .62))) * .55;
           c += (hash(vUv * vec2(1080., 1920.) + frame * 17.) - .5) * .035;
@@ -174,11 +377,21 @@
           #include <encodings_fragment>
         }`, depthTest: false, depthWrite: false });
     const postScene = new THREE.Scene(); postScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), post)); const postCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    const TR = .45;
+    function draw(sc, t, rt) { const g = sc.s.update(sc.lt !== undefined ? t - sc.lt : t, sc.m) || {}; renderer.setRenderTarget(rt); renderer.render(sc.s.scene, sc.s.camera); return g; }
     function renderAt(t) {
-      const c = SC.find(x => t >= x.a && t < x.b) || SC[SC.length - 1];
-      const g = c.s.update(t - c.a) || {};
-      renderer.setRenderTarget(rtA); renderer.render(c.s.scene, c.s.camera);
-      post.uniforms.red.value = g.red || 0; post.uniforms.frame.value = Math.round(t * 30);
+      let i = SC.findIndex(x => t >= x.a && t < x.b); if (i < 0) i = SC.length - 1;
+      const cur = SC[i], nxt = SC[i + 1], prv = SC[i - 1];
+      let A = cur, B = null, k = 0, za = 1, zb = 1, T0 = 0;
+      if (nxt && t > nxt.a - TR) { B = nxt; T0 = nxt.a; } else if (prv && t < cur.a + TR) { A = prv; B = cur; T0 = cur.a; }
+      if (A.s === (B && B.s) && A.m === B.m) B = null;
+      // si las dos tomas usan la misma escena 3D, se dibuja primero la que sale y después la que entra
+      let g = draw(A, t, rtA);
+      if (B) {
+        k = ease(prog(t, T0 - .2, T0 + .2)); za = 1 + .35 * easeIn(prog(t, T0 - TR, T0 + .2)); zb = 1.3 - .3 * easeOut(prog(t, T0 - .2, T0 + TR));
+        const g2 = draw(B, t, rtB); g = { red: lerp(g.red || 0, g2.red || 0, k) };
+      }
+      const u = post.uniforms; u.mixk.value = k; u.za.value = za; u.zb.value = zb; u.red.value = g.red || 0; u.frame.value = Math.round(t * 30);
       renderer.setRenderTarget(null); renderer.render(postScene, postCam);
     }
     window.addEventListener('hf-seek', e => renderAt(e.detail.time));
