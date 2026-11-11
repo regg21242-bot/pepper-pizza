@@ -113,5 +113,83 @@
     g.userData = { cv, tex, ctx: cv.getContext('2d'), scr };
     return g;
   }
-  window.M = { THREE, rng, mat, glow, box, ball, cyl, person, hero, vecino, building, sky, stars, phone };
+
+  /* cejas (para el primer plano dudando) */
+  function addBrows(p) {
+    const head = p.userData.head, brows = [];
+    for (const s of [-1, 1]) { const b = box(.13, .028, .03, mat('#2A1C14'), s * .11, .12, .3); head.add(b); brows.push(b); }
+    p.userData.brows = (worry) => brows.forEach((b, i) => { const s = i ? 1 : -1; b.rotation.z = -s * .35 * worry; b.position.y = .12 + .02 * worry; });
+  }
+  /* camioneta pickup low-poly */
+  function truck(color = '#2E5A4A') {
+    const g = new THREE.Group(), body = mat(color, { roughness: .5, metalness: .2 }), dark = mat('#14161E', { roughness: .4 });
+    g.add(box(4.2, .7, 1.9, body, 0, .85, 0));                 // chasis
+    g.add(box(1.9, .8, 1.8, body, .7, 1.6, 0));                 // cabina
+    g.add(box(1.92, .55, 1.82, mat('#1A2A3A', { roughness: .15, metalness: .4 }), .7, 1.62, 0)); // vidrios
+    g.add(box(2.0, .5, .08, body, -1.1, 1.45, .91)); g.add(box(2.0, .5, .08, body, -1.1, 1.45, -.91)); g.add(box(.08, .5, 1.9, body, -2.1, 1.45, 0)); // caja
+    const wheels = [];
+    for (const [x, z] of [[1.3, .95], [1.3, -.95], [-1.3, .95], [-1.3, -.95]]) { const w = cyl(.42, .42, .3, dark, 14); w.rotation.x = Math.PI / 2; w.position.set(x, .45, z); g.add(w); wheels.push(w); }
+    for (const z of [.6, -.6]) { const h = box(.06, .18, .32, glow('#FFF4D0'), 2.11, .95, z); g.add(h); }
+    for (const z of [.7, -.7]) g.add(box(.06, .2, .2, glow('#FF2A1A'), -2.11, .95, z));
+    // dos cabecitas dentro de la cabina
+    g.add(ball(.2, mat('#D9A27A'), .5, 1.75, .45, 12)); g.add(ball(.2, mat('#D9A27A'), .5, 1.75, -.45, 12));
+    const capB = new THREE.Mesh(new THREE.SphereGeometry(.21, 12, 6, 0, Math.PI * 2, 0, Math.PI * .5), mat('#C8302A')); capB.position.set(.5, 1.8, -.45); g.add(capB);
+    const beams = new THREE.SpotLight('#FFF0C8', 3, 30, .5, .5, 1); beams.position.set(2.2, 1, 0); const bt = new THREE.Object3D(); bt.position.set(12, 0, 0); g.add(bt); beams.target = bt; g.add(beams);
+    g.userData = { wheels }; return g;
+  }
+  /* garrafón de agua azul */
+  function jug(s = 1) {
+    const g = new THREE.Group(), m = mat('#4AA8FF', { roughness: .15, transparent: true, opacity: .75 });
+    const b = cyl(.32, .32, .7, m, 16); b.position.y = .35; g.add(b);
+    const n = cyl(.12, .3, .2, m, 14); n.position.y = .8; g.add(n);
+    const c = cyl(.1, .1, .1, mat('#1E5AC8'), 10); c.position.y = .95; g.add(c);
+    g.scale.setScalar(s); return g;
+  }
+  /* reloj de pared: cara de canvas, manecillas que giran */
+  function wallClock() {
+    const g = new THREE.Group();
+    const rim = cyl(.62, .62, .12, mat('#2A2A30', { roughness: .4 }), 32); rim.rotation.x = Math.PI / 2; g.add(rim);
+    const cv = document.createElement('canvas'); cv.width = cv.height = 512; const c = cv.getContext('2d');
+    c.fillStyle = '#F4EEDC'; c.fillRect(0, 0, 512, 512); c.fillStyle = '#1A1A20'; c.font = '700 64px Nunito, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
+    for (let i = 1; i <= 12; i++) { const a = i / 12 * Math.PI * 2; c.fillText(String(i), 256 + Math.sin(a) * 190, 256 - Math.cos(a) * 190); }
+    for (let i = 0; i < 60; i++) { const a = i / 60 * Math.PI * 2, r1 = i % 5 ? 236 : 222; c.lineWidth = i % 5 ? 3 : 7; c.beginPath(); c.moveTo(256 + Math.sin(a) * r1, 256 - Math.cos(a) * r1); c.lineTo(256 + Math.sin(a) * 248, 256 - Math.cos(a) * 248); c.stroke(); }
+    const tex = new THREE.CanvasTexture(cv); tex.encoding = THREE.sRGBEncoding;
+    const face = new THREE.Mesh(new THREE.CircleGeometry(.56, 48), new THREE.MeshStandardMaterial({ map: tex, roughness: .6 })); face.position.z = .065; g.add(face);
+    const hand = (len, w, col, z) => { const h = new THREE.Group(); const m = box(w, len, .02, mat(col), 0, len / 2 - .05, 0); m.castShadow = false; h.add(m); h.position.z = z; g.add(h); return h; };
+    const hh = hand(.3, .05, '#1A1A20', .08), mh = hand(.44, .035, '#1A1A20', .09), sh = hand(.48, .014, '#D02020', .1);
+    g.add(ball(.035, mat('#D02020'), 0, 0, .11, 8));
+    g.userData.set = (h, m, sec) => { hh.rotation.z = -((h % 12) + m / 60) / 12 * Math.PI * 2; mh.rotation.z = -(m + sec / 60) / 60 * Math.PI * 2; sh.rotation.z = -Math.floor(sec) / 60 * Math.PI * 2; };
+    return g;
+  }
+  /* mano (sin dedos detallados) sosteniendo el celular, con manga de sudadera */
+  function handPhone() {
+    const g = new THREE.Group(), ph = phone(); g.add(ph);
+    const skin = mat('#D9A27A');
+    g.add(box(.62, .5, .16, skin, 0, -.42, -.1));                 // palma detrás
+    const thumb = box(.14, .34, .14, skin, -.3, -.2, .03); thumb.rotation.z = -.5; g.add(thumb);
+    for (let i = 0; i < 3; i++) g.add(box(.1, .14, .1, skin, .3, -.1 - i * .17, .0));   // dedos asomando al borde
+    g.add(box(.7, .6, .5, mat('#F2A033'), 0, -.95, -.15));        // manga
+    g.userData = ph.userData; return g;
+  }
+  /* portón con barrotes y candado */
+  function gate() {
+    const g = new THREE.Group(), iron = mat('#3A3A44', { metalness: .6, roughness: .45 });
+    const leaf = new THREE.Group(); g.add(leaf);
+    leaf.add(box(2.6, .1, .1, iron, 1.3, 2.2, 0)); leaf.add(box(2.6, .1, .1, iron, 1.3, .25, 0));
+    for (let i = 0; i <= 10; i++) leaf.add(box(.06, 2.0, .06, iron, .1 + i * .25, 1.22, 0));
+    const lock = new THREE.Group(); lock.position.set(2.62, 1.2, .1); leaf.add(lock);
+    lock.add(box(.22, .26, .1, mat('#C8A040', { metalness: .7, roughness: .3 }), 0, 0, 0));
+    const sh = new THREE.Mesh(new THREE.TorusGeometry(.08, .022, 8, 16, Math.PI), mat('#B8B8C0', { metalness: .8, roughness: .3 })); sh.position.y = .14; lock.add(sh);
+    g.userData = { leaf, lock, shackle: sh }; return g;
+  }
+  /* casita del cerro */
+  function hut() {
+    const g = new THREE.Group();
+    g.add(box(4, 2.6, 3.4, mat('#8A6A4A'), 0, 1.3, 0));
+    const roof = new THREE.Mesh(new THREE.CylinderGeometry(0, 3.1, 1.4, 4), mat('#5A2A22')); roof.rotation.y = Math.PI / 4; roof.position.y = 3.3; roof.scale.set(1, 1, .85); roof.castShadow = true; g.add(roof);
+    g.add(box(.9, 1.8, .06, mat('#4A3020'), -.8, .9, 1.72));
+    g.add(box(.9, .7, .06, glow('#FFC65A'), .9, 1.5, 1.72));
+    return g;
+  }
+  window.M = { THREE, rng, mat, glow, box, ball, cyl, person, hero, vecino, building, sky, stars, phone, addBrows, truck, jug, wallClock, handPhone, gate, hut };
 })();

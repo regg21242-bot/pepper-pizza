@@ -1,0 +1,1347 @@
+{
+ "texto": "Imagina que a las tres de la mañana te despierta un temblor fuerte. Dura casi un minuto. Luego suena la alerta en el celular, alerta de tsunami, evacúe a zonas altas. La ola llega en veinte minutos. Y tu mamá te escribe, estoy en el malecón con tu tía. ¿Qué hacemos? Entonces alguien toca la puerta. Es el vecino raro, ese al que nadie saluda. Tengo camioneta. Subete, nos vamos al cerro. ¿Por qué tú? Porque eres el único que una vez le ayudó a subir el garrafón. Mientras manejan, el mar se retira. La playa queda vacía. Primera regla, no te acerque saber. Si el mar se retira, la ola ya viene. En lo alto del cerro, el vecino tiene una casita, agua, comida y un radio de pilas. Segunda regla, nadie baja hasta que lo diga protección civil. Porque la primera ola muchas veces no es la más grande. Entonces lo ves, una línea blanca en el mar, acercándose. Y te vibra el celular. Tu mamá, no hay taxis, seguimos en el malecón. ¿Dónde estás? Quedan ocho minutos. ¿Y el vecino ya está cerrando el portón? ¿Te quedas en el cerro o bajas por tu mamá? Elige en comentarios. Y sígueme, si llegamos a diez mil seguidores, saco la segunda parte.",
+ "idioma": "es",
+ "duracion": 73.94,
+ "segmentos": [
+  {
+   "inicio": 0.0,
+   "fin": 5.5,
+   "texto": "Imagina que a las tres de la mañana te despierta un temblor fuerte. Dura casi un minuto. Luego"
+  },
+  {
+   "inicio": 5.5,
+   "fin": 11.12,
+   "texto": "suena la alerta en el celular, alerta de tsunami, evacúe a zonas altas. La ola llega en veinte"
+  },
+  {
+   "inicio": 11.12,
+   "fin": 17.28,
+   "texto": "minutos. Y tu mamá te escribe, estoy en el malecón con tu tía. ¿Qué hacemos? Entonces alguien toca"
+  },
+  {
+   "inicio": 17.28,
+   "fin": 24.94,
+   "texto": "la puerta. Es el vecino raro, ese al que nadie saluda. Tengo camioneta. Subete, nos vamos al cerro."
+  },
+  {
+   "inicio": 25.34,
+   "fin": 29.94,
+   "texto": "¿Por qué tú? Porque eres el único que una vez le ayudó a subir el garrafón. Mientras"
+  },
+  {
+   "inicio": 29.94,
+   "fin": 37.48,
+   "texto": "manejan, el mar se retira. La playa queda vacía. Primera regla, no te acerque saber. Si el mar se"
+  },
+  {
+   "inicio": 37.48,
+   "fin": 43.16,
+   "texto": "retira, la ola ya viene. En lo alto del cerro, el vecino tiene una casita, agua, comida y un"
+  },
+  {
+   "inicio": 43.16,
+   "fin": 49.1,
+   "texto": "radio de pilas. Segunda regla, nadie baja hasta que lo diga protección civil. Porque la primera ola"
+  },
+  {
+   "inicio": 49.1,
+   "fin": 54.0,
+   "texto": "muchas veces no es la más grande. Entonces lo ves, una línea blanca en el mar, acercándose."
+  },
+  {
+   "inicio": 54.0,
+   "fin": 60.1,
+   "texto": "Y te vibra el celular. Tu mamá, no hay taxis, seguimos en el malecón. ¿Dónde estás?"
+  },
+  {
+   "inicio": 60.66,
+   "fin": 66.16,
+   "texto": "Quedan ocho minutos. ¿Y el vecino ya está cerrando el portón? ¿Te quedas en el cerro o bajas por"
+  },
+  {
+   "inicio": 66.16,
+   "fin": 72.62,
+   "texto": "tu mamá? Elige en comentarios. Y sígueme, si llegamos a diez mil seguidores, saco la segunda parte."
+  }
+ ],
+ "palabras": [
+  {
+   "palabra": "Imagina",
+   "inicio": 0.0,
+   "fin": 0.62,
+   "prob": 0.856
+  },
+  {
+   "palabra": "que",
+   "inicio": 0.62,
+   "fin": 0.74,
+   "prob": 0.992
+  },
+  {
+   "palabra": "a",
+   "inicio": 0.74,
+   "fin": 0.82,
+   "prob": 0.993
+  },
+  {
+   "palabra": "las",
+   "inicio": 0.82,
+   "fin": 0.92,
+   "prob": 0.991
+  },
+  {
+   "palabra": "tres",
+   "inicio": 0.92,
+   "fin": 1.08,
+   "prob": 0.473
+  },
+  {
+   "palabra": "de",
+   "inicio": 1.08,
+   "fin": 1.18,
+   "prob": 0.997
+  },
+  {
+   "palabra": "la",
+   "inicio": 1.18,
+   "fin": 1.26,
+   "prob": 0.997
+  },
+  {
+   "palabra": "mañana",
+   "inicio": 1.26,
+   "fin": 1.48,
+   "prob": 0.988
+  },
+  {
+   "palabra": "te",
+   "inicio": 1.48,
+   "fin": 1.7,
+   "prob": 0.972
+  },
+  {
+   "palabra": "despierta",
+   "inicio": 1.7,
+   "fin": 2.12,
+   "prob": 0.989
+  },
+  {
+   "palabra": "un",
+   "inicio": 2.12,
+   "fin": 2.24,
+   "prob": 0.996
+  },
+  {
+   "palabra": "temblor",
+   "inicio": 2.24,
+   "fin": 2.54,
+   "prob": 0.98
+  },
+  {
+   "palabra": "fuerte.",
+   "inicio": 2.54,
+   "fin": 2.84,
+   "prob": 0.998
+  },
+  {
+   "palabra": "Dura",
+   "inicio": 3.64,
+   "fin": 4.08,
+   "prob": 0.967
+  },
+  {
+   "palabra": "casi",
+   "inicio": 4.08,
+   "fin": 4.28,
+   "prob": 0.998
+  },
+  {
+   "palabra": "un",
+   "inicio": 4.28,
+   "fin": 4.48,
+   "prob": 0.981
+  },
+  {
+   "palabra": "minuto.",
+   "inicio": 4.48,
+   "fin": 5.18,
+   "prob": 0.993
+  },
+  {
+   "palabra": "Luego",
+   "inicio": 5.2,
+   "fin": 5.5,
+   "prob": 0.965
+  },
+  {
+   "palabra": "suena",
+   "inicio": 5.5,
+   "fin": 5.82,
+   "prob": 0.994
+  },
+  {
+   "palabra": "la",
+   "inicio": 5.82,
+   "fin": 5.92,
+   "prob": 0.584
+  },
+  {
+   "palabra": "alerta",
+   "inicio": 5.92,
+   "fin": 6.24,
+   "prob": 0.986
+  },
+  {
+   "palabra": "en",
+   "inicio": 6.24,
+   "fin": 6.32,
+   "prob": 0.996
+  },
+  {
+   "palabra": "el",
+   "inicio": 6.32,
+   "fin": 6.42,
+   "prob": 0.999
+  },
+  {
+   "palabra": "celular,",
+   "inicio": 6.42,
+   "fin": 6.72,
+   "prob": 0.992
+  },
+  {
+   "palabra": "alerta",
+   "inicio": 7.0,
+   "fin": 7.34,
+   "prob": 0.955
+  },
+  {
+   "palabra": "de",
+   "inicio": 7.34,
+   "fin": 7.42,
+   "prob": 0.967
+  },
+  {
+   "palabra": "tsunami,",
+   "inicio": 7.42,
+   "fin": 7.66,
+   "prob": 0.541
+  },
+  {
+   "palabra": "evacúe",
+   "inicio": 8.06,
+   "fin": 8.46,
+   "prob": 0.815
+  },
+  {
+   "palabra": "a",
+   "inicio": 8.46,
+   "fin": 8.56,
+   "prob": 0.993
+  },
+  {
+   "palabra": "zonas",
+   "inicio": 8.56,
+   "fin": 8.74,
+   "prob": 0.985
+  },
+  {
+   "palabra": "altas.",
+   "inicio": 8.74,
+   "fin": 9.22,
+   "prob": 0.997
+  },
+  {
+   "palabra": "La",
+   "inicio": 10.06,
+   "fin": 10.32,
+   "prob": 0.934
+  },
+  {
+   "palabra": "ola",
+   "inicio": 10.32,
+   "fin": 10.5,
+   "prob": 0.969
+  },
+  {
+   "palabra": "llega",
+   "inicio": 10.5,
+   "fin": 10.72,
+   "prob": 0.997
+  },
+  {
+   "palabra": "en",
+   "inicio": 10.72,
+   "fin": 10.88,
+   "prob": 0.998
+  },
+  {
+   "palabra": "veinte",
+   "inicio": 10.88,
+   "fin": 11.12,
+   "prob": 0.827
+  },
+  {
+   "palabra": "minutos.",
+   "inicio": 11.12,
+   "fin": 11.48,
+   "prob": 0.996
+  },
+  {
+   "palabra": "Y",
+   "inicio": 11.98,
+   "fin": 12.18,
+   "prob": 0.908
+  },
+  {
+   "palabra": "tu",
+   "inicio": 12.18,
+   "fin": 12.28,
+   "prob": 0.973
+  },
+  {
+   "palabra": "mamá",
+   "inicio": 12.28,
+   "fin": 12.48,
+   "prob": 0.905
+  },
+  {
+   "palabra": "te",
+   "inicio": 12.48,
+   "fin": 12.56,
+   "prob": 0.999
+  },
+  {
+   "palabra": "escribe,",
+   "inicio": 12.56,
+   "fin": 12.86,
+   "prob": 0.977
+  },
+  {
+   "palabra": "estoy",
+   "inicio": 13.18,
+   "fin": 13.42,
+   "prob": 0.516
+  },
+  {
+   "palabra": "en",
+   "inicio": 13.42,
+   "fin": 13.56,
+   "prob": 0.997
+  },
+  {
+   "palabra": "el",
+   "inicio": 13.56,
+   "fin": 13.64,
+   "prob": 0.997
+  },
+  {
+   "palabra": "malecón",
+   "inicio": 13.64,
+   "fin": 13.96,
+   "prob": 0.938
+  },
+  {
+   "palabra": "con",
+   "inicio": 13.96,
+   "fin": 14.12,
+   "prob": 0.996
+  },
+  {
+   "palabra": "tu",
+   "inicio": 14.12,
+   "fin": 14.22,
+   "prob": 0.993
+  },
+  {
+   "palabra": "tía.",
+   "inicio": 14.22,
+   "fin": 14.42,
+   "prob": 0.992
+  },
+  {
+   "palabra": "¿Qué",
+   "inicio": 15.36,
+   "fin": 15.5,
+   "prob": 0.886
+  },
+  {
+   "palabra": "hacemos?",
+   "inicio": 15.5,
+   "fin": 15.76,
+   "prob": 0.999
+  },
+  {
+   "palabra": "Entonces",
+   "inicio": 16.36,
+   "fin": 16.68,
+   "prob": 0.964
+  },
+  {
+   "palabra": "alguien",
+   "inicio": 16.68,
+   "fin": 17.06,
+   "prob": 0.993
+  },
+  {
+   "palabra": "toca",
+   "inicio": 17.06,
+   "fin": 17.28,
+   "prob": 0.983
+  },
+  {
+   "palabra": "la",
+   "inicio": 17.28,
+   "fin": 17.44,
+   "prob": 0.981
+  },
+  {
+   "palabra": "puerta.",
+   "inicio": 17.44,
+   "fin": 17.64,
+   "prob": 0.996
+  },
+  {
+   "palabra": "Es",
+   "inicio": 18.72,
+   "fin": 18.88,
+   "prob": 0.958
+  },
+  {
+   "palabra": "el",
+   "inicio": 18.88,
+   "fin": 19.0,
+   "prob": 0.999
+  },
+  {
+   "palabra": "vecino",
+   "inicio": 19.0,
+   "fin": 19.26,
+   "prob": 0.999
+  },
+  {
+   "palabra": "raro,",
+   "inicio": 19.26,
+   "fin": 19.58,
+   "prob": 0.995
+  },
+  {
+   "palabra": "ese",
+   "inicio": 19.86,
+   "fin": 20.0,
+   "prob": 0.885
+  },
+  {
+   "palabra": "al",
+   "inicio": 20.0,
+   "fin": 20.14,
+   "prob": 0.98
+  },
+  {
+   "palabra": "que",
+   "inicio": 20.14,
+   "fin": 20.2,
+   "prob": 0.992
+  },
+  {
+   "palabra": "nadie",
+   "inicio": 20.2,
+   "fin": 20.38,
+   "prob": 0.999
+  },
+  {
+   "palabra": "saluda.",
+   "inicio": 20.38,
+   "fin": 20.78,
+   "prob": 0.922
+  },
+  {
+   "palabra": "Tengo",
+   "inicio": 21.7,
+   "fin": 22.02,
+   "prob": 0.973
+  },
+  {
+   "palabra": "camioneta.",
+   "inicio": 22.02,
+   "fin": 22.48,
+   "prob": 0.982
+  },
+  {
+   "palabra": "Subete,",
+   "inicio": 23.38,
+   "fin": 23.82,
+   "prob": 0.646
+  },
+  {
+   "palabra": "nos",
+   "inicio": 24.12,
+   "fin": 24.22,
+   "prob": 0.993
+  },
+  {
+   "palabra": "vamos",
+   "inicio": 24.22,
+   "fin": 24.42,
+   "prob": 0.996
+  },
+  {
+   "palabra": "al",
+   "inicio": 24.42,
+   "fin": 24.64,
+   "prob": 0.998
+  },
+  {
+   "palabra": "cerro.",
+   "inicio": 24.64,
+   "fin": 24.94,
+   "prob": 0.986
+  },
+  {
+   "palabra": "¿Por",
+   "inicio": 25.34,
+   "fin": 25.48,
+   "prob": 0.971
+  },
+  {
+   "palabra": "qué",
+   "inicio": 25.48,
+   "fin": 25.6,
+   "prob": 0.859
+  },
+  {
+   "palabra": "tú?",
+   "inicio": 25.6,
+   "fin": 25.76,
+   "prob": 0.971
+  },
+  {
+   "palabra": "Porque",
+   "inicio": 26.56,
+   "fin": 26.88,
+   "prob": 0.884
+  },
+  {
+   "palabra": "eres",
+   "inicio": 26.88,
+   "fin": 27.08,
+   "prob": 0.997
+  },
+  {
+   "palabra": "el",
+   "inicio": 27.08,
+   "fin": 27.24,
+   "prob": 0.997
+  },
+  {
+   "palabra": "único",
+   "inicio": 27.24,
+   "fin": 27.42,
+   "prob": 0.999
+  },
+  {
+   "palabra": "que",
+   "inicio": 27.42,
+   "fin": 27.62,
+   "prob": 0.995
+  },
+  {
+   "palabra": "una",
+   "inicio": 27.62,
+   "fin": 27.74,
+   "prob": 0.996
+  },
+  {
+   "palabra": "vez",
+   "inicio": 27.74,
+   "fin": 27.94,
+   "prob": 1.0
+  },
+  {
+   "palabra": "le",
+   "inicio": 27.94,
+   "fin": 28.08,
+   "prob": 0.994
+  },
+  {
+   "palabra": "ayudó",
+   "inicio": 28.08,
+   "fin": 28.36,
+   "prob": 0.96
+  },
+  {
+   "palabra": "a",
+   "inicio": 28.36,
+   "fin": 28.42,
+   "prob": 0.996
+  },
+  {
+   "palabra": "subir",
+   "inicio": 28.42,
+   "fin": 28.6,
+   "prob": 0.998
+  },
+  {
+   "palabra": "el",
+   "inicio": 28.6,
+   "fin": 28.78,
+   "prob": 0.999
+  },
+  {
+   "palabra": "garrafón.",
+   "inicio": 28.78,
+   "fin": 29.16,
+   "prob": 0.947
+  },
+  {
+   "palabra": "Mientras",
+   "inicio": 29.58,
+   "fin": 29.94,
+   "prob": 0.987
+  },
+  {
+   "palabra": "manejan,",
+   "inicio": 29.94,
+   "fin": 30.36,
+   "prob": 0.613
+  },
+  {
+   "palabra": "el",
+   "inicio": 30.64,
+   "fin": 30.74,
+   "prob": 0.987
+  },
+  {
+   "palabra": "mar",
+   "inicio": 30.74,
+   "fin": 30.86,
+   "prob": 0.993
+  },
+  {
+   "palabra": "se",
+   "inicio": 30.86,
+   "fin": 31.0,
+   "prob": 0.997
+  },
+  {
+   "palabra": "retira.",
+   "inicio": 31.0,
+   "fin": 31.32,
+   "prob": 0.972
+  },
+  {
+   "palabra": "La",
+   "inicio": 32.02,
+   "fin": 32.5,
+   "prob": 0.918
+  },
+  {
+   "palabra": "playa",
+   "inicio": 32.5,
+   "fin": 32.78,
+   "prob": 0.99
+  },
+  {
+   "palabra": "queda",
+   "inicio": 32.78,
+   "fin": 32.94,
+   "prob": 0.991
+  },
+  {
+   "palabra": "vacía.",
+   "inicio": 32.94,
+   "fin": 33.32,
+   "prob": 0.988
+  },
+  {
+   "palabra": "Primera",
+   "inicio": 34.14,
+   "fin": 34.54,
+   "prob": 0.961
+  },
+  {
+   "palabra": "regla,",
+   "inicio": 34.54,
+   "fin": 34.84,
+   "prob": 0.99
+  },
+  {
+   "palabra": "no",
+   "inicio": 35.14,
+   "fin": 35.26,
+   "prob": 0.99
+  },
+  {
+   "palabra": "te",
+   "inicio": 35.26,
+   "fin": 35.38,
+   "prob": 0.997
+  },
+  {
+   "palabra": "acerque",
+   "inicio": 35.38,
+   "fin": 35.66,
+   "prob": 0.854
+  },
+  {
+   "palabra": "saber.",
+   "inicio": 35.66,
+   "fin": 35.9,
+   "prob": 0.986
+  },
+  {
+   "palabra": "Si",
+   "inicio": 36.84,
+   "fin": 37.12,
+   "prob": 0.973
+  },
+  {
+   "palabra": "el",
+   "inicio": 37.12,
+   "fin": 37.2,
+   "prob": 0.998
+  },
+  {
+   "palabra": "mar",
+   "inicio": 37.2,
+   "fin": 37.34,
+   "prob": 0.99
+  },
+  {
+   "palabra": "se",
+   "inicio": 37.34,
+   "fin": 37.48,
+   "prob": 0.996
+  },
+  {
+   "palabra": "retira,",
+   "inicio": 37.48,
+   "fin": 37.82,
+   "prob": 0.99
+  },
+  {
+   "palabra": "la",
+   "inicio": 38.1,
+   "fin": 38.22,
+   "prob": 0.992
+  },
+  {
+   "palabra": "ola",
+   "inicio": 38.22,
+   "fin": 38.38,
+   "prob": 0.958
+  },
+  {
+   "palabra": "ya",
+   "inicio": 38.38,
+   "fin": 38.52,
+   "prob": 0.995
+  },
+  {
+   "palabra": "viene.",
+   "inicio": 38.52,
+   "fin": 38.76,
+   "prob": 0.997
+  },
+  {
+   "palabra": "En",
+   "inicio": 39.26,
+   "fin": 39.46,
+   "prob": 0.993
+  },
+  {
+   "palabra": "lo",
+   "inicio": 39.46,
+   "fin": 39.56,
+   "prob": 0.994
+  },
+  {
+   "palabra": "alto",
+   "inicio": 39.56,
+   "fin": 39.72,
+   "prob": 0.998
+  },
+  {
+   "palabra": "del",
+   "inicio": 39.72,
+   "fin": 39.9,
+   "prob": 0.994
+  },
+  {
+   "palabra": "cerro,",
+   "inicio": 39.9,
+   "fin": 40.26,
+   "prob": 0.994
+  },
+  {
+   "palabra": "el",
+   "inicio": 40.58,
+   "fin": 40.68,
+   "prob": 0.995
+  },
+  {
+   "palabra": "vecino",
+   "inicio": 40.68,
+   "fin": 40.96,
+   "prob": 0.999
+  },
+  {
+   "palabra": "tiene",
+   "inicio": 40.96,
+   "fin": 41.22,
+   "prob": 0.998
+  },
+  {
+   "palabra": "una",
+   "inicio": 41.22,
+   "fin": 41.38,
+   "prob": 0.998
+  },
+  {
+   "palabra": "casita,",
+   "inicio": 41.38,
+   "fin": 41.74,
+   "prob": 0.992
+  },
+  {
+   "palabra": "agua,",
+   "inicio": 42.12,
+   "fin": 42.32,
+   "prob": 0.996
+  },
+  {
+   "palabra": "comida",
+   "inicio": 42.64,
+   "fin": 42.88,
+   "prob": 0.998
+  },
+  {
+   "palabra": "y",
+   "inicio": 42.88,
+   "fin": 43.06,
+   "prob": 0.997
+  },
+  {
+   "palabra": "un",
+   "inicio": 43.06,
+   "fin": 43.16,
+   "prob": 0.997
+  },
+  {
+   "palabra": "radio",
+   "inicio": 43.16,
+   "fin": 43.36,
+   "prob": 0.962
+  },
+  {
+   "palabra": "de",
+   "inicio": 43.36,
+   "fin": 43.5,
+   "prob": 0.996
+  },
+  {
+   "palabra": "pilas.",
+   "inicio": 43.5,
+   "fin": 43.84,
+   "prob": 0.985
+  },
+  {
+   "palabra": "Segunda",
+   "inicio": 44.22,
+   "fin": 44.7,
+   "prob": 0.99
+  },
+  {
+   "palabra": "regla,",
+   "inicio": 44.7,
+   "fin": 45.02,
+   "prob": 0.999
+  },
+  {
+   "palabra": "nadie",
+   "inicio": 45.38,
+   "fin": 45.56,
+   "prob": 0.997
+  },
+  {
+   "palabra": "baja",
+   "inicio": 45.56,
+   "fin": 45.82,
+   "prob": 0.987
+  },
+  {
+   "palabra": "hasta",
+   "inicio": 45.82,
+   "fin": 46.08,
+   "prob": 0.998
+  },
+  {
+   "palabra": "que",
+   "inicio": 46.08,
+   "fin": 46.2,
+   "prob": 0.999
+  },
+  {
+   "palabra": "lo",
+   "inicio": 46.2,
+   "fin": 46.32,
+   "prob": 0.991
+  },
+  {
+   "palabra": "diga",
+   "inicio": 46.32,
+   "fin": 46.5,
+   "prob": 0.997
+  },
+  {
+   "palabra": "protección",
+   "inicio": 46.5,
+   "fin": 46.98,
+   "prob": 0.829
+  },
+  {
+   "palabra": "civil.",
+   "inicio": 46.98,
+   "fin": 47.26,
+   "prob": 0.997
+  },
+  {
+   "palabra": "Porque",
+   "inicio": 48.0,
+   "fin": 48.48,
+   "prob": 0.979
+  },
+  {
+   "palabra": "la",
+   "inicio": 48.48,
+   "fin": 48.64,
+   "prob": 0.997
+  },
+  {
+   "palabra": "primera",
+   "inicio": 48.64,
+   "fin": 48.86,
+   "prob": 0.998
+  },
+  {
+   "palabra": "ola",
+   "inicio": 48.86,
+   "fin": 49.1,
+   "prob": 0.993
+  },
+  {
+   "palabra": "muchas",
+   "inicio": 49.1,
+   "fin": 49.32,
+   "prob": 0.995
+  },
+  {
+   "palabra": "veces",
+   "inicio": 49.32,
+   "fin": 49.72,
+   "prob": 0.999
+  },
+  {
+   "palabra": "no",
+   "inicio": 49.72,
+   "fin": 49.96,
+   "prob": 0.988
+  },
+  {
+   "palabra": "es",
+   "inicio": 49.96,
+   "fin": 50.08,
+   "prob": 0.999
+  },
+  {
+   "palabra": "la",
+   "inicio": 50.08,
+   "fin": 50.18,
+   "prob": 0.995
+  },
+  {
+   "palabra": "más",
+   "inicio": 50.18,
+   "fin": 50.34,
+   "prob": 0.98
+  },
+  {
+   "palabra": "grande.",
+   "inicio": 50.34,
+   "fin": 50.58,
+   "prob": 0.999
+  },
+  {
+   "palabra": "Entonces",
+   "inicio": 51.02,
+   "fin": 51.44,
+   "prob": 0.99
+  },
+  {
+   "palabra": "lo",
+   "inicio": 51.44,
+   "fin": 51.68,
+   "prob": 0.945
+  },
+  {
+   "palabra": "ves,",
+   "inicio": 51.68,
+   "fin": 51.88,
+   "prob": 0.987
+  },
+  {
+   "palabra": "una",
+   "inicio": 52.12,
+   "fin": 52.28,
+   "prob": 0.997
+  },
+  {
+   "palabra": "línea",
+   "inicio": 52.28,
+   "fin": 52.48,
+   "prob": 0.981
+  },
+  {
+   "palabra": "blanca",
+   "inicio": 52.48,
+   "fin": 52.82,
+   "prob": 0.986
+  },
+  {
+   "palabra": "en",
+   "inicio": 52.82,
+   "fin": 52.94,
+   "prob": 0.998
+  },
+  {
+   "palabra": "el",
+   "inicio": 52.94,
+   "fin": 53.06,
+   "prob": 1.0
+  },
+  {
+   "palabra": "mar,",
+   "inicio": 53.06,
+   "fin": 53.2,
+   "prob": 0.997
+  },
+  {
+   "palabra": "acercándose.",
+   "inicio": 53.4,
+   "fin": 54.0,
+   "prob": 0.996
+  },
+  {
+   "palabra": "Y",
+   "inicio": 54.0,
+   "fin": 54.6,
+   "prob": 0.068
+  },
+  {
+   "palabra": "te",
+   "inicio": 54.6,
+   "fin": 54.7,
+   "prob": 0.97
+  },
+  {
+   "palabra": "vibra",
+   "inicio": 54.7,
+   "fin": 54.96,
+   "prob": 0.996
+  },
+  {
+   "palabra": "el",
+   "inicio": 54.96,
+   "fin": 55.06,
+   "prob": 0.998
+  },
+  {
+   "palabra": "celular.",
+   "inicio": 55.06,
+   "fin": 55.34,
+   "prob": 0.992
+  },
+  {
+   "palabra": "Tu",
+   "inicio": 56.16,
+   "fin": 56.48,
+   "prob": 0.657
+  },
+  {
+   "palabra": "mamá,",
+   "inicio": 56.48,
+   "fin": 56.78,
+   "prob": 0.967
+  },
+  {
+   "palabra": "no",
+   "inicio": 57.02,
+   "fin": 57.1,
+   "prob": 0.971
+  },
+  {
+   "palabra": "hay",
+   "inicio": 57.1,
+   "fin": 57.2,
+   "prob": 0.999
+  },
+  {
+   "palabra": "taxis,",
+   "inicio": 57.2,
+   "fin": 57.6,
+   "prob": 0.849
+  },
+  {
+   "palabra": "seguimos",
+   "inicio": 57.76,
+   "fin": 58.08,
+   "prob": 0.996
+  },
+  {
+   "palabra": "en",
+   "inicio": 58.08,
+   "fin": 58.22,
+   "prob": 0.994
+  },
+  {
+   "palabra": "el",
+   "inicio": 58.22,
+   "fin": 58.3,
+   "prob": 0.998
+  },
+  {
+   "palabra": "malecón.",
+   "inicio": 58.3,
+   "fin": 58.66,
+   "prob": 0.919
+  },
+  {
+   "palabra": "¿Dónde",
+   "inicio": 59.44,
+   "fin": 59.86,
+   "prob": 0.913
+  },
+  {
+   "palabra": "estás?",
+   "inicio": 59.86,
+   "fin": 60.1,
+   "prob": 0.976
+  },
+  {
+   "palabra": "Quedan",
+   "inicio": 60.66,
+   "fin": 60.92,
+   "prob": 0.931
+  },
+  {
+   "palabra": "ocho",
+   "inicio": 60.92,
+   "fin": 61.16,
+   "prob": 0.775
+  },
+  {
+   "palabra": "minutos.",
+   "inicio": 61.16,
+   "fin": 61.42,
+   "prob": 0.999
+  },
+  {
+   "palabra": "¿Y",
+   "inicio": 62.2,
+   "fin": 62.64,
+   "prob": 0.73
+  },
+  {
+   "palabra": "el",
+   "inicio": 62.64,
+   "fin": 62.74,
+   "prob": 0.999
+  },
+  {
+   "palabra": "vecino",
+   "inicio": 62.74,
+   "fin": 63.02,
+   "prob": 0.999
+  },
+  {
+   "palabra": "ya",
+   "inicio": 63.02,
+   "fin": 63.2,
+   "prob": 0.941
+  },
+  {
+   "palabra": "está",
+   "inicio": 63.2,
+   "fin": 63.4,
+   "prob": 0.991
+  },
+  {
+   "palabra": "cerrando",
+   "inicio": 63.4,
+   "fin": 63.74,
+   "prob": 0.997
+  },
+  {
+   "palabra": "el",
+   "inicio": 63.74,
+   "fin": 63.88,
+   "prob": 0.999
+  },
+  {
+   "palabra": "portón?",
+   "inicio": 63.88,
+   "fin": 64.2,
+   "prob": 0.941
+  },
+  {
+   "palabra": "¿Te",
+   "inicio": 64.8,
+   "fin": 64.9,
+   "prob": 0.96
+  },
+  {
+   "palabra": "quedas",
+   "inicio": 64.9,
+   "fin": 65.16,
+   "prob": 0.998
+  },
+  {
+   "palabra": "en",
+   "inicio": 65.16,
+   "fin": 65.28,
+   "prob": 0.996
+  },
+  {
+   "palabra": "el",
+   "inicio": 65.28,
+   "fin": 65.38,
+   "prob": 0.999
+  },
+  {
+   "palabra": "cerro",
+   "inicio": 65.38,
+   "fin": 65.68,
+   "prob": 0.995
+  },
+  {
+   "palabra": "o",
+   "inicio": 65.68,
+   "fin": 65.76,
+   "prob": 0.983
+  },
+  {
+   "palabra": "bajas",
+   "inicio": 65.76,
+   "fin": 66.02,
+   "prob": 0.994
+  },
+  {
+   "palabra": "por",
+   "inicio": 66.02,
+   "fin": 66.16,
+   "prob": 0.998
+  },
+  {
+   "palabra": "tu",
+   "inicio": 66.16,
+   "fin": 66.28,
+   "prob": 0.994
+  },
+  {
+   "palabra": "mamá?",
+   "inicio": 66.28,
+   "fin": 66.58,
+   "prob": 0.997
+  },
+  {
+   "palabra": "Elige",
+   "inicio": 67.28,
+   "fin": 67.74,
+   "prob": 0.614
+  },
+  {
+   "palabra": "en",
+   "inicio": 67.74,
+   "fin": 67.86,
+   "prob": 0.998
+  },
+  {
+   "palabra": "comentarios.",
+   "inicio": 67.86,
+   "fin": 68.24,
+   "prob": 0.991
+  },
+  {
+   "palabra": "Y",
+   "inicio": 69.26,
+   "fin": 69.5,
+   "prob": 0.957
+  },
+  {
+   "palabra": "sígueme,",
+   "inicio": 69.5,
+   "fin": 69.82,
+   "prob": 0.973
+  },
+  {
+   "palabra": "si",
+   "inicio": 70.1,
+   "fin": 70.22,
+   "prob": 0.986
+  },
+  {
+   "palabra": "llegamos",
+   "inicio": 70.22,
+   "fin": 70.54,
+   "prob": 0.998
+  },
+  {
+   "palabra": "a",
+   "inicio": 70.54,
+   "fin": 70.68,
+   "prob": 0.998
+  },
+  {
+   "palabra": "diez",
+   "inicio": 70.68,
+   "fin": 70.8,
+   "prob": 0.449
+  },
+  {
+   "palabra": "mil",
+   "inicio": 70.8,
+   "fin": 70.98,
+   "prob": 0.992
+  },
+  {
+   "palabra": "seguidores,",
+   "inicio": 70.98,
+   "fin": 71.38,
+   "prob": 0.995
+  },
+  {
+   "palabra": "saco",
+   "inicio": 71.7,
+   "fin": 71.98,
+   "prob": 0.982
+  },
+  {
+   "palabra": "la",
+   "inicio": 71.98,
+   "fin": 72.06,
+   "prob": 0.998
+  },
+  {
+   "palabra": "segunda",
+   "inicio": 72.06,
+   "fin": 72.3,
+   "prob": 0.997
+  },
+  {
+   "palabra": "parte.",
+   "inicio": 72.3,
+   "fin": 72.62,
+   "prob": 0.999
+  }
+ ]
+}

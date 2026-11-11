@@ -12,7 +12,7 @@ Rama de trabajo: `claude/eager-knuth-pxgzyv`.
 - Guía para publicar y resumen de la investigación: `videos/PUBLICAR.md`
 
 ### Lo que le gusta al usuario
-- Voz: **Álvaro** (`es-ES-AlvaroNeural`, velocidad +8 a +12 %). Es la que más le gustó.
+- Voz: **SIEMPRE Álvaro** (`es-ES-AlvaroNeural`, velocidad +8 a +12 %) en todos los videos, aunque el pedido mencione otras voces. No preguntar ni mandar muestras de otras voces.
 - Estilo que mejor funciona: **monitos de palitos con fondos detallados**, subtítulos abajo con la palabra clave resaltada en amarillo.
 - Hay un segundo estilo "cine" (oscuro, subtítulos arriba palabra por palabra con recuadro azul, paneles de vidrio, detalles dorados): `videos/lib/cine.js`.
 - Duración: 45–60 s o más. Si es una serie, cada parte de al menos 55 s.

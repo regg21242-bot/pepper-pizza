@@ -1,0 +1,32 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; pointer-events: none; font-family: Nunito, sans-serif; }
+    .el-wrap { position: absolute; left: 70px; width: 800px; }
+    #el-label { top: 760px; text-align: center; color: #fff; font-weight: 900; font-size: 52px; text-shadow: 0 4px 18px rgba(0,0,0,.7); }
+    .btn { display: flex; align-items: center; gap: 28px; padding: 30px 38px; border-radius: 34px; color: #fff; font-weight: 900; font-size: 54px; line-height: 1.05;
+      box-shadow: 0 14px 40px rgba(0,0,0,.55), inset 0 -8px 0 rgba(0,0,0,.25); border: 4px solid rgba(255,255,255,.85); }
+    .btn small { display: block; font-size: 36px; font-weight: 800; opacity: .95; }
+    .btn svg { flex: none; width: 96px; height: 96px; }
+    #el-azul { top: 880px; } #el-azul .btn { background: linear-gradient(180deg, #3D8BFF, #1F4FC8); }
+    #el-rojo { top: 1110px; } #el-rojo .btn { background: linear-gradient(180deg, #FF4A4A, #B8161E); }
+  </style>
+  <div id="root" data-composition-id="eleccion" data-width="1080" data-height="1920">
+    <div id="el-label" class="clip el-wrap" data-start="67.2" data-duration="6.74" data-track-index="0"><div id="el-label-in">Elige en comentarios ▼</div></div>
+    <div id="el-azul" class="clip el-wrap" data-start="64.7" data-duration="9.24" data-track-index="1"><div id="el-azul-in" class="btn">
+      <svg viewBox="0 0 64 64"><path d="M4 54 L24 18 L34 34 L42 24 L60 54 Z" fill="#fff"/><path d="M24 18 L19 27 L24 25 L29 27 Z" fill="#BFD8FF"/></svg>
+      <div>TE QUEDAS<small>en el cerro</small></div></div></div>
+    <div id="el-rojo" class="clip el-wrap" data-start="65.6" data-duration="8.34" data-track-index="2"><div id="el-rojo-in" class="btn">
+      <svg viewBox="0 0 64 64"><path d="M32 6 L32 40" stroke="#fff" stroke-width="8" stroke-linecap="round"/><path d="M16 28 L32 46 L48 28" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 56 Q20 50 32 56 T56 56" fill="none" stroke="#FFD0D0" stroke-width="5" stroke-linecap="round"/></svg>
+      <div>BAJAS<small>por tu mamá</small></div></div></div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo('#el-azul-in', { opacity: 0, scale: .5, x: -60 }, { opacity: 1, scale: 1, x: 0, duration: .5, ease: 'back.out(2)' }, 64.7);
+    tl.fromTo('#el-rojo-in', { opacity: 0, scale: .5, x: 60 }, { opacity: 1, scale: 1, x: 0, duration: .5, ease: 'back.out(2)' }, 65.6);
+    tl.fromTo('#el-label-in', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: .4, ease: 'power2.out' }, 67.2);
+    // pulso suave para invitar a elegir
+    tl.fromTo('#el-azul-in', { scale: 1 }, { scale: 1.04, duration: .5, ease: 'sine.inOut', yoyo: true, repeat: 5 }, 67.9);
+    tl.fromTo('#el-rojo-in', { scale: 1 }, { scale: 1.04, duration: .5, ease: 'sine.inOut', yoyo: true, repeat: 5 }, 68.4);
+    window.__timelines['eleccion'] = tl;
+  </script>
+</template>

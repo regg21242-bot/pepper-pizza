@@ -3,165 +3,481 @@
     #root { position: absolute; inset: 0; background: #05060f; }
     #gl { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
   </style>
-  <div id="root" data-composition-id="film" data-start="0" data-duration="70" data-width="1080" data-height="1920">
+  <div id="root" data-composition-id="film" data-start="0" data-duration="73.94" data-width="1080" data-height="1920">
     <canvas id="gl" width="1080" height="1920" data-layout-ignore></canvas>
   </div>
   <script>
   (function () {
-    const { THREE, rng, mat, glow, box, ball, cyl, hero, vecino, building, sky, stars, phone } = window.M;
+    /* =====================================================================
+       "Alerta de tsunami a las 3 a.m." — 12 escenas 3D low-poly (Three.js).
+       Cada cuadro es función solo del tiempo t. Los tiempos vienen de la voz (Whisper).
+       Modelos compartidos en assets/lib/modelos.js (window.M).
+       ===================================================================== */
+    const { THREE, rng, mat, glow, box, ball, cyl, hero, vecino, building, sky, stars, phone, addBrows, truck, jug, wallClock, handPhone, gate, hut } = window.M;
     const W = 1080, H = 1920;
-    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gl'), antialias: true, preserveDrawingBuffer: true });
-    renderer.setPixelRatio(1); renderer.setSize(W, H, false);
-    renderer.outputEncoding = THREE.sRGBEncoding; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.1;
-    renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v)), lerp = (a, b, k) => a + (b - a) * k, prog = (t, a, b) => clamp((t - a) / (b - a));
     const ease = k => (k = clamp(k), k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
-    const cam = () => new THREE.PerspectiveCamera(38, W / H, .05, 900);
+    const easeIn = k => Math.pow(clamp(k), 3), easeOut = k => 1 - Math.pow(1 - clamp(k), 3);
+    const V3 = (x, y, z) => new THREE.Vector3(x, y, z);
+    function camPath(c, t, keys) {   // keys: [[t, pos[3], look[3]], ...] con interpolación suave
+      let i = 0; while (i < keys.length - 2 && t > keys[i + 1][0]) i++;
+      const [t0, p0, l0] = keys[i], [t1, p1, l1] = keys[Math.min(i + 1, keys.length - 1)];
+      const k = t1 > t0 ? ease(prog(t, t0, t1)) : 0;
+      c.position.set(lerp(p0[0], p1[0], k), lerp(p0[1], p1[1], k), lerp(p0[2], p1[2], k));
+      c.lookAt(lerp(l0[0], l1[0], k), lerp(l0[1], l1[1], k), lerp(l0[2], l1[2], k));
+    }
+    /* tiempos clave (de la voz) */
+    const T = {
+      shake: [.25, 4.9], wake: 2.3, alert: 5.45, cityRed: [8.6, 11.6],
+      msg1: 13.15, knock: [17.06, 17.32, 17.58], doorOpen: [18.3, 19.4], tengo: 21.7,
+      seaOut: [30.9, 33.0], fish: 32.4, look: [34.1, 36.6],
+      agua: 42.12, comida: 42.64, radio: 43.16, clockPush: [44.6, 47.5],
+      line: [51.0, 54.3], vib: [54.6, 56.9, 59.44], msg2: [56.95, 59.44],
+      gateClose: [62.1, 63.3], lock: 63.88, quedas: 64.8,
+    };
+    window.__TSU_T = T;
 
-    /* ================= ESCENA 1: recámara, temblor ================= */
-    const S1 = (() => {
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gl'), antialias: true, preserveDrawingBuffer: true });
+    renderer.setPixelRatio(1); renderer.setSize(W, H, false);
+    renderer.outputEncoding = THREE.sRGBEncoding; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = .9;
+    renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    const cam = (fov = 38) => new THREE.PerspectiveCamera(fov, W / H, .05, 900);
+
+    /* ---------- pantalla del celular ---------- */
+    function wrap(c, text, x, y, maxW, lh) { const words = text.split(' '); let line = '', lines = []; for (const w of words) { const test = line ? line + ' ' + w : w; if (c.measureText(test).width > maxW && line) { lines.push(line); line = w; } else line = test; } lines.push(line); lines.forEach((l, i) => c.fillText(l, x, y + i * lh)); return lines.length; }
+    function drawAlert(u, a, t) {
+      const c = u.ctx; c.fillStyle = '#05060A'; c.fillRect(0, 0, 360, 720);
+      if (a > 0) {
+        c.globalAlpha = a; c.fillStyle = `rgb(${150 + 40 * Math.sin(t * 8)},16,24)`; c.fillRect(0, 0, 360, 720);
+        c.fillStyle = '#FFFFFF'; c.beginPath(); c.moveTo(180, 150); c.lineTo(290, 330); c.lineTo(70, 330); c.closePath(); c.fill();
+        c.fillStyle = '#B3121A'; c.fillRect(170, 200, 20, 78); c.fillRect(170, 292, 20, 20);
+        c.fillStyle = '#FFFFFF'; c.textAlign = 'center'; c.font = '900 44px Nunito, sans-serif'; c.fillText('ALERTA', 180, 410); c.font = '800 34px Nunito, sans-serif'; c.fillText('DE TSUNAMI', 180, 455);
+        c.font = '700 24px Nunito, sans-serif'; c.fillText('Evacúe a zonas altas', 180, 520); c.globalAlpha = 1;
+      }
+      u.tex.needsUpdate = true;
+    }
+    function drawChat(u, t, msgs, clock) {
+      const c = u.ctx; c.fillStyle = '#0E1220'; c.fillRect(0, 0, 360, 720);
+      c.fillStyle = '#1A2238'; c.fillRect(0, 0, 360, 112);
+      c.fillStyle = '#E8A0B8'; c.beginPath(); c.arc(52, 70, 26, 0, 7); c.fill(); c.fillStyle = '#5A2A3A'; c.font = '900 26px Nunito, sans-serif'; c.textAlign = 'center'; c.fillText('M', 52, 79);
+      c.fillStyle = '#FFFFFF'; c.textAlign = 'left'; c.font = '800 28px Nunito, sans-serif'; c.fillText('Mamá', 92, 78);
+      c.font = '700 18px Nunito, sans-serif'; c.fillStyle = 'rgba(255,255,255,0.7)'; c.fillText(clock, 16, 26);
+      let y = 140;
+      for (const m of msgs) {
+        if (t < m.at - .9) continue;
+        if (t < m.at) {   // "escribiendo…"
+          c.fillStyle = '#2A3150'; c.beginPath(); c.roundRect(16, y, 92, 48, 22); c.fill();
+          for (let i = 0; i < 3; i++) { c.fillStyle = `rgba(255,255,255,${Math.sin(t * 9 - i) > 0 ? .9 : .4})`; c.beginPath(); c.arc(42 + i * 20, y + 24, 6, 0, 7); c.fill(); }
+          y += 64; continue;
+        }
+        c.font = '700 24px Nunito, sans-serif';
+        const k = clamp((t - m.at) * 6);
+        // medir líneas sin dibujar
+        const words = m.text.split(' '); let line = '', n = 1; for (const w of words) { const test = line ? line + ' ' + w : w; if (c.measureText(test).width > 258 && line) { n++; line = w; } else line = test; }
+        const h = 30 * n + 26;
+        c.globalAlpha = k; c.fillStyle = m.nuevo ? '#F4F0FF' : '#DCDCE8'; c.beginPath(); c.roundRect(16, y + (1 - k) * 18, 290, h, 20); c.fill();
+        c.fillStyle = '#1A1A28'; wrap(c, m.text, 32, y + 38 + (1 - k) * 18, 258, 30); c.globalAlpha = 1;
+        y += h + 16;
+      }
+      u.tex.needsUpdate = true;
+    }
+
+    /* ================= RECÁMARA (temblor + alerta) ================= */
+    const BED = (() => {
       const s = new THREE.Scene(); s.background = new THREE.Color('#070A1C'); s.fog = new THREE.Fog('#070A1C', 8, 22);
-      const wall = mat('#1C2244'), floor = mat('#2A2030');
-      s.add(box(8, .1, 8, floor, 0, -.05, 0));
-      s.add(box(8, 4, .1, wall, 0, 2, -3)); s.add(box(.1, 4, 8, wall, -3.2, 2, 0));
-      // ventana con luna
+      const wall = mat('#1C2244');
+      s.add(box(8, .1, 8, mat('#2A2030'), 0, -.05, 0)); s.add(box(8, 4, .1, wall, 0, 2, -3)); s.add(box(.1, 4, 8, wall, -3.2, 2, 0));
       const win = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 1.6), glow('#2E4C9A')); win.position.set(-3.14, 2.3, -.6); win.rotation.y = Math.PI / 2; s.add(win);
       s.add(box(.12, 1.8, .1, mat('#10142A'), -3.12, 2.3, -.6)); s.add(box(.12, .1, 1.6, mat('#10142A'), -3.12, 2.3, -.6));
       const moon = new THREE.DirectionalLight('#7C9CFF', .9); moon.position.set(-6, 5, 1); moon.castShadow = true; moon.shadow.mapSize.set(1024, 1024); s.add(moon);
       s.add(new THREE.HemisphereLight('#4A4AA0', '#120A1A', .7));
       const warm = new THREE.PointLight('#FFB070', .35, 6, 2); warm.position.set(1.8, 1.6, -1.8); s.add(warm);
-      // cama
       const bed = new THREE.Group(); s.add(bed); bed.position.set(.2, 0, -1.4);
       bed.add(box(2.2, .45, 3.2, mat('#4A3426'), 0, .25, 0)); bed.add(box(2.3, 1.2, .14, mat('#3E2A1E'), 0, .6, -1.6));
       bed.add(box(2.1, .25, 3.0, mat('#D8D2E8'), 0, .58, 0));
       bed.add(box(.9, .18, .5, mat('#EEE8F6'), -.45, .78, -1.2)); bed.add(box(.9, .18, .5, mat('#EEE8F6'), .5, .78, -1.2));
-      // protagonista acostado bajo la cobija
       const p = hero(); p.rotation.x = -Math.PI / 2; p.rotation.z = .08; p.position.set(-.4, .9, .95); p.scale.setScalar(.82); bed.add(p);
-      p.userData.armL.rotation.x = .2; p.userData.armR.rotation.x = .2; p.userData.sleep(true);
-      const blanket = box(2.15, .5, 2.2, mat('#3E5FB0'), 0, .9, .52); bed.add(blanket);
-      for (let i = 0; i < 5; i++) bed.add(box(2.16, .51, .08, mat('#5A7AD0'), 0, .9, -.5 + i * .45));
-      // buró, lámpara y celular
+      p.userData.armL.rotation.x = .2; p.userData.armR.rotation.x = .2;
+      bed.add(box(2.15, .5, 2.2, mat('#3E5FB0'), 0, .9, .52)); for (let i = 0; i < 5; i++) bed.add(box(2.16, .51, .08, mat('#5A7AD0'), 0, .9, -.5 + i * .45));
       const nst = new THREE.Group(); s.add(nst); nst.position.set(1.9, 0, -2.2);
       nst.add(box(.8, .7, .6, mat('#5A3E2A'), 0, .35, 0)); nst.add(box(.6, .04, .02, mat('#2A1A10'), 0, .45, .31));
       const lamp = new THREE.Group(); lamp.position.set(-.15, .7, -.05); nst.add(lamp);
       const lb = cyl(.08, .14, .5, mat('#C8B890'), 12); lb.position.y = .25; lamp.add(lb);
-      const shade = cyl(.18, .3, .32, mat('#E8D8B0', { emissive: '#3A2A10', emissiveIntensity: .2 }), 14); shade.position.y = .62; lamp.add(shade);
+      const shade = cyl(.18, .3, .32, mat('#E8D8B0'), 14); shade.position.y = .62; lamp.add(shade);
       const ph = phone(); ph.scale.setScalar(.35); ph.rotation.x = -Math.PI / 2; ph.position.set(.2, .72, .05); nst.add(ph);
-      const glowL = new THREE.PointLight('#FF2A2A', 0, 3, 2); glowL.position.set(.2, 1, .05); nst.add(glowL);
+      const glowL = new THREE.PointLight('#FF2A2A', 0, 5, 2); glowL.position.set(.2, 1.1, .05); nst.add(glowL);
       const camera = cam();
       function update(t) {
-        const shake = clamp(prog(t, .2, .8)) * (1 - prog(t, 5.5, 6.5));
+        const shake = prog(t, T.shake[0], T.shake[0] + .5) * (1 - prog(t, T.shake[1] - .6, T.shake[1]));
         const sh = (f, a) => Math.sin(t * f) * a * shake;
         bed.position.x = .2 + sh(31, .03); bed.rotation.z = sh(23, .006);
-        lamp.rotation.z = sh(17, .12); lamp.rotation.x = sh(13, .08); nst.position.x = 1.9 + sh(29, .02);
-        p.userData.head.rotation.y = sh(7, .2);
-        // la pantalla del celular: negra hasta la alerta
-        const a = prog(t, 6.2, 6.5); glowL.intensity = a * 2.5 * (.7 + .3 * Math.sin(t * 12));
+        lamp.rotation.z = sh(17, .14); lamp.rotation.x = sh(13, .09); nst.position.x = 1.9 + sh(29, .02);
+        const awake = t > T.wake; p.userData.sleep(!awake);
+        p.userData.head.rotation.y = awake ? lerp(0, .5, ease(prog(t, T.wake, T.wake + .8))) + sh(7, .1) : sh(7, .2);
+        const a = prog(t, T.alert - .1, T.alert + .2);
+        glowL.intensity = a * 3 * (.6 + .4 * Math.sin(t * 8));
+        ph.position.x = .2 + (a > 0 ? Math.sin(t * 70) * .006 : 0);
         drawAlert(ph.userData, a, t);
-        camera.position.set(lerp(3.4, 2.9, t / 8) + sh(41, .03), lerp(6.4, 5.8, t / 8) + sh(37, .03), lerp(4.6, 3.9, t / 8));
-        camera.lookAt(.6, .5, -1.6);
-      }
-      return { scene: s, camera, update };
-    })();
-    function drawAlert(u, a, t) {
-      const c = u.ctx; c.fillStyle = '#05060A'; c.fillRect(0, 0, 360, 720);
-      if (a > 0) {
-        c.globalAlpha = a; c.fillStyle = '#B3121A'; c.fillRect(0, 0, 360, 720);
-        c.fillStyle = '#FFFFFF'; c.beginPath(); c.moveTo(180, 170); c.lineTo(280, 340); c.lineTo(80, 340); c.closePath(); c.fill();
-        c.fillStyle = '#B3121A'; c.fillRect(172, 220, 16, 70); c.fillRect(172, 304, 16, 16);
-        c.fillStyle = '#FFFFFF'; c.font = '900 40px Nunito, sans-serif'; c.textAlign = 'center'; c.fillText('ALERTA', 180, 420); c.font = '800 32px Nunito, sans-serif'; c.fillText('DE TSUNAMI', 180, 465);
-        c.globalAlpha = 1;
-      }
-      u.tex.needsUpdate = true;
-    }
-
-    /* ================= ESCENA 4: pasillo, el vecino en la puerta ================= */
-    const S4 = (() => {
-      const s = new THREE.Scene(); s.background = new THREE.Color('#05070F'); s.fog = new THREE.Fog('#05070F', 4, 16);
-      const wall = mat('#20253F'), floor = mat('#1A1622');
-      s.add(box(4, .1, 12, floor, 0, -.05, -3));
-      s.add(box(.1, 3.4, 12, wall, -1.6, 1.7, -3)); s.add(box(.1, 3.4, 12, wall, 1.6, 1.7, -3));
-      s.add(box(3.2, .1, 12, mat('#151A2E'), 0, 3.4, -3));
-      // marco de la puerta al fondo (la puerta de tu depa) y el exterior oscuro
-      const frame = mat('#3A2A20');
-      s.add(box(.16, 2.5, .3, frame, -.66, 1.25, -5)); s.add(box(.16, 2.5, .3, frame, .66, 1.25, -5)); s.add(box(1.48, .16, .3, frame, 0, 2.55, -5));
-      s.add(box(3.2, 3.4, .1, wall, -1.9, 1.7, -5.05)); s.add(box(3.2, 3.4, .1, wall, 1.9, 1.7, -5.05));
-      const door = new THREE.Group(); door.position.set(-.6, 0, -5); s.add(door);
-      const dpanel = box(1.18, 2.4, .08, mat('#6A4A30'), .59, 1.2, 0); door.add(dpanel); door.add(ball(.05, mat('#C8A040', { metalness: .6, roughness: .3 }), 1.05, 1.15, .07, 8));
-      // luz de emergencia roja en el techo del pasillo de afuera
-      const em = new THREE.PointLight('#FF2020', 0, 7, 2); em.position.set(0, 3, -7); s.add(em);
-      const emBulb = ball(.08, glow('#FF3030'), -1.2, 3.1, -7.5, 8); s.add(emBulb);
-      s.add(new THREE.HemisphereLight('#5A5AA8', '#0A0A12', .75));
-      const fill = new THREE.PointLight('#8090FF', .6, 8, 2); fill.position.set(.8, 2.8, -2.5); s.add(fill);
-      const v = vecino(); v.position.set(0, 0, -6.1); s.add(v);
-      v.userData.armR.rotation.x = -1.35; v.userData.armR.rotation.z = .25;
-      const p = hero(); p.position.set(-.55, 0, -2.9); p.rotation.y = Math.PI + .1; s.add(p);
-      p.userData.armR.rotation.x = -.6;
-      const camera = cam();
-      function update(t) {
-        const open = ease(prog(t, .8, 2.0));
-        door.rotation.y = open * 1.6;
-        v.position.z = lerp(-6.4, -5.9, ease(prog(t, 1.2, 2.6)));
-        v.userData.flash.rotation.x = .18 + Math.sin(t * 1.3) * .04; v.userData.flash.rotation.y = Math.sin(t * .9) * .08;
-        em.intensity = 1.2 + .8 * Math.sin(t * 5); emBulb.material.color.setHSL(0, 1, .35 + .15 * Math.sin(t * 5));
-        p.userData.armR.rotation.x = -.6 * (1 - open) - .1;
-        camera.position.set(lerp(.75, .65, t / 6), lerp(2.45, 2.35, t / 6), lerp(1.4, .8, t / 6));
-        camera.lookAt(-.15, 1.55, -6);
+        camPath(camera, t, [[0, [3.4, 6.4, 4.6], [.6, .5, -1.6]], [5.0, [2.95, 5.85, 3.95], [.7, .5, -1.7]], [7.8, [2.35, 1.75, -1.15], [2.1, .72, -2.15]]]);
+        camera.position.x += sh(41, .035); camera.position.y += sh(37, .035);
+        return { red: a * (.45 + .1 * Math.sin(t * 8)) };
       }
       return { scene: s, camera, update };
     })();
 
-    /* ================= ESCENA 9: desde el cerro, la línea blanca ================= */
-    const S9 = (() => {
+    /* ================= CIUDAD Y CERRO (ventanas rojas / la línea blanca) ================= */
+    const CITY = (() => {
       const s = new THREE.Scene(); s.fog = new THREE.FogExp2('#2A1A4A', .006);
       const sk = sky('#0A1034', '#5A2A72'); s.add(sk); s.add(stars());
       s.add(new THREE.HemisphereLight('#4A4AA0', '#1A0A20', .6));
       const moon = new THREE.DirectionalLight('#8AA0FF', .6); moon.position.set(-30, 40, -20); s.add(moon);
-      // mar
       const seaG = new THREE.PlaneGeometry(400, 200, 80, 40); seaG.rotateX(-Math.PI / 2);
       const sea = new THREE.Mesh(seaG, mat('#0C1A44', { roughness: .35, metalness: .1, flatShading: true })); sea.position.set(0, -.2, -185); s.add(sea);
       const seaPos = seaG.attributes.position, seaBase = seaPos.array.slice();
-      // costa y ciudad
       s.add(box(260, .4, 60, mat('#2A2238'), 0, 0, -55));
       const city = new THREE.Group(); s.add(city); const r = rng(5), blds = [];
       for (let i = 0; i < 70; i++) {
         const w = 2 + r() * 3, h = 3 + r() * (i % 7 === 0 ? 18 : 9), d = 2 + r() * 3;
         const b = building(w, h, d, 100 + i, { lit: .5 }); b.position.set(-60 + (i % 14) * 9 + r() * 3, 0, -40 - Math.floor(i / 14) * 8 - r() * 3); city.add(b); blds.push(b);
       }
-      // cerro en primer plano
       const hillG = new THREE.CircleGeometry(16, 28); hillG.rotateX(-Math.PI / 2);
       const hp = hillG.attributes.position, hr = rng(3); for (let i = 0; i < hp.count; i++) { const x = hp.getX(i), z = hp.getZ(i), dd = Math.hypot(x, z); hp.setY(i, Math.max(0, 6 - dd * .42) + hr() * .35); }
       hillG.computeVertexNormals();
       const hill = new THREE.Mesh(hillG, mat('#24302A', { flatShading: true })); hill.position.set(0, 14, 18); s.add(hill);
-      const slope = box(60, 14, 30, mat('#161E1C', { flatShading: true }), 0, 7, 22); s.add(slope);
-      s.add(box(240, .3, 70, mat('#1A1A2A'), 0, -.1, -5));
-      // protagonista y vecino de espaldas, viendo al mar
+      s.add(box(60, 14, 30, mat('#161E1C', { flatShading: true }), 0, 7, 22)); s.add(box(240, .3, 70, mat('#1A1A2A'), 0, -.1, -5));
       const p = hero(), v = vecino(); p.position.set(-.9, 19.6, 13.4); v.position.set(.8, 19.5, 13.8); p.rotation.y = Math.PI; v.rotation.y = Math.PI - .15; s.add(p, v);
       v.userData.spot.intensity = 0; v.userData.beam.visible = false;
-      // la línea blanca: espuma brillante que avanza
-      const lineM = new THREE.MeshBasicMaterial({ color: '#F4F8FF', toneMapped: false, fog: false });
-      const line = new THREE.Mesh(new THREE.BoxGeometry(300, .5, 1.2), lineM); s.add(line);
+      const line = new THREE.Mesh(new THREE.BoxGeometry(300, .5, 1.2), new THREE.MeshBasicMaterial({ color: '#F4F8FF', toneMapped: false, fog: false })); s.add(line);
       const halo = new THREE.Mesh(new THREE.PlaneGeometry(300, 12), new THREE.MeshBasicMaterial({ color: '#BFD8FF', transparent: true, opacity: .25, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false, fog: false })); halo.rotation.x = -Math.PI / 2; s.add(halo);
+      const sirens = []; for (let i = 0; i < 4; i++) { const L = new THREE.PointLight('#FF2020', 0, 30, 2); L.position.set(-30 + i * 20, 4, -36); s.add(L); sirens.push(L); }
       const camera = cam();
       function update(t) {
-        // el oleaje se mueve un poco
         for (let i = 0; i < seaPos.count; i++) { const x = seaBase[i * 3], z = seaBase[i * 3 + 2]; seaPos.setY(i, Math.sin(x * .08 + t * .8) * .25 + Math.cos(z * .1 + t * .6) * .25); }
         seaPos.needsUpdate = true; seaG.computeVertexNormals();
-        const k = prog(t, 0, 8); const lz = lerp(-260, -160, k);
+        const street = t < 30;
+        sirens.forEach((L, i) => L.intensity = street ? prog(t, T.cityRed[0], T.cityRed[0] + 1) * (3 + 2 * Math.sin(t * 6 + i)) : 2 + Math.sin(t * 5 + i));
+        if (street) {
+          const red = ease(prog(t, T.cityRed[0], T.cityRed[1]));
+          blds.forEach(b => b.userData.paint(red));
+          sk.userData.mat.uniforms.red.value = red * .6;
+          line.visible = halo.visible = false;
+          camPath(camera, t, [[8.0, [-6, 3, -22], [4, 16, -60]], [12.4, [4, 2.4, -26], [-2, 18, -62]]]);
+          return { red: .15 + red * .45 };
+        }
+        line.visible = halo.visible = true;
+        const k = prog(t, T.line[0] - .3, T.line[1] + .5), lz = lerp(-255, -175, k);
         line.position.set(0, .4, lz); halo.position.set(0, .3, lz + 1); line.scale.y = 1 + Math.sin(t * 6) * .15;
-        blds.forEach((b, i) => b.userData.paint(.35 + .15 * Math.sin(i), 0));
-        const red = .25 + .1 * Math.sin(t * 3); sk.userData.mat.uniforms.red.value = red;
-        camera.position.set(lerp(1.2, .6, t / 8), lerp(25, 24.4, t / 8), lerp(26, 24.8, t / 8));
-        camera.lookAt(-1.5, 4, -110);
+        blds.forEach(b => b.userData.paint(.45));
+        sk.userData.mat.uniforms.red.value = .3 + .08 * Math.sin(t * 3);
+        camPath(camera, t, [[50.4, [1.6, 25.8, 28], [-1.5, 4, -110]], [54.8, [.4, 24.6, 24.2], [-1.5, 3, -120]]]);
+        return { red: .3 };
       }
       return { scene: s, camera, update };
     })();
 
-    // Las escenas se arman por tiempo; por ahora solo las tres de prueba de estilo
-    const SC = [{ a: 0, b: 8, s: S1 }, { a: 8, b: 16, s: S4 }, { a: 16, b: 70, s: S9 }];
+    /* ================= CELULAR EN LA MANO ================= */
+    const CEL = (() => {
+      const s = new THREE.Scene(); s.background = new THREE.Color('#06081A');
+      s.add(new THREE.HemisphereLight('#5060B0', '#100818', .7));
+      const key = new THREE.PointLight('#9AB0FF', 1.2, 10, 2); key.position.set(-1.5, 1.5, 2.5); s.add(key);
+      const red = new THREE.PointLight('#FF3030', 0, 8, 2); red.position.set(1.8, -1, 1.5); s.add(red);
+      const r = rng(31);
+      for (let i = 0; i < 26; i++) { const m = new THREE.Mesh(new THREE.CircleGeometry(.15 + r() * .35, 20), new THREE.MeshBasicMaterial({ color: r() < .5 ? '#FFB860' : '#FF3A3A', transparent: true, opacity: .22, toneMapped: false, depthWrite: false })); m.position.set((r() - .5) * 9, (r() - .5) * 14, -6 - r() * 4); s.add(m); }
+      const hp = handPhone(); hp.scale.setScalar(2.1); s.add(hp);
+      const msgs1 = [{ at: T.msg1, text: 'Estoy en el malecón con tu tía. ¿Qué hacemos?' }];
+      const msgs2 = [{ at: 0, text: 'Estoy en el malecón con tu tía. ¿Qué hacemos?' }, { at: T.msg2[0], text: 'No hay taxis, seguimos en el malecón.', nuevo: true }, { at: T.msg2[1], text: '¿Dónde estás?', nuevo: true }];
+      const camera = cam(34);
+      function update(t) {
+        const second = t > 40;
+        let vib = 0; if (second) for (const v of T.vib) { const d = t - v; if (d >= 0 && d < .7) vib = Math.max(vib, 1 - d / .7); }
+        hp.position.set(Math.sin(t * 50) * .03 * vib, -.2 + Math.sin(t * .9) * .03, 0);
+        hp.rotation.set(-.12 + Math.sin(t * .7) * .02, .18 + Math.sin(t * .5) * .03, -.05 + Math.sin(t * 60) * .03 * vib);
+        drawChat(hp.userData, t, second ? msgs2 : msgs1, second ? '3:31' : '3:21');
+        red.intensity = second ? 1.5 + Math.sin(t * 5) : .6;
+        const t0 = second ? 54.3 : 11.9;
+        camPath(camera, t, [[t0 - .5, [.35, .85, 4.8], [0, .6, 0]], [t0 + 6, [.12, .9, 4.1], [0, .65, 0]]]);
+        return { red: second ? .25 : .12 };
+      }
+      return { scene: s, camera, update };
+    })();
+
+    /* ================= PASILLO: tocan la puerta ================= */
+    const HALL = (() => {
+      const s = new THREE.Scene(); s.background = new THREE.Color('#05070F'); s.fog = new THREE.Fog('#05070F', 4, 16);
+      const wall = mat('#20253F');
+      s.add(box(4, .1, 12, mat('#1A1622'), 0, -.05, -3)); s.add(box(.1, 3.4, 12, wall, -1.6, 1.7, -3)); s.add(box(.1, 3.4, 12, wall, 1.6, 1.7, -3)); s.add(box(3.2, .1, 12, mat('#151A2E'), 0, 3.4, -3));
+      const frame = mat('#3A2A20');
+      s.add(box(.16, 2.5, .3, frame, -.66, 1.25, -5)); s.add(box(.16, 2.5, .3, frame, .66, 1.25, -5)); s.add(box(1.48, .16, .3, frame, 0, 2.55, -5));
+      s.add(box(3.2, 3.4, .1, wall, -1.9, 1.7, -5.05)); s.add(box(3.2, 3.4, .1, wall, 1.9, 1.7, -5.05));
+      const door = new THREE.Group(); door.position.set(-.6, 0, -5); s.add(door);
+      door.add(box(1.18, 2.4, .08, mat('#6A4A30'), .59, 1.2, 0)); door.add(ball(.05, mat('#C8A040', { metalness: .6, roughness: .3 }), 1.05, 1.15, .07, 8));
+      const em = new THREE.PointLight('#FF2020', 0, 7, 2); em.position.set(0, 3, -7); s.add(em);
+      s.add(new THREE.HemisphereLight('#5A5AA8', '#0A0A12', .75));
+      const fill = new THREE.PointLight('#8090FF', .6, 8, 2); fill.position.set(.8, 2.8, -2.5); s.add(fill);
+      const warmKey = new THREE.PointLight('#FFB070', .7, 5, 2); warmKey.position.set(.6, 2.4, -1.4); s.add(warmKey);
+      const v = vecino(); v.position.set(0, 0, -6.1); s.add(v);
+      const p = hero(); p.position.set(-.55, 0, -2.9); p.rotation.y = Math.PI + .1; s.add(p);
+      const camera = cam();
+      function update(t) {
+        let knock = 0; for (const k of T.knock) { const d = t - k; if (d >= 0 && d < .15) knock = Math.max(knock, 1 - d / .15); }
+        const open = ease(prog(t, T.doorOpen[0], T.doorOpen[1]));
+        door.rotation.y = open * 1.6 + knock * .01; door.position.z = -5 - knock * .015;
+        v.position.z = lerp(-6.5, -5.9, ease(prog(t, T.doorOpen[0] + .4, T.doorOpen[1] + .8)));
+        const point = ease(prog(t, T.tengo + 1.2, T.tengo + 1.8));
+        v.userData.armR.rotation.x = lerp(-1.35, -1.0, point); v.userData.armR.rotation.z = lerp(.25, -.6, point);
+        v.userData.armL.rotation.x = -point * .3;
+        v.userData.flash.rotation.x = .3 + Math.sin(t * 1.3) * .04; v.userData.flash.rotation.y = Math.sin(t * .9) * .08;
+        v.userData.head.rotation.y = Math.sin(t * .8) * .1;
+        em.intensity = 1.2 + .8 * Math.sin(t * 5);
+        p.userData.armR.rotation.x = -.6 * (1 - open) - .1; p.userData.head.rotation.x = -knock * .05;
+        camPath(camera, t, [[15.8, [.95, 2.6, 2.6], [-.15, 1.6, -6]], [19.5, [.75, 2.45, 1.4], [-.15, 1.55, -6]], [25.6, [.55, 2.3, .4], [-.1, 1.7, -6]]]);
+        return { red: .2 + .1 * Math.sin(t * 5) };
+      }
+      return { scene: s, camera, update };
+    })();
+
+    /* ================= RECUERDO: el garrafón por la escalera (luz cálida) ================= */
+    const FLASH = (() => {
+      const s = new THREE.Scene(); s.background = new THREE.Color('#C8945A'); s.fog = new THREE.Fog('#C8945A', 12, 30);
+      const sun = new THREE.DirectionalLight('#FFD8A0', 1.0); sun.position.set(6, 10, 6); sun.castShadow = true; sun.shadow.mapSize.set(1024, 1024); s.add(sun);
+      s.add(new THREE.HemisphereLight('#FFE8C8', '#6A4A30', .45));
+      const wallM = mat('#D8B888'), stepM = mat('#A8865A');
+      s.add(box(.2, 8, 14, wallM, -1.4, 3, -3));
+      for (let i = 0; i < 14; i++) s.add(box(2.6, .25, .5, stepM, 0, .125 + i * .25, 2 - i * .5));
+      s.add(box(2.6, 3.5, 3, stepM, 0, 1.74, -6.4));
+      s.add(box(.08, .08, 7.5, mat('#6A4A2A'), 1.25, 2.6, -1.2));
+      const p = hero(), v = vecino(); s.add(p, v); v.userData.spot.intensity = 0; v.userData.beam.visible = false;
+      v.position.set(.2, 3.5, -5.6); v.rotation.y = .2;
+      const j = jug(1.1); p.add(j); j.position.set(0, 2.15, -.35); j.rotation.x = .2;
+      p.userData.armL.rotation.x = -2.6; p.userData.armR.rotation.x = -2.6;
+      const camera = cam();
+      function update(t) {
+        const k = prog(t, 24.8, 29.8), step = k * 9;
+        const zz = 2.1 - step * .5, yy = step * .25 + Math.abs(Math.sin(step * Math.PI)) * .06;
+        p.position.set(.2, yy, zz); p.rotation.y = Math.PI;
+        p.userData.legL.rotation.x = Math.sin(step * Math.PI) * .5; p.userData.legR.rotation.x = -Math.sin(step * Math.PI) * .5;
+        v.userData.armR.rotation.x = -.6 + Math.sin(t * 3) * .15; v.userData.head.rotation.y = .1;
+        camera.position.set(5.6, yy + 3.0, zz + 4.4); camera.lookAt(-.2, yy + 1.4, zz - 1.2);
+        return { warm: 1 };
+      }
+      return { scene: s, camera, update };
+    })();
+
+    /* ================= COSTA: el mar se retira ================= */
+    const COAST = (() => {
+      const s = new THREE.Scene(); s.fog = new THREE.FogExp2('#1A1030', .012);
+      const sk = sky('#0A0E2E', '#4A1A4A'); s.add(sk); s.add(stars(300, 4));
+      s.add(new THREE.HemisphereLight('#5A4AA0', '#200A10', .55));
+      const moon = new THREE.DirectionalLight('#A0B0FF', .7); moon.position.set(-20, 30, -30); s.add(moon);
+      const redL = new THREE.PointLight('#FF2020', 0, 60, 1.5); redL.position.set(0, 10, -10); s.add(redL);
+      s.add(box(600, 1, 40, mat('#1E2420'), 0, -.5, 22));
+      s.add(box(600, .06, 5, mat('#2A2A32'), 0, .03, 1));
+      for (let i = -60; i < 60; i++) s.add(box(1.6, .02, .14, glow('#C8B070'), i * 4, .07, 1));
+      s.add(box(600, .4, 3, mat('#4A4038'), 0, -.2, -2.5));
+      const sand = new THREE.Mesh(new THREE.PlaneGeometry(600, 160, 60, 16), mat('#5A4A3A', { roughness: .95, flatShading: true }));
+      sand.rotation.x = -Math.PI / 2; sand.position.set(0, -1.2, -84); sand.receiveShadow = true; s.add(sand);
+      const sp = sand.geometry.attributes.position, sr = rng(8); for (let i = 0; i < sp.count; i++) sp.setZ(i, sr() * .25);
+      sand.geometry.computeVertexNormals();
+      const seaG = new THREE.PlaneGeometry(600, 300, 90, 30); seaG.rotateX(-Math.PI / 2);
+      const sea = new THREE.Mesh(seaG, mat('#0E1E50', { roughness: .3, metalness: .15, flatShading: true })); s.add(sea);
+      const seaPos = seaG.attributes.position, seaBase = seaPos.array.slice();
+      const fr = rng(12), fish = [];
+      for (let i = 0; i < 60; i++) { const f = new THREE.Mesh(new THREE.SphereGeometry(.18, 8, 6), new THREE.MeshStandardMaterial({ color: '#C8D8F0', emissive: '#7A9AD0', emissiveIntensity: .6, metalness: .6, roughness: .25 })); f.scale.set(1.8, .35, .7); f.position.set(-40 + fr() * 120, -1.05, -6 - fr() * 55); f.rotation.y = fr() * 6; s.add(f); fish.push({ m: f, ph: fr() * 6 }); }
+      const tr = truck(); s.add(tr);
+      const camera = cam(42);
+      function update(t) {
+        const out = ease(prog(t, T.seaOut[0], T.seaOut[1]));
+        const shore = lerp(-3.6, -70, out);
+        sea.position.set(0, -.15 - out * .9, shore - 150);
+        for (let i = 0; i < seaPos.count; i++) { const x = seaBase[i * 3], z = seaBase[i * 3 + 2]; seaPos.setY(i, Math.sin(x * .1 + t * 1.1) * .2 + Math.cos(z * .12 + t * .7) * .2); }
+        seaPos.needsUpdate = true; seaG.computeVertexNormals();
+        fish.forEach(f => { f.m.visible = f.m.position.z > shore + 1; f.m.material.emissiveIntensity = .4 + .6 * Math.max(0, Math.sin(t * 4 + f.ph)); });
+        const x = lerp(-30, 26, prog(t, 29.0, 39.6));
+        tr.position.set(x, 0, 1.4);
+        tr.userData.wheels.forEach(w => w.rotation.y = -x * 1.2);
+        redL.intensity = 2 + 1.5 * Math.sin(t * 5); redL.position.x = x;
+        sk.userData.mat.uniforms.red.value = .35 + .1 * Math.sin(t * 4);
+        const look = ease(prog(t, T.look[0] - .6, T.look[0] + .6)) * (1 - ease(prog(t, T.look[1], T.look[1] + 1.2)));
+        camera.position.set(x - 9 + look * 6, lerp(5.5, 4.2, look), lerp(9, 6, look));
+        camera.lookAt(lerp(x + 2, x - 2, look), lerp(1, -1, look), lerp(1, -26, look));
+        return { red: .45 + .12 * Math.sin(t * 5) };
+      }
+      return { scene: s, camera, update };
+    })();
+
+    /* ================= SUBIDA AL CERRO ================= */
+    const HILL = (() => {
+      const s = new THREE.Scene(); s.fog = new THREE.FogExp2('#1A1438', .02);
+      const sk = sky('#0A1034', '#4A2A6A'); s.add(sk); s.add(stars(300, 6));
+      s.add(new THREE.HemisphereLight('#4A4A90', '#1A0A20', .45));
+      const moon = new THREE.DirectionalLight('#9AB0FF', .8); moon.position.set(-20, 30, 10); moon.castShadow = true; s.add(moon);
+      const g = new THREE.PlaneGeometry(80, 80, 40, 40); g.rotateX(-Math.PI / 2);
+      const gp = g.attributes.position, gr = rng(17);
+      const hgt = (x, z) => Math.max(0, 14 - Math.hypot(x, z + 4) * .62);
+      for (let i = 0; i < gp.count; i++) gp.setY(i, hgt(gp.getX(i), gp.getZ(i)) + gr() * .3);
+      g.computeVertexNormals();
+      s.add(new THREE.Mesh(g, mat('#1E2A22', { flatShading: true })));
+      const P = [[-14, 14], [-6, 9], [6, 6], [4, -1], [-3, -1.5], [0, -5.5]].map(([x, z]) => V3(x, hgt(x, z) + .25, z));
+      const path = new THREE.CatmullRomCurve3(P);
+      const N = 160, pos = [], idx = [];
+      for (let i = 0; i <= N; i++) { const k = i / N, pt = path.getPointAt(k), tg = path.getTangentAt(k); const nx = -tg.z, nz = tg.x, L = Math.hypot(nx, nz) || 1;
+        for (const sd of [-1, 1]) { const x = pt.x + sd * 1.0 * nx / L, z = pt.z + sd * 1.0 * nz / L; pos.push(x, hgt(x, z) + .12, z); }
+        if (i < N) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); } }
+      const rg = new THREE.BufferGeometry(); rg.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); rg.setIndex(idx); rg.computeVertexNormals();
+      const road = new THREE.Mesh(rg, mat('#6A4A2E', { roughness: 1, side: THREE.DoubleSide })); road.receiveShadow = true; s.add(road);
+      const h = hut(); h.position.set(1.5, hgt(1.5, -8.2) - .1, -8.2); s.add(h);
+      const hutL = new THREE.PointLight('#FFC070', 1.5, 12, 2); hutL.position.set(2.4, hgt(1.5, -8.2) + 1.6, -6.2); s.add(hutL);
+      const tr = truck(); tr.scale.setScalar(.6); s.add(tr);
+      const camera = cam(40);
+      function update(t) {
+        const k = ease(prog(t, 38.7, 41.9)), pt = path.getPointAt(k), tg = path.getTangentAt(Math.min(.999, k));
+        tr.position.set(pt.x, hgt(pt.x, pt.z) + .12 + Math.sin(t * 22) * .03, pt.z); tr.rotation.y = Math.atan2(-tg.z, tg.x);
+        camPath(camera, t, [[38.7, [-28, 20, 30], [-6, 4, 6]], [41.9, [-14, 26, 20], [1, 10, -5]]]);
+        return { red: .12 };
+      }
+      return { scene: s, camera, update };
+    })();
+
+    /* ================= CASITA: agua, comida, radio, reloj ================= */
+    const HUT = (() => {
+      const s = new THREE.Scene(); s.background = new THREE.Color('#120C10');
+      const wood = mat('#6A4A30'), dark = mat('#3A2618');
+      s.add(box(8, .1, 6, mat('#3A2A20'), 0, -.05, 0)); s.add(box(8, 4, .1, wood, 0, 2, -2)); s.add(box(.1, 4, 6, wood, -3.5, 2, 1));
+      for (let i = 0; i < 9; i++) s.add(box(.04, 4, .02, dark, -3.4 + i * .85, 2, -1.94));
+      const shelfX = -1.2;
+      for (let lv = 0; lv < 3; lv++) s.add(box(3.4, .08, .7, dark, shelfX, .6 + lv * .95, -1.6));
+      for (const sx of [-1.7, 1.7]) s.add(box(.08, 2.9, .7, dark, shelfX + sx, 1.45, -1.6));
+      for (let i = 0; i < 4; i++) { const j = jug(.62); j.position.set(shelfX - 1.25 + i * .82, .64, -1.6); s.add(j); }
+      const cans = ['#E04848', '#F2C230', '#3FAE5A', '#3A7AE0', '#E87A2A', '#B04AE0'];
+      for (let i = 0; i < 14; i++) { const c = cyl(.11, .11, .26, mat(cans[i % 6], { roughness: .4, metalness: .3 }), 12); c.position.set(shelfX - 1.45 + (i % 7) * .48, 1.69, -1.6 + (i >= 7 ? .18 : -.12)); s.add(c); }
+      const radio = new THREE.Group(); radio.position.set(shelfX + .2, 2.55, -1.6); s.add(radio);
+      radio.add(box(.9, .5, .3, mat('#2A2A30', { roughness: .5 }), 0, .25, 0)); radio.add(box(.34, .34, .02, mat('#555560'), -.2, .25, .16));
+      radio.add(box(.24, .1, .02, glow('#7AFF9A'), .22, .36, .16)); radio.add(ball(.05, mat('#C8C8D0'), .22, .18, .17, 8));
+      const ant = cyl(.012, .012, .8, mat('#B8B8C0', { metalness: .8 }), 6); ant.position.set(.35, .8, 0); ant.rotation.z = -.3; radio.add(ant);
+      const led = ball(.025, glow('#FF3030'), .4, .44, .16, 6); radio.add(led);
+      const clock = wallClock(); clock.position.set(2.0, 2.4, -1.93); s.add(clock);
+      const lamp = new THREE.PointLight('#FFB060', 1.6, 9, 2); lamp.position.set(.6, 3.2, 0); lamp.castShadow = true; s.add(lamp);
+      s.add(new THREE.HemisphereLight('#6A5A8A', '#1A0E0A', .5));
+      const redW = new THREE.PointLight('#FF2A2A', 0, 8, 2); redW.position.set(3.2, 2.2, 1.5); s.add(redW);
+      const camera = cam(36);
+      function update(t) {
+        const late = t > 58;
+        const sec = late ? 3 + (t - 60.5) : 18 + (t - 44.2);
+        clock.userData.set(3, late ? 32 : 27, ((sec % 60) + 60) % 60);
+        led.visible = Math.sin(t * 6) > 0;
+        redW.intensity = late ? 1.4 + Math.sin(t * 5) : .5;
+        if (late) { camPath(camera, t, [[60.0, [2.3, 2.5, .2], [2.0, 2.4, -1.93]], [62.4, [2.1, 2.42, -.35], [2.0, 2.4, -1.93]]]); return { red: .35 }; }
+        camPath(camera, t, [
+          [41.2, [-3.2, 1.4, 1.6], [-2.4, .9, -1.6]],
+          [T.comida, [-1.6, 1.9, 1.2], [-1.2, 1.7, -1.6]],
+          [T.radio + .2, [-.6, 2.7, .9], [-1.0, 2.75, -1.6]],
+          [T.clockPush[0], [.6, 2.5, 1.6], [1.4, 2.4, -1.9]],
+          [T.clockPush[1], [1.85, 2.35, .1], [2.0, 2.4, -1.93]],
+          [51.2, [1.95, 2.38, -.2], [2.0, 2.4, -1.93]]]);
+        return { red: .1 };
+      }
+      return { scene: s, camera, update };
+    })();
+
+    /* ================= PORTÓN Y CANDADO ================= */
+    const GATE = (() => {
+      const s = new THREE.Scene(); s.fog = new THREE.FogExp2('#1A1438', .03);
+      const sk = sky('#0A1034', '#4A2A6A'); s.add(sk); s.add(stars(300, 8));
+      s.add(new THREE.HemisphereLight('#5A5AB0', '#1A0A20', .7));
+      const moon = new THREE.DirectionalLight('#9AB0FF', .8); moon.position.set(-10, 20, 10); moon.castShadow = true; s.add(moon);
+      s.add(box(40, .2, 40, mat('#26342C', { flatShading: true }), 0, -.1, 0));
+      const iron = mat('#3A3A44', { metalness: .6, roughness: .45 });
+      for (let i = -6; i <= 6; i++) if (i < -1 || i > 1) s.add(box(.12, 2.3, .12, iron, i * 1.3 - 1.3, 1.15, 0));
+      s.add(box(5.5, .08, .08, iron, -7.2, 2.1, 0)); s.add(box(5.5, .08, .08, iron, -7.2, .4, 0)); s.add(box(5.5, .08, .08, iron, 4.6, 2.1, 0)); s.add(box(5.5, .08, .08, iron, 4.6, .4, 0));
+      const gt = gate(); gt.position.set(-1.3, 0, 0); s.add(gt);
+      s.add(box(.2, 2.6, .2, iron, 1.4, 1.3, 0));
+      const v = vecino(); s.add(v); v.userData.spot.intensity = 1.5;
+      const h = hut(); h.position.set(-3, 0, -6); s.add(h);
+      const redL = new THREE.PointLight('#FF2020', 2, 20, 1.5); redL.position.set(4, 6, 8); s.add(redL);
+      const camera = cam(40);
+      function update(t) {
+        const close = ease(prog(t, T.gateClose[0], T.gateClose[1]));
+        gt.userData.leaf.rotation.y = lerp(1.25, 0, close);
+        const ang = gt.userData.leaf.rotation.y, ex = -1.3 + Math.cos(ang) * 2.2, ez = -Math.sin(ang) * 2.2;
+        v.position.set(ex - .2, 0, ez - .7); v.rotation.y = -.4;
+        v.userData.armL.rotation.x = -1.3; v.userData.armR.rotation.x = -1.1 - (t > T.lock - .6 ? .3 : 0);
+        const walking = close > 0 && close < 1 ? 1 : 0;
+        v.userData.legL.rotation.x = Math.sin(t * 8) * .3 * walking; v.userData.legR.rotation.x = -v.userData.legL.rotation.x;
+        const snap = prog(t, T.lock - .05, T.lock + .08);
+        gt.userData.shackle.position.y = .14 + .08 * (1 - snap);
+        redL.intensity = 2 + Math.sin(t * 5) * 1.2;
+        camPath(camera, t, [[61.6, [3.5, 2.6, 6], [0, 1.2, 0]], [T.gateClose[1], [2.4, 1.8, 3.6], [.8, 1.2, 0]], [T.lock - .35, [1.75, 1.3, 1.0], [1.32, 1.22, .1]], [65.0, [1.6, 1.28, .75], [1.32, 1.2, .1]]]);
+        return { red: .35 + .1 * Math.sin(t * 5) };
+      }
+      return { scene: s, camera, update };
+    })();
+
+    /* ================= FINAL: primer plano, dudando ================= */
+    const END = (() => {
+      const s = new THREE.Scene(); s.fog = new THREE.FogExp2('#2A1440', .02);
+      const sk = sky('#0A0E30', '#6A1A3A'); s.add(sk); s.add(stars(400, 12));
+      s.add(new THREE.HemisphereLight('#6A6AC0', '#200A10', .8));
+      const key = new THREE.PointLight('#FFB070', 1.2, 8, 2); key.position.set(-1.2, 2.6, 2); s.add(key);
+      const rim = new THREE.PointLight('#FF2A2A', 3, 10, 2); rim.position.set(1.6, 2.6, -1.6); s.add(rim);
+      s.add(box(60, .2, 60, mat('#26342C', { flatShading: true }), 0, -.1, 0));
+      const r = rng(44); for (let i = 0; i < 30; i++) { const b = building(2 + r() * 2, 3 + r() * 8, 2, 300 + i, { lit: .6 }); b.position.set(-40 + i * 2.8, -14, -50 - r() * 10); b.userData.paint(.5); s.add(b); }
+      const p = hero(); addBrows(p); s.add(p); p.rotation.y = -.15;
+      const camera = cam(32);
+      function update(t) {
+        p.userData.brows(.6 + .4 * Math.max(0, Math.sin(t * 1.3)));
+        p.userData.head.rotation.y = Math.sin(t * .9) * .38;
+        p.userData.head.rotation.x = Math.max(0, Math.sin(t * .9)) * .12;
+        p.userData.armR.rotation.x = -.2 + Math.sin(t * .7) * .05;
+        rim.intensity = 2.6 + Math.sin(t * 5) * 1.2;
+        camPath(camera, t, [[64.2, [.55, 1.75, 4.6], [0, 1.25, 0]], [74.0, [.3, 1.8, 3.9], [0, 1.3, 0]]]);
+        return { red: .3 + .08 * Math.sin(t * 5) };
+      }
+      return { scene: s, camera, update };
+    })();
+
+    /* ================= montaje ================= */
+    const SC = [
+      { a: 0, b: 8.4, s: BED }, { a: 8.4, b: 11.9, s: CITY }, { a: 11.9, b: 16.2, s: CEL }, { a: 16.2, b: 25.2, s: HALL },
+      { a: 25.2, b: 29.5, s: FLASH }, { a: 29.5, b: 39.2, s: COAST }, { a: 39.2, b: 41.6, s: HILL }, { a: 41.6, b: 50.9, s: HUT },
+      { a: 50.9, b: 54.3, s: CITY }, { a: 54.3, b: 60.5, s: CEL }, { a: 60.5, b: 62.0, s: HUT }, { a: 62.0, b: 64.6, s: GATE }, { a: 64.6, b: 73.94, s: END },
+    ];
+    const rtA = new THREE.WebGLRenderTarget(W, H, { samples: 4 }), rtB = new THREE.WebGLRenderTarget(W, H, { samples: 4 });
+    const post = new THREE.ShaderMaterial({
+      uniforms: { a: { value: rtA.texture }, b: { value: rtB.texture }, mixk: { value: 0 }, za: { value: 1 }, zb: { value: 1 }, red: { value: 0 }, warm: { value: 0 }, frame: { value: 0 } },
+      vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }',
+      fragmentShader: `uniform sampler2D a; uniform sampler2D b; uniform float mixk, za, zb, red, warm, frame; varying vec2 vUv;
+        float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898,78.233))) * 43758.5453); }
+        void main(){
+          vec3 ca = texture2D(a, (vUv - .5) / za + .5).rgb, cb = texture2D(b, (vUv - .5) / zb + .5).rgb;
+          vec3 c = mix(ca, cb, mixk);
+          float l = dot(c, vec3(.299,.587,.114));
+          c = mix(c, vec3(l * 1.55 + c.r * .15, l * .3, l * .26), clamp(red * 1.8, 0., .92));
+          c = mix(c, c * vec3(1.1, .98, .8), warm);
+          vec2 q = vUv - .5; c *= 1. - smoothstep(.35, .85, length(q * vec2(1., .62))) * .55;
+          c += (hash(vUv * vec2(1080., 1920.) + frame * 17.) - .5) * .035;
+          gl_FragColor = vec4(max(c, 0.), 1.);
+          #include <tonemapping_fragment>
+          #include <encodings_fragment>
+        }`,
+      depthTest: false, depthWrite: false });
+    const postScene = new THREE.Scene(); postScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), post)); const postCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    const TR = .45;
+    function draw(sc, t, rt) { const g = sc.s.update(t) || {}; renderer.setRenderTarget(rt); renderer.render(sc.s.scene, sc.s.camera); return g; }
     function renderAt(t) {
-      const c = SC.find(x => t >= x.a && t < x.b) || SC[SC.length - 1];
-      c.s.update(t - c.a); renderer.render(c.s.scene, c.s.camera);
+      let i = SC.findIndex(x => t >= x.a && t < x.b); if (i < 0) i = SC.length - 1;
+      const cur = SC[i], nxt = SC[i + 1], prv = SC[i - 1];
+      let A = cur, B = null, k = 0, za = 1, zb = 1, T0 = 0;
+      if (nxt && t > nxt.a - TR) { B = nxt; T0 = nxt.a; }
+      else if (prv && t < cur.a + TR) { A = prv; B = cur; T0 = cur.a; }
+      // si A y B son la misma escena 3D (no pasa aquí) se dibuja una sola
+      let g = draw(A, t, rtA);
+      if (B) {
+        k = ease(prog(t, T0 - .2, T0 + .2)); za = 1 + .35 * easeIn(prog(t, T0 - TR, T0 + .2)); zb = 1.3 - .3 * easeOut(prog(t, T0 - .2, T0 + TR));
+        const g2 = draw(B, t, rtB);
+        g = { red: lerp(g.red || 0, g2.red || 0, k), warm: lerp(g.warm || 0, g2.warm || 0, k) };
+      }
+      const u = post.uniforms; u.mixk.value = k; u.za.value = za; u.zb.value = zb; u.red.value = g.red || 0; u.warm.value = g.warm || 0; u.frame.value = Math.round(t * 30);
+      renderer.setRenderTarget(null); renderer.render(postScene, postCam);
     }
     window.addEventListener('hf-seek', e => renderAt(e.detail.time));
     renderAt(0);
