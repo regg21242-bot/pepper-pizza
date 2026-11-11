@@ -1,0 +1,172 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; background: #05060f; }
+    #gl { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+  </style>
+  <div id="root" data-composition-id="film" data-start="0" data-duration="70" data-width="1080" data-height="1920">
+    <canvas id="gl" width="1080" height="1920" data-layout-ignore></canvas>
+  </div>
+  <script>
+  (function () {
+    const { THREE, rng, mat, glow, box, ball, cyl, hero, vecino, building, sky, stars, phone } = window.M;
+    const W = 1080, H = 1920;
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gl'), antialias: true, preserveDrawingBuffer: true });
+    renderer.setPixelRatio(1); renderer.setSize(W, H, false);
+    renderer.outputEncoding = THREE.sRGBEncoding; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.1;
+    renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v)), lerp = (a, b, k) => a + (b - a) * k, prog = (t, a, b) => clamp((t - a) / (b - a));
+    const ease = k => (k = clamp(k), k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
+    const cam = () => new THREE.PerspectiveCamera(38, W / H, .05, 900);
+
+    /* ================= ESCENA 1: recámara, temblor ================= */
+    const S1 = (() => {
+      const s = new THREE.Scene(); s.background = new THREE.Color('#070A1C'); s.fog = new THREE.Fog('#070A1C', 8, 22);
+      const wall = mat('#1C2244'), floor = mat('#2A2030');
+      s.add(box(8, .1, 8, floor, 0, -.05, 0));
+      s.add(box(8, 4, .1, wall, 0, 2, -3)); s.add(box(.1, 4, 8, wall, -3.2, 2, 0));
+      // ventana con luna
+      const win = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 1.6), glow('#2E4C9A')); win.position.set(-3.14, 2.3, -.6); win.rotation.y = Math.PI / 2; s.add(win);
+      s.add(box(.12, 1.8, .1, mat('#10142A'), -3.12, 2.3, -.6)); s.add(box(.12, .1, 1.6, mat('#10142A'), -3.12, 2.3, -.6));
+      const moon = new THREE.DirectionalLight('#7C9CFF', .9); moon.position.set(-6, 5, 1); moon.castShadow = true; moon.shadow.mapSize.set(1024, 1024); s.add(moon);
+      s.add(new THREE.HemisphereLight('#4A4AA0', '#120A1A', .7));
+      const warm = new THREE.PointLight('#FFB070', .35, 6, 2); warm.position.set(1.8, 1.6, -1.8); s.add(warm);
+      // cama
+      const bed = new THREE.Group(); s.add(bed); bed.position.set(.2, 0, -1.4);
+      bed.add(box(2.2, .45, 3.2, mat('#4A3426'), 0, .25, 0)); bed.add(box(2.3, 1.2, .14, mat('#3E2A1E'), 0, .6, -1.6));
+      bed.add(box(2.1, .25, 3.0, mat('#D8D2E8'), 0, .58, 0));
+      bed.add(box(.9, .18, .5, mat('#EEE8F6'), -.45, .78, -1.2)); bed.add(box(.9, .18, .5, mat('#EEE8F6'), .5, .78, -1.2));
+      // protagonista acostado bajo la cobija
+      const p = hero(); p.rotation.x = -Math.PI / 2; p.rotation.z = .08; p.position.set(-.4, .9, .95); p.scale.setScalar(.82); bed.add(p);
+      p.userData.armL.rotation.x = .2; p.userData.armR.rotation.x = .2; p.userData.sleep(true);
+      const blanket = box(2.15, .5, 2.2, mat('#3E5FB0'), 0, .9, .52); bed.add(blanket);
+      for (let i = 0; i < 5; i++) bed.add(box(2.16, .51, .08, mat('#5A7AD0'), 0, .9, -.5 + i * .45));
+      // buró, lámpara y celular
+      const nst = new THREE.Group(); s.add(nst); nst.position.set(1.9, 0, -2.2);
+      nst.add(box(.8, .7, .6, mat('#5A3E2A'), 0, .35, 0)); nst.add(box(.6, .04, .02, mat('#2A1A10'), 0, .45, .31));
+      const lamp = new THREE.Group(); lamp.position.set(-.15, .7, -.05); nst.add(lamp);
+      const lb = cyl(.08, .14, .5, mat('#C8B890'), 12); lb.position.y = .25; lamp.add(lb);
+      const shade = cyl(.18, .3, .32, mat('#E8D8B0', { emissive: '#3A2A10', emissiveIntensity: .2 }), 14); shade.position.y = .62; lamp.add(shade);
+      const ph = phone(); ph.scale.setScalar(.35); ph.rotation.x = -Math.PI / 2; ph.position.set(.2, .72, .05); nst.add(ph);
+      const glowL = new THREE.PointLight('#FF2A2A', 0, 3, 2); glowL.position.set(.2, 1, .05); nst.add(glowL);
+      const camera = cam();
+      function update(t) {
+        const shake = clamp(prog(t, .2, .8)) * (1 - prog(t, 5.5, 6.5));
+        const sh = (f, a) => Math.sin(t * f) * a * shake;
+        bed.position.x = .2 + sh(31, .03); bed.rotation.z = sh(23, .006);
+        lamp.rotation.z = sh(17, .12); lamp.rotation.x = sh(13, .08); nst.position.x = 1.9 + sh(29, .02);
+        p.userData.head.rotation.y = sh(7, .2);
+        // la pantalla del celular: negra hasta la alerta
+        const a = prog(t, 6.2, 6.5); glowL.intensity = a * 2.5 * (.7 + .3 * Math.sin(t * 12));
+        drawAlert(ph.userData, a, t);
+        camera.position.set(lerp(3.4, 2.9, t / 8) + sh(41, .03), lerp(6.4, 5.8, t / 8) + sh(37, .03), lerp(4.6, 3.9, t / 8));
+        camera.lookAt(.6, .5, -1.6);
+      }
+      return { scene: s, camera, update };
+    })();
+    function drawAlert(u, a, t) {
+      const c = u.ctx; c.fillStyle = '#05060A'; c.fillRect(0, 0, 360, 720);
+      if (a > 0) {
+        c.globalAlpha = a; c.fillStyle = '#B3121A'; c.fillRect(0, 0, 360, 720);
+        c.fillStyle = '#FFFFFF'; c.beginPath(); c.moveTo(180, 170); c.lineTo(280, 340); c.lineTo(80, 340); c.closePath(); c.fill();
+        c.fillStyle = '#B3121A'; c.fillRect(172, 220, 16, 70); c.fillRect(172, 304, 16, 16);
+        c.fillStyle = '#FFFFFF'; c.font = '900 40px Nunito, sans-serif'; c.textAlign = 'center'; c.fillText('ALERTA', 180, 420); c.font = '800 32px Nunito, sans-serif'; c.fillText('DE TSUNAMI', 180, 465);
+        c.globalAlpha = 1;
+      }
+      u.tex.needsUpdate = true;
+    }
+
+    /* ================= ESCENA 4: pasillo, el vecino en la puerta ================= */
+    const S4 = (() => {
+      const s = new THREE.Scene(); s.background = new THREE.Color('#05070F'); s.fog = new THREE.Fog('#05070F', 4, 16);
+      const wall = mat('#20253F'), floor = mat('#1A1622');
+      s.add(box(4, .1, 12, floor, 0, -.05, -3));
+      s.add(box(.1, 3.4, 12, wall, -1.6, 1.7, -3)); s.add(box(.1, 3.4, 12, wall, 1.6, 1.7, -3));
+      s.add(box(3.2, .1, 12, mat('#151A2E'), 0, 3.4, -3));
+      // marco de la puerta al fondo (la puerta de tu depa) y el exterior oscuro
+      const frame = mat('#3A2A20');
+      s.add(box(.16, 2.5, .3, frame, -.66, 1.25, -5)); s.add(box(.16, 2.5, .3, frame, .66, 1.25, -5)); s.add(box(1.48, .16, .3, frame, 0, 2.55, -5));
+      s.add(box(3.2, 3.4, .1, wall, -1.9, 1.7, -5.05)); s.add(box(3.2, 3.4, .1, wall, 1.9, 1.7, -5.05));
+      const door = new THREE.Group(); door.position.set(-.6, 0, -5); s.add(door);
+      const dpanel = box(1.18, 2.4, .08, mat('#6A4A30'), .59, 1.2, 0); door.add(dpanel); door.add(ball(.05, mat('#C8A040', { metalness: .6, roughness: .3 }), 1.05, 1.15, .07, 8));
+      // luz de emergencia roja en el techo del pasillo de afuera
+      const em = new THREE.PointLight('#FF2020', 0, 7, 2); em.position.set(0, 3, -7); s.add(em);
+      const emBulb = ball(.08, glow('#FF3030'), -1.2, 3.1, -7.5, 8); s.add(emBulb);
+      s.add(new THREE.HemisphereLight('#5A5AA8', '#0A0A12', .75));
+      const fill = new THREE.PointLight('#8090FF', .6, 8, 2); fill.position.set(.8, 2.8, -2.5); s.add(fill);
+      const v = vecino(); v.position.set(0, 0, -6.1); s.add(v);
+      v.userData.armR.rotation.x = -1.35; v.userData.armR.rotation.z = .25;
+      const p = hero(); p.position.set(-.55, 0, -2.9); p.rotation.y = Math.PI + .1; s.add(p);
+      p.userData.armR.rotation.x = -.6;
+      const camera = cam();
+      function update(t) {
+        const open = ease(prog(t, .8, 2.0));
+        door.rotation.y = open * 1.6;
+        v.position.z = lerp(-6.4, -5.9, ease(prog(t, 1.2, 2.6)));
+        v.userData.flash.rotation.x = .18 + Math.sin(t * 1.3) * .04; v.userData.flash.rotation.y = Math.sin(t * .9) * .08;
+        em.intensity = 1.2 + .8 * Math.sin(t * 5); emBulb.material.color.setHSL(0, 1, .35 + .15 * Math.sin(t * 5));
+        p.userData.armR.rotation.x = -.6 * (1 - open) - .1;
+        camera.position.set(lerp(.75, .65, t / 6), lerp(2.45, 2.35, t / 6), lerp(1.4, .8, t / 6));
+        camera.lookAt(-.15, 1.55, -6);
+      }
+      return { scene: s, camera, update };
+    })();
+
+    /* ================= ESCENA 9: desde el cerro, la línea blanca ================= */
+    const S9 = (() => {
+      const s = new THREE.Scene(); s.fog = new THREE.FogExp2('#2A1A4A', .006);
+      const sk = sky('#0A1034', '#5A2A72'); s.add(sk); s.add(stars());
+      s.add(new THREE.HemisphereLight('#4A4AA0', '#1A0A20', .6));
+      const moon = new THREE.DirectionalLight('#8AA0FF', .6); moon.position.set(-30, 40, -20); s.add(moon);
+      // mar
+      const seaG = new THREE.PlaneGeometry(400, 200, 80, 40); seaG.rotateX(-Math.PI / 2);
+      const sea = new THREE.Mesh(seaG, mat('#0C1A44', { roughness: .35, metalness: .1, flatShading: true })); sea.position.set(0, -.2, -185); s.add(sea);
+      const seaPos = seaG.attributes.position, seaBase = seaPos.array.slice();
+      // costa y ciudad
+      s.add(box(260, .4, 60, mat('#2A2238'), 0, 0, -55));
+      const city = new THREE.Group(); s.add(city); const r = rng(5), blds = [];
+      for (let i = 0; i < 70; i++) {
+        const w = 2 + r() * 3, h = 3 + r() * (i % 7 === 0 ? 18 : 9), d = 2 + r() * 3;
+        const b = building(w, h, d, 100 + i, { lit: .5 }); b.position.set(-60 + (i % 14) * 9 + r() * 3, 0, -40 - Math.floor(i / 14) * 8 - r() * 3); city.add(b); blds.push(b);
+      }
+      // cerro en primer plano
+      const hillG = new THREE.CircleGeometry(16, 28); hillG.rotateX(-Math.PI / 2);
+      const hp = hillG.attributes.position, hr = rng(3); for (let i = 0; i < hp.count; i++) { const x = hp.getX(i), z = hp.getZ(i), dd = Math.hypot(x, z); hp.setY(i, Math.max(0, 6 - dd * .42) + hr() * .35); }
+      hillG.computeVertexNormals();
+      const hill = new THREE.Mesh(hillG, mat('#24302A', { flatShading: true })); hill.position.set(0, 14, 18); s.add(hill);
+      const slope = box(60, 14, 30, mat('#161E1C', { flatShading: true }), 0, 7, 22); s.add(slope);
+      s.add(box(240, .3, 70, mat('#1A1A2A'), 0, -.1, -5));
+      // protagonista y vecino de espaldas, viendo al mar
+      const p = hero(), v = vecino(); p.position.set(-.9, 19.6, 13.4); v.position.set(.8, 19.5, 13.8); p.rotation.y = Math.PI; v.rotation.y = Math.PI - .15; s.add(p, v);
+      v.userData.spot.intensity = 0; v.userData.beam.visible = false;
+      // la línea blanca: espuma brillante que avanza
+      const lineM = new THREE.MeshBasicMaterial({ color: '#F4F8FF', toneMapped: false, fog: false });
+      const line = new THREE.Mesh(new THREE.BoxGeometry(300, .5, 1.2), lineM); s.add(line);
+      const halo = new THREE.Mesh(new THREE.PlaneGeometry(300, 12), new THREE.MeshBasicMaterial({ color: '#BFD8FF', transparent: true, opacity: .25, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false, fog: false })); halo.rotation.x = -Math.PI / 2; s.add(halo);
+      const camera = cam();
+      function update(t) {
+        // el oleaje se mueve un poco
+        for (let i = 0; i < seaPos.count; i++) { const x = seaBase[i * 3], z = seaBase[i * 3 + 2]; seaPos.setY(i, Math.sin(x * .08 + t * .8) * .25 + Math.cos(z * .1 + t * .6) * .25); }
+        seaPos.needsUpdate = true; seaG.computeVertexNormals();
+        const k = prog(t, 0, 8); const lz = lerp(-260, -160, k);
+        line.position.set(0, .4, lz); halo.position.set(0, .3, lz + 1); line.scale.y = 1 + Math.sin(t * 6) * .15;
+        blds.forEach((b, i) => b.userData.paint(.35 + .15 * Math.sin(i), 0));
+        const red = .25 + .1 * Math.sin(t * 3); sk.userData.mat.uniforms.red.value = red;
+        camera.position.set(lerp(1.2, .6, t / 8), lerp(25, 24.4, t / 8), lerp(26, 24.8, t / 8));
+        camera.lookAt(-1.5, 4, -110);
+      }
+      return { scene: s, camera, update };
+    })();
+
+    // Las escenas se arman por tiempo; por ahora solo las tres de prueba de estilo
+    const SC = [{ a: 0, b: 8, s: S1 }, { a: 8, b: 16, s: S4 }, { a: 16, b: 70, s: S9 }];
+    function renderAt(t) {
+      const c = SC.find(x => t >= x.a && t < x.b) || SC[SC.length - 1];
+      c.s.update(t - c.a); renderer.render(c.s.scene, c.s.camera);
+    }
+    window.addEventListener('hf-seek', e => renderAt(e.detail.time));
+    renderAt(0);
+    window.__timelines = window.__timelines || {};
+    window.__timelines['film'] = gsap.timeline({ paused: true });
+  })();
+  </script>
+</template>

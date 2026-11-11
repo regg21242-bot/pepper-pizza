@@ -1,0 +1,22 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; pointer-events: none; }
+    .pwrap { position: absolute; left: 0; top: 1020px; width: 900px; display: flex; justify-content: center; }
+    .pill { display: inline-flex; align-items: center; gap: 22px; padding: 22px 40px 22px 32px; border-radius: 999px;
+      background: rgba(12,12,20,0.82); border: 4px solid #FFC93C; color: #fff; font-family: Nunito, sans-serif; font-weight: 900;
+      font-size: 50px; line-height: 1; box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 24px rgba(255,201,60,0.25); }
+    .tri { color: #FFC93C; font-size: 40px; }
+  </style>
+  <div id="root" data-composition-id="pildoras" data-width="1080" data-height="1920">
+    <div id="pl0" class="clip pwrap" data-start="2.00" data-duration="5.50" data-track-index="0"><div id="pl0c" class="pill"><span class="tri">▶</span><span>Te despiertas</span></div></div>
+    <div id="pl1" class="clip pwrap" data-start="9.50" data-duration="6.00" data-track-index="0"><div id="pl1c" class="pill"><span class="tri">▶</span><span>Abres la puerta</span></div></div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#pl0c", {opacity:0, scale:.6, y:30}, {opacity:1, scale:1, y:0, duration:.45, ease:"back.out(2.2)"}, 2.00);
+    tl.to("#pl0c", {opacity:0, y:-12, duration:.3, ease:"power2.in"}, 7.18);
+    tl.fromTo("#pl1c", {opacity:0, scale:.6, y:30}, {opacity:1, scale:1, y:0, duration:.45, ease:"back.out(2.2)"}, 9.50);
+    tl.to("#pl1c", {opacity:0, y:-12, duration:.3, ease:"power2.in"}, 15.18);
+    window.__timelines["pildoras"] = tl;
+  </script>
+</template>
