@@ -31,7 +31,7 @@
     }
 
     /* ================= CIUDAD: el mar entra ================= */
-    const FL = { line: [0, 1.8], coast: 1.8, front: [2.0, 6.3] };   // tiempos locales de la toma
+    const FL = { line: [0, 1.8], coast: 1.8, front: [2.0, 5.0] };   // tiempos locales de la toma
     const CITY = (() => {
       const s = new THREE.Scene(); s.fog = new THREE.FogExp2('#2A1A4A', .006);
       const sk = sky('#0A1034', '#5A2A72'); s.add(sk); s.add(stars());
@@ -50,14 +50,34 @@
       const cr = rng(31), cars = [], carCols = ['#E04848', '#F2C230', '#3FAE5A', '#3A7AE0', '#E8E8F0', '#2A2A30'];
       for (let i = 0; i < 26; i++) { const c = new THREE.Group(); c.add(box(1.6, .5, .8, mat(carCols[i % 6], { roughness: .4, metalness: .3 }), 0, .45, 0)); c.add(box(.9, .35, .74, mat('#1A2030', { roughness: .2 }), -.1, .85, 0)); const x = -58 + cr() * 116, z = -36 - cr() * 46; c.position.set(x, 0, z); c.rotation.y = cr() < .5 ? 0 : Math.PI / 2; s.add(c); cars.push({ c, x, z, ph: cr() * 6, sp: .6 + cr() * .8 }); }
       const hillG = new THREE.CircleGeometry(16, 28); hillG.rotateX(-Math.PI / 2);
-      const hp = hillG.attributes.position, hr = rng(3); for (let i = 0; i < hp.count; i++) { const x = hp.getX(i), z = hp.getZ(i), dd = Math.hypot(x, z); hp.setY(i, Math.max(0, 6 - dd * .42) + hr() * .35); }
+      const hp = hillG.attributes.position, hr = rng(3); for (let i = 0; i < hp.count; i++) { const x = hp.getX(i), z = hp.getZ(i), dd = Math.hypot(x, z); const n = hr(); hp.setY(i, dd < 8.5 ? 5.6 : Math.max(0, 5.6 - (dd - 8.5) * .75) + n * .35); }
       hillG.computeVertexNormals();
       const hill = new THREE.Mesh(hillG, mat('#24302A', { flatShading: true })); hill.position.set(0, 14, 18); s.add(hill);
       s.add(box(60, 14, 30, mat('#161E1C', { flatShading: true }), 0, 7, 22)); s.add(box(240, .3, 70, mat('#1A1A2A'), 0, -.1, -5));
       const hh = hut(); hh.position.set(-6.5, 19.6, 19.5); hh.rotation.y = -.4; s.add(hh);
       const hutL = new THREE.PointLight('#FFC070', 1.2, 10, 2); hutL.position.set(-6, 21, 21.5); s.add(hutL);
-      const p = hero(), v = vecino(); p.position.set(-.9, 19.6, 13.4); v.position.set(.8, 19.5, 13.8); p.rotation.y = Math.PI; v.rotation.y = Math.PI - .15; s.add(p, v);
+      const p = hero(), v = vecino(); p.position.set(-.9, 19.6, 13.4); v.position.set(.8, 19.6, 13.8); p.rotation.y = Math.PI; v.rotation.y = Math.PI - .15; s.add(p, v);
       v.userData.spot.intensity = 0; v.userData.beam.visible = false;
+      // cerca de madera: divide el terreno del vecino de la bajada del cerro
+      const wood = mat('#6A4428', { roughness: .85 }), woodD = mat('#4A2E1A', { roughness: .9 });
+      const fp = []; for (let k = 0; k <= 16; k++) { const a = -1.05 + k * 2.1 / 16; fp.push([Math.sin(a) * 7.9, 18 - Math.cos(a) * 7.9]); }
+      fp.forEach(([x, z], k) => { const post = box(.14, 1.25, .14, wood, x, 19.6 + .6, z); post.rotation.y = (k % 3 - 1) * .08; s.add(post); });
+      for (let k = 0; k < fp.length - 1; k++) { const [x0, z0] = fp[k], [x1, z1] = fp[k + 1], L = Math.hypot(x1 - x0, z1 - z0), ry = -Math.atan2(z1 - z0, x1 - x0);
+        for (const [y, m] of [[19.6 + .45, woodD], [19.6 + .95, wood]]) { const rail = box(L + .1, .09, .06, m, (x0 + x1) / 2, y, (z0 + z1) / 2); rail.rotation.y = ry; s.add(rail); } }
+      // salpicadura cuando el agua choca contra el cerro
+      const NSP = 700, spG = new THREE.BufferGeometry(), spP = new Float32Array(NSP * 3); spG.setAttribute('position', new THREE.BufferAttribute(spP, 3));
+      const spr = rng(77), spD = []; for (let i = 0; i < NSP; i++) spD.push({ x: (spr() - .5) * 36, z: 6 + spr() * 2.5, vy: 9 + spr() * 6, vz: 1 + spr() * 3.5, vx: (spr() - .5) * 2, off: spr() * 1.3 });
+      const dot = (() => { const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d'); const g = x.createRadialGradient(32, 32, 0, 32, 32, 30); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(.5, 'rgba(230,240,255,.6)'); g.addColorStop(1, 'rgba(230,240,255,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c); })();
+      const spM = new THREE.PointsMaterial({ map: dot, color: '#CFE0FF', size: .45, transparent: true, opacity: .9, depthWrite: false, fog: false, toneMapped: false });
+      const spray = new THREE.Points(spG, spM); spray.frustumCulled = false; s.add(spray);
+      const splashMist = new THREE.Mesh(new THREE.PlaneGeometry(40, 6), new THREE.MeshBasicMaterial({ color: '#DDE8FF', transparent: true, opacity: 0, depthWrite: false, fog: false, toneMapped: false })); splashMist.position.set(0, 17, 7); s.add(splashMist);
+      function splash(t, t0) {
+        const on = t > t0; spray.visible = on; if (!on) { splashMist.material.opacity = 0; return; }
+        for (let i = 0; i < NSP; i++) { const d = spD[i], a = ((t - t0 - d.off) % 1.3 + 1.3) % 1.3, alive = t - t0 >= d.off;
+          const y = 14 + d.vy * a - 9.8 * a * a; spP[i * 3] = d.x + d.vx * a; spP[i * 3 + 1] = alive && y > 13.5 ? y : -50; spP[i * 3 + 2] = d.z + d.vz * a; }
+        spG.attributes.position.needsUpdate = true;
+        const k = t - t0; splashMist.material.opacity = .12 * Math.min(1, k * 3) * Math.max(.4, 1 - k * .3); splashMist.position.y = 16.5 + Math.sin(t * 4) * .3;
+      }
       // la línea blanca y el agua que entra
       const line = new THREE.Mesh(new THREE.BoxGeometry(300, .6, 1.4), new THREE.MeshBasicMaterial({ color: '#F4F8FF', toneMapped: false, fog: false })); s.add(line);
       const waterM = new THREE.MeshStandardMaterial({ color: '#3A5070', roughness: .15, metalness: .45, transparent: true, opacity: .95 });
@@ -69,11 +89,11 @@
       const camera = cam();
       function update(t, mode = 'flood') {
         if (mode === 'aerial') {   // escena 1: toma aérea que baja hasta la casita del cerro
-          line.visible = water.visible = foam.visible = false; blds.forEach(b => b.userData.paint(.45)); cars.forEach(o => { o.c.position.set(o.x, 0, o.z); o.c.rotation.set(0, o.c.rotation.y, 0); });
+          line.visible = water.visible = foam.visible = false; splash(-1, 0); blds.forEach(b => b.userData.paint(.45)); cars.forEach(o => { o.c.position.set(o.x, 0, o.z); o.c.rotation.set(0, o.c.rotation.y, 0); });
           sirens.forEach((L, i) => L.intensity = 2.5 + Math.sin(t * 5 + i) * 1.5); rn.userData.update(t, 0, 10, 0);
-          sk.userData.mat.uniforms.red.value = .3;
+          sk.userData.mat.uniforms.red.value = .12;
           camPath(camera, t, [[-.4, [6, 62, 75], [-1, 0, -45]], [3.0, [-1.4, 26.8, 30.5], [-1, -1, -70]]]);
-          return { red: .25 };
+          return { red: .06 };
         }
         for (let i = 0; i < seaPos.count; i++) { const x = seaBase[i * 3], z = seaBase[i * 3 + 2]; seaPos.setY(i, Math.sin(x * .08 + t * .8) * .25 + Math.cos(z * .1 + t * .6) * .25); }
         seaPos.needsUpdate = true; seaG.computeVertexNormals();
@@ -81,18 +101,19 @@
         rn.userData.update(t, 0, 10, 0);
         // la línea llega a la costa y el agua entra
         const kl = prog(t, FL.line[0], FL.line[1]), lz = lerp(-190, -86, kl);
-        const kf = ease(prog(t, FL.front[0], FL.front[1])), front = lerp(-86, -18, kf);
+        const kf = ease(prog(t, FL.front[0], FL.front[1])), front = lerp(-86, 6.5, kf);
         const isWave = t < FL.coast;
         line.visible = isWave; line.position.set(0, .4, lz);
         const h = isWave ? 0 : lerp(.6, 3.2, kf);
         water.visible = !isWave; water.scale.set(1, Math.max(.01, h), front + 196); water.position.set(0, h / 2 - .1, (front - 196) / 2);
+        splash(t, FL.front[1] - .15);
         foam.visible = !isWave; foam.position.set(0, h + .1, front); foam.scale.y = 1 + Math.sin(t * 7) * .3;
         // coches arrastrados y luces que se apagan por zonas
         cars.forEach(o => { const hit = !isWave && front > o.z; const k = hit ? clamp((t - (FL.front[0] + (o.z + 86) / 68 * (FL.front[1] - FL.front[0]))) * .8) : 0; o.c.position.set(o.x + Math.sin(o.ph + t) * k * 2, k * (h * .6) + Math.sin(t * 3 + o.ph) * .2 * k, o.z + k * 9 * o.sp); o.c.rotation.set(Math.sin(t * 2 + o.ph) * .4 * k, o.c.rotation.y + .02 * k, Math.cos(t * 1.7 + o.ph) * .5 * k); });
         blds.forEach(b => { const passed = !isWave && front > b.position.z ? clamp((front - b.position.z) / 18) : 0; b.userData.paint(.45, 0, passed); });
-        sk.userData.mat.uniforms.red.value = .3 + .08 * Math.sin(t * 3);
+        sk.userData.mat.uniforms.red.value = .14 + .05 * Math.sin(t * 3);
         camPath(camera, t, [[-.6, [-1.5, 26.5, 29], [-1, -1, -70]], [6.6, [.4, 25.5, 23.0], [-1, -3, -60]]]);
-        return { red: .32 + .08 * Math.sin(t * 4) };
+        return { red: .1 + .05 * Math.sin(t * 4) };
       }
       return { scene: s, camera, update };
     })();

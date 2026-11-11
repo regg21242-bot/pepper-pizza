@@ -174,10 +174,10 @@
     parts.sleep = (on) => { eyes.forEach(e => e.visible = !on); shut.forEach(l => l.visible = on); };
     parts.brows = (worry) => brows.forEach((b, i) => { const sd = i ? 1 : -1; b.rotation.z = -sd * .35 * worry; b.position.y = .115 + .02 * worry; });
     // pelo corto con fleco
-    const hair = new THREE.Mesh(new THREE.SphereGeometry(.245, 20, 12, 0, Math.PI * 2, 0, Math.PI * .55), hairM); hair.position.set(0, .03, -.015); hair.scale.set(1.0, 1.12, 1.04); hair.rotation.x = -.18; hair.castShadow = true; head.add(hair);
-    const back = ball(.236, hairM, 0, .0, -.05, 18); back.scale.set(.97, 1.08, .95); head.add(back);   // nuca con pelo
-    const fringe = box(.34, .07, .1, hairM, 0, .16, .17); fringe.rotation.x = .35; head.add(fringe);
-    for (const s of [-1, 1]) head.add(box(.04, .1, .12, hairM, s * .21, .07, .03));
+    const hair = new THREE.Mesh(new THREE.SphereGeometry(.245, 20, 12, 0, Math.PI * 2, 0, Math.PI * .4), hairM); hair.position.set(0, .05, -.02); hair.scale.set(1.0, 1.12, 1.04); hair.rotation.x = -.22; hair.castShadow = true; head.add(hair);
+    const back = ball(.232, hairM, 0, .02, -.055, 18); back.scale.set(.94, 1.06, .93); head.add(back);   // nuca con pelo
+    const fringe = ball(.14, hairM, .03, .215, .12, 14); fringe.scale.set(1.55, .42, .95); fringe.rotation.set(.45, 0, -.15); head.add(fringe);   // copete peinado hacia un lado, arriba de las cejas
+    for (const s of [-1, 1]) head.add(box(.03, .07, .1, hairM, s * .215, .1, .0));
     g.userData = parts; return g;
   }
 
@@ -367,8 +367,8 @@
   function addBrows(p) {
     if (p.userData.brows) return;
     const head = p.userData.head, brows = [];
-    for (const s of [-1, 1]) { const b = box(.13, .028, .03, mat('#2A1C14'), s * .11, .12, .3); head.add(b); brows.push(b); }
-    p.userData.brows = (worry) => brows.forEach((b, i) => { const s = i ? 1 : -1; b.rotation.z = -s * .35 * worry; b.position.y = .12 + .02 * worry; });
+    for (const s of [-1, 1]) { const b = box(.1, .024, .03, mat('#2A1C14'), s * .08, .12, .215); head.add(b); brows.push(b); }
+    p.userData.brows = (worry) => brows.forEach((b, i) => { const s = i ? 1 : -1; b.rotation.z = -s * .35 * worry; b.position.y = .115 + .015 * worry; });
   }
   /* camioneta pickup low-poly */
   function truck(color = '#2E5A4A') {
