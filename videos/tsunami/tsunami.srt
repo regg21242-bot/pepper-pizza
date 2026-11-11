@@ -171,7 +171,7 @@ acercándose.
 Y te vibra el celular.
 
 44
-00:00:56,160 --> 00:00:56,780
+00:00:56,180 --> 00:00:56,780
 Tu mamá:
 
 45
@@ -183,7 +183,7 @@ Tu mamá:
 seguimos en el malecón.
 
 47
-00:00:59,440 --> 00:01:01,420
+00:00:59,380 --> 00:01:01,420
 ¿Dónde estás?» Quedan ocho minutos.
 
 48
@@ -195,26 +195,26 @@ Y el vecino ya está cerrando
 el portón.
 
 50
-00:01:04,800 --> 00:01:05,760
+00:01:04,780 --> 00:01:05,760
 ¿Te quedas en el cerro o
 
 51
-00:01:05,760 --> 00:01:06,580
+00:01:05,760 --> 00:01:06,560
 bajas por tu mamá?
 
 52
-00:01:07,280 --> 00:01:08,240
+00:01:07,280 --> 00:01:08,220
 Elige en comentarios.
 
 53
-00:01:09,260 --> 00:01:09,820
+00:01:09,240 --> 00:01:09,820
 Y sígueme:
 
 54
-00:01:10,100 --> 00:01:11,380
-si llegamos a diez mil seguidores,
+00:01:10,120 --> 00:01:11,160
+si llegamos a mil seguidores,
 
 55
-00:01:11,700 --> 00:01:12,620
+00:01:11,500 --> 00:01:12,380
 saco la segunda parte.
 

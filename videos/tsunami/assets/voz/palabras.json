@@ -976,25 +976,25 @@
    "palabra": "Y",
    "inicio": 54.0,
    "fin": 54.6,
-   "prob": 0.068
+   "prob": 0.077
   },
   {
    "palabra": "te",
    "inicio": 54.6,
    "fin": 54.7,
-   "prob": 0.97
+   "prob": 0.966
   },
   {
    "palabra": "vibra",
    "inicio": 54.7,
    "fin": 54.96,
-   "prob": 0.996
+   "prob": 0.995
   },
   {
    "palabra": "el",
    "inicio": 54.96,
    "fin": 55.06,
-   "prob": 0.998
+   "prob": 0.997
   },
   {
    "palabra": "celular.",
@@ -1004,21 +1004,21 @@
   },
   {
    "palabra": "Tu",
-   "inicio": 56.16,
+   "inicio": 56.18,
    "fin": 56.48,
-   "prob": 0.657
+   "prob": 0.624
   },
   {
    "palabra": "mamá:",
    "inicio": 56.48,
    "fin": 56.78,
-   "prob": 0.967
+   "prob": 0.968
   },
   {
    "palabra": "«No",
    "inicio": 57.02,
    "fin": 57.1,
-   "prob": 0.971
+   "prob": 0.963
   },
   {
    "palabra": "hay",
@@ -1030,13 +1030,13 @@
    "palabra": "taxis,",
    "inicio": 57.2,
    "fin": 57.6,
-   "prob": 0.849
+   "prob": 0.856
   },
   {
    "palabra": "seguimos",
    "inicio": 57.76,
    "fin": 58.08,
-   "prob": 0.996
+   "prob": 0.995
   },
   {
    "palabra": "en",
@@ -1054,13 +1054,13 @@
    "palabra": "malecón.",
    "inicio": 58.3,
    "fin": 58.66,
-   "prob": 0.919
+   "prob": 0.911
   },
   {
    "palabra": "¿Dónde",
-   "inicio": 59.44,
+   "inicio": 59.38,
    "fin": 59.86,
-   "prob": 0.913
+   "prob": 0.91
   },
   {
    "palabra": "estás?»",
@@ -1078,7 +1078,7 @@
    "palabra": "ocho",
    "inicio": 60.92,
    "fin": 61.16,
-   "prob": 0.775
+   "prob": 0.79
   },
   {
    "palabra": "minutos.",
@@ -1090,31 +1090,31 @@
    "palabra": "Y",
    "inicio": 62.2,
    "fin": 62.64,
-   "prob": 0.73
+   "prob": 0.568
   },
   {
    "palabra": "el",
    "inicio": 62.64,
    "fin": 62.74,
-   "prob": 0.999
+   "prob": 0.997
   },
   {
    "palabra": "vecino",
    "inicio": 62.74,
-   "fin": 63.02,
+   "fin": 63.04,
    "prob": 0.999
   },
   {
    "palabra": "ya",
-   "inicio": 63.02,
+   "inicio": 63.04,
    "fin": 63.2,
-   "prob": 0.941
+   "prob": 0.965
   },
   {
    "palabra": "está",
    "inicio": 63.2,
    "fin": 63.4,
-   "prob": 0.991
+   "prob": 0.992
   },
   {
    "palabra": "cerrando",
@@ -1132,19 +1132,19 @@
    "palabra": "portón.",
    "inicio": 63.88,
    "fin": 64.2,
-   "prob": 0.941
+   "prob": 0.935
   },
   {
    "palabra": "¿Te",
-   "inicio": 64.8,
+   "inicio": 64.78,
    "fin": 64.9,
-   "prob": 0.96
+   "prob": 0.97
   },
   {
    "palabra": "quedas",
    "inicio": 64.9,
    "fin": 65.16,
-   "prob": 0.998
+   "prob": 0.997
   },
   {
    "palabra": "en",
@@ -1162,73 +1162,73 @@
    "palabra": "cerro",
    "inicio": 65.38,
    "fin": 65.68,
-   "prob": 0.995
+   "prob": 0.996
   },
   {
    "palabra": "o",
    "inicio": 65.68,
    "fin": 65.76,
-   "prob": 0.983
+   "prob": 0.979
   },
   {
    "palabra": "bajas",
    "inicio": 65.76,
    "fin": 66.02,
-   "prob": 0.994
+   "prob": 0.995
   },
   {
    "palabra": "por",
    "inicio": 66.02,
    "fin": 66.16,
-   "prob": 0.998
+   "prob": 0.997
   },
   {
    "palabra": "tu",
    "inicio": 66.16,
    "fin": 66.28,
-   "prob": 0.994
+   "prob": 0.992
   },
   {
    "palabra": "mamá?",
    "inicio": 66.28,
-   "fin": 66.58,
+   "fin": 66.56,
    "prob": 0.997
   },
   {
    "palabra": "Elige",
    "inicio": 67.28,
-   "fin": 67.74,
-   "prob": 0.614
+   "fin": 67.72,
+   "prob": 0.634
   },
   {
    "palabra": "en",
-   "inicio": 67.74,
-   "fin": 67.86,
-   "prob": 0.998
+   "inicio": 67.72,
+   "fin": 67.88,
+   "prob": 0.997
   },
   {
    "palabra": "comentarios.",
-   "inicio": 67.86,
-   "fin": 68.24,
-   "prob": 0.991
+   "inicio": 67.88,
+   "fin": 68.22,
+   "prob": 0.986
   },
   {
    "palabra": "Y",
-   "inicio": 69.26,
+   "inicio": 69.24,
    "fin": 69.5,
-   "prob": 0.957
+   "prob": 0.958
   },
   {
    "palabra": "sígueme:",
    "inicio": 69.5,
    "fin": 69.82,
-   "prob": 0.973
+   "prob": 0.974
   },
   {
    "palabra": "si",
-   "inicio": 70.1,
+   "inicio": 70.12,
    "fin": 70.22,
-   "prob": 0.986
+   "prob": 0.987
   },
   {
    "palabra": "llegamos",
@@ -1239,49 +1239,43 @@
   {
    "palabra": "a",
    "inicio": 70.54,
-   "fin": 70.68,
-   "prob": 0.998
-  },
-  {
-   "palabra": "diez",
-   "inicio": 70.68,
-   "fin": 70.8,
-   "prob": 0.449
+   "fin": 70.66,
+   "prob": 0.999
   },
   {
    "palabra": "mil",
-   "inicio": 70.8,
-   "fin": 70.98,
-   "prob": 0.992
+   "inicio": 70.66,
+   "fin": 70.78,
+   "prob": 0.848
   },
   {
    "palabra": "seguidores,",
-   "inicio": 70.98,
-   "fin": 71.38,
-   "prob": 0.995
+   "inicio": 70.78,
+   "fin": 71.16,
+   "prob": 0.998
   },
   {
    "palabra": "saco",
-   "inicio": 71.7,
-   "fin": 71.98,
-   "prob": 0.982
+   "inicio": 71.5,
+   "fin": 71.76,
+   "prob": 0.978
   },
   {
    "palabra": "la",
-   "inicio": 71.98,
-   "fin": 72.06,
+   "inicio": 71.76,
+   "fin": 71.84,
    "prob": 0.998
   },
   {
    "palabra": "segunda",
-   "inicio": 72.06,
-   "fin": 72.3,
+   "inicio": 71.84,
+   "fin": 72.08,
    "prob": 0.997
   },
   {
    "palabra": "parte.",
-   "inicio": 72.3,
-   "fin": 72.62,
+   "inicio": 72.08,
+   "fin": 72.38,
    "prob": 0.999
   }
  ]
