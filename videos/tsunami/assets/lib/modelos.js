@@ -58,8 +58,79 @@
     }
     g.userData = parts; return g;
   }
+
+  /* vecino detallado: proporciones más reales, codos/rodillas, cara con nariz, cejas, bigote y barba */
+  function prism(rt, rb, h, m, sx = 1, sz = 1) { const g = new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, 4), m); g.rotation.y = Math.PI / 4; const w = new THREE.Group(); w.add(g); w.scale.set(sx, 1, sz); g.castShadow = g.receiveShadow = true; return w; }
+  let haloTex = null;
+  function halo() {
+    if (!haloTex) { const c = document.createElement('canvas'); c.width = c.height = 128; const x = c.getContext('2d'); const gr = x.createRadialGradient(64, 64, 0, 64, 64, 64); gr.addColorStop(0, 'rgba(255,250,225,1)'); gr.addColorStop(.25, 'rgba(255,215,140,.55)'); gr.addColorStop(1, 'rgba(255,190,90,0)'); x.fillStyle = gr; x.fillRect(0, 0, 128, 128); haloTex = new THREE.CanvasTexture(c); }
+    return new THREE.Sprite(new THREE.SpriteMaterial({ map: haloTex, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, toneMapped: false }));
+  }
+  function elder() {
+    const g = new THREE.Group(), parts = {};
+    const coat = mat('#4A3222', { roughness: .85 }), coatD = mat('#33221A'), pants = mat('#2E2E36'), shoe = mat('#18181C'), skin = mat('#D49C76'), hairM = mat('#9E9A94'), capM = mat('#B8282A');
+    // piernas con rodilla
+    for (const s of [-1, 1]) {
+      const hip = new THREE.Group(); hip.position.set(s * .13, 1.0, 0); g.add(hip);
+      hip.add(box(.17, .5, .19, pants, 0, -.25, 0));
+      const knee = new THREE.Group(); knee.position.y = -.5; hip.add(knee);
+      knee.add(box(.15, .44, .17, pants, 0, -.22, 0)); knee.add(box(.18, .1, .32, shoe, 0, -.46, .06));
+      parts[s < 0 ? 'legL' : 'legR'] = hip; parts[s < 0 ? 'kneeL' : 'kneeR'] = knee;
+    }
+    // abrigo largo: falda, torso, cuello, botones, bolsas
+    const skirt = prism(.32, .37, .55, coat, 1.25, .7); skirt.position.y = .97; g.add(skirt);
+    const torso = prism(.36, .31, .74, coat, 1.25, .72); torso.position.y = 1.6; g.add(torso);
+    g.add(box(.5, .16, .3, coatD, 0, 1.97, -.01));
+    for (const s of [-1, 1]) { const lap = box(.14, .34, .04, coatD, s * .1, 1.82, .2); lap.rotation.z = s * .25; g.add(lap); }
+    for (let i = 0; i < 4; i++) g.add(ball(.022, mat('#1A120C'), .03, 1.62 - i * .2, .23, 6));
+    for (const s of [-1, 1]) g.add(box(.16, .03, .04, coatD, s * .17, 1.05, .25));
+    const neck = new THREE.Mesh(new THREE.CylinderGeometry(.075, .085, .13, 10), skin); neck.position.y = 2.05; g.add(neck);
+    // brazos con codo
+    for (const s of [-1, 1]) {
+      const sh = new THREE.Group(); sh.position.set(s * .38, 1.9, 0); g.add(sh);
+      sh.add(ball(.11, coat, 0, -.02, 0, 10));
+      sh.add(box(.15, .44, .17, coat, 0, -.22, 0));
+      const el = new THREE.Group(); el.position.y = -.44; el.rotation.x = -.12; sh.add(el);
+      el.add(box(.14, .38, .16, coat, 0, -.19, 0)); el.add(box(.155, .06, .175, coatD, 0, -.36, 0));
+      const hand = ball(.075, skin, 0, -.45, .01, 10); hand.scale.set(1, 1.35, .8); el.add(hand);
+      parts[s < 0 ? 'armL' : 'armR'] = sh; parts[s < 0 ? 'elbowL' : 'elbowR'] = el;
+    }
+    // cabeza
+    const head = new THREE.Group(); head.position.set(0, 2.3, 0); g.add(head); parts.head = head;
+    const skull = ball(.23, skin, 0, 0, 0, 22); skull.scale.set(.95, 1.12, 1); head.add(skull);
+    for (const s of [-1, 1]) { const ear = ball(.05, skin, s * .215, 0, -.01, 8); ear.scale.set(.5, 1, .8); head.add(ear); }
+    const nose = box(.06, .1, .09, skin, 0, -.02, .225); nose.rotation.x = -.25; head.add(nose);
+    const eyes = [], shut = [];
+    for (const s of [-1, 1]) {
+      const w = ball(.034, mat('#F2EEE6', { roughness: .4 }), s * .078, .055, .195, 10); head.add(w);
+      const pu = ball(.019, EYE, s * .078, .055, .224, 8); head.add(pu); eyes.push(w, pu);
+      const l = box(.07, .015, .02, EYE, s * .078, .05, .225); l.visible = false; head.add(l); shut.push(l);
+      const br = box(.095, .026, .035, hairM, s * .085, .115, .205); br.rotation.z = -s * .12; head.add(br);
+      head.add(box(.07, .01, .01, mat('#B88060'), s * .08, .015, .218));   // ojeras / arruga
+    }
+    parts.sleep = (on) => { eyes.forEach(e => e.visible = !on); shut.forEach(l => l.visible = on); };
+    const beard = ball(.2, hairM, 0, -.16, .07, 14); beard.scale.set(1.05, .85, .78); head.add(beard);
+    const must = box(.17, .045, .06, hairM, 0, -.075, .215); head.add(must);
+    for (const s of [-1, 1]) { const sb = box(.05, .12, .14, hairM, s * .2, -.04, .02); head.add(sb); }   // patillas
+    // gorro de lana con doblez
+    const dome = new THREE.Mesh(new THREE.SphereGeometry(.245, 20, 10, 0, Math.PI * 2, 0, Math.PI * .5), capM); dome.position.y = .07; dome.scale.set(1.02, 1.05, 1.04); dome.castShadow = true; head.add(dome);
+    const cuff = new THREE.Mesh(new THREE.CylinderGeometry(.252, .258, .09, 22), mat('#A02024')); cuff.position.y = .1; head.add(cuff);
+    // linterna en la mano derecha
+    const fl = new THREE.Group(); fl.position.set(0, -.47, .06); parts.elbowR.add(fl);
+    const body = new THREE.Mesh(new THREE.CylinderGeometry(.045, .05, .26, 10), mat('#2A2A2A', { roughness: .4, metalness: .4 })); body.rotation.x = Math.PI / 2; body.position.z = .09; fl.add(body);
+    const head2 = new THREE.Mesh(new THREE.CylinderGeometry(.07, .05, .08, 12), mat('#333', { metalness: .5, roughness: .4 })); head2.rotation.x = Math.PI / 2; head2.position.z = .25; fl.add(head2);
+    const lens = new THREE.Mesh(new THREE.CircleGeometry(.065, 14), glow('#FFF6D8')); lens.position.z = .292; fl.add(lens);
+    const h = halo(); h.position.z = .33; h.scale.setScalar(.9); fl.add(h); parts.halo = h;
+    const spot = new THREE.SpotLight('#FFE7B0', 7, 16, .42, .55, 1.2); spot.position.set(0, 0, .3); spot.castShadow = true;
+    const tgt = new THREE.Object3D(); tgt.position.set(0, 0, 5); fl.add(tgt); spot.target = tgt; fl.add(spot);
+    const beam = new THREE.Mesh(new THREE.ConeGeometry(.9, 4, 24, 1, true), new THREE.MeshBasicMaterial({ color: '#FFE8B0', transparent: true, opacity: .05, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide }));
+    beam.rotation.x = -Math.PI / 2; beam.position.z = 2.3; fl.add(beam);
+    const pl = new THREE.PointLight('#FFD9A0', .8, 2.5, 2); pl.position.z = .4; fl.add(pl);
+    parts.flash = fl; parts.spot = spot; parts.beam = beam; parts.lamp = pl;
+    g.userData = parts; return g;
+  }
   const hero = () => person({ top: '#F2A033', pants: '#3A5A8C', hair: '#2A1C14' });
-  const vecino = () => person({ top: '#5A3B26', pants: '#3A3A42', coat: true, cap: '#C8302A', beard: '#B9B5AE', flashlight: true });
+  const vecino = () => elder();
 
   /* edificio con ventanas instanciadas (cada ventana con su color) */
   function building(w, h, d, seed, o = {}) {
