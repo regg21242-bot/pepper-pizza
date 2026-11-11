@@ -1,0 +1,311 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; background: #1a0508; }
+    #film-canvas { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+  </style>
+  <div id="root" data-composition-id="film" data-start="0" data-duration="60" data-width="1080" data-height="1920">
+    <canvas id="film-canvas" width="1080" height="1920" data-layout-ignore></canvas>
+  </div>
+  <script>
+  (function () {
+    const cv = document.getElementById('film-canvas');
+    const ctx = cv.getContext('2d');
+    const W = 1080, H = 1920;
+
+    /* ---------- utilidades ---------- */
+    const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+    const lerp = (a, b, k) => a + (b - a) * k;
+    const prog = (t, a, b) => clamp((t - a) / (b - a));
+    const ease = k => (k = clamp(k), k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
+    function rng(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+    function soft(fn, blur, alpha = 1, comp) { ctx.save(); ctx.filter = `blur(${blur}px)`; ctx.globalAlpha = alpha; if (comp) ctx.globalCompositeOperation = comp; fn(); ctx.restore(); }
+    function radial(x, y, r, stops) { const g = ctx.createRadialGradient(x, y, 0, x, y, r); stops.forEach(([o, c]) => g.addColorStop(o, c)); return g; }
+
+    /* grano fino: textura sembrada, se desplaza cada cuadro */
+    const grain = document.createElement('canvas'); grain.width = 540; grain.height = 960;
+    (function () { const g = grain.getContext('2d'), im = g.createImageData(540, 960), r = rng(11); for (let i = 0; i < im.data.length; i += 4) { const v = 128 + (r() - .5) * 255; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255; } g.putImageData(im, 0, 0); })();
+    function finish(t, vign = .55) {
+      const f = Math.floor(t * 30);
+      ctx.save(); ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = .16;
+      ctx.drawImage(grain, -(f * 37) % 540, -(f * 61) % 960, 1080 * 2, 1920 * 2); ctx.restore();
+      const tg = ctx.createLinearGradient(0, 0, 0, 560); tg.addColorStop(0, 'rgba(0,0,0,0.5)'); tg.addColorStop(1, 'rgba(0,0,0,0)'); ctx.fillStyle = tg; ctx.fillRect(0, 0, W, 560);
+      ctx.fillStyle = radial(W / 2, H * .46, H * .78, [[0, 'rgba(0,0,0,0)'], [.55, 'rgba(0,0,0,0)'], [1, `rgba(0,0,0,${vign})`]]); ctx.fillRect(0, 0, W, H);
+    }
+
+    /* ================= ESCENA 1: el brazo ================= */
+    const SKIN = { hi: '#E7B48C', mid: '#C88660', lo: '#8C5135', deep: '#5E321F' };
+    function armPath() {
+      const p = new Path2D();
+      p.moveTo(-80, 830);
+      p.bezierCurveTo(10, 770, 120, 760, 190, 820);          // hombro / deltoides
+      p.bezierCurveTo(250, 720, 470, 690, 600, 790);          // cima del bíceps
+      p.bezierCurveTo(650, 830, 680, 880, 700, 905);          // pliegue del codo
+      p.bezierCurveTo(690, 800, 690, 690, 705, 600);          // antebrazo interior
+      p.bezierCurveTo(640, 560, 640, 430, 700, 380);          // puño
+      p.bezierCurveTo(760, 330, 880, 340, 915, 410);
+      p.bezierCurveTo(950, 470, 935, 545, 905, 590);
+      p.bezierCurveTo(930, 760, 960, 920, 935, 1080);         // antebrazo exterior
+      p.bezierCurveTo(925, 1150, 870, 1190, 800, 1195);       // codo
+      p.bezierCurveTo(600, 1215, 330, 1225, 160, 1190);       // tríceps / parte de abajo
+      p.bezierCurveTo(60, 1175, -20, 1185, -80, 1200);
+      p.closePath();
+      return p;
+    }
+    const ARM = armPath();
+    function backdrop1(t) {
+      const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#3B2419'); g.addColorStop(.5, '#6A4030'); g.addColorStop(1, '#2A1610');
+      ctx.fillStyle = g; ctx.fillRect(-200, -200, W + 400, H + 400);
+      ctx.fillStyle = radial(560, 820, 900, [[0, 'rgba(255,200,150,0.35)'], [1, 'rgba(255,200,150,0)']]); ctx.fillRect(-200, -200, W + 400, H + 400);
+    }
+    /* o.xray 0..1 (piel translúcida), o.flex 0..1 (contracción), o.bump 0..1 (brinco) */
+    function arm(t, o = {}) {
+      const flex = o.flex || 0;
+      // sombra proyectada
+      soft(() => { ctx.fillStyle = 'rgba(20,8,4,0.55)'; ctx.beginPath(); ctx.ellipse(470, 1290, 520, 70, 0, 0, 7); ctx.fill(); }, 40);
+      ctx.save(); ctx.clip(ARM);
+      // base de piel
+      const g = ctx.createLinearGradient(0, 700, 0, 1230); g.addColorStop(0, SKIN.hi); g.addColorStop(.45, SKIN.mid); g.addColorStop(1, SKIN.lo);
+      ctx.fillStyle = g; ctx.fillRect(-100, 300, 1200, 1000);
+      // volumen: bíceps, antebrazo, puño
+      const by = 820 - flex * 25, bs = 1 + flex * .12;
+      soft(() => { ctx.fillStyle = 'rgba(255,225,190,0.75)'; ctx.beginPath(); ctx.ellipse(420, by, 170 * bs, 70 * bs, -.1, 0, 7); ctx.fill(); }, 45);
+      soft(() => { ctx.fillStyle = 'rgba(255,215,180,0.55)'; ctx.beginPath(); ctx.ellipse(800, 760, 70, 260, .05, 0, 7); ctx.fill(); }, 40);
+      soft(() => { ctx.fillStyle = 'rgba(255,220,185,0.6)'; ctx.beginPath(); ctx.ellipse(790, 430, 110, 70, -.3, 0, 7); ctx.fill(); }, 30);
+      // sombras de forma
+      soft(() => { ctx.fillStyle = 'rgba(70,30,15,0.75)'; ctx.beginPath(); ctx.ellipse(690, 930, 60, 120, -.4, 0, 7); ctx.fill(); }, 35);   // pliegue del codo
+      soft(() => { ctx.fillStyle = 'rgba(70,30,15,0.55)'; ctx.beginPath(); ctx.ellipse(420, 1180, 520, 80, 0, 0, 7); ctx.fill(); }, 50);  // parte de abajo
+      soft(() => { ctx.fillStyle = 'rgba(70,30,15,0.45)'; ctx.beginPath(); ctx.ellipse(200, 870, 50, 120, .3, 0, 7); ctx.fill(); }, 35);   // separación deltoides
+      soft(() => { ctx.fillStyle = 'rgba(70,30,15,0.5)'; ctx.beginPath(); ctx.ellipse(925, 800, 40, 320, 0, 0, 7); ctx.fill(); }, 30);    // borde del antebrazo
+      // nudillos y dedos del puño
+      soft(() => { ctx.strokeStyle = 'rgba(255,235,210,0.7)'; ctx.lineWidth = 10; ctx.beginPath(); ctx.arc(790, 470, 120, -2.6, -1.2); ctx.stroke(); }, 6);
+      // venas suaves
+      ctx.strokeStyle = 'rgba(110,70,90,0.18)'; ctx.lineWidth = 7;
+      ctx.beginPath(); ctx.moveTo(760, 1050); ctx.bezierCurveTo(740, 900, 790, 760, 760, 620); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(560, 860); ctx.bezierCurveTo(450, 870, 360, 850, 260, 880); ctx.stroke();
+      // redondez: bordes oscurecidos y brillo superior
+      soft(() => { ctx.lineWidth = 150; ctx.strokeStyle = 'rgba(70,28,12,0.55)'; ctx.stroke(ARM); }, 45);
+      ctx.save(); ctx.translate(0, 18); soft(() => { ctx.lineWidth = 40; ctx.strokeStyle = 'rgba(255,226,196,0.45)'; ctx.stroke(ARM); }, 16); ctx.restore();
+      // dedos del puño enrollados
+      for (let i = 0; i < 4; i++) {
+        const fy = 420 + i * 46, fx = 700 + i * 4;
+        const fg = ctx.createLinearGradient(fx, fy - 22, fx, fy + 22); fg.addColorStop(0, SKIN.hi); fg.addColorStop(.6, SKIN.mid); fg.addColorStop(1, SKIN.lo);
+        ctx.fillStyle = fg; ctx.beginPath(); ctx.roundRect(fx - 40, fy - 24, 120, 46, 23); ctx.fill();
+        ctx.strokeStyle = 'rgba(95,45,25,0.55)'; ctx.lineWidth = 4; ctx.stroke();
+      }
+      soft(() => { ctx.fillStyle = 'rgba(255,228,200,0.6)'; ctx.beginPath(); ctx.ellipse(830, 400, 70, 30, -.5, 0, 7); ctx.fill(); }, 14);
+      // poros / textura de piel
+      const r = rng(3); ctx.fillStyle = 'rgba(90,45,25,0.10)';
+      for (let i = 0; i < 900; i++) { ctx.beginPath(); ctx.arc(r() * 1000, 350 + r() * 900, .8 + r() * 1.6, 0, 7); ctx.fill(); }
+      // el brinco: bulto bajo la piel
+      const b = o.bump || 0;
+      if (b > 0) {
+        soft(() => { ctx.fillStyle = `rgba(255,232,205,${.85 * b})`; ctx.beginPath(); ctx.ellipse(455, 778 - 14 * b, 46 + 10 * b, 22 + 8 * b, -.15, 0, 7); ctx.fill(); }, 10);
+        soft(() => { ctx.fillStyle = `rgba(80,35,18,${.5 * b})`; ctx.beginPath(); ctx.ellipse(458, 812, 50, 12, -.15, 0, 7); ctx.fill(); }, 9);
+      }
+      ctx.restore();
+      // contorno: luz de borde
+      ctx.save(); ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(255,214,170,0.14)'; ctx.stroke(ARM); ctx.restore();
+    }
+    /* dedo índice de la otra mano, presionando (press 0..1) */
+    function finger(t, press, wob = 0) {
+      ctx.save();
+      const tipX = lerp(330, 462, press) + wob * 3, tipY = lerp(690, 742, press);
+      ctx.translate(tipX, tipY); ctx.rotate(-1.12);
+      soft(() => { ctx.fillStyle = 'rgba(30,12,6,0.45)'; ctx.beginPath(); ctx.ellipse(10, 40 + 30 * (1 - press), 60, 22, 0, 0, 7); ctx.fill(); }, 18);
+      const g = ctx.createLinearGradient(-55, 0, 55, 0); g.addColorStop(0, SKIN.lo); g.addColorStop(.45, SKIN.hi); g.addColorStop(1, SKIN.mid);
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.moveTo(-46, -520); ctx.lineTo(-48, -40); ctx.quadraticCurveTo(-46, 22, 0, 26); ctx.quadraticCurveTo(46, 22, 48, -40); ctx.lineTo(52, -520); ctx.closePath(); ctx.fill();
+      // uña
+      ctx.fillStyle = 'rgba(245,205,190,0.95)'; ctx.beginPath(); ctx.moveTo(-30, -70); ctx.quadraticCurveTo(-32, 6, 0, 8); ctx.quadraticCurveTo(32, 6, 30, -70); ctx.quadraticCurveTo(0, -84, -30, -70); ctx.fill();
+      ctx.strokeStyle = 'rgba(160,100,80,0.5)'; ctx.lineWidth = 3; ctx.stroke();
+      // arrugas del nudillo
+      ctx.strokeStyle = 'rgba(110,55,30,0.45)'; ctx.lineWidth = 4; for (const y of [-190, -175, -330]) { ctx.beginPath(); ctx.moveTo(-30, y); ctx.quadraticCurveTo(0, y - 8, 30, y); ctx.stroke(); }
+      soft(() => { ctx.fillStyle = 'rgba(255,230,200,0.5)'; ctx.fillRect(-10, -500, 18, 470); }, 10);
+      ctx.restore();
+    }
+    function twitch(t, times) { let b = 0; for (const s of times) { const d = t - s; if (d >= 0 && d < .35) b = Math.max(b, Math.sin(Math.min(1, d / .12) * Math.PI / 2) * (1 - prog(d, .12, .35))); } return b; }
+    function scene1(t) {
+      backdrop1(t);
+      const z = 1.08 + t * .012;
+      ctx.save(); ctx.translate(W / 2, 880); ctx.scale(z, z); ctx.translate(-W / 2, -800);
+      const bump = twitch(t, [0.25, 1.05, 1.7, 2.6, 3.3, 4.1, 4.8, 5.5]);
+      arm(t, { bump });
+      const press = ease(prog(t, 1.8, 2.5)) * (1 - ease(prog(t, 5.2, 5.9)));
+      if (t > 1.6) finger(t, press, bump);
+      ctx.restore();
+      finish(t);
+    }
+
+    /* ================= ESCENA 3: dentro del músculo ================= */
+    function fiber(x1, y1, x2, y2, r, o = {}) {
+      const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy), a = Math.atan2(dy, dx);
+      ctx.save(); ctx.translate(x1, y1); ctx.rotate(a);
+      const c = o.contract || 0, rr = r * (1 + c * .18);
+      const g = ctx.createLinearGradient(0, -rr, 0, rr);
+      const dk = o.dark || 0;
+      g.addColorStop(0, `rgb(${70 - dk * 30},${8},${16})`); g.addColorStop(.28, `rgb(${215 - dk * 90},${48 - dk * 20},${58 - dk * 20})`);
+      g.addColorStop(.42, `rgb(${255 - dk * 90},${118 - dk * 50},${118 - dk * 50})`); g.addColorStop(.7, `rgb(${170 - dk * 70},${22},${36})`); g.addColorStop(1, 'rgb(48,4,12)');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.roundRect(0, -rr, L, rr * 2, rr); ctx.fill();
+      // estrías
+      const step = Math.max(5, rr * .32) * (1 - c * .25);
+      ctx.strokeStyle = `rgba(255,170,160,${.22 - dk * .1})`; ctx.lineWidth = Math.max(1, rr * .07);
+      for (let s = rr; s < L - rr; s += step) { ctx.beginPath(); ctx.moveTo(s, -rr * .86); ctx.quadraticCurveTo(s + step * .25, 0, s, rr * .86); ctx.stroke(); }
+      ctx.restore();
+    }
+    /* campo de fibras con profundidad; cam.z avanza hacia adentro */
+    const FIB = (() => { const r = rng(21), out = []; for (let i = 0; i < 70; i++) out.push({ y: r() * 2.2 - 1.1, z: .25 + r() * 2.6, x: r() * 2 - 1, len: 2 + r() * 2, r: .055 + r() * .03, tilt: (r() - .5) * .12 }); return out.sort((a, b) => b.z - a.z); })();
+    function wineBg() {
+      const g = ctx.createRadialGradient(W / 2, H * .45, 50, W / 2, H * .45, H * .8); g.addColorStop(0, '#5A0E1A'); g.addColorStop(.6, '#2A0510'); g.addColorStop(1, '#0E0206');
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    }
+    function fiberField(camZ, camX, o = {}) {
+      for (const f of FIB) {
+        const z = f.z - camZ; if (z < .12) continue;
+        const s = 900 / z, cx = W / 2 + (f.x - camX) * s, cy = H * .5 + f.y * s, L = f.len * s, r = f.r * s;
+        if (cy + r < -50 || cy - r > H + 50) continue;
+        const blur = Math.abs(z - .9) * 6;
+        ctx.save(); if (blur > .6) ctx.filter = `blur(${Math.min(blur, 14)}px)`;
+        ctx.globalAlpha = clamp(1.4 - z * .35);
+        fiber(cx - L / 2, cy - L / 2 * f.tilt, cx + L / 2, cy + L / 2 * f.tilt, r, o);
+        ctx.restore();
+      }
+    }
+    /* grupitos de fibras ordenados y cables dorados */
+    const GROUPS = [{ x: 300, y: 800 }, { x: 790, y: 900 }, { x: 290, y: 1170 }, { x: 790, y: 1290 }, { x: 520, y: 1580 }];
+    function bundle(gx, gy, k, o = {}) {
+      const r = rng(Math.round(gx + gy));
+      const L = 300 * k, c = o.contract || 0, Lc = L * (1 - c * .16);
+      soft(() => { ctx.fillStyle = 'rgba(10,0,4,0.55)'; ctx.beginPath(); ctx.ellipse(gx, gy + 40, Lc + 40, 120, 0, 0, 7); ctx.fill(); }, 30);
+      // fila de atrás (más oscura) y fila de enfrente
+      for (const [row, n, rad, dk, dy] of [[0, 6, 24, .55, -38], [1, 7, 28, 0, 22]]) {
+        for (let i = 0; i < n; i++) {
+          const oy = dy + (i - (n - 1) / 2) * rad * 1.05 * .55 + (r() - .5) * 6, ox = (r() - .5) * 30;
+          fiber(gx - Lc + ox, gy + oy, gx + Lc + ox, gy + oy + (r() - .5) * 8, rad * (1 + c * .2), { contract: c, dark: Math.max(dk, o.dark || 0) });
+        }
+      }
+      // vaina del grupito
+      ctx.strokeStyle = 'rgba(255,200,200,0.22)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.ellipse(gx, gy, Lc + 40, 105, 0, 0, 7); ctx.stroke();
+      ctx.fillStyle = 'rgba(255,190,190,0.05)'; ctx.fill();
+    }
+    function cable(x0, y0, x1, y1, k, o = {}) {
+      // k = cuánto ha bajado (0..1)
+      const p = new Path2D(), cx = (x0 + x1) / 2 + (o.bend || 0);
+      const ex = lerp(x0, x1, k), ey = lerp(y0, y1, k);
+      p.moveTo(x0, y0); p.bezierCurveTo(x0, lerp(y0, y1, .45 * k), cx, lerp(y0, ey, .6), ex, ey);
+      const dk = o.dark || 0;
+      ctx.save(); ctx.lineCap = 'round';
+      if (!dk) { ctx.shadowColor = 'rgba(255,200,90,0.55)'; ctx.shadowBlur = 24; }
+      ctx.strokeStyle = dk ? '#4A3A1E' : '#9C7426'; ctx.lineWidth = 15; ctx.stroke(p);
+      ctx.shadowBlur = 0; ctx.strokeStyle = dk ? '#6A5530' : '#E9C066'; ctx.lineWidth = 7; ctx.stroke(p);
+      ctx.strokeStyle = dk ? 'rgba(160,130,80,0.4)' : 'rgba(255,245,200,0.85)'; ctx.lineWidth = 2.5; ctx.stroke(p);
+      // placa de unión con la fibra
+      if (k > .98) { ctx.fillStyle = dk ? '#5A4826' : '#F2C860'; for (const dx of [-24, 0, 24]) { ctx.beginPath(); ctx.ellipse(ex + dx, ey + 6, 14, 7, 0, 0, 7); ctx.fill(); } }
+      ctx.restore();
+      return p;
+    }
+    function scene3(t) {
+      // t local 0..8: vuelo entre fibras (0-4.5), se acomodan en grupitos y bajan los cables (4.5-8)
+      wineBg();
+      const fly = ease(prog(t, 0, 5));
+      const sort = ease(prog(t, 3.6, 5.4));
+      if (sort < 1) { ctx.save(); ctx.globalAlpha = 1 - sort; fiberField(lerp(0, 1.6, fly), Math.sin(t * .4) * .15); ctx.restore(); }
+      if (sort > 0) {
+        ctx.save(); ctx.globalAlpha = sort;
+        const z = lerp(1.25, 1, sort) + (t - 5.4) * .01; ctx.translate(W / 2, 1200); ctx.scale(z, z); ctx.translate(-W / 2, -1200);
+        GROUPS.forEach((gp, i) => bundle(gp.x, gp.y, 1, {}));
+        GROUPS.forEach((gp, i) => { const k = ease(prog(t, 5.2 + i * .25, 6.6 + i * .25)); if (k > 0) cable(540 + (i - 2) * 50, -80, gp.x + (i % 2 ? -60 : 60), gp.y - 100, k, { bend: (i - 2) * 60 }); });
+        ctx.restore();
+      }
+      // partículas flotando (plasma)
+      const r = rng(5); for (let i = 0; i < 40; i++) { const px = r() * W, py = (r() * H - t * 40 * (1 + r())) % H; ctx.fillStyle = `rgba(255,170,150,${.15 + r() * .25})`; ctx.beginPath(); ctx.arc(px, py < 0 ? py + H : py, 2 + r() * 4, 0, 7); ctx.fill(); }
+      finish(t, .7);
+    }
+
+    /* ================= ESCENA 6: causas (azul noche) ================= */
+    function nightRoom(t) {
+      const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#0B1430'); g.addColorStop(.6, '#16244A'); g.addColorStop(1, '#0A1024'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      // ventana con luna
+      ctx.fillStyle = radial(860, 360, 360, [[0, 'rgba(160,190,255,0.35)'], [1, 'rgba(160,190,255,0)']]); ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = '#1E2E5A'; ctx.fillRect(700, 210, 320, 380); ctx.fillStyle = '#2A3E74'; ctx.fillRect(720, 230, 280, 340);
+      ctx.fillStyle = '#E8EEFF'; ctx.beginPath(); ctx.arc(890, 330, 46, 0, 7); ctx.fill(); ctx.fillStyle = '#2A3E74'; ctx.beginPath(); ctx.arc(912, 318, 42, 0, 7); ctx.fill();
+      ctx.strokeStyle = '#0E1838'; ctx.lineWidth = 12; ctx.beginPath(); ctx.moveTo(860, 230); ctx.lineTo(860, 570); ctx.moveTo(720, 400); ctx.lineTo(1000, 400); ctx.stroke();
+      // mesa
+      const tg = ctx.createLinearGradient(0, 1080, 0, H); tg.addColorStop(0, '#3A2E3E'); tg.addColorStop(1, '#141020'); ctx.fillStyle = tg; ctx.fillRect(0, 1080, W, H);
+      ctx.fillStyle = 'rgba(140,170,255,0.18)'; ctx.fillRect(0, 1080, W, 6);
+    }
+    function dumbbell(x, y, s) {
+      ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+      soft(() => { ctx.fillStyle = 'rgba(0,0,10,0.6)'; ctx.beginPath(); ctx.ellipse(0, 70, 230, 26, 0, 0, 7); ctx.fill(); }, 16);
+      const bar = ctx.createLinearGradient(0, -14, 0, 14); bar.addColorStop(0, '#9AA6C0'); bar.addColorStop(.5, '#E4EAF6'); bar.addColorStop(1, '#4A5470');
+      ctx.fillStyle = bar; ctx.fillRect(-150, -12, 300, 24);
+      for (const sx of [-1, 1]) for (const [ox, w, h] of [[110, 34, 120], [148, 34, 140]]) {
+        const pg = ctx.createLinearGradient(sx * ox - w / 2, 0, sx * ox + w / 2, 0); pg.addColorStop(0, '#1A1E2C'); pg.addColorStop(.4, '#4C5674'); pg.addColorStop(1, '#141824');
+        ctx.fillStyle = pg; ctx.beginPath(); ctx.roundRect(sx * ox - w / 2, -h / 2, w, h, 8); ctx.fill();
+        ctx.strokeStyle = 'rgba(170,190,255,0.35)'; ctx.lineWidth = 2; ctx.stroke();
+      }
+      ctx.restore();
+    }
+    function mug(x, y, s, t) {
+      ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+      soft(() => { ctx.fillStyle = 'rgba(0,0,10,0.6)'; ctx.beginPath(); ctx.ellipse(0, 120, 130, 22, 0, 0, 7); ctx.fill(); }, 14);
+      ctx.strokeStyle = '#C9D2EA'; ctx.lineWidth = 26; ctx.beginPath(); ctx.arc(94, 22, 50, -1.4, 1.4); ctx.stroke();
+      const g = ctx.createLinearGradient(-100, 0, 100, 0); g.addColorStop(0, '#7C88AA'); g.addColorStop(.35, '#F2F5FF'); g.addColorStop(1, '#6A7698');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-100, -60); ctx.lineTo(-88, 100); ctx.quadraticCurveTo(0, 130, 88, 100); ctx.lineTo(100, -60); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#3A2214'; ctx.beginPath(); ctx.ellipse(0, -60, 100, 22, 0, 0, 7); ctx.fill();
+      ctx.fillStyle = 'rgba(255,220,180,0.25)'; ctx.beginPath(); ctx.ellipse(-20, -64, 50, 8, 0, 0, 7); ctx.fill();
+      // vapor
+      for (let i = 0; i < 3; i++) { const ph = (t * .35 + i / 3) % 1; ctx.save(); ctx.globalAlpha = Math.sin(ph * Math.PI) * .5; ctx.strokeStyle = '#DDE6FF'; ctx.lineWidth = 12; ctx.lineCap = 'round'; ctx.filter = 'blur(4px)'; ctx.beginPath(); const bx = -40 + i * 40; for (let j = 0; j <= 12; j++) ctx.lineTo(bx + Math.sin(j * .7 + t * 2 + i) * 16, -90 - ph * 120 - j * 14); ctx.stroke(); ctx.restore(); }
+      ctx.restore();
+    }
+    function phone(x, y, s, t) {
+      ctx.save(); ctx.translate(x, y); ctx.scale(s, s); ctx.rotate(-.12);
+      soft(() => { ctx.fillStyle = 'rgba(120,170,255,0.45)'; ctx.beginPath(); ctx.roundRect(-150, -290, 300, 580, 50); ctx.fill(); }, 40);
+      ctx.fillStyle = '#0A0D18'; ctx.beginPath(); ctx.roundRect(-140, -280, 280, 560, 44); ctx.fill();
+      const sg = ctx.createLinearGradient(0, -260, 0, 260); sg.addColorStop(0, '#2B4FA8'); sg.addColorStop(1, '#162A64'); ctx.fillStyle = sg; ctx.beginPath(); ctx.roundRect(-126, -266, 252, 532, 34); ctx.fill();
+      ctx.fillStyle = '#FFFFFF'; ctx.font = '700 92px Nunito, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('4:00', 0, -150);
+      ctx.font = '600 22px Nunito, sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.75)'; ctx.fillText('martes', 0, -112);
+      const notes = ['3 mensajes nuevos', 'Recordatorio: gym', 'Correo del trabajo'];
+      notes.forEach((n, i) => { const k = clamp((t - .3 - i * .5) * 3); if (k <= 0) return; ctx.globalAlpha = k; ctx.fillStyle = 'rgba(255,255,255,0.88)'; ctx.beginPath(); ctx.roundRect(-116, -70 + i * 92 + (1 - k) * 20, 232, 76, 18); ctx.fill(); ctx.fillStyle = '#E5484D'; ctx.beginPath(); ctx.arc(-80, -32 + i * 92 + (1 - k) * 20, 16, 0, 7); ctx.fill(); ctx.fillStyle = '#1A2040'; ctx.font = '700 18px Nunito, sans-serif'; ctx.textAlign = 'left'; ctx.fillText(n, -58, -25 + i * 92 + (1 - k) * 20); ctx.globalAlpha = 1; });
+      ctx.restore();
+    }
+    function alarmClock(x, y, s, t) {
+      ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+      soft(() => { ctx.fillStyle = 'rgba(0,0,10,0.6)'; ctx.beginPath(); ctx.ellipse(0, 110, 200, 22, 0, 0, 7); ctx.fill(); }, 14);
+      const g = ctx.createLinearGradient(0, -100, 0, 110); g.addColorStop(0, '#3A3F56'); g.addColorStop(1, '#14172A'); ctx.fillStyle = g;
+      ctx.beginPath(); ctx.roundRect(-190, -90, 380, 190, 40); ctx.fill();
+      ctx.fillStyle = '#05060C'; ctx.beginPath(); ctx.roundRect(-160, -62, 320, 134, 18); ctx.fill();
+      const on = clamp((t - .6) * 4);
+      ctx.save(); ctx.globalAlpha = on; ctx.shadowColor = '#FF2A2A'; ctx.shadowBlur = 30; ctx.fillStyle = '#FF3B30'; ctx.font = '800 112px "Space Mono", monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('4:00', 0, 8); ctx.restore();
+      ctx.fillStyle = 'rgba(255,60,48,0.25)'; ctx.globalAlpha = on; ctx.fillRect(-160, 80, 320, 6);
+      ctx.restore();
+      soft(() => { ctx.fillStyle = `rgba(255,50,40,${.22 * on})`; ctx.beginPath(); ctx.ellipse(x, y + 120 * s, 340 * s, 60 * s, 0, 0, 7); ctx.fill(); }, 40);
+    }
+    function scene6(t) {
+      nightRoom(t);
+      const z = 1 + t * .015; ctx.save(); ctx.translate(W / 2, 1100); ctx.scale(z, z); ctx.translate(-W / 2, -1100);
+      phone(760, 800, 1, t);
+      dumbbell(330, 1200, 1.05);
+      mug(300, 1540, 1, t);
+      alarmClock(730, 1520, 1, t);
+      ctx.restore();
+      finish(t, .5);
+    }
+
+    /* ================= montaje ================= */
+    const SCENES = [
+      { a: 0, b: 6, fn: scene1 },
+      { a: 12, b: 20, fn: scene3 },
+      { a: 35, b: 43, fn: scene6 },
+    ];
+    function renderAt(t) {
+      ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.filter = 'none'; ctx.globalCompositeOperation = 'source-over';
+      const s = SCENES.find(s => t >= s.a && t < s.b) || SCENES[0];
+      ctx.clearRect(0, 0, W, H); s.fn(t - s.a);
+    }
+    window.addEventListener('hf-seek', e => renderAt(e.detail.time));
+    renderAt(0);
+    window.__timelines = window.__timelines || {};
+    window.__timelines['film'] = gsap.timeline({ paused: true });
+  })();
+  </script>
+</template>
