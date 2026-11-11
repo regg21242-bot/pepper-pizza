@@ -13,7 +13,8 @@ Rama de trabajo: `claude/eager-knuth-pxgzyv`.
 
 ### Lo que le gusta al usuario
 - Voz: **SIEMPRE Álvaro** (`es-ES-AlvaroNeural`, velocidad +8 a +12 %) en todos los videos, aunque el pedido mencione otras voces. No preguntar ni mandar muestras de otras voces.
-- Estilo que mejor funciona: **monitos de palitos con fondos detallados**, subtítulos abajo con la palabra clave resaltada en amarillo.
+- **ESTILO ÚNICO DE LA CUENTA (desde nov-2026): 3D** como el video del tsunami (`videos/tsunami/`): HyperFrames + Three.js, personajes 3D detallados (nariz, cejas, codos/rodillas), luces suaves, grano fino, subtítulos karaoke arriba (Nunito, recuadro en palabras clave), píldoras "▶ acción" a media pantalla. Modelos compartidos en `videos/lib/modelos3d.js`. No volver a hacer videos 2D/monitos salvo que lo pida.
+- (Histórico) Antes funcionaban los monitos de palitos con fondos detallados y subtítulos abajo en amarillo.
 - Hay un segundo estilo "cine" (oscuro, subtítulos arriba palabra por palabra con recuadro azul, paneles de vidrio, detalles dorados): `videos/lib/cine.js`.
 - Duración: 45–60 s o más. Si es una serie, cada parte de al menos 55 s.
 - Español con palabras de México ("metro", no "flexómetro" raro; evitar "coger", usar "llevar").
