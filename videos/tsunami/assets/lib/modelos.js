@@ -129,7 +129,58 @@
     parts.flash = fl; parts.spot = spot; parts.beam = beam; parts.lamp = pl;
     g.userData = parts; return g;
   }
-  const hero = () => person({ top: '#F2A033', pants: '#3A5A8C', hair: '#2A1C14' });
+
+  /* protagonista detallado: sudadera con capucha, jeans, tenis, cara con nariz y cejas */
+  function youth() {
+    const g = new THREE.Group(), parts = {};
+    const hood = mat('#F2A033', { roughness: .9 }), hoodD = mat('#D8862A', { roughness: .9 }), jeans = mat('#3A5A8C', { roughness: .85 }), jeansD = mat('#2E4A76');
+    const skin = mat('#D9A27A'), hairM = mat('#2A1C14'), sole = mat('#F2F2F2'), shoeM = mat('#2A2A34');
+    for (const s of [-1, 1]) {
+      const hip = new THREE.Group(); hip.position.set(s * .13, 1.0, 0); g.add(hip);
+      hip.add(box(.19, .5, .2, jeans, 0, -.25, 0));
+      const knee = new THREE.Group(); knee.position.y = -.5; hip.add(knee);
+      knee.add(box(.17, .44, .18, jeans, 0, -.22, 0)); knee.add(box(.18, .06, .19, jeansD, 0, -.42, 0));
+      knee.add(box(.19, .1, .32, shoeM, 0, -.45, .06)); knee.add(box(.2, .035, .34, sole, 0, -.5, .06));
+      parts[s < 0 ? 'legL' : 'legR'] = hip; parts[s < 0 ? 'kneeL' : 'kneeR'] = knee;
+    }
+    // sudadera: torso, resorte de la cintura, bolsa canguro, cordones, capucha atrás
+    const torso = prism(.38, .35, .78, hood, 1.22, .72); torso.position.y = 1.5; g.add(torso);
+    g.add(box(.62, .1, .36, hoodD, 0, 1.1, 0));
+    g.add(box(.36, .2, .04, hoodD, 0, 1.3, .23));
+    for (const s of [-1, 1]) g.add(box(.018, .22, .018, mat('#F4F0E8'), s * .06, 1.78, .25));
+    const hd = ball(.26, hood, 0, 1.95, -.16, 16); hd.scale.set(1, .55, .62); g.add(hd);   // capucha caída en la espalda
+    const neck = new THREE.Mesh(new THREE.CylinderGeometry(.075, .085, .13, 10), skin); neck.position.y = 2.0; g.add(neck);
+    for (const s of [-1, 1]) {
+      const sh = new THREE.Group(); sh.position.set(s * .38, 1.84, 0); g.add(sh);
+      sh.add(ball(.11, hood, 0, -.02, 0, 10));
+      sh.add(box(.16, .44, .18, hood, 0, -.22, 0));
+      const el = new THREE.Group(); el.position.y = -.44; el.rotation.x = -.12; sh.add(el);
+      el.add(box(.15, .38, .17, hood, 0, -.19, 0)); el.add(box(.16, .07, .18, hoodD, 0, -.36, 0));
+      const hand = ball(.075, skin, 0, -.45, .01, 10); hand.scale.set(1, 1.35, .8); el.add(hand);
+      parts[s < 0 ? 'armL' : 'armR'] = sh; parts[s < 0 ? 'elbowL' : 'elbowR'] = el;
+    }
+    const head = new THREE.Group(); head.position.set(0, 2.27, 0); g.add(head); parts.head = head;
+    const skull = ball(.23, skin, 0, 0, 0, 22); skull.scale.set(.95, 1.12, 1); head.add(skull);
+    for (const s of [-1, 1]) { const ear = ball(.05, skin, s * .215, 0, -.01, 8); ear.scale.set(.5, 1, .8); head.add(ear); }
+    const nose = box(.055, .09, .08, skin, 0, -.02, .22); nose.rotation.x = -.25; head.add(nose);
+    head.add(box(.09, .015, .015, mat('#9A5A44'), 0, -.11, .215));   // boca
+    const eyes = [], shut = [], brows = [];
+    for (const s of [-1, 1]) {
+      const w = ball(.034, mat('#F2EEE6', { roughness: .4 }), s * .078, .055, .195, 10); head.add(w);
+      const pu = ball(.02, EYE, s * .078, .055, .224, 8); head.add(pu); eyes.push(w, pu);
+      const l = box(.07, .015, .02, EYE, s * .078, .05, .225); l.visible = false; head.add(l); shut.push(l);
+      const br = box(.09, .024, .03, hairM, s * .082, .115, .205); head.add(br); brows.push(br);
+    }
+    parts.sleep = (on) => { eyes.forEach(e => e.visible = !on); shut.forEach(l => l.visible = on); };
+    parts.brows = (worry) => brows.forEach((b, i) => { const sd = i ? 1 : -1; b.rotation.z = -sd * .35 * worry; b.position.y = .115 + .02 * worry; });
+    // pelo corto con fleco
+    const hair = new THREE.Mesh(new THREE.SphereGeometry(.245, 20, 12, 0, Math.PI * 2, 0, Math.PI * .55), hairM); hair.position.set(0, .03, -.015); hair.scale.set(1.0, 1.12, 1.04); hair.rotation.x = -.18; hair.castShadow = true; head.add(hair);
+    const back = ball(.236, hairM, 0, .0, -.05, 18); back.scale.set(.97, 1.08, .95); head.add(back);   // nuca con pelo
+    const fringe = box(.34, .07, .1, hairM, 0, .16, .17); fringe.rotation.x = .35; head.add(fringe);
+    for (const s of [-1, 1]) head.add(box(.04, .1, .12, hairM, s * .21, .07, .03));
+    g.userData = parts; return g;
+  }
+  const hero = () => youth();
   const vecino = () => elder();
 
   /* edificio con ventanas instanciadas (cada ventana con su color) */
@@ -187,6 +238,7 @@
 
   /* cejas (para el primer plano dudando) */
   function addBrows(p) {
+    if (p.userData.brows) return;
     const head = p.userData.head, brows = [];
     for (const s of [-1, 1]) { const b = box(.13, .028, .03, mat('#2A1C14'), s * .11, .12, .3); head.add(b); brows.push(b); }
     p.userData.brows = (worry) => brows.forEach((b, i) => { const s = i ? 1 : -1; b.rotation.z = -s * .35 * worry; b.position.y = .12 + .02 * worry; });
