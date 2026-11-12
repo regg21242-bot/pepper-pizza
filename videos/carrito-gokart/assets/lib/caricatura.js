@@ -42,9 +42,13 @@
   // ---------- calle mexicana caricaturizada ----------
   function street(o = {}) {
     const g = new THREE.Group(), r = rng(o.seed || 7);
-    g.add(box(400, .1, 14, '#4A4E58', 0, -.05, 0));                         // asfalto
-    for (let i = -40; i < 40; i++) g.add(box(1.6, .012, .14, '#F2E6B0', i * 4, .006, 1.2));   // línea punteada
-    g.add(box(400, .18, 3.2, '#C9C3B6', 0, .09, -4.6));                       // banqueta
+    const asT = canvasTex(512, 512, (c, w, h) => { c.fillStyle = '#4C505A'; c.fillRect(0, 0, w, h); const q = rng(11); for (let i = 0; i < 2600; i++) { const v = q(); c.fillStyle = v < .5 ? 'rgba(30,32,40,.35)' : 'rgba(120,124,134,.28)'; const r0 = .6 + q() * 1.8; c.fillRect(q() * w, q() * h, r0, r0); } });
+    asT.wrapS = asT.wrapT = THREE.RepeatWrapping; asT.repeat.set(80, 3);
+    g.add(mesh(new THREE.BoxGeometry(400, .1, 14), toonMap(asT), 0, -.05, 0));          // asfalto con textura
+    g.add(box(400, .012, .12, '#F2C230', 0, .006, 1.25));                             // línea amarilla
+    const swT = canvasTex(256, 256, (c, w, h) => { c.fillStyle = '#D6D0C2'; c.fillRect(0, 0, w, h); c.strokeStyle = '#A8A294'; c.lineWidth = 5; for (let i = 0; i <= 2; i++) { c.beginPath(); c.moveTo(i * 128, 0); c.lineTo(i * 128, h); c.stroke(); c.beginPath(); c.moveTo(0, i * 128); c.lineTo(w, i * 128); c.stroke(); } });
+    swT.wrapS = swT.wrapT = THREE.RepeatWrapping; swT.repeat.set(160, 1.3);
+    const sw = mesh(new THREE.BoxGeometry(400, .18, 3.2), [toon('#C9C3B6'), toon('#C9C3B6'), toonMap(swT), toon('#C9C3B6'), toon('#C9C3B6'), toon('#C9C3B6')], 0, .09, -4.6); g.add(sw);   // banqueta de mosaicos
     g.add(box(400, .2, .22, '#E8E2D4', 0, .1, -3.0));                         // guarnición
     const cols = ['#E8463A', '#3FB25A', '#F5C431', '#F58A2E', '#3E8FE0', '#E8628E', '#7AD0C8'];
     const bld = []; let x = -60;
@@ -124,7 +128,7 @@
     const body = new THREE.Group(); g.add(body); parts.body = body;
     const L = 1.0, W = .58, y0 = .42, H = .48;
     // canasta de rejilla
-    const wires = []; const wire = (a, b, m = metal) => { const d = new THREE.Vector3().subVectors(b, a), len = d.length(); const c = mesh(new THREE.CylinderGeometry(.009, .009, len, 5), m); c.position.copy(a).addScaledVector(d, .5); c.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize()); c.userData.sinContorno = true; body.add(c); wires.push(c); return c; };
+    const wires = []; const wire = (a, b, m = metal) => { const d = new THREE.Vector3().subVectors(b, a), len = d.length(); const c = mesh(new THREE.CylinderGeometry(.009, .009, len, 5), m); c.position.copy(a).addScaledVector(d, .5); c.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize()); body.add(c); wires.push(c); return c; };
     const V = (x, y, z) => new THREE.Vector3(x, y, z);
     const top = y0 + H, xb = -L / 2, xf = L / 2, xfTop = L / 2 + .08;
     for (let i = 0; i <= 10; i++) { const x = lerp(xb, xf, i / 10), xt = lerp(xb, xfTop, i / 10); for (const z of [-W / 2, W / 2]) wire(V(x, y0, z), V(xt, top, z)); }
@@ -144,8 +148,10 @@
       const piv = new THREE.Group(); piv.position.set(x, .2, z); g.add(piv);
       piv.add(box(.03, .1, .06, dark, 0, -.05, 0));
       const w = new THREE.Group(); w.position.y = -.12; piv.add(w);
-      const tire = cyl(.07, .07, .045, '#24262C', 16); tire.rotation.x = Math.PI / 2; w.add(tire);
-      const hub = cyl(.035, .035, .05, '#D8DCE2', 10); hub.rotation.x = Math.PI / 2; w.add(hub);
+      const tire = mesh(new THREE.TorusGeometry(.052, .02, 10, 24), toon('#24262C')); w.add(tire);
+      const hub = cyl(.034, .034, .036, '#E8ECF0', 16); hub.rotation.x = Math.PI / 2; w.add(hub);
+      const cap = cyl(.012, .012, .05, '#8A929C', 8); cap.rotation.x = Math.PI / 2; w.add(cap);
+      for (const s of [-1, 1]) piv.add(box(.012, .13, .012, dark, 0, -.065, s * .03));   // horquilla
       wheels.push({ piv, w, front });
     }
     parts.wheels = wheels; parts.metal = metal; parts.wires = wires.slice(0, wires.length - 6);   // la canasta (sin manubrio ni patas del chasis)
@@ -225,6 +231,48 @@
     for (const z of [-.33, .33]) { const sp = box(.5, .06, .1, '#F5C431', 0, .18, z * 1.05); g.add(sp); }   // pontones
     g.userData = P; return g;
   }
+  function tubo(parent, a, b, r, m) { const d = new THREE.Vector3().subVectors(b, a), len = d.length(); const c = mesh(new THREE.CylinderGeometry(r, r, len, 10), m); c.position.copy(a).addScaledVector(d, .5); c.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize()); parent.add(c); return c; }
+  function rueda(r, w, rinCol = '#E8ECF0') { const g = new THREE.Group(); const t = cyl(r, r, w, '#202228', 28); t.rotation.x = Math.PI / 2; g.add(t);
+    const rin = cyl(r * .62, r * .62, w * 1.04, rinCol, 20); rin.rotation.x = Math.PI / 2; g.add(rin);
+    for (let i = 0; i < 5; i++) { const sp = box(r * .9, r * .12, w * 1.06, '#9AA2AC'); sp.rotation.z = i * Math.PI * 2 / 5; g.add(sp); }
+    const c = cyl(r * .18, r * .18, w * 1.1, '#E33A2E', 10); c.rotation.x = Math.PI / 2; g.add(c); return g; }
+  // go-kart de tubo: chasis delgado, llantas anchas, asiento, volante, defensas y número (eje x = adelante)
+  function gokart() {
+    const g = new THREE.Group(), P = {}, fr = toon('#2AA39A'), V = (x, y, z) => new THREE.Vector3(x, y, z);
+    const L = 1.3, W = .62, y = .16;
+    // chasis
+    for (const z of [-W / 2, W / 2]) { tubo(g, V(-L / 2, y, z), V(L / 2 - .2, y, z), .018, fr); tubo(g, V(L / 2 - .2, y, z), V(L / 2, y + .02, z * .55), .018, fr); }
+    tubo(g, V(L / 2, y + .02, -W * .275), V(L / 2, y + .02, W * .275), .018, fr);
+    for (const x of [-L / 2, -.15, .25]) tubo(g, V(x, y, -W / 2), V(x, y, W / 2), .016, fr);
+    // ejes y llantas (traseras anchas)
+    const wheels = [];
+    for (const [x, z, r, w, front] of [[-L / 2 + .08, -W / 2 - .07, .13, .11, 0], [-L / 2 + .08, W / 2 + .07, .13, .11, 0], [L / 2 - .12, -W / 2 - .05, .1, .08, 1], [L / 2 - .12, W / 2 + .05, .1, .08, 1]]) {
+      const piv = new THREE.Group(); piv.position.set(x, r, z); g.add(piv); const wh = rueda(r, w); piv.add(wh); wheels.push({ piv, w: wh, front, r });
+    }
+    tubo(g, V(-L / 2 + .08, .13, -W / 2 - .07), V(-L / 2 + .08, .13, W / 2 + .07), .015, toon('#9AA2AC'));
+    // asiento tipo cubeta
+    const seat = new THREE.Group(); seat.position.set(-.18, y + .04, 0); g.add(seat); P.seat = seat;
+    seat.add(box(.34, .05, .36, '#1E1F25', 0, 0, 0)); const back = box(.05, .36, .36, '#1E1F25', -.17, .17, 0); back.rotation.z = .3; seat.add(back);
+    for (const s of [-1, 1]) seat.add(box(.3, .1, .03, '#1E1F25', 0, .05, s * .18));
+    // columna y volante
+    const col = tubo(g, V(.42, y + .02, 0), V(.2, .55, 0), .014, toon('#9AA2AC')); P.column = col;
+    const vol = new THREE.Group(); vol.position.set(.2, .56, 0); vol.rotation.set(0, 0, .95); g.add(vol); P.volante = vol;
+    vol.add(mesh(new THREE.TorusGeometry(.1, .014, 8, 24), toon('#1E1F25'))); vol.children[0].rotation.y = Math.PI / 2;
+    for (let i = 0; i < 3; i++) { const sp = box(.012, .09, .012, '#9AA2AC'); sp.rotation.x = i * Math.PI * 2 / 3; sp.position.set(0, Math.cos(i * 2.094) * .045, Math.sin(i * 2.094) * .045); vol.add(sp); }
+    // defensas y pontones
+    const bump = toon('#36C45A');
+    tubo(g, V(L / 2 + .05, y + .02, -W * .38), V(L / 2 + .05, y + .02, W * .38), .02, bump);
+    for (const z of [-W * .38, W * .38]) tubo(g, V(L / 2 - .05, y + .02, z), V(L / 2 + .05, y + .02, z), .02, bump);
+    for (const s of [-1, 1]) { const pod = box(.55, .1, .1, '#F5C431', .05, y + .06, s * (W / 2 + .03)); g.add(pod); }
+    tubo(g, V(-L / 2 - .08, y + .05, -W / 2), V(-L / 2 - .08, y + .05, W / 2), .022, toon('#E33A2E'));   // defensa trasera (la agarradera del carrito)
+    // nariz con número
+    const nose = box(.2, .1, .42, '#F5C431', L / 2 - .02, y + .1, 0); nose.rotation.z = -.35; g.add(nose);
+    const numT = canvasTex(256, 256, (c, w, h) => { c.fillStyle = '#FFFFFF'; c.beginPath(); c.arc(128, 128, 118, 0, 7); c.fill(); c.lineWidth = 12; c.strokeStyle = '#111'; c.stroke(); c.fillStyle = '#E33A2E'; c.font = '190px Anton, Impact, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('7', 128, 140); });
+    const plate = mesh(new THREE.PlaneGeometry(.2, .2), toonMap(numT, { transparent: true }), L / 2 + .05, y + .16, 0); plate.rotation.y = Math.PI / 2; plate.rotation.x = 0; plate.rotation.order = 'YXZ'; plate.rotation.x = -.35; g.add(plate);
+    // motor de podadora atrás con su cadena
+    const mot = motor(); mot.position.set(-.48, y + .02, .2); mot.scale.setScalar(.85); g.add(mot); P.motor = mot;
+    g.userData = Object.assign(P, { wheels }); return g;
+  }
   function volante() { const g = new THREE.Group(); const rim = torus(.11, .016, '#1F1F24', 24); g.add(rim); for (let i = 0; i < 3; i++) { const sp = box(.1, .016, .016, '#9AA2AC'); sp.rotation.z = i * Math.PI * 2 / 3; sp.position.set(Math.cos(i * 2.094) * .05, Math.sin(i * 2.094) * .05, 0); g.add(sp); } g.add(cyl(.025, .025, .03, '#E33A2E', 10)); g.children[g.children.length - 1].rotation.x = Math.PI / 2; return g; }
   function disco() { const g = new THREE.Group(), P = {}; const d = cyl(.11, .11, .016, toon('#C9CED6', { noCache: true }), 28); d.rotation.x = Math.PI / 2; g.add(d); P.disc = d; for (let i = 0; i < 8; i++) { const h = cyl(.008, .008, .02, '#555', 6, Math.cos(i * .785) * .07, Math.sin(i * .785) * .07, 0); h.rotation.x = Math.PI / 2; g.add(h); }
     const cal = new THREE.Group(); cal.position.set(0, .1, 0); g.add(cal); P.caliper = cal; cal.add(box(.09, .06, .07, '#3E8FE0', 0, 0, 0));
@@ -250,7 +298,7 @@
     const rtN = new THREE.WebGLRenderTarget(W, H); rtN.depthTexture = new THREE.DepthTexture(W, H); rtN.depthTexture.type = THREE.UnsignedIntType;
     const normalMat = new THREE.MeshNormalMaterial();
     const post = new THREE.ShaderMaterial({
-      uniforms: { tC: { value: rtC.texture }, tN: { value: rtN.texture }, tD: { value: rtN.depthTexture }, res: { value: new THREE.Vector2(W, H) }, near: { value: .05 }, far: { value: 400 }, thick: { value: 2.6 }, xray: { value: 0 }, flash: { value: 0 }, outline: { value: 0 } },
+      uniforms: { tC: { value: rtC.texture }, tN: { value: rtN.texture }, tD: { value: rtN.depthTexture }, res: { value: new THREE.Vector2(W, H) }, near: { value: .05 }, far: { value: 400 }, thick: { value: 1.7 }, xray: { value: 0 }, flash: { value: 0 }, outline: { value: 0 } },
       vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }',
       fragmentShader: `uniform sampler2D tC, tN, tD; uniform vec2 res; uniform float near, far, thick, xray, flash, outline; varying vec2 vUv;
         float lin(vec2 uv){ float z = texture2D(tD, uv).x; return (near * far) / ((far - near) * z - far) * -1.; }
@@ -292,5 +340,5 @@
   }
   const ghostMat = new THREE.MeshBasicMaterial({ color: '#8FE0FF', transparent: true, opacity: .16, depthWrite: false, toneMapped: false, blending: THREE.AdditiveBlending });
 
-  window.K = { estilo, repaint, THREE, rng, clamp, lerp, prog, ease, easeOut, easeIn, backOut, toon, flat, mesh, box, cyl, ball, torus, canvasTex, gear, street, chavo, pose, carrito, motor, cinchos, cadena, clutch, kartKit, volante, disco, puffs, sparks, crearRender, rayosX };
+  window.K = { estilo, repaint, THREE, rng, clamp, lerp, prog, ease, easeOut, easeIn, backOut, toon, flat, mesh, box, cyl, ball, torus, canvasTex, gear, gokart, rueda, tubo, street, chavo, pose, carrito, motor, cinchos, cadena, clutch, kartKit, volante, disco, puffs, sparks, crearRender, rayosX };
 })();
