@@ -1,0 +1,32 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; pointer-events: none; font-family: Nunito, sans-serif; }
+    .el-wrap { position: absolute; left: 70px; width: 800px; }
+    #el-label { top: 760px; text-align: center; color: #fff; font-weight: 900; font-size: 52px; text-shadow: 0 4px 18px rgba(0,0,0,.7); }
+    .btn { display: flex; align-items: center; gap: 28px; padding: 30px 38px; border-radius: 34px; color: #fff; font-weight: 900; font-size: 54px; line-height: 1.05;
+      box-shadow: 0 14px 40px rgba(0,0,0,.55), inset 0 -8px 0 rgba(0,0,0,.25); border: 4px solid rgba(255,255,255,.85); }
+    .btn small { display: block; font-size: 36px; font-weight: 800; opacity: .95; }
+    .btn svg { flex: none; width: 96px; height: 96px; }
+    #el-rojo { top: 880px; } #el-rojo .btn { background: linear-gradient(180deg, #FF4A4A, #B8161E); }
+    #el-azul { top: 1110px; } #el-azul .btn { background: linear-gradient(180deg, #3D8BFF, #1F4FC8); }
+  </style>
+  <div id="root" data-composition-id="eleccion" data-width="1080" data-height="1920">
+    <div id="el-label" class="clip el-wrap" data-start="8.9" data-duration="3.4" data-track-index="0"><div id="el-label-in">Elige en comentarios ▼</div></div>
+    <div id="el-azul" class="clip el-wrap" data-start="8.6" data-duration="3.4" data-track-index="1"><div id="el-azul-in" class="btn">
+      <svg viewBox="0 0 64 64"><path d="M24 58 V30 c0-3 5-3 5 0 v14 V12 c0-4 6-4 6 0 v30 V10 c0-4 6-4 6 0 v32 V16 c0-4 6-4 6 0 v28 c0 9-6 16-15 16 h-4 c-5 0-8-3-10-7 l-8-13 c-2-4 2-6 5-3 z" fill="#fff"/></svg>
+      <div>LE PIDES<small>que se quede</small></div></div></div>
+    <div id="el-rojo" class="clip el-wrap" data-start="8.3" data-duration="3.4" data-track-index="2"><div id="el-rojo-in" class="btn">
+      <svg viewBox="0 0 64 64"><circle cx="36" cy="9" r="7" fill="#fff"/><path d="M33 18 l-9 6 -5 11 M33 18 l6 14 9 4 M31 20 l-3 16 -9 20 M28 36 l10 9 2 13" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div>LO DEJAS<small>ir</small></div></div></div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo('#el-azul-in', { opacity: 0, scale: .5, x: -60 }, { opacity: 1, scale: 1, x: 0, duration: .5, ease: 'back.out(2)' }, 8.6);
+    tl.fromTo('#el-rojo-in', { opacity: 0, scale: .5, x: 60 }, { opacity: 1, scale: 1, x: 0, duration: .5, ease: 'back.out(2)' }, 8.3);
+    tl.fromTo('#el-label-in', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: .4, ease: 'power2.out' }, 8.9);
+    // pulso suave para invitar a elegir
+    tl.fromTo('#el-azul-in', { scale: 1 }, { scale: 1.04, duration: .5, ease: 'sine.inOut', yoyo: true, repeat: 3, immediateRender: false }, 10.0);
+    tl.fromTo('#el-rojo-in', { scale: 1 }, { scale: 1.04, duration: .5, ease: 'sine.inOut', yoyo: true, repeat: 3, immediateRender: false }, 9.6);
+    window.__timelines['eleccion'] = tl;
+  </script>
+</template>
