@@ -13,10 +13,10 @@
   const backOut = k => { k = clamp(k); const c = 1.9; return 1 + (c + 1) * Math.pow(k - 1, 3) + c * Math.pow(k - 1, 2); };
 
   // ---------- materiales caricatura ----------
-  const grad = (() => { const d = new Uint8Array([70, 150, 255]); const t = new THREE.DataTexture(d, 3, 1, THREE.RedFormat); t.minFilter = t.magFilter = THREE.NearestFilter; t.generateMipmaps = false; t.needsUpdate = true; return t; })();
+  const grad = (() => { const d = new Uint8Array([120, 200, 255]); const t = new THREE.DataTexture(d, 3, 1, THREE.RedFormat); t.minFilter = t.magFilter = THREE.NearestFilter; t.generateMipmaps = false; t.needsUpdate = true; return t; })();
   const cache = {};
   // estilo 3D de la serie (igual que los videos del tsunami): sombreado suave, sin contornos.  K.estilo = 'caricatura' vuelve al cel-shading
-  const estilo = { modo: 'suave' };
+  const estilo = { modo: 'caricatura' };
   function toon(color, o = {}) { const k = estilo.modo + color + JSON.stringify(o); if (!o.noCache && cache[k]) return cache[k]; const oo = Object.assign({}, o); const nc = oo.noCache; delete oo.noCache;
     const m = estilo.modo === 'caricatura' ? new THREE.MeshToonMaterial(Object.assign({ color, gradientMap: grad }, oo)) : new THREE.MeshStandardMaterial(Object.assign({ color, roughness: .62, metalness: .05 }, oo)); if (!nc) cache[k] = m; return m; }
   function toonMap(map, o = {}) { return estilo.modo === 'caricatura' ? new THREE.MeshToonMaterial(Object.assign({ map, gradientMap: grad }, o)) : new THREE.MeshStandardMaterial(Object.assign({ map, roughness: .7 }, o)); }
@@ -124,7 +124,7 @@
     const body = new THREE.Group(); g.add(body); parts.body = body;
     const L = 1.0, W = .58, y0 = .42, H = .48;
     // canasta de rejilla
-    const wires = []; const wire = (a, b, m = metal) => { const d = new THREE.Vector3().subVectors(b, a), len = d.length(); const c = mesh(new THREE.CylinderGeometry(.009, .009, len, 5), m); c.position.copy(a).addScaledVector(d, .5); c.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize()); body.add(c); wires.push(c); return c; };
+    const wires = []; const wire = (a, b, m = metal) => { const d = new THREE.Vector3().subVectors(b, a), len = d.length(); const c = mesh(new THREE.CylinderGeometry(.009, .009, len, 5), m); c.position.copy(a).addScaledVector(d, .5); c.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize()); c.userData.sinContorno = true; body.add(c); wires.push(c); return c; };
     const V = (x, y, z) => new THREE.Vector3(x, y, z);
     const top = y0 + H, xb = -L / 2, xf = L / 2, xfTop = L / 2 + .08;
     for (let i = 0; i <= 10; i++) { const x = lerp(xb, xf, i / 10), xt = lerp(xb, xfTop, i / 10); for (const z of [-W / 2, W / 2]) wire(V(x, y0, z), V(xt, top, z)); }
@@ -250,7 +250,7 @@
     const rtN = new THREE.WebGLRenderTarget(W, H); rtN.depthTexture = new THREE.DepthTexture(W, H); rtN.depthTexture.type = THREE.UnsignedIntType;
     const normalMat = new THREE.MeshNormalMaterial();
     const post = new THREE.ShaderMaterial({
-      uniforms: { tC: { value: rtC.texture }, tN: { value: rtN.texture }, tD: { value: rtN.depthTexture }, res: { value: new THREE.Vector2(W, H) }, near: { value: .05 }, far: { value: 400 }, thick: { value: 2.2 }, xray: { value: 0 }, flash: { value: 0 }, outline: { value: 0 } },
+      uniforms: { tC: { value: rtC.texture }, tN: { value: rtN.texture }, tD: { value: rtN.depthTexture }, res: { value: new THREE.Vector2(W, H) }, near: { value: .05 }, far: { value: 400 }, thick: { value: 2.6 }, xray: { value: 0 }, flash: { value: 0 }, outline: { value: 0 } },
       vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }',
       fragmentShader: `uniform sampler2D tC, tN, tD; uniform vec2 res; uniform float near, far, thick, xray, flash, outline; varying vec2 vUv;
         float lin(vec2 uv){ float z = texture2D(tD, uv).x; return (near * far) / ((far - near) * z - far) * -1.; }
@@ -272,7 +272,7 @@
         }`, depthTest: false, depthWrite: false });
     const ps = new THREE.Scene(); ps.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), post)); const pc = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
     function render(scene, camera, o = {}) {
-      post.uniforms.near.value = camera.near; post.uniforms.far.value = camera.far; post.uniforms.xray.value = o.xray || 0; post.uniforms.flash.value = o.flash || 0; const ol = estilo.modo === 'caricatura' ? 1 : 0; post.uniforms.outline.value = ol;
+      post.uniforms.near.value = camera.near; post.uniforms.far.value = camera.far; post.uniforms.xray.value = o.xray || 0; post.uniforms.flash.value = o.flash || 0; const ol = estilo.modo === 'caricatura' ? 1 : 0; post.uniforms.outline.value = ol; renderer.toneMapping = ol ? THREE.NoToneMapping : THREE.ACESFilmicToneMapping; post.toneMapped = !ol;
       renderer.setRenderTarget(rtC); renderer.render(scene, camera);
       if (!ol) { renderer.setRenderTarget(null); renderer.render(ps, pc); return; }
       const hidden = []; scene.traverse(ob => { if (ob.userData.sinContorno && ob.visible) { ob.visible = false; hidden.push(ob); } });
