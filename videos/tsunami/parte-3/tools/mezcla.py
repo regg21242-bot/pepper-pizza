@@ -11,7 +11,7 @@ SR = 48000
 root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 P = lambda *a: os.path.join(root, *a)
 src = open(P("compositions/film.html"), encoding="utf-8").read()
-blk = re.search(r"const T2 = (\{.*?\});", src, re.S).group(1)
+blk = re.search(r"const T3 = (\{.*?\});", src, re.S).group(1)
 blk = re.sub(r"([{,]\s*)([A-Za-z_]\w*)\s*:", r'\1"\2":', blk); blk = re.sub(r"(?<![\d])\.(\d)", r"0.\1", blk)
 T = json.loads(blk)
 C, DUR = T["cuts"], T["end"]
@@ -44,80 +44,57 @@ S = lambda name: read(P("assets/sfx", name))
 voz = read(P("assets/voz/voz.wav"))[:N]; voz = np.pad(voz, ((0, N - len(voz)), (0, 0)))
 fx = buf()
 noise = rs.standard_normal(N)
-outdoor = [(0, C[1]), (C[4], C[5]), (C[6], C[8]), (C[9], DUR)]   # escenas afuera (lluvia fuerte)
+outdoor = [(0, C[2]), (C[2], C[3]), (C[11], DUR)]   # escenas afuera (lluvia fuerte)
+CS = [0] + C
+def seg(i): return CS[i], (CS[i + 1] if i + 1 < len(CS) else DUR)
 
-# --- lluvia: ruido brillante continuo, más fuerte afuera ---
+# --- lluvia constante, más fuerte afuera ---
 rainL = hp(lp(rs.standard_normal(N), 3), 40); rainR = hp(lp(rs.standard_normal(N), 3), 40)
 drops = (rs.random(N) < .0009) * rs.standard_normal(N) * 3; drops = hp(lp(drops, 4), 30)
-rlev = np.full(N, .35)
+rlev = np.full(N, .4)
 for a, b in outdoor: rlev[(t >= a) & (t < b)] = 1.0
 rlev = lp(rlev, int(.4 * SR))
-rain = np.stack([rainL + drops, rainR + np.roll(drops, 400)], axis=1) * rlev[:, None] * .035
-fx += rain
+fx += np.stack([rainL + drops, rainR + np.roll(drops, 400)], axis=1) * rlev[:, None] * .035
 
-# --- alarma lejana: sirena que sube y baja, filtrada y suave ---
-ph = 2 * np.pi * np.cumsum(620 + 230 * np.sin(2 * np.pi * t / 3.2)) / SR
-siren = lp(np.sin(ph) + .3 * np.sin(2 * ph), 6) * env([(0, .8), (C[1], .8), (C[1] + .3, .2), (C[4], .25), (C[4] + .3, .9), (C[5], .9), (C[5] + .3, .15), (C[7], .2), (C[7] + .3, .5), (C[8], .5), (C[8] + .3, .1), (DUR, .2)])
-fx += np.stack([siren, np.roll(siren, 900)], axis=1) * .035
+# --- toque suave del dedo en el botón ---
+x = tt(.12); place(fx, st(fade(np.sin(2 * np.pi * 900 * x) * np.exp(-x / .02) * .4, .002, .05)), T["tap"], -8)
+place(fx, S("pop.wav"), T["tap"] + .02, -10)
 
-# --- el agua que entra: rugido grave que crece con el frente ---
-a0, a1 = C[0] - .3, C[1] + .4; x = tt(a1 - a0)
-roar = lp(rs.standard_normal(len(x)), 45) * 3 + lp(rs.standard_normal(len(x)), 180) * 9
-roar *= np.interp(x, [0, 1.6, 3.5, 6.0, a1 - a0], [.15, .5, 1.0, 1.1, .7])
-place(fx, st(fade(roar, .3, .5)), a0, -15)
-place(fx, S("retumbe.wav"), C[0] + 1.0, -12)
-place(fx, S("whoosh.wav"), C[0] + .2, -9)
-# coches arrastrados: golpes metálicos y raspones
-for k, tk in enumerate([C[0] + 2.4, C[0] + 3.1, C[0] + 3.7, C[0] + 4.6, C[0] + 5.3]):
-    place(fx, S("metal.wav"), tk, -14 + rs.random() * 3, rs.random() - .5)
-    place(fx, S("golpe.wav"), tk + .05, -16, rs.random() - .5)
-    x = tt(.7); scr = hp(lp(rs.standard_normal(len(x)), 2), 8) * np.sin(2 * np.pi * (900 + 300 * x) * x) * .2
-    place(fx, st(fade(scr, .05, .3)), tk + .1, -16)
-
-# --- calle inundada: corriente que corre y escombros que chocan ---
-a0, a1 = C[4] - .3, C[5] + .3; x = tt(a1 - a0)
+# --- portón: candado y rechinido al abrir y cerrar ---
+def creak(t0, d, db):
+    x = tt(d); sq = np.sin(2 * np.pi * (260 + 90 * np.sin(2 * np.pi * .9 * x)) * x) * (.6 + .4 * np.sin(2 * np.pi * 23 * x)) * .08
+    place(fx, st(fade(sq, .1, .2)), t0, db)
+def clank(t0, db=-8): place(fx, S("metal.wav"), t0, db); place(fx, S("tic.wav"), t0 + .02, db + 2)
+a0 = C[0]
+clank(a0 + .1); creak(a0 + .2, .55, -14); creak(a0 + 2.2, .6, -14); place(fx, S("golpe.wav"), a0 + 2.85, -10); clank(a0 + 2.9)
+a0 = C[11]
+clank(a0 + 2.6); creak(a0 + 2.8, 1.2, -12)
+# --- chorro de agua en la cubeta ---
+a0, a1 = C[4] + .2, C[5] - .2; x = tt(a1 - a0)
+pour = (lp(rs.standard_normal(len(x)), 4) * .5 + lp(rs.standard_normal(len(x)), 25) * 1.5) * (1 + .2 * np.sin(2 * np.pi * 7 * x))
+place(fx, st(fade(pour, .2, .4)), a0, -16)
+# --- calle: corriente ---
+a0, a1 = C[5] - .2, C[6] + .2; x = tt(a1 - a0)
 flow = lp(rs.standard_normal(len(x)), 20) * 2.2 * (1 + .3 * np.sin(2 * np.pi * .9 * x)) + lp(rs.standard_normal(len(x)), 120) * 5
-place(fx, st(fade(flow, .4, .5)), a0, -19)
-for tk in (C[4] + 1.1, C[4] + 2.7, C[4] + 4.2): place(fx, S("toc2.wav"), tk, -14, rs.random() - .5)
-
-# --- celular: tecleo y el aviso de "no enviado" ---
-k0, k1 = T["typing"]
-for k in range(16): place(fx, S("tic.wav"), k0 + k * (k1 - k0) / 16, -16)
-x = tt(.12); place(fx, st(fade(np.sin(2 * np.pi * 1200 * x) * .3, .005, .05)), T["sent"], -10)
-for k in range(2):
-    x = tt(.18); place(fx, st(fade(np.sin(2 * np.pi * 330 * x) * .35, .005, .05)), T["noSignal"] + k * .22, -8)
-
-# --- radio: estática con voz lejana ininteligible ---
-a0, a1 = C[2] - .1, C[3] + .2; x = tt(a1 - a0)
-stat = hp(rs.standard_normal(len(x)), 6) * (.6 + .4 * (rs.random(len(x)) < .002).astype(float).cumsum() % 2)
-mumble = lp(rs.standard_normal(len(x)), 30) * 6 * (np.sin(2 * np.pi * 3.5 * x) > 0) * np.sin(2 * np.pi * 180 * x)
-place(fx, st(fade(stat * .15 + mumble * .08, .05, .2)), a0, -20)
-place(fx, st(fade(hp(rs.standard_normal(int(.25 * SR)), 4) * .5, .01, .1)), C[2] - .05, -18)   # chasquido al prender
-
-# --- reloj: tic-tac que acelera ---
-a0, a1 = C[5], C[6]; tk, step = a0 + .15, .5; k = 0
-while tk < a1 - .1:
-    place(fx, S("tic.wav" if k % 2 == 0 else "tac.wav"), tk, -5); k += 1
-    step = max(.09, step * .9); tk += step
-# las olas segunda y tercera (lejos, a través de las paredes)
-place(fx, S("retumbe.wav"), 32.5, -10); place(fx, S("retumbe.wav"), 34.0, -6)
-
-# --- golpes metálicos en el portón ---
-for i, k in enumerate(T["knocks"]):
-    place(fx, S("metal.wav"), k, -6, .2); place(fx, S("golpe.wav"), k + .01, -8, .2)
-    place(fx, S("toc.wav" if i % 2 == 0 else "toc2.wav"), k, -10, .2)
-
-# --- candado: la mano del vecino ---
-place(fx, S("metal.wav"), C[9] + 1.4, -12); place(fx, S("tic.wav"), C[9] + 1.45, -6)
-
-# --- transiciones y botones ---
-for c in C: place(fx, S("whoosh_corto.wav"), c - .13, -14)
-for tb in (50.7, 52.1, 53.4): place(fx, S("pop.wav"), tb + .05, -6)
+place(fx, st(fade(flow, .4, .5)), a0, -20)
+# --- tic-tac acelerado ---
+tk, step, k = C[6] + .1, .4, 0
+while tk < C[7] - .05: place(fx, S("tic.wav" if k % 2 == 0 else "tac.wav"), tk, -6); k += 1; step = max(.07, step * .82); tk += step
+# --- clics de linterna: tus tres señales (y el vecino al prenderla) ---
+for d in T["mine"]: place(fx, S("tic.wav"), C[7] + d - .02, -4)
+for d in T["theirs"]: x = tt(.25); place(fx, st(fade(np.sin(2 * np.pi * 1320 * x) * np.exp(-x / .08) * .15, .005, .1)), C[7] + d, -18)
+place(fx, S("tic.wav"), C[11] + 1.9, -4)
+# --- radio: estática y luego se aclara ---
+a0 = C[8]; x = tt(1.4); stat = hp(rs.standard_normal(len(x)), 6) * np.linspace(1, .15, len(x))
+place(fx, st(fade(stat * .2, .02, .3)), a0, -16); place(fx, st(fade(hp(rs.standard_normal(int(.2 * SR)), 4) * .5, .01, .08)), a0 + .1, -16)
+# --- transiciones ---
+for c in C: place(fx, S("whoosh_corto.wav"), c - .13, -16)
+for tb in (53.45, 54.6, 56.1): place(fx, S("pop.wav"), tb + .05, -7)
 
 # --- música de suspenso: dron grave y pulso lento ---
 def tension():
-    zones = [(0, C[0], .4), (C[0], C[1], .9), (C[1], C[3], .6), (C[3], C[4], .5), (C[4], C[5], .8), (C[5], C[6], .9), (C[6], C[8], 1.0), (C[8], C[10], .85), (C[10], DUR, .7)]
-    v = np.full(N, .4)
+    zones = [(0, C[0], .5), (C[0], C[2], .7), (C[2], C[5], .55), (C[5], C[6], .75), (C[6], C[7], .85), (C[7], C[8], .8), (C[8], C[9], .4), (C[9], C[10], 0), (C[10], C[12], .6), (C[12], DUR, .7)]
+    v = np.full(N, .5)
     for a, b, k in zones: v[(t >= a) & (t < b)] = k
     return lp(v, int(.8 * SR))
 ten = tension()
@@ -130,6 +107,10 @@ for k in range(int(DUR / beat)):
     if kk < .55: continue
     x = tt(.4); th = np.sin(2 * np.pi * (52 - 22 * x) * x) * np.exp(-x / .11)
     i = int(tk * SR); seg = th[: N - i] * kk; mus[i:i + len(seg)] += seg * 1.3
+# abrazo: acordes cálidos (do mayor suave) que entran y se van despacio
+wk = np.clip(np.interp(t, [C[8] + 2.5, C[9] - .2, C[10] + .5, C[11] - 1.0], [0, 1, 1, 0]), 0, 1)
+warm = sum(np.sin(2 * np.pi * f * t) * (.6 + .4 * np.sin(2 * np.pi * .25 * t + f)) for f in (130.8, 164.8, 196, 261.6, 329.6)) * .25
+mus = mus * (1 - .85 * wk) + warm * wk * 1.6
 mus = st(mus)
 
 def rms_db(x): return 20 * np.log10(np.sqrt(np.mean(x ** 2)) + 1e-12)

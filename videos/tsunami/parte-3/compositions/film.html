@@ -3,7 +3,7 @@
     #root { position: absolute; inset: 0; background: #05060f; }
     #gl { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
   </style>
-  <div id="root" data-composition-id="film" data-start="0" data-duration="12" data-width="1080" data-height="1920">
+  <div id="root" data-composition-id="film" data-start="0" data-duration="60" data-width="1080" data-height="1920">
     <canvas id="gl" width="1080" height="1920" data-layout-ignore></canvas>
   </div>
   <script>
@@ -30,137 +30,18 @@
       return l;
     }
 
-    /* ================= CIUDAD: el mar entra ================= */
-    const FL = { line: [0, 1.8], coast: 1.8, front: [2.0, 5.0] };   // tiempos locales de la toma
-    const CITY = (() => {
-      const s = new THREE.Scene(); s.fog = new THREE.FogExp2('#2A1A4A', .006);
-      const sk = sky('#0A1034', '#5A2A72'); s.add(sk); s.add(stars());
-      s.add(new THREE.HemisphereLight('#4A4AA0', '#1A0A20', .6));
-      const moon = new THREE.DirectionalLight('#8AA0FF', .6); moon.position.set(-30, 40, -20); s.add(moon);
-      const seaG = new THREE.PlaneGeometry(400, 200, 80, 40); seaG.rotateX(-Math.PI / 2);
-      const sea = new THREE.Mesh(seaG, mat('#0C1A44', { roughness: .35, metalness: .1, flatShading: true })); sea.position.set(0, -.2, -185); s.add(sea);
-      const seaPos = seaG.attributes.position, seaBase = seaPos.array.slice();
-      s.add(box(260, .4, 60, mat('#2A2238'), 0, 0, -55));
-      const city = new THREE.Group(); s.add(city); const r = rng(5), blds = [];
-      for (let i = 0; i < 70; i++) {
-        const w = 2 + r() * 3, h = 3 + r() * (i % 7 === 0 ? 18 : 9), d = 2 + r() * 3;
-        const b = building(w, h, d, 100 + i, { lit: .5 }); b.position.set(-60 + (i % 14) * 9 + r() * 3, 0, -40 - Math.floor(i / 14) * 8 - r() * 3); city.add(b); blds.push(b);
-      }
-      // coches en las calles
-      const cr = rng(31), cars = [], carCols = ['#E04848', '#F2C230', '#3FAE5A', '#3A7AE0', '#E8E8F0', '#2A2A30'];
-      for (let i = 0; i < 26; i++) { const c = new THREE.Group(); c.add(box(1.6, .5, .8, mat(carCols[i % 6], { roughness: .4, metalness: .3 }), 0, .45, 0)); c.add(box(.9, .35, .74, mat('#1A2030', { roughness: .2 }), -.1, .85, 0)); const x = -58 + cr() * 116, z = -36 - cr() * 46; c.position.set(x, 0, z); c.rotation.y = cr() < .5 ? 0 : Math.PI / 2; s.add(c); cars.push({ c, x, z, ph: cr() * 6, sp: .6 + cr() * .8 }); }
-      const hillG = new THREE.RingGeometry(.01, 16, 32, 16); hillG.rotateX(-Math.PI / 2);
-      const hp = hillG.attributes.position, hr = rng(3); for (let i = 0; i < hp.count; i++) { const x = hp.getX(i), z = hp.getZ(i), dd = Math.hypot(x, z); const n = hr(); hp.setY(i, dd < 10.5 ? 5.6 : Math.max(0, 5.6 - (dd - 10.5) * 1.1) + n * .35); }
-      hillG.computeVertexNormals();
-      const hill = new THREE.Mesh(hillG, mat('#24302A', { flatShading: true })); hill.position.set(0, 14, 18); s.add(hill);
-      s.add(box(60, 14, 30, mat('#161E1C', { flatShading: true }), 0, 7, 22)); s.add(box(240, .3, 70, mat('#1A1A2A'), 0, -.1, -5));
-      const hh = hut(); hh.position.set(-6.5, 19.6, 19.5); hh.rotation.y = -.4; s.add(hh);
-      const hutL = new THREE.PointLight('#FFC070', 1.2, 10, 2); hutL.position.set(-6, 21, 21.5); s.add(hutL);
-      const p = hero(), v = vecino(); p.position.set(-.9, 19.6, 13.4); v.position.set(.8, 19.6, 13.8); p.rotation.y = Math.PI; v.rotation.y = Math.PI - .15; s.add(p, v);
-      v.userData.spot.intensity = 0; v.userData.beam.visible = false;
-      // cerca de madera: divide el terreno del vecino de la bajada del cerro
-      const wood = mat('#6A4428', { roughness: .85 }), woodD = mat('#4A2E1A', { roughness: .9 });
-      const fp = []; for (let k = 0; k <= 16; k++) { const a = -1.05 + k * 2.1 / 16; fp.push([Math.sin(a) * 6.4, 18 - Math.cos(a) * 6.4]); }
-      fp.forEach(([x, z], k) => { const post = box(.14, 1.3, .14, wood, x, 19.6 + .6, z); post.rotation.y = (k % 3 - 1) * .08; s.add(post); });
-      for (let k = 0; k < fp.length - 1; k++) { const [x0, z0] = fp[k], [x1, z1] = fp[k + 1], L = Math.hypot(x1 - x0, z1 - z0), ry = -Math.atan2(z1 - z0, x1 - x0);
-        for (const [y, m] of [[19.6 + .45, woodD], [19.6 + .95, wood]]) { const rail = box(L + .1, .09, .06, m, (x0 + x1) / 2, y, (z0 + z1) / 2); rail.rotation.y = ry; s.add(rail); } }
-      // salpicadura cuando el agua choca contra el cerro
-      const NSP = 700, spG = new THREE.BufferGeometry(), spP = new Float32Array(NSP * 3); spG.setAttribute('position', new THREE.BufferAttribute(spP, 3));
-      const spr = rng(77), spD = []; for (let i = 0; i < NSP; i++) spD.push({ x: (spr() - .5) * 36, z: 2 + spr() * 2.5, vy: 11 + spr() * 5, vz: 1 + spr() * 3.5, vx: (spr() - .5) * 2, off: spr() * 1.3 });
-      const dot = (() => { const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d'); const g = x.createRadialGradient(32, 32, 0, 32, 32, 30); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(.5, 'rgba(230,240,255,.6)'); g.addColorStop(1, 'rgba(230,240,255,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c); })();
-      const spM = new THREE.PointsMaterial({ map: dot, color: '#CFE0FF', size: .45, transparent: true, opacity: .9, depthWrite: false, fog: false, toneMapped: false });
-      const spray = new THREE.Points(spG, spM); spray.frustumCulled = false; s.add(spray);
-      const splashMist = new THREE.Mesh(new THREE.PlaneGeometry(40, 6), new THREE.MeshBasicMaterial({ color: '#DDE8FF', transparent: true, opacity: 0, depthWrite: false, fog: false, toneMapped: false })); splashMist.position.set(0, 17, 7); splashMist.visible = false;
-      function splash(t, t0) {
-        const on = t > t0; spray.visible = on; if (!on) { splashMist.material.opacity = 0; return; }
-        for (let i = 0; i < NSP; i++) { const d = spD[i], a = ((t - t0 - d.off) % 1.3 + 1.3) % 1.3, alive = t - t0 >= d.off;
-          const y = 14 + d.vy * a - 9.8 * a * a; spP[i * 3] = d.x + d.vx * a; spP[i * 3 + 1] = alive && y > 13.5 ? y : -50; spP[i * 3 + 2] = d.z + d.vz * a; }
-        spG.attributes.position.needsUpdate = true;
-        const k = t - t0; splashMist.material.opacity = .12 * Math.min(1, k * 3) * Math.max(.4, 1 - k * .3); splashMist.position.y = 16.5 + Math.sin(t * 4) * .3;
-      }
-      // la línea blanca y el agua que entra
-      const line = new THREE.Mesh(new THREE.BoxGeometry(300, .6, 1.4), new THREE.MeshBasicMaterial({ color: '#F4F8FF', toneMapped: false, fog: false })); s.add(line);
-      const waterM = new THREE.MeshStandardMaterial({ color: '#3A5070', roughness: .15, metalness: .45, transparent: true, opacity: .95 });
-      const water = new THREE.Mesh(new THREE.BoxGeometry(300, 1, 1), waterM); s.add(water);
-      const foamM = new THREE.MeshBasicMaterial({ color: '#E8F0FF', toneMapped: false, fog: false, transparent: true, opacity: .95 });
-      const foam = new THREE.Mesh(new THREE.BoxGeometry(300, .5, 1.6), foamM); s.add(foam);
-      const sirens = []; for (let i = 0; i < 4; i++) { const L = new THREE.PointLight('#FF2020', 0, 30, 2); L.position.set(-30 + i * 20, 4, -36); s.add(L); sirens.push(L); }
-      const rn = rain(900, [60, 40, 40, 6], 4, '#8A9AD0', .28); s.add(rn);
-      const camera = cam();
-      function update(t, mode = 'flood') {
-        if (mode === 'aerial') {   // escena 1: toma aérea que baja hasta la casita del cerro
-          line.visible = water.visible = foam.visible = false; splash(-1, 0); blds.forEach(b => b.userData.paint(.45)); cars.forEach(o => { o.c.position.set(o.x, 0, o.z); o.c.rotation.set(0, o.c.rotation.y, 0); });
-          sirens.forEach((L, i) => L.intensity = 2.5 + Math.sin(t * 5 + i) * 1.5); rn.userData.update(t, 0, 10, 0);
-          sk.userData.mat.uniforms.red.value = .12;
-          camPath(camera, t, [[-.4, [6, 62, 75], [-1, 0, -45]], [3.0, [-1.4, 26.8, 30.5], [-1, -1, -70]]]);
-          return { red: .06 };
-        }
-        for (let i = 0; i < seaPos.count; i++) { const x = seaBase[i * 3], z = seaBase[i * 3 + 2]; seaPos.setY(i, Math.sin(x * .08 + t * .8) * .25 + Math.cos(z * .1 + t * .6) * .25); }
-        seaPos.needsUpdate = true; seaG.computeVertexNormals();
-        sirens.forEach((L, i) => L.intensity = 2.5 + Math.sin(t * 5 + i) * 1.5);
-        rn.userData.update(t, 0, 10, 0);
-        // la línea llega a la costa y el agua entra
-        const kl = prog(t, FL.line[0], FL.line[1]), lz = lerp(-190, -86, kl);
-        const kf = ease(prog(t, FL.front[0], FL.front[1])), front = lerp(-86, 6.5, kf);
-        const isWave = t < FL.coast;
-        line.visible = isWave; line.position.set(0, .4, lz);
-        const h = isWave ? 0 : lerp(.6, 3.2, kf);
-        water.visible = !isWave; water.scale.set(1, Math.max(.01, h), front + 196); water.position.set(0, h / 2 - .1, (front - 196) / 2);
-        splash(t, FL.front[1] - .15);
-        foam.visible = !isWave; foam.position.set(0, h + .1, front); foam.scale.y = 1 + Math.sin(t * 7) * .3;
-        // coches arrastrados y luces que se apagan por zonas
-        cars.forEach(o => { const hit = !isWave && front > o.z; const k = hit ? clamp((t - (FL.front[0] + (o.z + 86) / 68 * (FL.front[1] - FL.front[0]))) * .8) : 0; o.c.position.set(o.x + Math.sin(o.ph + t) * k * 2, k * (h * .6) + Math.sin(t * 3 + o.ph) * .2 * k, o.z + k * 9 * o.sp); o.c.rotation.set(Math.sin(t * 2 + o.ph) * .4 * k, o.c.rotation.y + .02 * k, Math.cos(t * 1.7 + o.ph) * .5 * k); });
-        blds.forEach(b => { const passed = !isWave && front > b.position.z ? clamp((front - b.position.z) / 18) : 0; b.userData.paint(.45, 0, passed); });
-        sk.userData.mat.uniforms.red.value = .14 + .05 * Math.sin(t * 3);
-        camPath(camera, t, [[-.6, [-1.5, 26.5, 29], [-1, -1, -70]], [6.6, [.4, 25.5, 23.0], [-1, -3, -60]]]);
-        return { red: .1 + .05 * Math.sin(t * 4) };
-      }
-      return { scene: s, camera, update };
-    })();
 
-    /* ================= EL PORTÓN: la mamá y cinco más ================= */
-    const GATE_OUT = (() => {
-      const s = new THREE.Scene(); s.background = new THREE.Color('#0A0E1E'); s.fog = new THREE.FogExp2('#141A30', .07);
-      s.add(new THREE.HemisphereLight('#5060A0', '#100A18', .55));
-      s.add(box(40, .2, 40, mat('#2A3028', { roughness: .6 }), 0, -.1, 0));
-      // charcos brillantes
-      for (const [x, z, sx] of [[-1, 2.5, 2.2], [1.6, 4.5, 1.6], [-2.4, 6, 2.0]]) { const pd = new THREE.Mesh(new THREE.CircleGeometry(.8, 20), mat('#1A2440', { roughness: .05, metalness: .6 })); pd.rotation.x = -Math.PI / 2; pd.position.set(x, .01, z); pd.scale.set(sx, 1, .6); s.add(pd); }
-      // reja y portón cerrado (los mismos de la parte 1)
-      const iron = mat('#3A3A44', { metalness: .6, roughness: .45 });
-      for (let i = -6; i <= 6; i++) if (i < -1 || i > 1) s.add(box(.12, 2.3, .12, iron, i * 1.3 - 1.3, 1.15, 0));
-      s.add(box(5.5, .08, .08, iron, -7.2, 2.1, 0)); s.add(box(5.5, .08, .08, iron, -7.2, .4, 0)); s.add(box(5.5, .08, .08, iron, 4.6, 2.1, 0)); s.add(box(5.5, .08, .08, iron, 4.6, .4, 0));
-      const gt = gate(); gt.position.set(-1.3, 0, 0); s.add(gt); s.add(box(.2, 2.6, .2, iron, 1.4, 1.3, 0));
-      // farol del portón: ilumina a la mamá
-      const lampPost = cyl(.05, .05, 3, mat('#2A2A30'), 8); lampPost.position.set(1.7, 1.5, .3); s.add(lampPost);
-      const bulb = ball(.12, glow('#FFD9A0'), 1.7, 3.0, .6, 10); s.add(bulb);
-      const lampL = new THREE.SpotLight('#FFD9A0', 5, 14, .7, .5, 1.2); lampL.position.set(1.7, 3.0, .6); const lt = new THREE.Object3D(); lt.position.set(.175, 1.9, 1.0); s.add(lt); lampL.target = lt; lampL.castShadow = true; s.add(lampL);
-      const redL = new THREE.PointLight('#FF2020', 2, 18, 1.5); redL.position.set(-4, 5, 9); s.add(redL);
-      // la mamá y cinco desconocidos detrás
-      const m = mom(); m.position.set(.175, 0, 1.0); m.rotation.y = Math.PI; s.add(m);
-      const people = [
-        person3d({ shirt: '#5A6A7A', pants: '#2A2A34', skin: '#B88464', hair: '#2A1A10', height: 1.04, width: .95 }),
-        person3d({ shirt: '#8A6A3A', pants: '#3A3A40', skin: '#D8A880', hair: '#6A4A2A', height: .82, width: .9, seed: 3, hairStyle: 'rizos' }),
-        person3d({ shirt: '#3A5A4A', pants: '#2E2E36', skin: '#A87050', hair: '#1A120C', height: 1.1, width: 1.05 }),
-        person3d({ shirt: '#6A3A5A', pants: '#2A2A30', skin: '#E0B090', hair: '#B8B4AC', height: .98, width: 1.0 }),
-        person3d({ shirt: '#4A4A6A', pants: '#30303A', skin: '#C08A64', hair: '#2A1A10', height: .7, width: .8, hairStyle: 'rizos', seed: 9 }),
-      ];
-      const spots = [[-1.4, 3.2], [1.5, 3.4], [-.4, 4.4], [.9, 5.0], [-2.1, 4.8]];
-      people.forEach((pp, i) => { pp.position.set(spots[i][0], 0, spots[i][1]); pp.rotation.y = Math.PI + (i - 2) * .08; pp.userData.brows(.8); pp.userData.mouth('flat'); s.add(pp); });
-      const rn = rain(1600, [14, 12, 12, 3], 7, '#B8C8F0', .45); s.add(rn);
-      const camera = cam(36);
-      function update(t) {
-        m.userData.drip(t); m.userData.look(0, .2);
-        m.userData.armR.rotation.x = -.9 + Math.sin(t * 2.6) * .25; m.userData.elbowR.rotation.x = -.6;   // se agarra de los barrotes
-        m.userData.armL.rotation.x = -.7; m.userData.head.rotation.set(-.08, Math.sin(t * .7) * .1, 0);
-        people.forEach((pp, i) => { pp.userData.head.rotation.y = Math.sin(t * .6 + i) * .2; pp.userData.armL.rotation.x = -.15 - (i % 2) * .3; pp.userData.look(Math.sin(t + i) * .5, .2); });
-        rn.userData.update(t, 0, 0, 0);
-        redL.intensity = 2 + Math.sin(t * 5) * 1.3;
-        camPath(camera, t, [[-.5, [.175, 1.85, -.8], [.175, 2.08, 1]], [1.2, [.175, 1.85, -.8], [.175, 2.08, 1]], [5.6, [.175, 1.8, -2.9], [.175, 1.8, 3]]]);
-        return { red: .12 + .05 * Math.sin(t * 5) };
-      }
-      return { scene: s, camera, update };
-    })();
-
+    /* tiempos de la parte 3 (de la voz). mezcla.py lee T3 */
+    const T3 = { cuts: [2.45, 5.6, 10.3, 15.3, 18.85, 25.25, 28.55, 30.3, 34.5, 38.7, 41.1, 47.1, 53.25], end: 60,
+      tap: 1.35, mine: [.45, .85, 1.25], theirs: [2.75, 3.1, 3.45] };
+    window.__TSU3 = T3;
+    const walk = (P, ph, k = 1) => { const a = Math.sin(ph) * .5 * k; P.legL.rotation.x = a; P.legR.rotation.x = -a; P.armL.rotation.x = -a * .8; P.armR.rotation.x = a * .8; if (P.kneeL) { P.kneeL.rotation.x = Math.max(0, -a) * .8; P.kneeR.rotation.x = Math.max(0, a) * .8; } };
+    const strangers = () => [
+      person3d({ shirt: '#5A6A7A', pants: '#2A2A34', skin: '#B88464', hair: '#2A1A10', height: 1.04, width: .95 }),
+      person3d({ shirt: '#8A6A3A', pants: '#3A3A40', skin: '#D8A880', hair: '#6A4A2A', height: .82, width: .9, seed: 3, hairStyle: 'rizos' }),
+      person3d({ shirt: '#3A5A4A', pants: '#2E2E36', skin: '#A87050', hair: '#1A120C', height: 1.1, width: 1.05 }),
+      person3d({ shirt: '#6A3A5A', pants: '#2A2A30', skin: '#E0B090', hair: '#B8B4AC', height: .98, width: 1.0 }),
+      person3d({ shirt: '#4A4A6A', pants: '#30303A', skin: '#C08A64', hair: '#2A1A10', height: .7, width: .8, hairStyle: 'rizos', seed: 9 })];
     /* ================= FINAL: primer plano, dudando (igual que la parte 1) ================= */
     const END = (() => {
       const s = new THREE.Scene(); s.fog = new THREE.FogExp2('#2A1440', .02);
@@ -185,54 +66,6 @@
     })();
 
 
-    /* tiempos de la parte 2 (de la voz) */
-    const T2 = { cuts: [2.6, 8.95, 11.45, 16.3, 24.45, 29.9, 34.95, 38.25, 43.85, 47.8, 50.45], end: 58.58,
-      typing: [9.15, 10.0], sent: 10.15, noSignal: 10.75, knocks: [35.8, 36.05, 36.3, 36.95, 37.2, 37.45] };
-    window.__TSU2 = T2;
-
-    /* ================= CELULAR: sin señal ================= */
-    function wrap(c, text, x, y, maxW, lh) { const words = text.split(' '); let line = '', lines = []; for (const w of words) { const test = line ? line + ' ' + w : w; if (c.measureText(test).width > maxW && line) { lines.push(line); line = w; } else line = test; } lines.push(line); lines.forEach((l, i) => c.fillText(l, x, y + i * lh)); return lines.length; }
-    function bubble(c, text, y, right, col, tcol) { c.font = '700 24px Nunito, sans-serif'; const words = text.split(' '); let line = '', n = 1; for (const w of words) { const test = line ? line + ' ' + w : w; if (c.measureText(test).width > 240 && line) { n++; line = w; } else line = test; } const h = 30 * n + 26, x = right ? 54 : 16; c.fillStyle = col; c.beginPath(); c.roundRect(x, y, 290, h, 20); c.fill(); c.fillStyle = tcol; wrap(c, text, x + 16, y + 38, 258, 30); return h; }
-    function drawChat2(u, t) {
-      const c = u.ctx; c.fillStyle = '#0E1220'; c.fillRect(0, 0, 360, 720);
-      c.fillStyle = '#1A2238'; c.fillRect(0, 0, 360, 112);
-      c.fillStyle = '#E8A0B8'; c.beginPath(); c.arc(52, 70, 26, 0, 7); c.fill(); c.fillStyle = '#5A2A3A'; c.font = '900 26px Nunito, sans-serif'; c.textAlign = 'center'; c.fillText('M', 52, 79);
-      c.fillStyle = '#FFFFFF'; c.textAlign = 'left'; c.font = '800 28px Nunito, sans-serif'; c.fillText('Mamá', 92, 78);
-      const noSig = t > T2.noSignal; c.font = '800 18px Nunito, sans-serif'; c.fillStyle = noSig ? '#FF4A4A' : 'rgba(255,255,255,0.7)'; c.fillText(noSig ? 'Sin servicio' : '3:41', 16, 26);
-      if (noSig) { c.strokeStyle = '#FF4A4A'; c.lineWidth = 3; for (let i = 0; i < 4; i++) { c.beginPath(); c.moveTo(300 + i * 12, 30); c.lineTo(300 + i * 12, 30 - 6 - i * 4); c.stroke(); } c.beginPath(); c.moveTo(296, 10); c.lineTo(342, 32); c.stroke(); }
-      let y = 140;
-      y += bubble(c, 'No hay taxis, seguimos en el malecón.', y, false, '#DCDCE8', '#1A1A28') + 14;
-      y += bubble(c, '¿Dónde estás?', y, false, '#DCDCE8', '#1A1A28') + 14;
-      const msg = 'Estoy en el cerro, estoy bien';
-      if (t >= T2.sent) {
-        const h = bubble(c, msg, y, true, '#3A7AE0', '#FFFFFF');
-        if (t > T2.noSignal - .2) { c.fillStyle = '#FF4A4A'; c.font = '900 20px Nunito, sans-serif'; c.textAlign = 'right'; c.fillText('⚠ No enviado', 340, y + h + 26); c.textAlign = 'left'; }
-      }
-      // barra para escribir
-      c.fillStyle = '#1A2238'; c.fillRect(0, 640, 360, 80); c.fillStyle = '#2A3456'; c.beginPath(); c.roundRect(14, 656, 290, 48, 24); c.fill();
-      const typed = t < T2.typing[0] ? '' : t < T2.sent ? msg.slice(0, Math.floor(msg.length * prog(t, T2.typing[0], T2.typing[1]))) : '';
-      c.fillStyle = '#FFFFFF'; c.font = '700 20px Nunito, sans-serif'; c.fillText(typed + (t < T2.sent && Math.sin(t * 12) > 0 ? '|' : ''), 30, 687);
-      c.fillStyle = '#3A7AE0'; c.beginPath(); c.arc(330, 680, 20, 0, 7); c.fill();
-      u.tex.needsUpdate = true;
-    }
-    const CEL = (() => {
-      const s = new THREE.Scene(); s.background = new THREE.Color('#06081A');
-      s.add(new THREE.HemisphereLight('#5060B0', '#100818', .7));
-      const key = new THREE.PointLight('#9AB0FF', 1.2, 10, 2); key.position.set(-1.5, 1.5, 2.5); s.add(key);
-      const red = new THREE.PointLight('#FF3030', 1.5, 8, 2); red.position.set(1.8, -1, 1.5); s.add(red);
-      const r = rng(31);
-      for (let i = 0; i < 26; i++) { const m = new THREE.Mesh(new THREE.CircleGeometry(.15 + r() * .35, 20), new THREE.MeshBasicMaterial({ color: r() < .5 ? '#FFB860' : '#FF3A3A', transparent: true, opacity: .22, toneMapped: false, depthWrite: false })); m.position.set((r() - .5) * 9, (r() - .5) * 14, -6 - r() * 4); s.add(m); }
-      const hp = handPhone(); hp.scale.setScalar(2.1); s.add(hp);
-      const camera = cam(34);
-      function update(t) {
-        hp.position.set(0, -.2 + Math.sin(t * .9) * .03, 0); hp.rotation.set(-.12 + Math.sin(t * .7) * .02, .18 + Math.sin(t * .5) * .03, -.05);
-        drawChat2(hp.userData, t); red.intensity = 1.5 + Math.sin(t * 5);
-        camPath(camera, t, [[8.7, [.35, .85, 4.6], [0, .6, 0]], [11.7, [.15, .85, 3.9], [0, .62, 0]]]);
-        return { red: .2 };
-      }
-      return { scene: s, camera, update };
-    })();
-
     /* ================= CALLE INUNDADA ================= */
     const STREET = (() => {
       const s = new THREE.Scene(); s.background = new THREE.Color('#0A0E22'); s.fog = new THREE.FogExp2('#1A1838', .035);
@@ -251,20 +84,24 @@
       const deb = []; for (let i = 0; i < 18; i++) { const k = r(), m = k < .4 ? box(.9 + r(), .08, .2, mat('#6A4A2A')) : k < .7 ? box(.4, .3, .4, mat('#8A7A5A')) : cyl(.12, .12, .5, mat(['#E04848', '#3A7AE0', '#F2C230'][i % 3]), 10); s.add(m); deb.push({ m, x: (r() - .5) * 10, z0: -40 + r() * 40, sp: 1.5 + r() * 1.5, ph: r() * 6 }); }
       const sirens = [new THREE.PointLight('#FF2020', 3, 25, 1.5), new THREE.PointLight('#FF2020', 3, 25, 1.5)]; sirens[0].position.set(-5, 6, -6); sirens[1].position.set(5, 6, -20); s.add(...sirens);
       const rn = rain(1400, [16, 14, 20, -6], 33, '#B8C8F0', .4); s.add(rn);
+      // manchas de aceite tornasol sobre el agua
+      const oilT = (() => { const c = document.createElement('canvas'); c.width = c.height = 128; const x = c.getContext('2d'); const g = x.createRadialGradient(64, 64, 4, 64, 64, 62);
+        g.addColorStop(0, 'rgba(255,120,220,.55)'); g.addColorStop(.35, 'rgba(120,220,255,.5)'); g.addColorStop(.6, 'rgba(255,230,120,.45)'); g.addColorStop(.8, 'rgba(140,90,255,.35)'); g.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = g; x.fillRect(0, 0, 128, 128); return new THREE.CanvasTexture(c); })();
+      const oils = []; const orr = rng(88); for (let i = 0; i < 9; i++) { const o = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: oilT, transparent: true, opacity: .45, depthWrite: false })); o.rotation.x = -Math.PI / 2; const sc = 1.0 + orr() * 1.4; o.scale.set(sc, sc * (.6 + orr() * .5), 1); s.add(o); oils.push({ o, x: (orr() - .5) * 9, z0: -30 + orr() * 30, sp: .6 + orr() * .5 }); }
       const camera = cam(40);
-      function update(t) {
+      function update(t, mode, lt) {
         wt.offset.y = t * .35;
         for (let i = 0; i < wp.count; i++) { const x = wb[i * 3], y = wb[i * 3 + 1]; wp.setZ(i, Math.sin(x * .9 + t * 3 + y * .3) * .06 + Math.cos(y * .5 + t * 2) * .05); }
         wp.needsUpdate = true; water.geometry.computeVertexNormals();
         deb.forEach(o => { const z = ((o.z0 + t * o.sp) % 44 + 44) % 44 - 40; o.m.position.set(o.x + Math.sin(t + o.ph) * .3, .58 + Math.sin(t * 2 + o.ph) * .05, z); o.m.rotation.set(Math.sin(t + o.ph) * .2, t * .5 + o.ph, Math.cos(t * 1.3 + o.ph) * .2); });
-        sirens.forEach((L, i) => L.intensity = 2.5 + Math.sin(t * 5 + i * 2) * 1.5);
+        oils.forEach(q => { const z = ((q.z0 + t * q.sp) % 36 + 36) % 36 - 32; q.o.position.set(q.x + Math.sin(t * .5 + q.x) * .3, .63, z); q.o.rotation.z = t * .1 + q.x; });
+        sirens.forEach((L, i) => L.intensity = 1.5 + Math.sin(t * 5 + i * 2) * 1);
         rn.userData.update(t, 0, 0, 0);
-        camPath(camera, t, [[24.2, [1.0, 1.3, 7.5], [0, .5, -10]], [30.1, [.4, .95, 4.5], [0, .55, -10]]]);
-        return { red: .3 + .08 * Math.sin(t * 5) };
+        camPath(camera, lt, [[-.4, [.8, 1.5, 6.5], [0, .5, -10]], [3.8, [.3, 1.05, 3.8], [0, .5, -10]]]);
+        return { red: .14 + .05 * Math.sin(t * 5) };
       }
       return { scene: s, camera, update };
     })();
-
     const HUT = (() => {
       const s = new THREE.Scene(); s.background = new THREE.Color('#120C10');
       const wood = mat('#6A4A30'), dark = mat('#3A2618');
@@ -284,54 +121,84 @@
       const clock = wallClock(); clock.position.set(2.0, 2.4, -1.93); s.add(clock);
       const lamp = new THREE.PointLight('#FFB060', 1.6, 9, 2); lamp.position.set(.6, 3.2, 0); lamp.castShadow = true; s.add(lamp);
       s.add(new THREE.HemisphereLight('#6A5A8A', '#1A0E0A', .5));
-      const redW = new THREE.PointLight('#FF2A2A', 0, 8, 2); redW.position.set(3.2, 2.2, 1.5); s.add(redW);
+      const redW = new THREE.PointLight('#FF2A2A', 0, 8, 2); const radioL = new THREE.PointLight('#9AFFC0', 0, 4, 2); radioL.position.set(shelfX + .4, 2.8, -1.1); s.add(radioL); const warm = new THREE.PointLight('#FFB070', 0, 7, 2); warm.position.set(1.4, 2.6, 1.8); s.add(warm); redW.position.set(3.2, 2.2, 1.5); s.add(redW);
       // el vecino con su mapa de mareas y un cronómetro
       const v = vecino(); s.add(v); v.userData.spot.intensity = 0; v.userData.beam.visible = false; v.userData.halo.visible = false; v.userData.lamp.intensity = 0; v.userData.flash.visible = false;
       const mapT = (() => { const c = document.createElement('canvas'); c.width = 256; c.height = 180; const x = c.getContext('2d'); x.fillStyle = '#EFE6CC'; x.fillRect(0, 0, 256, 180); x.strokeStyle = '#3A6AB0'; x.lineWidth = 4; for (let k = 0; k < 4; k++) { x.beginPath(); for (let i = 0; i <= 256; i += 8) x.lineTo(i, 40 + k * 34 + Math.sin(i / 20 + k) * (8 + k * 3)); x.stroke(); } x.fillStyle = '#B83A2A'; x.font = '900 22px Nunito, sans-serif'; x.fillText('OLA 1   OLA 2   OLA 3', 14, 172); const tx = new THREE.CanvasTexture(c); tx.encoding = THREE.sRGBEncoding; return tx; })();
       const mapP = new THREE.Mesh(new THREE.PlaneGeometry(.55, .38), new THREE.MeshStandardMaterial({ map: mapT, roughness: .9, side: THREE.DoubleSide })); s.add(mapP);
       const sw = new THREE.Group(); sw.add(cyl(.08, .08, .03, mat('#2A2A30', { metalness: .5 }), 16)); const swf = new THREE.Mesh(new THREE.CircleGeometry(.065, 20), glow('#E8FFE8')); swf.rotation.x = -Math.PI / 2; swf.position.y = .016; sw.add(swf); s.add(sw);
+      // la mamá, tú, la bolsa negra, la cubeta y el jabón
+      const m = mom(); s.add(m); const M_ = m.userData;
+      const cut = box(.03, .14, .02, mat('#B01818', { roughness: .6 }), 0, -.25, .1); M_.kneeL.add(cut);
+      const p = hero(); addBrows(p); s.add(p); const P = p.userData;
+      const bag = new THREE.Mesh(new THREE.SphereGeometry(.22, 10, 8), mat('#101014', { roughness: .25, metalness: .2, flatShading: true })); bag.scale.set(1, 1.3, .8); s.add(bag);
+      const bucket = new THREE.Group(); bucket.add(cyl(.2, .16, .36, mat('#3A7AE0', { roughness: .5 }), 16)); const bw = new THREE.Mesh(new THREE.CircleGeometry(.18, 16), mat('#7AA8D8', { roughness: .1, metalness: .3 })); bw.rotation.x = -Math.PI / 2; bw.position.y = .1; bucket.add(bw); s.add(bucket);
+      const soap = box(.12, .05, .07, mat('#F2F0E6', { roughness: .4 })); s.add(soap);
+      const pj = jug(.62); s.add(pj);
+      const stream = new THREE.Mesh(new THREE.CylinderGeometry(.018, .03, 1, 8, 1, true), new THREE.MeshStandardMaterial({ color: '#CFE6FF', transparent: true, opacity: .7, roughness: .05, metalness: .2 })); s.add(stream);
       const camera = cam(36);
-      function update(t, mode) {
-        const V = v.userData;
-        v.visible = mode === 'vecino' || mode === 'estantes'; mapP.visible = sw.visible = mode === 'vecino';
+      const reset = (P_) => { ['legL', 'legR', 'kneeL', 'kneeR', 'armL', 'armR', 'elbowL', 'elbowR', 'head'].forEach(k => P_[k] && P_[k].rotation.set(0, 0, 0)); };
+      function update(t, mode, lt) {
+        const V = v.userData; reset(V); reset(M_); reset(P);
+        v.visible = m.visible = p.visible = bag.visible = bucket.visible = soap.visible = pj.visible = stream.visible = mapP.visible = sw.visible = false;
         jugs.forEach((j, i) => j.visible = mode !== 'estantes' || i < 2);
         led.visible = Math.sin(t * 6) > 0;
-        redW.intensity = .8 + Math.sin(t * 5) * .5;
-        if (mode === 'radio') {
-          clock.userData.set(3, 41, (t * 3) % 60);
-          camPath(camera, t, [[11.2, [-.2, 2.85, 1.4], [-1.0, 2.65, -1.6]], [16.6, [-.55, 2.78, .55], [-1.0, 2.65, -1.6]]]);
-          return { red: .15 };
+        redW.intensity = .35 + Math.sin(t * 5) * .2; radioL.intensity = 0; warm.intensity = 0; lamp.intensity = 1.6; lamp.color.set('#FFB060');
+        M_.drip(t);
+        if (mode === 'bolsa') {
+          v.visible = m.visible = bag.visible = bucket.visible = true;
+          m.position.set(-.7, 0, .5); m.rotation.y = 1.15; M_.look(.4, 0); M_.armL.rotation.set(-.2, 0, .15); M_.armR.rotation.set(-.65 * prog(lt, .6, 1.4), 0, 0); M_.elbowR.rotation.x = -.4;
+          v.position.set(.95, 0, .2); v.rotation.y = -1.5; V.armR.rotation.set(-1.15, 0, 0); V.elbowR.rotation.x = -.25; V.armL.rotation.set(-.15, 0, .1); V.flash.visible = false; V.head.rotation.set(.1, -.1, 0);
+          v.updateMatrixWorld(true); const hp = new THREE.Vector3(); V.elbowR.localToWorld(hp.set(0, -.52, .12)); bag.position.copy(hp).lerp(new THREE.Vector3(-.15, 1.2, .5), ease(prog(lt, .8, 1.8)) * .5);
+          bucket.position.set(.45, .18, .75);
+          camPath(camera, lt, [[-.3, [.6, 2.1, 5.6], [.1, 1.3, .3]], [3.8, [.4, 2.0, 4.8], [.1, 1.3, .3]]]);
+          return { red: .08 };
         }
-        if (mode === 'vecino') {
-          clock.userData.set(3, 44, ((t - 16) * 1) % 60);
-          v.position.set(1.0, 0, -.6); v.rotation.y = -.25;
-          V.armL.rotation.set(-1.1, 0, .25); V.elbowL.rotation.x = -.9; V.armR.rotation.set(-1.0, 0, -.2); V.elbowR.rotation.x = -.8;
-          V.head.rotation.set(.05, Math.sin(t * .8) * .15, 0);
-          v.updateMatrixWorld(true);
-          const pL = new THREE.Vector3(), pR = new THREE.Vector3(); V.elbowL.localToWorld(pL.set(0, -.47, .1)); V.elbowR.localToWorld(pR.set(0, -.47, .1));
-          mapP.position.copy(pL).add(new THREE.Vector3(.2, -.28, .12)); mapP.rotation.set(-.6, -.25, 0);
-          sw.position.copy(pR); sw.rotation.set(1.2, 0, 0);
-          camPath(camera, t, [[16.0, [-.3, 2.15, 2.6], [1.3, 1.75, -1.1]], [24.7, [.2, 2.05, 1.5], [1.2, 1.8, -1.1]]]);
-          return { red: .15 };
+        if (mode === 'lavar') {
+          m.visible = bucket.visible = soap.visible = pj.visible = stream.visible = v.visible = true;
+          m.position.set(-.35, 0, .55); m.rotation.y = .9; M_.head.rotation.set(.45, 0, 0); M_.look(0, -.6);
+          const scrub = Math.sin(lt * 7) * .18;
+          M_.armL.rotation.set(-1.0 + scrub, 0, .25); M_.armR.rotation.set(-1.0 - scrub, 0, -.25); M_.elbowL.rotation.x = -.5; M_.elbowR.rotation.x = -.5;
+          if (lt > 3.6) { M_.legL.rotation.x = -.5; M_.kneeL.rotation.x = .5; M_.armL.rotation.set(-1.4, 0, .1); M_.elbowL.rotation.x = -.9; }   // se lava la cortada de la pierna
+          v.position.set(.75, 0, .95); v.rotation.y = -1.9; V.armL.rotation.set(-1.25, 0, .1); V.armR.rotation.set(-1.25, 0, -.1); V.elbowL.rotation.x = V.elbowR.rotation.x = -.35; V.flash.visible = false; V.head.rotation.set(.35, 0, 0);
+          pj.position.set(.18, 1.32, .72); pj.rotation.set(0, 0, 2.1);
+          bucket.position.set(-.02, .18, .78);
+          const sp = new THREE.Vector3(-.05, 1.25, .74), bp = new THREE.Vector3(-.02, .38, .78); stream.position.copy(sp).lerp(bp, .5); stream.scale.y = sp.distanceTo(bp); stream.material.opacity = .55 + .15 * Math.sin(t * 30);
+          m.updateMatrixWorld(true); const hp = new THREE.Vector3(); M_.elbowR.localToWorld(hp.set(0, -.42, .05)); soap.position.copy(hp); soap.rotation.set(.2, t, 0);
+          camPath(camera, lt, [[-.3, [2.4, 1.9, 4.6], [-.1, .85, .6]], [3.4, [1.7, 1.6, 3.7], [-.15, .8, .6]], [6.6, [1.6, 1.45, 3.6], [-.25, .7, .55]]]);
+          return { red: .06 };
         }
-        if (mode === 'reloj') {   // pasan seis horas: las manecillas giran rápido
-          const k = ease(prog(t, 30.0, 32.0)), mins = 45 + k * 360;
-          clock.userData.set(3 + Math.floor(mins / 60), mins % 60, (t * 40) % 60);
-          const sh = Math.max(Math.max(0, 1 - Math.abs(t - 32.7) * 2.5), Math.max(0, 1 - Math.abs(t - 34.1) * 2.0) * 1.5);
-          camera.position.set(2.0 + Math.sin(t * 50) * .02 * sh, 2.4 + Math.cos(t * 43) * .02 * sh, -.15 - prog(t, 29.9, 35) * .25); camera.lookAt(2.0, 2.4, -1.93);
-          return { red: .2 + .35 * sh };
+        if (mode === 'reloj') {   // pasan las horas: 9:40 de la noche → 3:40 de la tarde
+          const mins = 9 * 60 + 40 + ease(prog(lt, .1, 1.6)) * 18 * 60;
+          clock.userData.set(Math.floor(mins / 60) % 12, mins % 60, (lt * 50) % 60);
+          camera.position.set(2.0, 2.4, .1 - prog(lt, 0, 1.8) * .3); camera.lookAt(2.0, 2.4, -1.93);
+          return { red: .1 };
         }
-        // estantes: casi no queda agua
-        v.position.set(.3, 0, -.4); v.rotation.y = Math.PI * .85;
-        V.armR.rotation.set(-1.2, 0, -.1); V.elbowR.rotation.x = -.2 - (Math.floor(t * 1.6) % 2) * .15; V.armL.rotation.set(-.1, 0, .1);
+        clock.userData.set(3, 40, t % 60);
+        if (mode === 'radio') {   // la radio se ilumina: ya no vienen más olas
+          const on = ease(prog(lt, .2, .9)); radioL.intensity = .6 * on; lamp.intensity = 1.0; led.visible = true;
+          camPath(camera, lt, [[-.3, [-.1, 2.85, 1.5], [-1.0, 2.7, -1.6]], [4.4, [-.5, 2.8, .45], [-1.0, 2.7, -1.6]]]);
+          return { red: .08 * (1 - on) };
+        }
+        if (mode === 'abrazo') {   // abrazo largo, luz cálida
+          p.visible = m.visible = true; redW.intensity = 0; warm.intensity = 3.2; lamp.color.set('#FFC27A'); lamp.intensity = 2.2;
+          p.position.set(.38, 0, .12); p.rotation.y = -Math.PI / 2 - .3; m.position.set(-.16, 0, .68); m.rotation.y = Math.PI / 2;
+          P.armL.rotation.set(-1.25, 0, -.55); P.armR.rotation.set(-1.25, 0, .55); P.elbowL.rotation.set(-.9, 0, 0); P.elbowR.rotation.set(-.9, 0, 0); P.head.rotation.set(.2, -.7, -.15); P.brows(.2); P.sleep(true);
+          M_.armL.rotation.set(-1.35, 0, -.45); M_.armR.rotation.set(-1.35, 0, .45); M_.elbowL.rotation.x = M_.elbowR.rotation.x = -1.0; M_.head.rotation.set(-.05, .7, .15);
+          const sway = Math.sin(lt * 1.6) * .03; p.rotation.z = sway; m.rotation.z = -sway;
+          camPath(camera, lt, [[-.3, [2.4, 2.3, 4.4], [.1, 1.55, .4]], [2.6, [1.6, 2.2, 4.0], [.1, 1.6, .4]]]);
+          return { red: 0 };
+        }
+        // estantes: el vecino cuenta los garrafones
+        P.sleep(false); v.visible = true;
+        v.position.set(.3, 0, -.4); v.rotation.y = Math.PI * .85; V.flash.visible = false;
+        V.armR.rotation.set(-1.2, 0, -.1); V.elbowR.rotation.x = -.2 - (Math.floor(lt * 1.6) % 2) * .15; V.armL.rotation.set(-.1, 0, .1);
         V.head.rotation.set(.35, .2, 0);
-        clock.userData.set(9, 40, t % 60);
-        camPath(camera, t, [[43.6, [-1.6, 1.6, 2.4], [-1.8, .9, -1.6]], [48.0, [-1.9, 1.3, 1.6], [-2.0, .85, -1.6]]]);
-        return { red: .15 };
+        camPath(camera, lt, [[-.3, [-1.6, 1.6, 2.4], [-1.8, .9, -1.6]], [6.2, [-1.9, 1.3, 1.6], [-2.0, .85, -1.6]]]);
+        return { red: .1 };
       }
       return { scene: s, camera, update };
     })();
-
     /* ================= PORTÓN POR DENTRO ================= */
     const GATE = (() => {
       const s = new THREE.Scene(); s.fog = new THREE.FogExp2('#1A1438', .03);
@@ -344,36 +211,64 @@
       s.add(box(5.5, .08, .08, iron, -7.2, 2.1, 0)); s.add(box(5.5, .08, .08, iron, -7.2, .4, 0)); s.add(box(5.5, .08, .08, iron, 4.6, 2.1, 0)); s.add(box(5.5, .08, .08, iron, 4.6, .4, 0));
       const gt = gate(); gt.position.set(-1.3, 0, 0); s.add(gt);
       s.add(box(.2, 2.6, .2, iron, 1.4, 1.3, 0));
-      const v = vecino(); s.add(v); v.userData.spot.intensity = 1.5;
+      const v = vecino(); s.add(v); v.userData.spot.intensity = 1.5; const V = v.userData;
       const h = hut(); h.position.set(-3, 0, -6); s.add(h);
       const redL = new THREE.PointLight('#FF2020', 2, 20, 1.5); redL.position.set(4, 6, 8); s.add(redL);
       const rn = rain(1200, [16, 12, 14, 2], 21, '#B8C8F0', .4); s.add(rn);
       gt.userData.leaf.rotation.y = 0;
       const inL = new THREE.PointLight('#FFC890', 2.2, 9, 1.5); inL.position.set(2.2, 2.6, -2.6); s.add(inL);
+      const m = mom(); s.add(m); const M_ = m.userData;
+      const ppl = strangers(); const spots = [[-1.2, 2.6], [1.3, 2.9], [-.3, 3.7], [.8, 4.3], [-1.9, 4.1]];
+      ppl.forEach((pp, i) => { pp.userData.brows(.8); pp.userData.mouth('flat'); s.add(pp); });
+      // la gorra: el vecino se la pone en la escena 12
+      const capMeshes = []; v.userData.head.children.forEach(o => { if (o.isMesh && o.material && o.material.color && ['b8282a', 'a02024'].includes(o.material.color.getHexString())) capMeshes.push(o); });
+      const cap = new THREE.Group(); capMeshes.forEach(o => cap.add(o.clone())); s.add(cap);
       const camera = cam(40);
-      function update(t, mode) {
-        rn.userData.update(t, 0, 0, 0);
-        redL.intensity = 2 + Math.sin(t * 5) * 1.2;
-        const V = v.userData; V.flash.visible = false; V.spot.intensity = 0; V.beam.visible = false; V.halo.visible = false; V.lamp.intensity = 0;
-        if (mode === 'golpes') {
-          let k = 0; for (const s0 of T2.knocks) { const d = t - s0; if (d >= 0 && d < .18) k = Math.max(k, 1 - d / .18); }
-          gt.userData.leaf.rotation.y = -k * .02; gt.userData.leaf.position.z = -k * .03;
-          v.position.set(-3, 0, -2.5); v.rotation.y = .6;
-          camPath(camera, t, [[34.8, [3.0, 2.0, -4.4], [.4, 1.3, 0]], [36.6, [2.3, 1.6, -2.4], [1.0, 1.25, 0]], [38.4, [1.95, 1.45, -1.5], [1.32, 1.2, 0]]]);
-          camera.position.x += Math.sin(t * 60) * .015 * k;
-          gt.userData.shackle.position.y = .14;
-          return { red: .3 + .1 * Math.sin(t * 5) };
+      const reset = (P_) => { ['legL', 'legR', 'kneeL', 'kneeR', 'armL', 'armR', 'elbowL', 'elbowR', 'head'].forEach(k => P_[k] && P_[k].rotation.set(0, 0, 0)); };
+      function update(t, mode, lt) {
+        rn.userData.update(t, 0, 0, 0); redL.intensity = .8 + Math.sin(t * 5) * .5;
+        reset(V); reset(M_); ppl.forEach(pp => reset(pp.userData));
+        V.flash.visible = true; V.spot.intensity = 1.2; V.beam.visible = false; V.halo.visible = true; V.lamp.intensity = .8;
+        capMeshes.forEach(o => o.visible = true); cap.visible = false; m.visible = false; ppl.forEach(pp => pp.visible = true);
+        gt.userData.leaf.rotation.y = 0; gt.userData.shackle.position.y = .14;
+        M_.drip(t);
+        if (mode === 'entra') {   // abre lo justo, entra la mamá y vuelve a cerrar
+          const open = .78 * (ease(prog(lt, .15, .7)) - ease(prog(lt, 2.2, 2.85))); gt.userData.leaf.rotation.y = open; gt.userData.shackle.position.y = lt < .15 || lt > 2.85 ? .14 : .22;
+          v.position.set(.15, 0, -2.25); v.rotation.y = .3; V.armL.rotation.set(-1.2, 0, .3); V.armR.rotation.set(-.5, 0, 0);
+          m.visible = true; const k = prog(lt, .55, 2.4); const zz = lerp(2.0, -2.2, k); m.position.set(lerp(1.0, .55, prog(lt, 1.6, 2.4)), 0, zz); m.rotation.y = Math.PI + .1; walk(M_, lt * 9, k > 0 && k < 1 ? 1 : 0); M_.look(0, .1);
+          ppl.forEach((pp, i) => { pp.position.set(spots[i][0], 0, spots[i][1]); pp.rotation.y = Math.PI + (i - 2) * .08; });
+          camPath(camera, lt, [[-.3, [3.4, 2.3, -6.4], [.6, 1.2, .8]], [3.4, [2.8, 2.1, -5.6], [.7, 1.2, .6]]]);
+          return { red: .12 };
         }
-        // la mano del vecino sobre el candado
-        v.position.set(1.05, 0, -.62); v.rotation.y = .45;
-        V.armR.rotation.set(-1.35, 0, 0); V.elbowR.rotation.x = -.25; V.head.rotation.set(.25, .4, 0);
-        camPath(camera, t, [[47.6, [2.5, 1.85, 3.0], [1.0, 1.3, 0]], [50.6, [1.95, 1.42, 1.45], [1.32, 1.2, .05]]]);
-        return { red: .32 + .1 * Math.sin(t * 5) };
+        if (mode === 'grita') {   // les grita y señala la escuela del otro cerro con la linterna
+          v.position.set(.3, 0, -.45); v.rotation.y = .1;
+          V.armL.rotation.set(-1.9, 0, .55); V.elbowL.rotation.set(-1.7, 0, 0);   // mano junto a la boca
+          const pt = ease(prog(lt, 1.2, 1.8)); V.armR.rotation.set(-1.55 * pt - .2, 0, -.75 * pt); V.beam.visible = pt > .5; V.spot.intensity = 2.5;
+          V.head.rotation.set(-.1 * pt, -.35 * pt, 0);
+          ppl.forEach((pp, i) => { const go = prog(lt, 3.0 + i * .12, 4.8); const P_ = pp.userData;
+            if (go <= 0) { pp.position.set(spots[i][0], 0, spots[i][1]); pp.rotation.y = Math.PI + (i - 2) * .08; P_.head.rotation.set(-.05, 0, 0); }
+            else { pp.rotation.y = .55; pp.position.set(spots[i][0] + go * 2.2, 0, spots[i][1] + go * 3.2); walk(P_, lt * 8 + i, 1); } });
+          camPath(camera, lt, [[-.3, [2.6, 3.4, 9.6], [.2, 1.3, 0]], [4.9, [2.0, 3.1, 8.6], [.2, 1.35, 0]]]);
+          return { red: .1 };
+        }
+        // sale: se pone la gorra, prende la linterna y abre el portón
+        ppl.forEach(pp => pp.visible = false);
+        const kc = ease(prog(lt, .3, 1.5));
+        capMeshes.forEach(o => o.visible = kc >= 1); cap.visible = kc < 1;
+        v.position.set(lerp(1.0, .15, ease(prog(lt, 3.6, 5.0))), 0, lerp(-1.4, .35, ease(prog(lt, 3.6, 5.0)))); v.rotation.y = lt < 4.4 ? .5 : lerp(.5, Math.PI - .1, ease(prog(lt, 4.4, 5.4)));
+        V.armL.rotation.set(lt < 1.6 ? -2.6 * (1 - Math.abs(kc - .6) * .4) : -.1, 0, .2); V.elbowL.rotation.x = lt < 1.6 ? -1.2 : 0;
+        v.updateMatrixWorld(true); const hd = new THREE.Vector3(); V.head.getWorldPosition(hd); const hand = new THREE.Vector3(); V.elbowL.localToWorld(hand.set(0, -.5, .1));
+        cap.position.copy(hand.lerp(hd, kc)); cap.rotation.set(0, v.rotation.y, (1 - kc) * .8);
+        const lightOn = lt > 1.9; V.flash.visible = lt > 1.6; V.spot.intensity = lightOn ? 2.2 : 0; V.halo.visible = lightOn; V.lamp.intensity = lightOn ? .8 : 0; V.beam.visible = lightOn && lt > 3.6;
+        V.armR.rotation.set(lt > 1.6 && lt < 3.6 ? -.9 : -.3, 0, 0);
+        gt.userData.shackle.position.y = lt > 2.6 ? .26 : .14;
+        gt.userData.leaf.rotation.y = 1.15 * ease(prog(lt, 2.8, 4.0));
+        if (lt > 3.6 && lt < 5.0) walk(V, lt * 8, 1);
+        camPath(camera, lt, [[-.3, [3.2, 2.4, -6.4], [.5, 1.45, -.6]], [2.6, [2.8, 2.3, -5.8], [.4, 1.4, -.4]], [6.4, [1.6, 2.2, -6.8], [.2, 1.35, .3]]]);
+        return { red: .08 };
       }
       return { scene: s, camera, update };
     })();
-
-
     /* ================= VENTANA: señales con la linterna hacia la escuela ================= */
     function flashGlow(color) { const c = document.createElement('canvas'); c.width = c.height = 128; const x = c.getContext('2d'); const g = x.createRadialGradient(64, 64, 0, 64, 64, 62); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(.25, color); g.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = g; x.fillRect(0, 0, 128, 128);
       const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false })); return sp; }
@@ -392,14 +287,15 @@
       const sk = sky('#0A1034', '#3A2A6A'); s.add(sk); s.add(stars(500, 31));
       s.add(new THREE.HemisphereLight('#5A5AB0', '#1A0A20', .55));
       const moon = new THREE.DirectionalLight('#9AB0FF', .7); moon.position.set(-20, 30, -10); s.add(moon);
-      // pared de la casita con la ventana (hueco de 1.6 × 1.2)
+      // pared de la casita con la ventana (hueco de 2.2 × 1.6)
+      const room = new THREE.Group(); s.add(room); const sAdd = s.add.bind(s);
       const wood = mat('#6A4A30'), dark = mat('#3A2618');
-      s.add(box(8, 1.15, .15, wood, 0, .575, 0)); s.add(box(8, 1.25, .15, wood, 0, 3.375, 0)); s.add(box(2.9, 1.6, .15, wood, -2.55, 1.95, 0)); s.add(box(2.9, 1.6, .15, wood, 2.55, 1.95, 0));
-      s.add(box(2.5, .12, .32, dark, 0, 1.15, .06)); s.add(box(2.5, .1, .2, dark, 0, 2.77, .02)); s.add(box(.12, 1.8, .2, dark, -1.15, 1.95, .02)); s.add(box(.12, 1.8, .2, dark, 1.15, 1.95, .02));
-      s.add(box(.05, 1.6, .06, dark, 0, 1.95, 0)); s.add(box(2.2, .05, .06, dark, 0, 1.95, 0));
-      for (let i = 0; i < 9; i++) { const x = -3.6 + i * .9; if (Math.abs(x) > 1.3) s.add(box(.04, 4, .02, dark, x, 2, .09)); }
-      s.add(box(8, .1, 5, mat('#3A2A20'), 0, -.05, 2.5));
-      const lamp = new THREE.PointLight('#FFB060', 1.1, 8, 2); lamp.position.set(-1.5, 3.2, 2.5); s.add(lamp);
+      room.add(box(8, 1.15, .15, wood, 0, .575, 0)); room.add(box(8, 1.25, .15, wood, 0, 3.375, 0)); room.add(box(2.9, 1.6, .15, wood, -2.55, 1.95, 0)); room.add(box(2.9, 1.6, .15, wood, 2.55, 1.95, 0));
+      room.add(box(2.5, .12, .32, dark, 0, 1.15, .06)); room.add(box(2.5, .1, .2, dark, 0, 2.77, .02)); room.add(box(.12, 1.8, .2, dark, -1.15, 1.95, .02)); room.add(box(.12, 1.8, .2, dark, 1.15, 1.95, .02));
+      room.add(box(.05, 1.6, .06, dark, 0, 1.95, 0)); room.add(box(2.2, .05, .06, dark, 0, 1.95, 0));
+      for (let i = 0; i < 9; i++) { const x = -3.6 + i * .9; if (Math.abs(x) > 1.3) room.add(box(.04, 4, .02, dark, x, 2, .09)); }
+      room.add(box(8, .1, 5, mat('#3A2A20'), 0, -.05, 2.5));
+      const lamp = new THREE.PointLight('#FFB060', 1.1, 8, 2); lamp.position.set(-1.5, 3.2, 2.5); room.add(lamp);
       // afuera: ciudad inundada abajo y el cerro de enfrente con la escuela
       const water = new THREE.Mesh(new THREE.PlaneGeometry(600, 400), mat('#2A3858', { roughness: .15, metalness: .4 })); water.rotation.x = -Math.PI / 2; water.position.set(0, -22, -150); s.add(water);
       const r = rng(17); for (let i = 0; i < 40; i++) { const b = building(4 + r() * 4, 4 + r() * 12, 4, 600 + i, { lit: .15 }); b.position.set(-90 + r() * 180, -26, -40 - r() * 120); b.userData.paint(0, 0, .85); s.add(b); }
@@ -415,26 +311,39 @@
       const beamM = new THREE.MeshBasicMaterial({ color: '#FFF2C8', transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false });
       const beam = new THREE.Mesh(new THREE.ConeGeometry(1.4, 14, 20, 1, true), beamM); s.add(beam);
       const rn = rain(900, [30, 30, 30, -12], 19, '#A8B8E8', .3); s.add(rn);
+      // el cerro de la casita (para ver a los cinco bajar con sus linternas)
+      const myHill = new THREE.Mesh(new THREE.ConeGeometry(40, 30, 24, 1), mat('#22302A', { flatShading: true })); myHill.position.set(0, -15.05, 0); s.add(myHill);
+      const walkers = strangers(); const wl = walkers.map((w, i) => { s.add(w); const g = flashGlow('rgba(255,236,180,.9)'); g.scale.set(1.4, 1.4, 1); s.add(g); const L = new THREE.PointLight('#FFE7B0', 2, 8, 2); s.add(L); return { w, g, L, ang: .15 + i * .14, r0: 5.5 + i * .7 }; });
       const camera = cam(36);
-      const blink = (t, starts) => { for (const a of starts) if (t >= a && t < a + .32) return 1 - Math.abs(t - a - .16) / .32 * .6; return 0; };
+      const blink = (k, starts) => { for (const a of starts) if (k >= a && k < a + .3) return 1 - Math.abs(k - a - .15) / .3 * .6; return 0; };
       function update(t, mode, lt) {
-        const k = lt;   // tiempo local de la toma
-        rn.userData.update(t, 0, -10, 0);
+        const k = lt; rn.userData.update(t, 0, -10, 0);
+        if (mode === 'escuela') {   // los cinco bajan del cerro rumbo a la escuela
+          room.visible = p.visible = beam.visible = myGlow.visible = false; walkers.forEach(w => w.visible = true);
+          wl.forEach((o, i) => { const r = o.r0 + k * 1.6, a = o.ang, x = Math.sin(a) * r + 2, z = -Math.cos(a) * r - 2, y = -.75 * Math.hypot(x, z);
+            o.w.position.set(x, y, z); o.w.rotation.y = Math.PI - a + .3; walk(o.w.userData, k * 8 + i, 1); o.w.userData.armR.rotation.x = -1.0;
+            o.w.updateMatrixWorld(true); const hp = new THREE.Vector3(); o.w.userData.elbowR.localToWorld(hp.set(0, -.45, .15)); o.g.position.copy(hp); o.L.position.copy(hp); o.g.material.opacity = .9; });
+          roofGlow.material.opacity = .1; roofL.intensity = 0;
+          camera.fov = 54; camera.updateProjectionMatrix();
+          camPath(camera, k, [[-.3, [-1.8, 4.0, 5.0], [9, -11, -32]], [5.2, [-1.4, 3.4, 3.8], [11, -12, -38]]]);
+          return { red: .06 };
+        }
+        camera.fov = 36; camera.updateProjectionMatrix();
+        room.visible = p.visible = beam.visible = myGlow.visible = true; walkers.forEach(w => w.visible = false); wl.forEach(o => { o.g.material.opacity = 0; o.L.intensity = 0; });
         P.armR.rotation.set(-1.45, 0, .1); P.elbowR.rotation.set(-.15, 0, 0); P.armL.rotation.set(-.2, 0, .05);
         P.head.rotation.set(-.08, .1, 0); P.brows(.4);
         p.updateMatrixWorld(true);
         const tp = new THREE.Vector3(); lens.getWorldPosition(tp);
-        const mine = blink(k, [.5, 1.0, 1.5]), theirs = blink(k, [2.4, 2.9, 3.4]);
-        myGlow.position.copy(tp); myGlow.material.opacity = mine;
+        const mine = blink(k, T3.mine), theirs = blink(k, T3.theirs);
+        myGlow.position.copy(tp); myGlow.material.opacity = mine * .8;
         const target = roofGlow.position.clone(); const dir = target.clone().sub(tp).normalize();
-        beam.position.copy(tp).addScaledVector(dir, 7); beam.quaternion.setFromUnitVectors(new THREE.Vector3(0, -1, 0), dir); beamM.opacity = .22 * mine;
-        roofGlow.material.opacity = .15 + theirs; roofL.intensity = 40 * theirs;
-        camPath(camera, k, [[-.3, [-1.15, 2.6, 3.9], [30, -14, -118]], [4.5, [-.95, 2.5, 3.3], [30, -12, -118]]]);
+        beam.position.copy(tp).addScaledVector(dir, 7); beam.quaternion.setFromUnitVectors(new THREE.Vector3(0, -1, 0), dir); beamM.opacity = .14 * mine;
+        roofGlow.material.opacity = .12 + theirs; roofL.intensity = 40 * theirs;
+        camPath(camera, k, [[-.3, [-1.15, 2.6, 3.9], [30, -14, -118]], [4.4, [-.95, 2.5, 3.3], [30, -12, -118]]]);
         return { red: .05 };
       }
       return { scene: s, camera, update };
     })();
-
     /* ================= FINAL: el vecino en el portón abierto, tú y tu mamá lo miran ================= */
     const FINAL = (() => {
       const s = new THREE.Scene(); s.fog = new THREE.FogExp2('#1A1438', .018);
@@ -464,9 +373,16 @@
       return { scene: s, camera, update };
     })();
 
+
     /* ================= montaje con zoom continuo ================= */
-    const C = T2.cuts;
-    const SC = [ { a: 0, b: 4, s: END, m: 'voto', lt: 0 }, { a: 4, b: 8, s: VENTANA, lt: 4 }, { a: 8, b: 99, s: FINAL, lt: 8 } ];
+    const C = T3.cuts;
+    const SC = [
+      { a: 0, b: C[0], s: END, m: 'voto' }, { a: C[0], b: C[1], s: GATE, m: 'entra' }, { a: C[1], b: C[2], s: GATE, m: 'grita' },
+      { a: C[2], b: C[3], s: VENTANA, m: 'escuela' }, { a: C[3], b: C[4], s: HUT, m: 'bolsa' }, { a: C[4], b: C[5], s: HUT, m: 'lavar' },
+      { a: C[5], b: C[6], s: STREET }, { a: C[6], b: C[7], s: HUT, m: 'reloj' }, { a: C[7], b: C[8], s: VENTANA, m: 'senal' },
+      { a: C[8], b: C[9], s: HUT, m: 'radio' }, { a: C[9], b: C[10], s: HUT, m: 'abrazo' }, { a: C[10], b: C[11], s: HUT, m: 'estantes' },
+      { a: C[11], b: C[12], s: GATE, m: 'sale' }, { a: C[12], b: 99, s: FINAL },
+    ];
     const rtA = new THREE.WebGLRenderTarget(W, H, { samples: 4 }), rtB = new THREE.WebGLRenderTarget(W, H, { samples: 4 });
     const post = new THREE.ShaderMaterial({
       uniforms: { a: { value: rtA.texture }, b: { value: rtB.texture }, mixk: { value: 0 }, za: { value: 1 }, zb: { value: 1 }, red: { value: 0 }, frame: { value: 0 } },
@@ -485,7 +401,7 @@
         }`, depthTest: false, depthWrite: false });
     const postScene = new THREE.Scene(); postScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), post)); const postCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
     const TR = .45;
-    function draw(sc, t, rt) { const g = sc.s.update(sc.lt !== undefined ? t - sc.lt : t, sc.m, sc.lt !== undefined ? t - sc.lt : t) || {}; renderer.setRenderTarget(rt); renderer.render(sc.s.scene, sc.s.camera); return g; }
+    function draw(sc, t, rt) { const g = sc.s.update(t, sc.m, t - sc.a) || {}; renderer.setRenderTarget(rt); renderer.render(sc.s.scene, sc.s.camera); return g; }
     function renderAt(t) {
       let i = SC.findIndex(x => t >= x.a && t < x.b); if (i < 0) i = SC.length - 1;
       const cur = SC[i], nxt = SC[i + 1], prv = SC[i - 1];
