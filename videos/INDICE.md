@@ -4,6 +4,7 @@ Todos son verticales (1080×1920), con la voz de Álvaro, música, efectos y sub
 
 | Carpeta | Título | Dura | Peso | Estilo | Estado |
 |---|---|---|---|---|---|
+| `gracias-100` | ¡Gracias por los 100 seguidores! (cuenta 1→100 con confeti) | 10 s | 6 MB | 3D (HyperFrames + Three.js) | ✅ nuevo |
 | `tsunami/parte-2` | Alerta de tsunami · Parte 2: ¿abres el portón? (`tsunami-parte-2-ligero.mp4` = 9.5 MB) | 59 s | 61 MB | 3D low-poly (HyperFrames + Three.js) | ✅ nuevo |
 | `tsunami` | Alerta de tsunami a las 3 a.m. (historia interactiva, parte 1; `tsunami-ligero.mp4` = 12 MB) | 74 s | 64 MB | 3D low-poly (HyperFrames + Three.js) | ✅ nuevo |
 | `biceps` | ¿Por qué te brinca el bíceps? (`biceps-ligero.mp4` = 10 MB) | 56 s | 48 MB | HyperFrames (canvas) | ✅ nuevo |
@@ -95,4 +96,9 @@ Formato: una pregunta para que comenten y 5 hashtags. Los de Torre Eiffel, Hamel
 ```
 ¿Abres el portón para todos o solo dejas entrar a tu mamá? 👇
 #tsunami #historiainteractiva #supervivencia #quéharías #dilemamoral
+```
+**Gracias por los 100**
+```
+¡Ya somos 100! 🎉 ¿Qué video quieres que haga ahora? 👇
+#gracias #100seguidores #comunidad #historiainteractiva #curiosidades
 ```

@@ -1,0 +1,168 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; background: #0A0820; overflow: hidden; }
+    #gl { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+    .ov { position: absolute; left: 0; width: 1080px; text-align: center; font-family: Nunito, sans-serif; }
+    #titulo { top: 210px; }
+    #titulo .l1 { font-size: 78px; font-weight: 900; color: #FFFFFF; letter-spacing: 2px; text-shadow: 0 6px 0 #3A1A6A, 0 0 30px rgba(140,90,255,.6); }
+    #titulo .l2 { font-size: 104px; font-weight: 900; line-height: 1.05; background: linear-gradient(180deg, #FFF3A8 0%, #FFC83A 55%, #FF8A1A 100%); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 6px 0 #6A2A0A) drop-shadow(0 0 22px rgba(255,190,60,.55)); }
+    #rayos { position: absolute; left: 140px; top: 470px; width: 800px; height: 800px; border-radius: 50%;
+      background: repeating-conic-gradient(rgba(255,210,90,.28) 0deg 9deg, rgba(255,210,90,0) 9deg 22.5deg);
+      -webkit-mask: radial-gradient(circle, #000 25%, transparent 70%); mask: radial-gradient(circle, #000 25%, transparent 70%); }
+    #aro { position: absolute; left: 240px; top: 570px; width: 600px; height: 600px; }
+    #numero { position: absolute; left: 0; top: 650px; width: 1080px; height: 440px; display: flex; align-items: center; justify-content: center;
+      font-family: Nunito, sans-serif; font-weight: 900; font-size: 300px; line-height: 1; font-variant-numeric: tabular-nums; }
+    #numero span { display: inline-block; background: linear-gradient(180deg, #FFFFFF 0%, #FFE27A 50%, #FFAA2A 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
+      filter: drop-shadow(0 10px 0 #4A1A6A) drop-shadow(0 0 40px rgba(255,200,80,.7)); }
+    #seg { position: absolute; left: 0; top: 1085px; width: 1080px; text-align: center; font-family: Nunito, sans-serif; font-weight: 900; font-size: 46px; letter-spacing: 8px; color: #CFC4FF; }
+    #frase { position: absolute; left: 90px; width: 900px; top: 1140px; text-align: center; font-family: Nunito, sans-serif; font-weight: 900; font-size: 64px; line-height: 1.12; color: #FFFFFF;
+      text-shadow: 0 5px 0 #2A1050, 0 0 24px rgba(0,0,0,.6); }
+    #frase b { color: #FFD24A; }
+    #flash { position: absolute; inset: 0; background: radial-gradient(circle at 50% 45%, rgba(255,240,200,1), rgba(255,200,120,.3) 50%, rgba(255,200,120,0) 75%); opacity: 0; }
+  </style>
+  <div id="root" data-composition-id="film" data-start="0" data-duration="10" data-width="1080" data-height="1920">
+    <canvas id="gl" width="1080" height="1920" data-layout-ignore></canvas>
+    <div id="rayos" data-layout-ignore></div>
+    <svg id="aro" viewBox="0 0 600 600" data-layout-ignore>
+      <circle cx="300" cy="300" r="270" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="22" />
+      <circle id="aroLleno" cx="300" cy="300" r="270" fill="none" stroke="url(#gradAro)" stroke-width="22" stroke-linecap="round" transform="rotate(-90 300 300)" stroke-dasharray="1696.5" stroke-dashoffset="1696.5" />
+      <defs><linearGradient id="gradAro" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8A5CFF" /><stop offset=".5" stop-color="#FF5CC8" /><stop offset="1" stop-color="#FFC83A" /></linearGradient></defs>
+    </svg>
+    <div id="numero" data-layout-ignore><span id="num">1</span></div>
+    <div id="seg" data-layout-ignore>SEGUIDORES</div>
+    <div class="ov" id="titulo" data-layout-ignore><div class="l1">¡GRACIAS POR LOS</div><div class="l2">100 SEGUIDORES!</div></div>
+    <div id="frase" data-layout-ignore></div>
+    <div id="flash" data-layout-ignore></div>
+  </div>
+  <script>
+  (function () {
+    /* Gracias por los 100 seguidores: contador 1→100 rapidísimo, festejo y pregunta final.
+       Personaje: el mismo muchacho del video del tsunami (assets/lib/modelos.js). */
+    const { THREE, rng, mat, glow, box, ball, cyl, hero, sky, stars, addBrows } = window.M;
+    const W = 1080, H = 1920;
+    const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v)), lerp = (a, b, k) => a + (b - a) * k, prog = (t, a, b) => clamp((t - a) / (b - a));
+    const easeOut = k => 1 - Math.pow(1 - clamp(k), 3), backOut = k => { k = clamp(k); const c = 2.2; return 1 + (c + 1) * Math.pow(k - 1, 3) + c * Math.pow(k - 1, 2); };
+    /* tiempos (los lee también tools/mezcla.py) */
+    const T = { c0: 0.5, c1: 4.9, voz: 5.25, f1: 5.35, f2: 6.45, f3: 7.95, end: 10 };
+    const countAt = t => t < T.c0 ? 1 : 1 + Math.floor(99 * Math.pow(prog(t, T.c0, T.c1), 1.8) + 1e-6);
+    window.__CUENTA = { T, countAt };
+
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gl'), antialias: true, preserveDrawingBuffer: true });
+    renderer.setPixelRatio(1); renderer.setSize(W, H, false);
+    renderer.outputEncoding = THREE.sRGBEncoding; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = .9;
+    renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    const s = new THREE.Scene();
+    const sk = sky('#0A0A2E', '#4A1E6A'); s.add(sk); s.add(stars(500, 21));
+    s.add(new THREE.HemisphereLight('#8A7AE0', '#1A0A2A', .7));
+    const key = new THREE.SpotLight('#FFE6C0', 3.2, 30, .5, .5, 1.2); key.position.set(0, 10, 5); key.target.position.set(0, 0, 0); key.castShadow = true; s.add(key, key.target);
+    const rimL = new THREE.PointLight('#8A5CFF', 3, 12, 2); rimL.position.set(-3, 3, -2); s.add(rimL);
+    const rimR = new THREE.PointLight('#FF5CC8', 3, 12, 2); rimR.position.set(3, 3, -2); s.add(rimR);
+    // escenario redondo con borde de luces
+    const stage = cyl(3.2, 3.4, .35, mat('#2A1E4A', { roughness: .5, metalness: .2 }), 40); stage.position.y = -.175; stage.receiveShadow = true; s.add(stage);
+    const top = new THREE.Mesh(new THREE.CircleGeometry(3.2, 48), mat('#241A44', { roughness: .35, metalness: .2 })); top.rotation.x = -Math.PI / 2; top.position.y = .002; top.receiveShadow = true; s.add(top);
+    const bulbs = []; for (let i = 0; i < 36; i++) { const a = i / 36 * Math.PI * 2; const b = new THREE.Mesh(new THREE.SphereGeometry(.07, 8, 6), new THREE.MeshBasicMaterial({ color: '#FFD86A', toneMapped: false })); b.position.set(Math.sin(a) * 3.3, -.05, Math.cos(a) * 3.3); s.add(b); bulbs.push(b); }
+    // el muchacho
+    const p = hero(); addBrows(p); s.add(p); p.traverse(o => { if (o.isMesh) o.castShadow = true; });
+    const P = p.userData;
+    // confeti (determinista)
+    const NC = 420, cr = rng(9), confG = new THREE.BoxGeometry(.09, .16, .01), cols = ['#FFD24A', '#FF5CC8', '#5CE1FF', '#8A5CFF', '#6AF07A', '#FFFFFF', '#FF6A4A'];
+    const conf = new THREE.InstancedMesh(confG, new THREE.MeshBasicMaterial({ toneMapped: false, side: THREE.DoubleSide }), NC); conf.frustumCulled = false; s.add(conf);
+    const cd = []; for (let i = 0; i < NC; i++) { const side = i % 2 ? 1 : -1; cd.push({ x0: side * (2.2 + cr()), y0: .3, z0: (cr() - .5) * 2, vx: -side * (1.5 + cr() * 3.5), vy: 7 + cr() * 6, vz: (cr() - .2) * 2.5, d: cr() * .35, sp: 4 + cr() * 8, ax: cr(), sw: cr() * 6 }); conf.setColorAt(i, new THREE.Color(cols[i % cols.length])); }
+    const dummy = new THREE.Object3D();
+    // chispas que suben durante la cuenta
+    const NS = 160, sr = rng(4), spG = new THREE.BufferGeometry(), spP = new Float32Array(NS * 3); spG.setAttribute('position', new THREE.BufferAttribute(spP, 3));
+    const spD = []; for (let i = 0; i < NS; i++) spD.push({ x: (sr() - .5) * 9, z: -3 - sr() * 4, v: .8 + sr() * 1.6, o: sr() * 9 });
+    const sparks = new THREE.Points(spG, new THREE.PointsMaterial({ color: '#FFE08A', size: .09, transparent: true, opacity: .8, toneMapped: false })); s.add(sparks);
+
+    const camera = new THREE.PerspectiveCamera(36, W / H, .05, 900);
+
+    const $ = id => document.getElementById(id);
+    const num = $('num'), aro = $('aroLleno'), rayos = $('rayos'), flash = $('flash'), frase = $('frase'), titulo = $('titulo'), seg = $('seg');
+    const FR = [[T.f1, T.f2, '¡<b>CIEN</b>!'], [T.f2, T.f3, '¡Gracias de <b>verdad</b>!'], [T.f3, 99, '¿Qué video quieres<br>que haga <b>ahora</b>? 👇']];
+
+    function renderAt(t) {
+      const n = countAt(t), boom = t >= T.c1, kb = t - T.c1;
+      // ---------- número ----------
+      num.textContent = n;
+      const tPrev = (() => { // momento en que apareció este número, para el "golpecito"
+        if (n <= 1) return T.c0; const k = Math.pow((n - 1) / 99, 1 / 1.8); return T.c0 + k * (T.c1 - T.c0); })();
+      const tick = clamp(1 - (t - tPrev) / .12);
+      let sc = 1 + .1 * tick;
+      if (boom) sc = 1 + .45 * Math.max(0, 1 - kb / .25) + .12 * (1 - backOut(kb / .5)) + .03 * Math.sin(t * 6);
+      const shake = !boom && t > T.c1 - 1.2 ? (t - (T.c1 - 1.2)) * 6 : 0;
+      num.style.transform = `translate(${Math.sin(t * 90) * shake}px, ${Math.cos(t * 77) * shake}px) scale(${sc})`;
+      num.parentElement.style.opacity = t < .15 ? 0 : 1;
+      seg.style.opacity = clamp((t - .2) / .3);
+      // ---------- aro de progreso ----------
+      const frac = (n - 1) / 99; aro.setAttribute('stroke-dashoffset', (1696.5 * (1 - frac)).toFixed(1));
+      aro.style.filter = boom ? `drop-shadow(0 0 ${20 + 20 * Math.max(0, 1 - kb)}px #FFC83A)` : 'none';
+      // ---------- rayos ----------
+      rayos.style.opacity = boom ? Math.min(1, kb * 4) : .25 * frac;
+      rayos.style.transform = `rotate(${t * (boom ? 30 : 12 + 40 * frac)}deg) scale(${boom ? 1 + .1 * Math.sin(t * 3) : .8 + .2 * frac})`;
+      flash.style.opacity = boom ? Math.max(0, .85 - kb * 2.2) : 0;
+      // ---------- título ----------
+      const kt = prog(t, .05, .55); titulo.style.opacity = kt; titulo.style.transform = `translateY(${(1 - easeOut(kt)) * -60}px) scale(${boom ? 1 + .06 * Math.max(0, Math.sin(kb * 8)) * Math.max(0, 1 - kb) : 1})`;
+      // ---------- frase de la voz ----------
+      const f = FR.find(([a, b]) => t >= a && t < b);
+      if (f) { frase.innerHTML = f[2]; const k = prog(t, f[0], f[0] + .25); frase.style.opacity = k; frase.style.transform = `scale(${.7 + .3 * backOut(k)})`; } else { frase.innerHTML = ''; frase.style.opacity = 0; }
+
+      // ---------- 3D ----------
+      // el muchacho: nervioso durante la cuenta (rebota y aprieta las manos), salta al llegar a 100, luego saluda
+      p.position.set(0, 0, 0); p.rotation.set(0, 0, 0);
+      P.legL.rotation.set(0, 0, 0); P.legR.rotation.set(0, 0, 0); P.kneeL.rotation.set(0, 0, 0); P.kneeR.rotation.set(0, 0, 0);
+      P.elbowL.rotation.set(-.12, 0, 0); P.elbowR.rotation.set(-.12, 0, 0);
+      if (!boom) {
+        const ex = .3 + .7 * frac, b = Math.abs(Math.sin(t * (6 + 10 * frac))) * .06 * ex;
+        p.position.y = b; P.kneeL.rotation.x = P.kneeR.rotation.x = b * 2; P.legL.rotation.x = P.legR.rotation.x = -b;
+        P.armL.rotation.set(-.9 - .3 * ex, 0, .35); P.armR.rotation.set(-.9 - .3 * ex, 0, -.35); P.elbowL.rotation.x = P.elbowR.rotation.x = -1.2;
+        P.head.rotation.set(-.32 - .05 * frac, Math.sin(t * 1.2) * .05, 0);
+        P.brows(.3 + .6 * frac);
+      } else {
+        const jumpK = kb < .6 ? kb / .6 : -1; const jump = jumpK >= 0 ? Math.sin(Math.PI * jumpK) * .9 : 0;
+        const crouch = kb < .08 ? kb / .08 : 0;
+        p.position.y = jump - crouch * .12;
+        if (jumpK >= 0) { P.kneeL.rotation.x = P.kneeR.rotation.x = .9 * Math.sin(Math.PI * jumpK); P.legL.rotation.x = P.legR.rotation.x = -.6 * Math.sin(Math.PI * jumpK); }
+        const up = Math.min(1, kb / .15);
+        if (kb < 2.4) {   // brazos arriba festejando
+          const wig = Math.sin(t * 14) * .12;
+          P.armL.rotation.set(0, 0, lerp(.3, -2.7, up) + wig); P.armR.rotation.set(0, 0, lerp(-.3, 2.7, up) - wig);
+          P.elbowL.rotation.x = P.elbowR.rotation.x = -.2;
+          p.rotation.y = Math.sin(t * 3) * .12;
+        } else {          // saluda a la cámara con una mano
+          const kw = prog(kb, 2.4, 2.8);
+          P.armL.rotation.set(0, 0, lerp(-2.7, .2, kw)); P.armR.rotation.set(0, 0, 2.6); P.elbowR.rotation.set(0, 0, lerp(0, .5, kw) * Math.sin(t * 11));
+        }
+        P.head.rotation.set(lerp(-.32, .02, Math.min(1, kb / .4)), Math.sin(t * 2.2) * .1, 0);
+        P.brows(0);
+      }
+      // luces del escenario
+      bulbs.forEach((b, i) => b.material.color.set((Math.floor(t * (boom ? 10 : 4 + 10 * frac)) + i) % 3 ? '#FFD86A' : '#FF5CC8'));
+      rimL.intensity = 2.5 + (boom ? 2 * Math.max(0, Math.sin(t * 8)) : frac * 2); rimR.intensity = 2.5 + (boom ? 2 * Math.max(0, Math.cos(t * 8)) : frac * 2);
+      key.intensity = boom ? 1.8 + 2 * Math.max(0, 1 - kb * 1.5) : 1.8;
+      sk.userData.mat.uniforms.red.value = 0;
+      // chispas
+      for (let i = 0; i < NS; i++) { const d = spD[i], y = ((d.o + t * d.v * (1 + 2 * frac)) % 9); spP.set([d.x + Math.sin(t + i) * .2, y, d.z], i * 3); }
+      spG.attributes.position.needsUpdate = true;
+      // confeti
+      for (let i = 0; i < NC; i++) {
+        const d = cd[i], a = kb - d.d;
+        if (a < 0) { dummy.position.set(0, -50, 0); }
+        else { const drag = 1 - Math.exp(-a * 1.4); const vy = d.vy / 1.4 * drag - 3.2 * a; dummy.position.set(d.x0 + d.vx / 1.4 * drag + Math.sin(a * 3 + d.sw) * .35, Math.max(.02, d.y0 + vy), d.z0 + d.vz / 1.4 * drag);
+          dummy.rotation.set(a * d.sp, a * d.sp * .7 + d.ax * 6, a * d.sp * .4); }
+        dummy.updateMatrix(); conf.setMatrixAt(i, dummy.matrix);
+      }
+      conf.instanceMatrix.needsUpdate = true;
+      // cámara: se acerca suave; golpecito al llegar a 100
+      const cz = lerp(19.5, 18.2, prog(t, 0, T.c1)) - (boom ? .7 * easeOut(kb / 1.5) : 0);
+      const ch = boom ? Math.max(0, 1 - kb * 3) * .06 : 0;
+      camera.position.set(Math.sin(t * 60) * ch, 4.6, cz); camera.lookAt(0, 4.6, 0);
+      renderer.render(s, camera);
+    }
+    window.addEventListener('hf-seek', e => renderAt(e.detail.time));
+    renderAt(0);
+    window.__timelines = window.__timelines || {};
+    window.__timelines['film'] = gsap.timeline({ paused: true });
+  })();
+  </script>
+</template>
