@@ -57,11 +57,11 @@
       const cart = K.carrito(); s.add(cart); const C = cart.userData;
       const mot = K.motor(); mot.position.set(-.12, .22, 0); mot.scale.setScalar(.95); cart.add(mot);
       const ties = K.cinchos(cart, [-.27, .03], .32, .38);
-      const shaft = V3(-.12, .315, .29), axle = V3(-.45, .08, .29);
-      const small = K.gear(10, .045, '#F58A2E', .025); small.position.copy(shaft); cart.add(small);
-      const big = K.gear(26, .11, '#3E8FE0', .025); big.position.copy(axle); cart.add(big);
+      const shaft = V3(-.12, .315, .17), axle = V3(-.45, .08, .17);   // del lado de adentro de la llanta trasera
+      const small = K.gear(8, .028, '#F58A2E', .025); small.position.copy(shaft); cart.add(small);
+      const big = K.gear(22, .062, '#3E8FE0', .025); big.position.copy(axle); cart.add(big);
       const d = axle.clone().sub(shaft), ang = Math.atan2(d.y, d.x);
-      const chain = K.cadena(.045, .11, d.length(), '#2A2A30'); chain.position.copy(shaft); chain.rotation.z = ang; cart.add(chain);
+      const chain = K.cadena(.028, .062, d.length(), '#2A2A30'); chain.position.copy(shaft); chain.rotation.z = ang; cart.add(chain);
       const axleBar = cyl(.012, .012, .62, '#9AA2AC', 8, -.45, .08, 0); axleBar.rotation.x = Math.PI / 2; cart.add(axleBar);
       const drum = cyl(.06, .06, .05, '#3E8FE0', 20, shaft.x, shaft.y, shaft.z - .04); drum.rotation.x = Math.PI / 2; cart.add(drum);
       // dirección: eje delantero, llantas con manguetas, barra de acoplamiento, columna y volante
@@ -72,7 +72,7 @@
       const tie = box(.015, .015, .64, '#36C45A', fx - .1, fy, 0); steer.add(tie);
       const col = new THREE.Group(); steer.add(col); K.tubo(col, V3(fx - .05, fy + .02, 0), V3(.22, .82, 0), .012, toon('#F58A2E'));
       const vol = K.volante(); vol.scale.setScalar(.9); vol.position.set(.2, .86, 0); vol.rotation.order = 'YXZ'; vol.rotation.set(-.6, Math.PI / 2, 0); steer.add(vol);
-      const disc = K.disco(); disc.scale.setScalar(.7); disc.position.set(-.45, .08, .17); cart.add(disc); const D = disc.userData;
+      const disc = K.disco(); disc.scale.setScalar(.7); disc.position.set(-.45, .08, -.17); cart.add(disc); const D = disc.userData;
       const kid = K.chavo(); s.add(kid); const P = kid.userData;
       const compa = K.chavo({ shirt: '#3FAE5A', shirtD: '#2E8A44', pants: '#3A3A44', cap: '#F5C431' }); s.add(compa); compa.visible = false;
       const smoke = K.puffs(10, 3, '#EDEDED'); s.add(smoke);
@@ -80,7 +80,7 @@
       const parts = { cadena: [small, big, chain, axleBar], clutch: [drum], dir: [steer], freno: [disc] };
       function stage(n) {   // 0 nada, 1 cadena, 2 clutch, 3 engranes, 4 dirección, 5 freno
         parts.cadena.forEach(o => o.visible = n >= 1); parts.clutch.forEach(o => o.visible = n >= 2); parts.dir.forEach(o => o.visible = n >= 4); parts.freno.forEach(o => o.visible = n >= 5);
-        big.scale.setScalar(n >= 3 ? 1.35 : 1); small.scale.setScalar(1); steer.scale.setScalar(1); chain.visible = n >= 1;
+        big.scale.setScalar(n >= 3 ? 1.2 : 1); small.scale.setScalar(1); steer.scale.setScalar(1); chain.visible = n >= 1;
         C.wheels.forEach(o => { o.piv.visible = !(o.front && n >= 4); o.piv.rotation.y = 0; });
       }
       function steerAt(a) { knuckles.forEach(o => o.k.rotation.y = a); tie.position.z = -a * .1; vol.rotation.z = a * 2.5; }
@@ -146,7 +146,7 @@
           rig.small.scale.setScalar(backOut(app[0]) || .001); rig.big.scale.setScalar(backOut(app[1]) || .001); rig.chain.visible = app[2] > 0;
           rig.roll(lt > 2 ? (lt - 2) * 1.2 : 0, t); g = { fuerza: .45, kmh: 0 }; engOn(true, 1.8);
           xr = .75; sol = [rig.small, rig.big, rig.chain];
-          tags = [['ENGRANE CHICO', rig.small, V3(0, .06, 0)], ['ENGRANE GRANDE', rig.big, V3(-.05, -.14, 0)], ['CADENA', rig.chain, V3(.2, .06, 0)]].filter((_, i) => app[i] >= 1);
+          tags = [['ENGRANE CHICO', rig.small, V3(0, .06, 0)], ['ENGRANE GRANDE', rig.big, V3(-.05, -.09, 0)], ['CADENA', rig.chain, V3(.2, .06, 0)]].filter((_, i) => app[i] >= 1);
           camPath(camera, lt, [[-.3, [.2, .75, 1.75], [-.3, .25, .2]], [4.8, [.05, .65, 1.45], [-.3, .22, .2]]]);
         } else if (mode === 'latas') {
           rig.stage(1); const dd = Math.min(dist(t, segS2), 6.35); const crash = t >= T.latas;
