@@ -9,14 +9,18 @@ src = open(P("compositions/film.html"), encoding="utf-8").read()
 def js_obj(name):
     b = re.search(r"const " + name + r" = (\{.*?\});", src, re.S).group(1)
     b = re.sub(r"([{,]\s*)([A-Za-z_]\w*)\s*:", r'\1"\2":', b); b = re.sub(r"(?<![\d])\.(\d)", r"0.\1", b); return json.loads(b)
-T = js_obj("T"); C, DUR = T["cuts"], T["end"]
+T = js_obj("T"); C = T["cuts"]
+WARP = json.loads(re.sub(r"(?<![\d])\.(\d)", r"0.\1", re.search(r"const WARP = (\[.*?\]\]);", src).group(1)))
+NW, OW = [w[0] for w in WARP], [w[1] for w in WARP]
+W = lambda x: float(np.interp(x, OW, NW))    # tiempo de la animación → tiempo del video
+DUR = NW[-1]
 txt_t = [float(x) for x in re.findall(r"\[(\d+\.?\d*), '", src.split("const TXT = ")[1].split("];")[0])]
 N = int(DUR * SR); t = np.arange(N) / SR; rs = np.random.default_rng(9)
 def read(path):
     with wave.open(path) as w: x = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(float) / 32768; ch = w.getnchannels()
     x = x.reshape(-1, ch); return np.repeat(x, 2, axis=1) if ch == 1 else x
-def place(b, sig, t0, db=0.0, pan=0.0):
-    i = int(round(t0 * SR));
+def place(b, sig, t0, db=0.0, pan=0.0, raw=False):
+    i = int(round((t0 if raw else W(t0)) * SR));
     if i >= N: return
     sig = sig[: N - i] * 10 ** (db / 20); b[i:i + len(sig), 0] += sig[:, 0] * (1 - max(pan, 0)); b[i:i + len(sig), 1] += sig[:, 1] * (1 + min(pan, 0))
 def st(x): return np.stack([x, x], axis=1)
@@ -30,7 +34,7 @@ fx = np.zeros((N, 2))
 pts = [(0, 0), (2.1, 0), (2.25, .55), (2.6, .35), (5.2, .4), (5.4, .75), (6.6, .55), (7, .45), (11.6, .45), (11.95, 1.0), (13.5, 1.0), (13.6, .3), (17.5, .4), (18.6, .35), (19.0, 0),
        (20.6, 0), (20.7, .3), (25.0, .3), (25.4, 1.0), (28.3, 1.0), (28.8, .4), (30.2, .45), (31.5, .75), (33.0, .75), (34.4, .95), (36.2, .9), (36.3, .5), (43.6, .5), (43.8, .9), (48, .9),
        (50.3, .9), (50.4, .3), (51, .35), (57.6, .45), (58, .7), (62, .7), (62.1, 1.0), (65.6, .9), (65.7, .45), (72.6, .45), (75, .3), (76, .3), (77.1, .3), (77.2, 1.0), (84.4, 1.0)]
-rpm = np.interp(t, *zip(*pts)); rpm = lp(rpm, int(.05 * SR))
+rpm = np.interp(t, [W(a) for a, _ in pts], [b for _, b in pts]); rpm = lp(rpm, int(.05 * SR))
 on = rpm > .02; f = 22 + 70 * rpm
 ph = np.cumsum(f) / SR; frac = ph % 1
 pulse = np.exp(-frac * 9) * (1 + .5 * rs.standard_normal(N) * np.exp(-frac * 20))

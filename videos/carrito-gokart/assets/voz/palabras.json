@@ -80,884 +80,884 @@
   },
   {
    "palabra": "…no",
-   "inicio": 5.31,
-   "fin": 5.63,
+   "inicio": 4.31,
+   "fin": 4.63,
    "prob": 0.863
   },
   {
    "palabra": "se",
-   "inicio": 5.63,
-   "fin": 5.77,
+   "inicio": 4.63,
+   "fin": 4.77,
    "prob": 0.996
   },
   {
    "palabra": "mueve.",
-   "inicio": 5.77,
-   "fin": 6.03,
+   "inicio": 4.77,
+   "fin": 5.03,
    "prob": 0.997
   },
   {
    "palabra": "Necesitas",
-   "inicio": 7.03,
-   "fin": 7.51,
+   "inicio": 6.03,
+   "fin": 6.51,
    "prob": 0.986
   },
   {
    "palabra": "una",
-   "inicio": 7.51,
-   "fin": 7.73,
+   "inicio": 6.51,
+   "fin": 6.73,
    "prob": 0.992
   },
   {
    "palabra": "cadena",
-   "inicio": 7.73,
-   "fin": 8.03,
+   "inicio": 6.73,
+   "fin": 7.03,
    "prob": 0.998
   },
   {
    "palabra": "del",
-   "inicio": 8.03,
-   "fin": 8.17,
+   "inicio": 7.03,
+   "fin": 7.17,
    "prob": 0.988
   },
   {
    "palabra": "motor",
-   "inicio": 8.17,
-   "fin": 8.41,
+   "inicio": 7.17,
+   "fin": 7.41,
    "prob": 0.995
   },
   {
    "palabra": "al",
-   "inicio": 8.41,
-   "fin": 8.53,
+   "inicio": 7.41,
+   "fin": 7.53,
    "prob": 0.0
   },
   {
    "palabra": "eje",
-   "inicio": 8.53,
-   "fin": 8.71,
+   "inicio": 7.53,
+   "fin": 7.71,
    "prob": 0.0
   },
   {
    "palabra": "de",
-   "inicio": 8.71,
-   "fin": 8.85,
+   "inicio": 7.71,
+   "fin": 7.85,
    "prob": 0.99
   },
   {
    "palabra": "atrás.",
-   "inicio": 8.85,
-   "fin": 9.09,
+   "inicio": 7.85,
+   "fin": 8.09,
    "prob": 0.994
   },
   {
    "palabra": "Cada",
-   "inicio": 17.77,
-   "fin": 18.13,
+   "inicio": 13.27,
+   "fin": 13.63,
    "prob": 0.943
   },
   {
    "palabra": "que",
-   "inicio": 18.13,
-   "fin": 18.27,
+   "inicio": 13.63,
+   "fin": 13.77,
    "prob": 0.698
   },
   {
    "palabra": "paras,",
-   "inicio": 18.27,
-   "fin": 18.51,
+   "inicio": 13.77,
+   "fin": 14.01,
    "prob": 0.659
   },
   {
    "palabra": "se",
-   "inicio": 18.79,
-   "fin": 18.99,
+   "inicio": 14.29,
+   "fin": 14.49,
    "prob": 0.993
   },
   {
    "palabra": "apaga.",
-   "inicio": 18.99,
-   "fin": 19.27,
+   "inicio": 14.49,
+   "fin": 14.77,
    "prob": 0.998
   },
   {
    "palabra": "Ocupas",
-   "inicio": 20.25,
-   "fin": 20.73,
+   "inicio": 15.75,
+   "fin": 16.23,
    "prob": 0.892
   },
   {
    "palabra": "un",
-   "inicio": 20.73,
-   "fin": 20.87,
+   "inicio": 16.23,
+   "fin": 16.37,
    "prob": 0.998
   },
   {
    "palabra": "clutch",
-   "inicio": 20.87,
-   "fin": 21.05,
+   "inicio": 16.37,
+   "fin": 16.55,
    "prob": 0.895
   },
   {
    "palabra": "centrífugo:",
-   "inicio": 21.05,
-   "fin": 21.57,
+   "inicio": 16.55,
+   "fin": 17.07,
    "prob": 0.0
   },
   {
    "palabra": "con",
-   "inicio": 21.87,
-   "fin": 21.99,
+   "inicio": 17.37,
+   "fin": 17.49,
    "prob": 0.992
   },
   {
    "palabra": "el",
-   "inicio": 21.99,
-   "fin": 22.09,
+   "inicio": 17.49,
+   "fin": 17.59,
    "prob": 0.999
   },
   {
    "palabra": "motor",
-   "inicio": 22.09,
-   "fin": 22.31,
+   "inicio": 17.59,
+   "fin": 17.81,
    "prob": 0.998
   },
   {
    "palabra": "lento,",
-   "inicio": 22.31,
-   "fin": 22.65,
+   "inicio": 17.81,
+   "fin": 18.15,
    "prob": 0.999
   },
   {
    "palabra": "las",
-   "inicio": 22.93,
-   "fin": 23.05,
+   "inicio": 18.43,
+   "fin": 18.55,
    "prob": 0.984
   },
   {
    "palabra": "zapatas",
-   "inicio": 23.05,
-   "fin": 23.37,
+   "inicio": 18.55,
+   "fin": 18.87,
    "prob": 0.994
   },
   {
    "palabra": "se",
-   "inicio": 23.37,
-   "fin": 23.57,
+   "inicio": 18.87,
+   "fin": 19.07,
    "prob": 0.994
   },
   {
    "palabra": "quedan",
-   "inicio": 23.57,
-   "fin": 23.79,
+   "inicio": 19.07,
+   "fin": 19.29,
    "prob": 0.997
   },
   {
    "palabra": "adentro",
-   "inicio": 23.79,
-   "fin": 24.13,
+   "inicio": 19.29,
+   "fin": 19.63,
    "prob": 0.986
   },
   {
    "palabra": "y",
-   "inicio": 24.13,
-   "fin": 24.21,
+   "inicio": 19.63,
+   "fin": 19.71,
    "prob": 0.986
   },
   {
    "palabra": "la",
-   "inicio": 24.21,
-   "fin": 24.27,
+   "inicio": 19.71,
+   "fin": 19.77,
    "prob": 0.998
   },
   {
    "palabra": "llanta",
-   "inicio": 24.27,
-   "fin": 24.47,
+   "inicio": 19.77,
+   "fin": 19.97,
    "prob": 0.967
   },
   {
    "palabra": "descansa;",
-   "inicio": 24.47,
-   "fin": 24.99,
+   "inicio": 19.97,
+   "fin": 20.49,
    "prob": 0.989
   },
   {
    "palabra": "aceleras,",
-   "inicio": 25.23,
-   "fin": 25.75,
+   "inicio": 20.73,
+   "fin": 21.25,
    "prob": 0.975
   },
   {
    "palabra": "se",
-   "inicio": 26.09,
-   "fin": 26.29,
+   "inicio": 21.59,
+   "fin": 21.79,
    "prob": 0.972
   },
   {
    "palabra": "abren",
-   "inicio": 26.29,
-   "fin": 26.47,
+   "inicio": 21.79,
+   "fin": 21.97,
    "prob": 0.989
   },
   {
    "palabra": "por",
-   "inicio": 26.47,
-   "fin": 26.63,
+   "inicio": 21.97,
+   "fin": 22.13,
    "prob": 0.997
   },
   {
    "palabra": "la",
-   "inicio": 26.63,
-   "fin": 26.77,
+   "inicio": 22.13,
+   "fin": 22.27,
    "prob": 0.997
   },
   {
    "palabra": "fuerza",
-   "inicio": 26.77,
-   "fin": 27.01,
+   "inicio": 22.27,
+   "fin": 22.51,
    "prob": 0.999
   },
   {
    "palabra": "y",
-   "inicio": 27.01,
-   "fin": 27.21,
+   "inicio": 22.51,
+   "fin": 22.71,
    "prob": 0.997
   },
   {
    "palabra": "agarran",
-   "inicio": 27.21,
-   "fin": 27.49,
+   "inicio": 22.71,
+   "fin": 22.99,
    "prob": 0.909
   },
   {
    "palabra": "el",
-   "inicio": 27.49,
-   "fin": 27.63,
+   "inicio": 22.99,
+   "fin": 23.13,
    "prob": 0.999
   },
   {
    "palabra": "tambor.",
-   "inicio": 27.63,
-   "fin": 27.93,
+   "inicio": 23.13,
+   "fin": 23.43,
    "prob": 0.975
   },
   {
    "palabra": "Con",
-   "inicio": 33.45,
-   "fin": 33.69,
+   "inicio": 25.95,
+   "fin": 26.19,
    "prob": 0.969
   },
   {
    "palabra": "tu",
-   "inicio": 33.69,
-   "fin": 33.83,
+   "inicio": 26.19,
+   "fin": 26.33,
    "prob": 0.997
   },
   {
    "palabra": "compa",
-   "inicio": 33.83,
-   "fin": 34.09,
+   "inicio": 26.33,
+   "fin": 26.59,
    "prob": 0.856
   },
   {
    "palabra": "atrás",
-   "inicio": 34.09,
-   "fin": 34.27,
+   "inicio": 26.59,
+   "fin": 26.77,
    "prob": 0.987
   },
   {
    "palabra": "no",
-   "inicio": 34.27,
-   "fin": 34.45,
+   "inicio": 26.77,
+   "fin": 26.95,
    "prob": 0.972
   },
   {
    "palabra": "sube.",
-   "inicio": 34.45,
-   "fin": 34.75,
+   "inicio": 26.95,
+   "fin": 27.25,
    "prob": 0.988
   },
   {
    "palabra": "Engrane",
-   "inicio": 35.61,
-   "fin": 36.01,
+   "inicio": 28.11,
+   "fin": 28.51,
    "prob": 0.0
   },
   {
    "palabra": "chico",
-   "inicio": 36.01,
-   "fin": 36.35,
+   "inicio": 28.51,
+   "fin": 28.85,
    "prob": 0.933
   },
   {
    "palabra": "empuja",
-   "inicio": 36.35,
-   "fin": 36.75,
+   "inicio": 28.85,
+   "fin": 29.25,
    "prob": 0.983
   },
   {
    "palabra": "a",
-   "inicio": 36.75,
-   "fin": 36.83,
+   "inicio": 29.25,
+   "fin": 29.33,
    "prob": 0.719
   },
   {
    "palabra": "uno",
-   "inicio": 36.83,
-   "fin": 36.93,
+   "inicio": 29.33,
+   "fin": 29.43,
    "prob": 0.896
   },
   {
    "palabra": "grande:",
-   "inicio": 36.93,
-   "fin": 37.21,
+   "inicio": 29.43,
+   "fin": 29.71,
    "prob": 0.997
   },
   {
    "palabra": "el",
-   "inicio": 37.53,
-   "fin": 37.65,
+   "inicio": 30.03,
+   "fin": 30.15,
    "prob": 0.99
   },
   {
    "palabra": "motor",
-   "inicio": 37.65,
-   "fin": 37.89,
+   "inicio": 30.15,
+   "fin": 30.39,
    "prob": 0.998
   },
   {
    "palabra": "da",
-   "inicio": 37.89,
-   "fin": 38.05,
+   "inicio": 30.39,
+   "fin": 30.55,
    "prob": 0.997
   },
   {
    "palabra": "tres",
-   "inicio": 38.05,
-   "fin": 38.25,
+   "inicio": 30.55,
+   "fin": 30.75,
    "prob": 0.766
   },
   {
    "palabra": "vueltas",
-   "inicio": 38.25,
-   "fin": 38.53,
+   "inicio": 30.75,
+   "fin": 31.03,
    "prob": 0.998
   },
   {
    "palabra": "por",
-   "inicio": 38.53,
-   "fin": 38.73,
+   "inicio": 31.03,
+   "fin": 31.23,
    "prob": 0.998
   },
   {
    "palabra": "una",
-   "inicio": 38.73,
-   "fin": 38.87,
+   "inicio": 31.23,
+   "fin": 31.37,
    "prob": 0.997
   },
   {
    "palabra": "de",
-   "inicio": 38.87,
-   "fin": 38.97,
+   "inicio": 31.37,
+   "fin": 31.47,
    "prob": 0.998
   },
   {
    "palabra": "la",
-   "inicio": 38.97,
-   "fin": 39.05,
+   "inicio": 31.47,
+   "fin": 31.55,
    "prob": 0.996
   },
   {
    "palabra": "llanta.",
-   "inicio": 39.05,
-   "fin": 39.29,
+   "inicio": 31.55,
+   "fin": 31.79,
    "prob": 0.989
   },
   {
    "palabra": "Menos",
-   "inicio": 40.19,
-   "fin": 40.67,
+   "inicio": 32.69,
+   "fin": 33.17,
    "prob": 0.621
   },
   {
    "palabra": "velocidad,",
-   "inicio": 40.67,
-   "fin": 41.03,
+   "inicio": 33.17,
+   "fin": 33.53,
    "prob": 0.992
   },
   {
    "palabra": "pero",
-   "inicio": 41.37,
-   "fin": 41.49,
+   "inicio": 33.87,
+   "fin": 33.99,
    "prob": 0.995
   },
   {
    "palabra": "mucha",
-   "inicio": 41.49,
-   "fin": 41.79,
+   "inicio": 33.99,
+   "fin": 34.29,
    "prob": 0.979
   },
   {
    "palabra": "más",
-   "inicio": 41.79,
-   "fin": 41.97,
+   "inicio": 34.29,
+   "fin": 34.47,
    "prob": 0.96
   },
   {
    "palabra": "fuerza.",
-   "inicio": 41.97,
-   "fin": 42.21,
+   "inicio": 34.47,
+   "fin": 34.71,
    "prob": 0.999
   },
   {
    "palabra": "Las",
-   "inicio": 48.29,
-   "fin": 48.53,
+   "inicio": 37.69,
+   "fin": 37.93,
    "prob": 0.979
   },
   {
    "palabra": "llantitas",
-   "inicio": 48.53,
-   "fin": 48.89,
+   "inicio": 37.93,
+   "fin": 38.29,
    "prob": 0.904
   },
   {
    "palabra": "del",
-   "inicio": 48.89,
-   "fin": 49.05,
+   "inicio": 38.29,
+   "fin": 38.45,
    "prob": 0.986
   },
   {
    "palabra": "súper",
-   "inicio": 49.05,
-   "fin": 49.29,
+   "inicio": 38.45,
+   "fin": 38.69,
    "prob": 0.599
   },
   {
    "palabra": "van",
-   "inicio": 49.29,
-   "fin": 49.53,
+   "inicio": 38.69,
+   "fin": 38.93,
    "prob": 0.994
   },
   {
    "palabra": "para",
-   "inicio": 49.53,
-   "fin": 49.71,
+   "inicio": 38.93,
+   "fin": 39.11,
    "prob": 0.998
   },
   {
    "palabra": "donde",
-   "inicio": 49.71,
-   "fin": 49.85,
+   "inicio": 39.11,
+   "fin": 39.25,
    "prob": 0.961
   },
   {
    "palabra": "quieren.",
-   "inicio": 49.85,
-   "fin": 50.19,
+   "inicio": 39.25,
+   "fin": 39.59,
    "prob": 0.981
   },
   {
    "palabra": "Le",
-   "inicio": 51.09,
-   "fin": 51.43,
+   "inicio": 40.49,
+   "fin": 40.83,
    "prob": 0.96
   },
   {
    "palabra": "pones",
-   "inicio": 51.43,
-   "fin": 51.63,
+   "inicio": 40.83,
+   "fin": 41.03,
    "prob": 0.992
   },
   {
    "palabra": "volante",
-   "inicio": 51.63,
-   "fin": 52.01,
+   "inicio": 41.03,
+   "fin": 41.41,
    "prob": 0.995
   },
   {
    "palabra": "y",
-   "inicio": 52.01,
-   "fin": 52.13,
+   "inicio": 41.41,
+   "fin": 41.53,
    "prob": 0.997
   },
   {
    "palabra": "barras",
-   "inicio": 52.13,
-   "fin": 52.37,
+   "inicio": 41.53,
+   "fin": 41.77,
    "prob": 0.966
   },
   {
    "palabra": "de",
-   "inicio": 52.37,
-   "fin": 52.47,
+   "inicio": 41.77,
+   "fin": 41.87,
    "prob": 0.997
   },
   {
    "palabra": "dirección,",
-   "inicio": 52.47,
-   "fin": 52.89,
+   "inicio": 41.87,
+   "fin": 42.29,
    "prob": 0.998
   },
   {
    "palabra": "y",
-   "inicio": 53.21,
-   "fin": 53.29,
+   "inicio": 42.61,
+   "fin": 42.69,
    "prob": 0.991
   },
   {
    "palabra": "ahora",
-   "inicio": 53.29,
-   "fin": 53.43,
+   "inicio": 42.69,
+   "fin": 42.83,
    "prob": 0.997
   },
   {
    "palabra": "sí,",
-   "inicio": 53.43,
-   "fin": 53.71,
+   "inicio": 42.83,
+   "fin": 43.11,
    "prob": 0.916
   },
   {
    "palabra": "las",
-   "inicio": 53.97,
-   "fin": 54.07,
+   "inicio": 43.37,
+   "fin": 43.47,
    "prob": 0.99
   },
   {
    "palabra": "dos",
-   "inicio": 54.07,
-   "fin": 54.23,
+   "inicio": 43.47,
+   "fin": 43.63,
    "prob": 0.989
   },
   {
    "palabra": "llantas",
-   "inicio": 54.23,
-   "fin": 54.47,
+   "inicio": 43.63,
+   "fin": 43.87,
    "prob": 0.975
   },
   {
    "palabra": "giran",
-   "inicio": 54.47,
-   "fin": 54.85,
+   "inicio": 43.87,
+   "fin": 44.25,
    "prob": 0.981
   },
   {
    "palabra": "juntas.",
-   "inicio": 54.85,
-   "fin": 55.29,
+   "inicio": 44.25,
+   "fin": 44.69,
    "prob": 0.999
   },
   {
    "palabra": "Y",
-   "inicio": 62.23,
-   "fin": 62.47,
+   "inicio": 47.23,
+   "fin": 47.47,
    "prob": 0.971
   },
   {
    "palabra": "sin",
-   "inicio": 62.47,
-   "fin": 62.63,
+   "inicio": 47.47,
+   "fin": 47.63,
    "prob": 0.979
   },
   {
    "palabra": "frenos…",
-   "inicio": 62.63,
-   "fin": 63.01,
+   "inicio": 47.63,
+   "fin": 48.01,
    "prob": 0.998
   },
   {
    "palabra": "con",
-   "inicio": 63.29,
-   "fin": 63.37,
+   "inicio": 48.29,
+   "fin": 48.37,
    "prob": 0.998
   },
   {
    "palabra": "los",
-   "inicio": 63.37,
-   "fin": 63.51,
+   "inicio": 48.37,
+   "fin": 48.51,
    "prob": 0.99
   },
   {
    "palabra": "tenis",
-   "inicio": 63.51,
-   "fin": 63.77,
+   "inicio": 48.51,
+   "fin": 48.77,
    "prob": 0.923
   },
   {
    "palabra": "no",
-   "inicio": 63.77,
-   "fin": 63.93,
+   "inicio": 48.77,
+   "fin": 48.93,
    "prob": 0.997
   },
   {
    "palabra": "se",
-   "inicio": 63.93,
-   "fin": 64.07,
+   "inicio": 48.93,
+   "fin": 49.07,
    "prob": 0.999
   },
   {
    "palabra": "puede.",
-   "inicio": 64.07,
-   "fin": 64.29,
+   "inicio": 49.07,
+   "fin": 49.29,
    "prob": 0.998
   },
   {
    "palabra": "Un",
-   "inicio": 65.13,
-   "fin": 65.47,
+   "inicio": 50.13,
+   "fin": 50.47,
    "prob": 0.986
   },
   {
    "palabra": "disco",
-   "inicio": 65.47,
-   "fin": 65.71,
+   "inicio": 50.47,
+   "fin": 50.71,
    "prob": 0.998
   },
   {
    "palabra": "de",
-   "inicio": 65.71,
-   "fin": 65.83,
+   "inicio": 50.71,
+   "fin": 50.83,
    "prob": 0.998
   },
   {
    "palabra": "acero",
-   "inicio": 65.83,
-   "fin": 66.07,
+   "inicio": 50.83,
+   "fin": 51.07,
    "prob": 0.997
   },
   {
    "palabra": "en",
-   "inicio": 66.07,
-   "fin": 66.21,
+   "inicio": 51.07,
+   "fin": 51.21,
    "prob": 0.996
   },
   {
    "palabra": "el",
-   "inicio": 66.21,
-   "fin": 66.29,
+   "inicio": 51.21,
+   "fin": 51.29,
    "prob": 0.994
   },
   {
    "palabra": "eje",
-   "inicio": 66.29,
-   "fin": 66.49,
+   "inicio": 51.29,
+   "fin": 51.49,
    "prob": 0.997
   },
   {
    "palabra": "y",
-   "inicio": 66.49,
-   "fin": 66.65,
+   "inicio": 51.49,
+   "fin": 51.65,
    "prob": 0.992
   },
   {
    "palabra": "una",
-   "inicio": 66.65,
-   "fin": 66.75,
+   "inicio": 51.65,
+   "fin": 51.75,
    "prob": 0.999
   },
   {
    "palabra": "mordaza",
-   "inicio": 66.75,
-   "fin": 67.11,
+   "inicio": 51.75,
+   "fin": 52.11,
    "prob": 0.977
   },
   {
    "palabra": "que",
-   "inicio": 67.11,
-   "fin": 67.25,
+   "inicio": 52.11,
+   "fin": 52.25,
    "prob": 0.994
   },
   {
    "palabra": "lo",
-   "inicio": 67.25,
-   "fin": 67.37,
+   "inicio": 52.25,
+   "fin": 52.37,
    "prob": 0.994
   },
   {
    "palabra": "aprieta:",
-   "inicio": 67.37,
-   "fin": 67.71,
+   "inicio": 52.37,
+   "fin": 52.71,
    "prob": 0.982
   },
   {
    "palabra": "puro",
-   "inicio": 67.99,
-   "fin": 68.19,
+   "inicio": 52.99,
+   "fin": 53.19,
    "prob": 0.983
   },
   {
    "palabra": "roce",
-   "inicio": 68.19,
-   "fin": 68.43,
+   "inicio": 53.19,
+   "fin": 53.43,
    "prob": 0.984
   },
   {
    "palabra": "que",
-   "inicio": 68.43,
-   "fin": 68.57,
+   "inicio": 53.43,
+   "fin": 53.57,
    "prob": 0.993
   },
   {
    "palabra": "convierte",
-   "inicio": 68.57,
-   "fin": 68.95,
+   "inicio": 53.57,
+   "fin": 53.95,
    "prob": 0.99
   },
   {
    "palabra": "la",
-   "inicio": 68.95,
-   "fin": 69.09,
+   "inicio": 53.95,
+   "fin": 54.09,
    "prob": 0.993
   },
   {
    "palabra": "velocidad",
-   "inicio": 69.09,
-   "fin": 69.41,
+   "inicio": 54.09,
+   "fin": 54.41,
    "prob": 0.998
   },
   {
    "palabra": "en",
-   "inicio": 69.41,
-   "fin": 69.61,
+   "inicio": 54.41,
+   "fin": 54.61,
    "prob": 0.993
   },
   {
    "palabra": "calor.",
-   "inicio": 69.61,
-   "fin": 69.85,
+   "inicio": 54.61,
+   "fin": 54.85,
    "prob": 0.999
   },
   {
    "palabra": "Y",
-   "inicio": 76.34,
-   "fin": 76.68,
+   "inicio": 58.34,
+   "fin": 58.68,
    "prob": 0.982
   },
   {
    "palabra": "así,",
-   "inicio": 76.68,
-   "fin": 76.88,
+   "inicio": 58.68,
+   "fin": 58.88,
    "prob": 0.983
   },
   {
    "palabra": "pieza",
-   "inicio": 77.28,
-   "fin": 77.52,
+   "inicio": 59.28,
+   "fin": 59.52,
    "prob": 0.989
   },
   {
    "palabra": "por",
-   "inicio": 77.52,
-   "fin": 77.64,
+   "inicio": 59.52,
+   "fin": 59.64,
    "prob": 0.998
   },
   {
    "palabra": "pieza,",
-   "inicio": 77.64,
-   "fin": 77.98,
+   "inicio": 59.64,
+   "fin": 59.98,
    "prob": 0.998
   },
   {
    "palabra": "el",
-   "inicio": 78.26,
-   "fin": 78.38,
+   "inicio": 60.26,
+   "fin": 60.38,
    "prob": 0.992
   },
   {
    "palabra": "carrito",
-   "inicio": 78.38,
-   "fin": 78.72,
+   "inicio": 60.38,
+   "fin": 60.72,
    "prob": 0.949
   },
   {
    "palabra": "del",
-   "inicio": 78.72,
-   "fin": 78.86,
+   "inicio": 60.72,
+   "fin": 60.86,
    "prob": 0.997
   },
   {
    "palabra": "súper",
-   "inicio": 78.86,
-   "fin": 79.16,
+   "inicio": 60.86,
+   "fin": 61.16,
    "prob": 0.986
   },
   {
    "palabra": "se",
-   "inicio": 79.16,
-   "fin": 79.34,
+   "inicio": 61.16,
+   "fin": 61.34,
    "prob": 0.988
   },
   {
    "palabra": "volvió",
-   "inicio": 79.34,
-   "fin": 79.62,
+   "inicio": 61.34,
+   "fin": 61.62,
    "prob": 0.997
   },
   {
    "palabra": "un",
-   "inicio": 79.62,
-   "fin": 79.72,
+   "inicio": 61.62,
+   "fin": 61.72,
    "prob": 0.883
   },
   {
    "palabra": "go-kart.",
-   "inicio": 79.72,
-   "fin": 80.04,
+   "inicio": 61.72,
+   "fin": 62.04,
    "prob": 0.713
   },
   {
    "palabra": "Síguenos",
-   "inicio": 80.86,
-   "fin": 81.34,
+   "inicio": 62.86,
+   "fin": 63.34,
    "prob": 0.918
   },
   {
    "palabra": "para",
-   "inicio": 81.34,
-   "fin": 81.56,
+   "inicio": 63.34,
+   "fin": 63.56,
    "prob": 0.991
   },
   {
    "palabra": "ver",
-   "inicio": 81.56,
-   "fin": 81.72,
+   "inicio": 63.56,
+   "fin": 63.72,
    "prob": 0.999
   },
   {
    "palabra": "cómo",
-   "inicio": 81.72,
-   "fin": 81.9,
+   "inicio": 63.72,
+   "fin": 63.9,
    "prob": 0.88
   },
   {
    "palabra": "funciona",
-   "inicio": 81.9,
-   "fin": 82.28,
+   "inicio": 63.9,
+   "fin": 64.28,
    "prob": 1.0
   },
   {
    "palabra": "por",
-   "inicio": 82.28,
-   "fin": 82.52,
+   "inicio": 64.28,
+   "fin": 64.52,
    "prob": 0.995
   },
   {
    "palabra": "dentro",
-   "inicio": 82.52,
-   "fin": 82.72,
+   "inicio": 64.52,
+   "fin": 64.72,
    "prob": 0.999
   },
   {
    "palabra": "el",
-   "inicio": 82.72,
-   "fin": 82.86,
+   "inicio": 64.72,
+   "fin": 64.86,
    "prob": 0.72
   },
   {
    "palabra": "siguiente.",
-   "inicio": 82.86,
-   "fin": 83.06,
+   "inicio": 64.86,
+   "fin": 65.06,
    "prob": 0.995
   }
  ]
