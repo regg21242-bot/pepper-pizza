@@ -297,8 +297,8 @@
     }
     // pelo largo, pegado por la lluvia
     const top = new THREE.Mesh(new THREE.SphereGeometry(.238, 20, 12, 0, Math.PI * 2, 0, Math.PI * .46), hairM); top.position.set(0, .03, -.03); top.scale.set(1, 1.14, 1.05); top.rotation.x = -.42; head.add(top);
-    const backH = box(.4, .62, .12, hairM, 0, -.22, -.15); head.add(backH);
-    for (const s of [-1, 1]) { const st = box(.07, .5, .1, hairM, s * .2, -.16, .05); st.rotation.z = s * .06; head.add(st); }
+    // melena larga por detrás: redondeada, sin tapar la cara de perfil
+    const backH = new THREE.Mesh(new THREE.SphereGeometry(.22, 16, 12), hairM); backH.scale.set(1.0, 1.75, .62); backH.position.set(0, -.2, -.13); head.add(backH);
     // gotas de agua escurriendo
     const dropM = new THREE.MeshStandardMaterial({ color: '#BFE4FF', roughness: .05, transparent: true, opacity: .85 });
     const drops = []; for (let i = 0; i < 7; i++) { const d = ball(.009, dropM, (r() - .5) * .5, 1.2 + r() * .9, .2 + r() * .06, 6); d.scale.y = 1.6; g.add(d); drops.push({ d, y0: d.position.y, ph: r() }); }
