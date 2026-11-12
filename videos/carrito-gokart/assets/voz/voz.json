@@ -1,0 +1,1035 @@
+{
+ "texto": "Si a tu carrito del súper le pones el motor de una podadora. No se mueve. Necesitas una cadena del motor aleje de atrás. Cada que paras, se apaga. Ocupas un clutch en trífugo, con el motor lento, las zapatas se quedan adentro y la llanta descansa, aceleras, se abren por la fuerza y agarran el tambor. Con tu compa atrás no sube. En grande chico empuja a uno grande, el motor da tres vueltas por una de la llanta. Menos velocidad, pero mucha más fuerza. Las llantitas del súper van para donde quieren. Le pones volante y barras de dirección, y ahora sí, las dos llantas giran juntas. Y sin frenos, con los tenis no se puede. Un disco de acero en el eje y una mordaza que lo aprieta, puro roce que convierte la velocidad en calor. Y así, pieza por pieza, el carrito del súper se volvió un gokart. Síguenos para ver cómo funciona por dentro el siguiente.",
+ "idioma": "es",
+ "duracion": 84.4,
+ "segmentos": [
+  {
+   "inicio": 0.18,
+   "fin": 6.03,
+   "texto": "Si a tu carrito del súper le pones el motor de una podadora. No se mueve."
+  },
+  {
+   "inicio": 7.03,
+   "fin": 19.27,
+   "texto": "Necesitas una cadena del motor aleje de atrás. Cada que paras, se apaga."
+  },
+  {
+   "inicio": 20.25,
+   "fin": 25.75,
+   "texto": "Ocupas un clutch en trífugo, con el motor lento, las zapatas se quedan adentro y la llanta descansa, aceleras,"
+  },
+  {
+   "inicio": 26.09,
+   "fin": 34.75,
+   "texto": "se abren por la fuerza y agarran el tambor. Con tu compa atrás no sube."
+  },
+  {
+   "inicio": 35.61,
+   "fin": 39.29,
+   "texto": "En grande chico empuja a uno grande, el motor da tres vueltas por una de la llanta."
+  },
+  {
+   "inicio": 40.19,
+   "fin": 42.21,
+   "texto": "Menos velocidad, pero mucha más fuerza."
+  },
+  {
+   "inicio": 48.29,
+   "fin": 50.19,
+   "texto": "Las llantitas del súper van para donde quieren."
+  },
+  {
+   "inicio": 51.09,
+   "fin": 55.29,
+   "texto": "Le pones volante y barras de dirección, y ahora sí, las dos llantas giran juntas."
+  },
+  {
+   "inicio": 62.23,
+   "fin": 64.29,
+   "texto": "Y sin frenos, con los tenis no se puede."
+  },
+  {
+   "inicio": 65.13,
+   "fin": 69.85,
+   "texto": "Un disco de acero en el eje y una mordaza que lo aprieta, puro roce que convierte la velocidad en calor."
+  },
+  {
+   "inicio": 76.34,
+   "fin": 80.04,
+   "texto": "Y así, pieza por pieza, el carrito del súper se volvió un gokart."
+  },
+  {
+   "inicio": 80.86,
+   "fin": 83.06,
+   "texto": "Síguenos para ver cómo funciona por dentro el siguiente."
+  }
+ ],
+ "palabras": [
+  {
+   "palabra": "Si",
+   "inicio": 0.18,
+   "fin": 0.62,
+   "prob": 0.754
+  },
+  {
+   "palabra": "a",
+   "inicio": 0.62,
+   "fin": 0.7,
+   "prob": 0.941
+  },
+  {
+   "palabra": "tu",
+   "inicio": 0.7,
+   "fin": 0.8,
+   "prob": 0.991
+  },
+  {
+   "palabra": "carrito",
+   "inicio": 0.8,
+   "fin": 1.12,
+   "prob": 0.953
+  },
+  {
+   "palabra": "del",
+   "inicio": 1.12,
+   "fin": 1.26,
+   "prob": 0.975
+  },
+  {
+   "palabra": "súper",
+   "inicio": 1.26,
+   "fin": 1.5,
+   "prob": 0.478
+  },
+  {
+   "palabra": "le",
+   "inicio": 1.5,
+   "fin": 1.7,
+   "prob": 0.982
+  },
+  {
+   "palabra": "pones",
+   "inicio": 1.7,
+   "fin": 1.9,
+   "prob": 0.993
+  },
+  {
+   "palabra": "el",
+   "inicio": 1.9,
+   "fin": 2.1,
+   "prob": 0.996
+  },
+  {
+   "palabra": "motor",
+   "inicio": 2.1,
+   "fin": 2.34,
+   "prob": 0.997
+  },
+  {
+   "palabra": "de",
+   "inicio": 2.34,
+   "fin": 2.48,
+   "prob": 0.997
+  },
+  {
+   "palabra": "una",
+   "inicio": 2.48,
+   "fin": 2.6,
+   "prob": 0.967
+  },
+  {
+   "palabra": "podadora.",
+   "inicio": 2.6,
+   "fin": 3.0,
+   "prob": 0.924
+  },
+  {
+   "palabra": "No",
+   "inicio": 5.31,
+   "fin": 5.63,
+   "prob": 0.863
+  },
+  {
+   "palabra": "se",
+   "inicio": 5.63,
+   "fin": 5.77,
+   "prob": 0.996
+  },
+  {
+   "palabra": "mueve.",
+   "inicio": 5.77,
+   "fin": 6.03,
+   "prob": 0.997
+  },
+  {
+   "palabra": "Necesitas",
+   "inicio": 7.03,
+   "fin": 7.51,
+   "prob": 0.986
+  },
+  {
+   "palabra": "una",
+   "inicio": 7.51,
+   "fin": 7.73,
+   "prob": 0.992
+  },
+  {
+   "palabra": "cadena",
+   "inicio": 7.73,
+   "fin": 8.03,
+   "prob": 0.998
+  },
+  {
+   "palabra": "del",
+   "inicio": 8.03,
+   "fin": 8.17,
+   "prob": 0.988
+  },
+  {
+   "palabra": "motor",
+   "inicio": 8.17,
+   "fin": 8.41,
+   "prob": 0.995
+  },
+  {
+   "palabra": "aleje",
+   "inicio": 8.41,
+   "fin": 8.71,
+   "prob": 0.792
+  },
+  {
+   "palabra": "de",
+   "inicio": 8.71,
+   "fin": 8.85,
+   "prob": 0.99
+  },
+  {
+   "palabra": "atrás.",
+   "inicio": 8.85,
+   "fin": 9.09,
+   "prob": 0.994
+  },
+  {
+   "palabra": "Cada",
+   "inicio": 17.77,
+   "fin": 18.13,
+   "prob": 0.943
+  },
+  {
+   "palabra": "que",
+   "inicio": 18.13,
+   "fin": 18.27,
+   "prob": 0.698
+  },
+  {
+   "palabra": "paras,",
+   "inicio": 18.27,
+   "fin": 18.51,
+   "prob": 0.659
+  },
+  {
+   "palabra": "se",
+   "inicio": 18.79,
+   "fin": 18.99,
+   "prob": 0.993
+  },
+  {
+   "palabra": "apaga.",
+   "inicio": 18.99,
+   "fin": 19.27,
+   "prob": 0.998
+  },
+  {
+   "palabra": "Ocupas",
+   "inicio": 20.25,
+   "fin": 20.73,
+   "prob": 0.892
+  },
+  {
+   "palabra": "un",
+   "inicio": 20.73,
+   "fin": 20.87,
+   "prob": 0.998
+  },
+  {
+   "palabra": "clutch",
+   "inicio": 20.87,
+   "fin": 21.05,
+   "prob": 0.895
+  },
+  {
+   "palabra": "en",
+   "inicio": 21.05,
+   "fin": 21.25,
+   "prob": 0.556
+  },
+  {
+   "palabra": "trífugo,",
+   "inicio": 21.25,
+   "fin": 21.57,
+   "prob": 0.89
+  },
+  {
+   "palabra": "con",
+   "inicio": 21.87,
+   "fin": 21.99,
+   "prob": 0.992
+  },
+  {
+   "palabra": "el",
+   "inicio": 21.99,
+   "fin": 22.09,
+   "prob": 0.999
+  },
+  {
+   "palabra": "motor",
+   "inicio": 22.09,
+   "fin": 22.31,
+   "prob": 0.998
+  },
+  {
+   "palabra": "lento,",
+   "inicio": 22.31,
+   "fin": 22.65,
+   "prob": 0.999
+  },
+  {
+   "palabra": "las",
+   "inicio": 22.93,
+   "fin": 23.05,
+   "prob": 0.984
+  },
+  {
+   "palabra": "zapatas",
+   "inicio": 23.05,
+   "fin": 23.37,
+   "prob": 0.994
+  },
+  {
+   "palabra": "se",
+   "inicio": 23.37,
+   "fin": 23.57,
+   "prob": 0.994
+  },
+  {
+   "palabra": "quedan",
+   "inicio": 23.57,
+   "fin": 23.79,
+   "prob": 0.997
+  },
+  {
+   "palabra": "adentro",
+   "inicio": 23.79,
+   "fin": 24.13,
+   "prob": 0.986
+  },
+  {
+   "palabra": "y",
+   "inicio": 24.13,
+   "fin": 24.21,
+   "prob": 0.986
+  },
+  {
+   "palabra": "la",
+   "inicio": 24.21,
+   "fin": 24.27,
+   "prob": 0.998
+  },
+  {
+   "palabra": "llanta",
+   "inicio": 24.27,
+   "fin": 24.47,
+   "prob": 0.967
+  },
+  {
+   "palabra": "descansa,",
+   "inicio": 24.47,
+   "fin": 24.99,
+   "prob": 0.989
+  },
+  {
+   "palabra": "aceleras,",
+   "inicio": 25.23,
+   "fin": 25.75,
+   "prob": 0.975
+  },
+  {
+   "palabra": "se",
+   "inicio": 26.09,
+   "fin": 26.29,
+   "prob": 0.972
+  },
+  {
+   "palabra": "abren",
+   "inicio": 26.29,
+   "fin": 26.47,
+   "prob": 0.989
+  },
+  {
+   "palabra": "por",
+   "inicio": 26.47,
+   "fin": 26.63,
+   "prob": 0.997
+  },
+  {
+   "palabra": "la",
+   "inicio": 26.63,
+   "fin": 26.77,
+   "prob": 0.997
+  },
+  {
+   "palabra": "fuerza",
+   "inicio": 26.77,
+   "fin": 27.01,
+   "prob": 0.999
+  },
+  {
+   "palabra": "y",
+   "inicio": 27.01,
+   "fin": 27.21,
+   "prob": 0.997
+  },
+  {
+   "palabra": "agarran",
+   "inicio": 27.21,
+   "fin": 27.49,
+   "prob": 0.909
+  },
+  {
+   "palabra": "el",
+   "inicio": 27.49,
+   "fin": 27.63,
+   "prob": 0.999
+  },
+  {
+   "palabra": "tambor.",
+   "inicio": 27.63,
+   "fin": 27.93,
+   "prob": 0.975
+  },
+  {
+   "palabra": "Con",
+   "inicio": 33.45,
+   "fin": 33.69,
+   "prob": 0.969
+  },
+  {
+   "palabra": "tu",
+   "inicio": 33.69,
+   "fin": 33.83,
+   "prob": 0.997
+  },
+  {
+   "palabra": "compa",
+   "inicio": 33.83,
+   "fin": 34.09,
+   "prob": 0.856
+  },
+  {
+   "palabra": "atrás",
+   "inicio": 34.09,
+   "fin": 34.27,
+   "prob": 0.987
+  },
+  {
+   "palabra": "no",
+   "inicio": 34.27,
+   "fin": 34.45,
+   "prob": 0.972
+  },
+  {
+   "palabra": "sube.",
+   "inicio": 34.45,
+   "fin": 34.75,
+   "prob": 0.988
+  },
+  {
+   "palabra": "En",
+   "inicio": 35.61,
+   "fin": 35.87,
+   "prob": 0.989
+  },
+  {
+   "palabra": "grande",
+   "inicio": 35.87,
+   "fin": 36.01,
+   "prob": 0.408
+  },
+  {
+   "palabra": "chico",
+   "inicio": 36.01,
+   "fin": 36.35,
+   "prob": 0.933
+  },
+  {
+   "palabra": "empuja",
+   "inicio": 36.35,
+   "fin": 36.75,
+   "prob": 0.983
+  },
+  {
+   "palabra": "a",
+   "inicio": 36.75,
+   "fin": 36.83,
+   "prob": 0.719
+  },
+  {
+   "palabra": "uno",
+   "inicio": 36.83,
+   "fin": 36.93,
+   "prob": 0.896
+  },
+  {
+   "palabra": "grande,",
+   "inicio": 36.93,
+   "fin": 37.21,
+   "prob": 0.997
+  },
+  {
+   "palabra": "el",
+   "inicio": 37.53,
+   "fin": 37.65,
+   "prob": 0.99
+  },
+  {
+   "palabra": "motor",
+   "inicio": 37.65,
+   "fin": 37.89,
+   "prob": 0.998
+  },
+  {
+   "palabra": "da",
+   "inicio": 37.89,
+   "fin": 38.05,
+   "prob": 0.997
+  },
+  {
+   "palabra": "tres",
+   "inicio": 38.05,
+   "fin": 38.25,
+   "prob": 0.766
+  },
+  {
+   "palabra": "vueltas",
+   "inicio": 38.25,
+   "fin": 38.53,
+   "prob": 0.998
+  },
+  {
+   "palabra": "por",
+   "inicio": 38.53,
+   "fin": 38.73,
+   "prob": 0.998
+  },
+  {
+   "palabra": "una",
+   "inicio": 38.73,
+   "fin": 38.87,
+   "prob": 0.997
+  },
+  {
+   "palabra": "de",
+   "inicio": 38.87,
+   "fin": 38.97,
+   "prob": 0.998
+  },
+  {
+   "palabra": "la",
+   "inicio": 38.97,
+   "fin": 39.05,
+   "prob": 0.996
+  },
+  {
+   "palabra": "llanta.",
+   "inicio": 39.05,
+   "fin": 39.29,
+   "prob": 0.989
+  },
+  {
+   "palabra": "Menos",
+   "inicio": 40.19,
+   "fin": 40.67,
+   "prob": 0.621
+  },
+  {
+   "palabra": "velocidad,",
+   "inicio": 40.67,
+   "fin": 41.03,
+   "prob": 0.992
+  },
+  {
+   "palabra": "pero",
+   "inicio": 41.37,
+   "fin": 41.49,
+   "prob": 0.995
+  },
+  {
+   "palabra": "mucha",
+   "inicio": 41.49,
+   "fin": 41.79,
+   "prob": 0.979
+  },
+  {
+   "palabra": "más",
+   "inicio": 41.79,
+   "fin": 41.97,
+   "prob": 0.96
+  },
+  {
+   "palabra": "fuerza.",
+   "inicio": 41.97,
+   "fin": 42.21,
+   "prob": 0.999
+  },
+  {
+   "palabra": "Las",
+   "inicio": 48.29,
+   "fin": 48.53,
+   "prob": 0.979
+  },
+  {
+   "palabra": "llantitas",
+   "inicio": 48.53,
+   "fin": 48.89,
+   "prob": 0.904
+  },
+  {
+   "palabra": "del",
+   "inicio": 48.89,
+   "fin": 49.05,
+   "prob": 0.986
+  },
+  {
+   "palabra": "súper",
+   "inicio": 49.05,
+   "fin": 49.29,
+   "prob": 0.599
+  },
+  {
+   "palabra": "van",
+   "inicio": 49.29,
+   "fin": 49.53,
+   "prob": 0.994
+  },
+  {
+   "palabra": "para",
+   "inicio": 49.53,
+   "fin": 49.71,
+   "prob": 0.998
+  },
+  {
+   "palabra": "donde",
+   "inicio": 49.71,
+   "fin": 49.85,
+   "prob": 0.961
+  },
+  {
+   "palabra": "quieren.",
+   "inicio": 49.85,
+   "fin": 50.19,
+   "prob": 0.981
+  },
+  {
+   "palabra": "Le",
+   "inicio": 51.09,
+   "fin": 51.43,
+   "prob": 0.96
+  },
+  {
+   "palabra": "pones",
+   "inicio": 51.43,
+   "fin": 51.63,
+   "prob": 0.992
+  },
+  {
+   "palabra": "volante",
+   "inicio": 51.63,
+   "fin": 52.01,
+   "prob": 0.995
+  },
+  {
+   "palabra": "y",
+   "inicio": 52.01,
+   "fin": 52.13,
+   "prob": 0.997
+  },
+  {
+   "palabra": "barras",
+   "inicio": 52.13,
+   "fin": 52.37,
+   "prob": 0.966
+  },
+  {
+   "palabra": "de",
+   "inicio": 52.37,
+   "fin": 52.47,
+   "prob": 0.997
+  },
+  {
+   "palabra": "dirección,",
+   "inicio": 52.47,
+   "fin": 52.89,
+   "prob": 0.998
+  },
+  {
+   "palabra": "y",
+   "inicio": 53.21,
+   "fin": 53.29,
+   "prob": 0.991
+  },
+  {
+   "palabra": "ahora",
+   "inicio": 53.29,
+   "fin": 53.43,
+   "prob": 0.997
+  },
+  {
+   "palabra": "sí,",
+   "inicio": 53.43,
+   "fin": 53.71,
+   "prob": 0.916
+  },
+  {
+   "palabra": "las",
+   "inicio": 53.97,
+   "fin": 54.07,
+   "prob": 0.99
+  },
+  {
+   "palabra": "dos",
+   "inicio": 54.07,
+   "fin": 54.23,
+   "prob": 0.989
+  },
+  {
+   "palabra": "llantas",
+   "inicio": 54.23,
+   "fin": 54.47,
+   "prob": 0.975
+  },
+  {
+   "palabra": "giran",
+   "inicio": 54.47,
+   "fin": 54.85,
+   "prob": 0.981
+  },
+  {
+   "palabra": "juntas.",
+   "inicio": 54.85,
+   "fin": 55.29,
+   "prob": 0.999
+  },
+  {
+   "palabra": "Y",
+   "inicio": 62.23,
+   "fin": 62.47,
+   "prob": 0.971
+  },
+  {
+   "palabra": "sin",
+   "inicio": 62.47,
+   "fin": 62.63,
+   "prob": 0.979
+  },
+  {
+   "palabra": "frenos,",
+   "inicio": 62.63,
+   "fin": 63.01,
+   "prob": 0.998
+  },
+  {
+   "palabra": "con",
+   "inicio": 63.29,
+   "fin": 63.37,
+   "prob": 0.998
+  },
+  {
+   "palabra": "los",
+   "inicio": 63.37,
+   "fin": 63.51,
+   "prob": 0.99
+  },
+  {
+   "palabra": "tenis",
+   "inicio": 63.51,
+   "fin": 63.77,
+   "prob": 0.923
+  },
+  {
+   "palabra": "no",
+   "inicio": 63.77,
+   "fin": 63.93,
+   "prob": 0.997
+  },
+  {
+   "palabra": "se",
+   "inicio": 63.93,
+   "fin": 64.07,
+   "prob": 0.999
+  },
+  {
+   "palabra": "puede.",
+   "inicio": 64.07,
+   "fin": 64.29,
+   "prob": 0.998
+  },
+  {
+   "palabra": "Un",
+   "inicio": 65.13,
+   "fin": 65.47,
+   "prob": 0.986
+  },
+  {
+   "palabra": "disco",
+   "inicio": 65.47,
+   "fin": 65.71,
+   "prob": 0.998
+  },
+  {
+   "palabra": "de",
+   "inicio": 65.71,
+   "fin": 65.83,
+   "prob": 0.998
+  },
+  {
+   "palabra": "acero",
+   "inicio": 65.83,
+   "fin": 66.07,
+   "prob": 0.997
+  },
+  {
+   "palabra": "en",
+   "inicio": 66.07,
+   "fin": 66.21,
+   "prob": 0.996
+  },
+  {
+   "palabra": "el",
+   "inicio": 66.21,
+   "fin": 66.29,
+   "prob": 0.994
+  },
+  {
+   "palabra": "eje",
+   "inicio": 66.29,
+   "fin": 66.49,
+   "prob": 0.997
+  },
+  {
+   "palabra": "y",
+   "inicio": 66.49,
+   "fin": 66.65,
+   "prob": 0.992
+  },
+  {
+   "palabra": "una",
+   "inicio": 66.65,
+   "fin": 66.75,
+   "prob": 0.999
+  },
+  {
+   "palabra": "mordaza",
+   "inicio": 66.75,
+   "fin": 67.11,
+   "prob": 0.977
+  },
+  {
+   "palabra": "que",
+   "inicio": 67.11,
+   "fin": 67.25,
+   "prob": 0.994
+  },
+  {
+   "palabra": "lo",
+   "inicio": 67.25,
+   "fin": 67.37,
+   "prob": 0.994
+  },
+  {
+   "palabra": "aprieta,",
+   "inicio": 67.37,
+   "fin": 67.71,
+   "prob": 0.982
+  },
+  {
+   "palabra": "puro",
+   "inicio": 67.99,
+   "fin": 68.19,
+   "prob": 0.983
+  },
+  {
+   "palabra": "roce",
+   "inicio": 68.19,
+   "fin": 68.43,
+   "prob": 0.984
+  },
+  {
+   "palabra": "que",
+   "inicio": 68.43,
+   "fin": 68.57,
+   "prob": 0.993
+  },
+  {
+   "palabra": "convierte",
+   "inicio": 68.57,
+   "fin": 68.95,
+   "prob": 0.99
+  },
+  {
+   "palabra": "la",
+   "inicio": 68.95,
+   "fin": 69.09,
+   "prob": 0.993
+  },
+  {
+   "palabra": "velocidad",
+   "inicio": 69.09,
+   "fin": 69.41,
+   "prob": 0.998
+  },
+  {
+   "palabra": "en",
+   "inicio": 69.41,
+   "fin": 69.61,
+   "prob": 0.993
+  },
+  {
+   "palabra": "calor.",
+   "inicio": 69.61,
+   "fin": 69.85,
+   "prob": 0.999
+  },
+  {
+   "palabra": "Y",
+   "inicio": 76.34,
+   "fin": 76.68,
+   "prob": 0.982
+  },
+  {
+   "palabra": "así,",
+   "inicio": 76.68,
+   "fin": 76.88,
+   "prob": 0.983
+  },
+  {
+   "palabra": "pieza",
+   "inicio": 77.28,
+   "fin": 77.52,
+   "prob": 0.989
+  },
+  {
+   "palabra": "por",
+   "inicio": 77.52,
+   "fin": 77.64,
+   "prob": 0.998
+  },
+  {
+   "palabra": "pieza,",
+   "inicio": 77.64,
+   "fin": 77.98,
+   "prob": 0.998
+  },
+  {
+   "palabra": "el",
+   "inicio": 78.26,
+   "fin": 78.38,
+   "prob": 0.992
+  },
+  {
+   "palabra": "carrito",
+   "inicio": 78.38,
+   "fin": 78.72,
+   "prob": 0.949
+  },
+  {
+   "palabra": "del",
+   "inicio": 78.72,
+   "fin": 78.86,
+   "prob": 0.997
+  },
+  {
+   "palabra": "súper",
+   "inicio": 78.86,
+   "fin": 79.16,
+   "prob": 0.986
+  },
+  {
+   "palabra": "se",
+   "inicio": 79.16,
+   "fin": 79.34,
+   "prob": 0.988
+  },
+  {
+   "palabra": "volvió",
+   "inicio": 79.34,
+   "fin": 79.62,
+   "prob": 0.997
+  },
+  {
+   "palabra": "un",
+   "inicio": 79.62,
+   "fin": 79.72,
+   "prob": 0.883
+  },
+  {
+   "palabra": "gokart.",
+   "inicio": 79.72,
+   "fin": 80.04,
+   "prob": 0.713
+  },
+  {
+   "palabra": "Síguenos",
+   "inicio": 80.86,
+   "fin": 81.34,
+   "prob": 0.918
+  },
+  {
+   "palabra": "para",
+   "inicio": 81.34,
+   "fin": 81.56,
+   "prob": 0.991
+  },
+  {
+   "palabra": "ver",
+   "inicio": 81.56,
+   "fin": 81.72,
+   "prob": 0.999
+  },
+  {
+   "palabra": "cómo",
+   "inicio": 81.72,
+   "fin": 81.9,
+   "prob": 0.88
+  },
+  {
+   "palabra": "funciona",
+   "inicio": 81.9,
+   "fin": 82.28,
+   "prob": 1.0
+  },
+  {
+   "palabra": "por",
+   "inicio": 82.28,
+   "fin": 82.52,
+   "prob": 0.995
+  },
+  {
+   "palabra": "dentro",
+   "inicio": 82.52,
+   "fin": 82.72,
+   "prob": 0.999
+  },
+  {
+   "palabra": "el",
+   "inicio": 82.72,
+   "fin": 82.86,
+   "prob": 0.72
+  },
+  {
+   "palabra": "siguiente.",
+   "inicio": 82.86,
+   "fin": 83.06,
+   "prob": 0.995
+  }
+ ]
+}

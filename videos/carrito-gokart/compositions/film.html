@@ -2,27 +2,29 @@
   <style>
     #root { position: absolute; inset: 0; background: #8FD3F4; overflow: hidden; }
     #gl { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
-    /* texto principal arriba: 1–3 palabras, Anton, borde negro grueso */
-    #txt { position: absolute; left: 50px; width: 860px; top: 150px; text-align: center; font-family: Anton, sans-serif; font-size: 150px; line-height: .95; letter-spacing: 2px;
+    #txt { position: absolute; left: 40px; width: 880px; top: 140px; text-align: center; font-family: Anton, sans-serif; font-size: 140px; line-height: .95; letter-spacing: 2px;
       -webkit-text-stroke: 14px #111; paint-order: stroke fill; text-shadow: 0 12px 0 rgba(0,0,0,.35); text-transform: uppercase; transform-origin: 50% 60%; }
-    /* medidores */
     .gauge { position: absolute; top: 420px; width: 230px; height: 200px; transform: scale(.8); transform-origin: 0 0; }
     #gF { left: 60px; } #gV { left: 265px; }
     .gauge .lab { position: absolute; left: 0; width: 230px; top: 150px; text-align: center; font-family: Anton, sans-serif; font-size: 40px; color: #fff; -webkit-text-stroke: 7px #111; paint-order: stroke fill; }
     .gauge .val { position: absolute; left: 0; width: 230px; top: 98px; text-align: center; font-family: Anton, sans-serif; font-size: 44px; color: #FFE14A; -webkit-text-stroke: 7px #111; paint-order: stroke fill; }
-    /* etiquetas pegadas a las piezas */
-    .tag { position: absolute; font-family: Anton, sans-serif; font-size: 58px; color: #FFE14A; -webkit-text-stroke: 9px #111; paint-order: stroke fill; white-space: nowrap; transform: translate(-50%, -100%); }
-    .tag::after { content: ""; position: absolute; left: 50%; top: 100%; width: 6px; height: 46px; background: #111; transform: translateX(-50%); }
+    .tag { position: absolute; font-family: Anton, sans-serif; font-size: 54px; color: #FFE14A; -webkit-text-stroke: 9px #111; paint-order: stroke fill; white-space: nowrap; transform: translate(-50%, -100%); }
+    .tag::after { content: ""; position: absolute; left: 50%; top: 100%; width: 6px; height: 40px; background: #111; transform: translateX(-50%); }
     #lines { position: absolute; inset: 0; }
+    #cnt { position: absolute; left: 60px; width: 840px; top: 1240px; text-align: center; font-family: Anton, sans-serif; font-size: 76px; line-height: 1.15; -webkit-text-stroke: 10px #111; paint-order: stroke fill; }
+    #cnt .m { color: #FF9A2E; } #cnt .l { color: #5CB8FF; }
+    #fx { position: absolute; inset: 0; }
   </style>
-  <div id="root" data-composition-id="film" data-start="0" data-duration="12" data-width="1080" data-height="1920">
+  <div id="root" data-composition-id="film" data-start="0" data-duration="84.4" data-width="1080" data-height="1920">
     <canvas id="gl" width="1080" height="1920" data-layout-ignore></canvas>
     <svg id="lines" viewBox="0 0 1080 1920" data-layout-ignore></svg>
+    <svg id="fx" viewBox="0 0 1080 1920" data-layout-ignore></svg>
     <div id="tags" data-layout-ignore></div>
+    <div id="cnt" data-layout-ignore></div>
     <div class="gauge" id="gF" data-layout-ignore>
       <svg viewBox="0 0 230 200" width="230" height="200">
         <circle cx="115" cy="115" r="100" fill="#FFF8E8" stroke="#111" stroke-width="10"/>
-        <path d="M 39.4 175.6 A 100 100 0 0 1 115 15" fill="none" stroke="#36D46A" stroke-width="20" transform="translate(0,0)"/>
+        <path d="M 39.4 175.6 A 100 100 0 0 1 115 15" fill="none" stroke="#36D46A" stroke-width="20"/>
         <path d="M 115 15 A 100 100 0 0 1 172 33" fill="none" stroke="#F5C431" stroke-width="20"/>
         <path d="M 172 33 A 100 100 0 0 1 190.6 175.6" fill="none" stroke="#FF3B30" stroke-width="20"/>
         <g id="gFn"><polygon points="111,115 119,115 116,30 114,30" fill="#111"/></g><circle cx="115" cy="115" r="12" fill="#111"/>
@@ -37,111 +39,339 @@
   </div>
   <script>
   (function () {
-    /* "Si a tu carrito del súper le pones el motor de una podadora…"  — estilo caricatura con contornos (assets/lib/caricatura.js) */
-    const K = window.K, THREE = K.THREE, { clamp, lerp, prog, ease, easeOut, backOut, box, cyl, toon, flat } = K;
+    /* "Si a tu carrito del súper le pones el motor de una podadora…" — serie "Así funciona por dentro".
+       Estilo caricatura con contornos (assets/lib/caricatura.js). Tiempos de la voz en T (los usa tools/mezcla.py). */
+    const K = window.K, THREE = K.THREE, { clamp, lerp, prog, ease, easeOut, easeIn, backOut, box, cyl, toon, flat } = K;
     const W = 1080, H = 1920;
+    const T = { cuts: [5.2, 7.0, 11.6, 17.5, 20.6, 29.6, 33.0, 36.2, 43.6, 48.0, 51.0, 57.6, 62.0, 65.6, 72.6, 76.0], end: 84.4,
+      cinchos: [.4, .8], jala: 1.7, arranca: 2.15, lurch: 12.0, latas: 13.55, alto: 18.2, apaga: 19.0, verde: 30.2, compa: 33.3, choqueElote: 50.3, tenis: 62.6, flash: [76.25, 76.7, 77.15] };
+    window.__CARRITO = T;
     const R = K.crearRender(document.getElementById('gl'), W, H);
     const cam = (fov = 40) => new THREE.PerspectiveCamera(fov, W / H, .05, 400);
     function camPath(c, t, keys) { let i = 0; while (i < keys.length - 2 && t > keys[i + 1][0]) i++; const [t0, p0, l0] = keys[i], [t1, p1, l1] = keys[Math.min(i + 1, keys.length - 1)]; const k = t1 > t0 ? ease(prog(t, t0, t1)) : 0; c.position.set(lerp(p0[0], p1[0], k), lerp(p0[1], p1[1], k), lerp(p0[2], p1[2], k)); c.lookAt(lerp(l0[0], l1[0], k), lerp(l0[1], l1[1], k), lerp(l0[2], l1[2], k)); }
-    function luces(s, sun = 1.6) { s.add(new THREE.HemisphereLight('#FFFFFF', '#9A8A7A', .7)); const d = new THREE.DirectionalLight('#FFF0D8', sun); d.shadow.bias = -.0006; d.shadow.normalBias = .03; d.position.set(6, 12, 8); d.castShadow = true; d.shadow.mapSize.set(2048, 2048); const sc = d.shadow.camera; sc.left = sc.bottom = -8; sc.right = sc.top = 8; sc.far = 40; s.add(d, d.target); return d; }
+    function luces(s, sun = 1.4) { s.add(new THREE.HemisphereLight('#FFFFFF', '#9A8A7A', .7)); const d = new THREE.DirectionalLight('#FFF0D8', sun); d.position.set(6, 12, 8); d.castShadow = true; d.shadow.mapSize.set(2048, 2048); d.shadow.bias = -.0006; d.shadow.normalBias = .03; const sc = d.shadow.camera; sc.left = sc.bottom = -7; sc.right = sc.top = 7; sc.far = 40; s.add(d, d.target); return d; }
+    const V3 = (x, y, z) => new THREE.Vector3(x, y, z);
 
-    /* ======== CALLE: el mismo carrito, el chavo y la calle en todo el video ======== */
+    /* ======== el carrito con todas sus piezas (se usa en la calle, la cuesta y el final) ======== */
+    function makeRig(s) {
+      const cart = K.carrito(); s.add(cart); const C = cart.userData;
+      const mot = K.motor(); mot.position.set(-.12, .22, 0); mot.scale.setScalar(.95); cart.add(mot);
+      const ties = K.cinchos(cart, [-.27, .03], .32, .38);
+      const shaft = V3(-.12, .315, .29), axle = V3(-.45, .08, .29);
+      const small = K.gear(10, .045, '#F58A2E', .025); small.position.copy(shaft); cart.add(small);
+      const big = K.gear(26, .11, '#3E8FE0', .025); big.position.copy(axle); cart.add(big);
+      const d = axle.clone().sub(shaft), ang = Math.atan2(d.y, d.x);
+      const chain = K.cadena(.045, .11, d.length(), '#2A2A30'); chain.position.copy(shaft); chain.rotation.z = ang; cart.add(chain);
+      const axleBar = cyl(.012, .012, .62, '#9AA2AC', 8, -.45, .08, 0); axleBar.rotation.x = Math.PI / 2; cart.add(axleBar);
+      const drum = cyl(.06, .06, .05, '#3E8FE0', 20, shaft.x, shaft.y, shaft.z - .04); drum.rotation.x = Math.PI / 2; cart.add(drum);
+      // dirección: eje delantero, llantas con manguetas, barra de acoplamiento, columna y volante
+      const steer = new THREE.Group(); cart.add(steer);
+      const fr = toon('#9AA2AC'); const fx = .45, fy = .085;
+      K.tubo(steer, V3(fx, fy, -.27), V3(fx, fy, .27), .014, fr);
+      const knuckles = [-1, 1].map(sgn => { const k = new THREE.Group(); k.position.set(fx, fy, sgn * .31); steer.add(k); const wh = K.rueda(.075, .05); k.add(wh); const arm = box(.1, .015, .015, '#36C45A', -.06, 0, -sgn * .02); k.add(arm); return { k, wh, sgn }; });
+      const tie = box(.015, .015, .64, '#36C45A', fx - .1, fy, 0); steer.add(tie);
+      const col = new THREE.Group(); steer.add(col); K.tubo(col, V3(fx - .05, fy + .02, 0), V3(.22, .82, 0), .012, toon('#F58A2E'));
+      const vol = K.volante(); vol.scale.setScalar(.9); vol.position.set(.2, .86, 0); vol.rotation.order = 'YXZ'; vol.rotation.set(-.6, Math.PI / 2, 0); steer.add(vol);
+      const disc = K.disco(); disc.scale.setScalar(.7); disc.position.set(-.45, .08, .17); cart.add(disc); const D = disc.userData;
+      const kid = K.chavo(); s.add(kid); const P = kid.userData;
+      const compa = K.chavo({ shirt: '#3FAE5A', shirtD: '#2E8A44', pants: '#3A3A44', cap: '#F5C431' }); s.add(compa); compa.visible = false;
+      const smoke = K.puffs(10, 3, '#EDEDED'); s.add(smoke);
+      const sparks = K.sparks(26, 5); s.add(sparks);
+      const parts = { cadena: [small, big, chain, axleBar], clutch: [drum], dir: [steer], freno: [disc] };
+      function stage(n) {   // 0 nada, 1 cadena, 2 clutch, 3 engranes, 4 dirección, 5 freno
+        parts.cadena.forEach(o => o.visible = n >= 1); parts.clutch.forEach(o => o.visible = n >= 2); parts.dir.forEach(o => o.visible = n >= 4); parts.freno.forEach(o => o.visible = n >= 5);
+        big.scale.setScalar(n >= 3 ? 1.35 : 1); small.scale.setScalar(1); steer.scale.setScalar(1); chain.visible = n >= 1;
+        C.wheels.forEach(o => { o.piv.visible = !(o.front && n >= 4); o.piv.rotation.y = 0; });
+      }
+      function steerAt(a) { knuckles.forEach(o => o.k.rotation.y = a); tie.position.z = -a * .1; vol.rotation.z = a * 2.5; }
+      function roll(dist, eng = 0) {
+        C.wheels.forEach(o => o.w.rotation.z = -dist / .07); knuckles.forEach(o => o.wh.rotation.z = -dist / .075);
+        big.rotation.z = -dist / .07; const ratio = big.scale.x > 1 ? 3 : 2.4; small.rotation.z = -dist / .07 * ratio; chain.userData.avance(dist / .07 * .11); disc.rotation.z = -dist / .07;
+        mot.position.y = .22 + (eng ? Math.sin(eng * 90) * .004 : 0);
+      }
+      function sit(k = kid, x = -.1, look = 0) { x -= .18;
+        k.visible = true; k.position.set(cart.position.x + x * Math.cos(cart.rotation.y), cart.position.y - .3, cart.position.z - x * Math.sin(cart.rotation.y)); k.rotation.set(0, Math.PI / 2 + cart.rotation.y, 0);
+        K.pose(k.userData, { legL: [-1.45, 0, 0], legR: [-1.45, 0, 0], kneeL: [1.45, 0, 0], kneeR: [1.45, 0, 0], armL: [-1.1, 0, .15], armR: [-1.1, 0, -.15], elbowL: [-.5, 0, 0], elbowR: [-.5, 0, 0], head: [0, look, 0] });
+      }
+      return { cart, C, mot, ties, small, big, chain, drum, steer, knuckles, vol, disc, D, kid, P, compa, smoke, sparks, stage, steerAt, roll, sit };
+    }
+    function dist(t, segs) { let d = 0; for (const [a, b, v0, v1] of segs) { if (t <= a) break; const e = Math.min(t, b), u = (e - a) / (b - a); d += (b - a) * (v0 * u + (v1 - v0) * u * u / 2); } return d; }
+    function speed(t, segs) { for (const [a, b, v0, v1] of segs) if (t >= a && t < b) return lerp(v0, v1, (t - a) / (b - a)); return 0; }
+
+    /* ======== LA CALLE ======== */
     const CALLE = (() => {
       const s = new THREE.Scene(); s.background = new THREE.Color('#8FD3F4'); s.fog = new THREE.Fog('#BFE6F7', 30, 90);
-      const sun = luces(s, 1.4);
-      const st = K.street({ shopX: 7.5, semX: 4.2, trees: [-9, -2.2, 12, 20] }); s.add(st.group);
-      // nubes caricatura
-      const r = K.rng(4); for (let i = 0; i < 6; i++) { const c = new THREE.Group(); for (let j = 0; j < 4; j++) c.add(K.ball(.9 + r() * .6, '#FFFFFF', j * 1.1 - 1.6, r() * .5, 0, 12)); c.position.set(-20 + i * 9, 14 + r() * 4, -30); s.add(c); }
-      const cart = K.carrito(); s.add(cart); const C = cart.userData;
-      const mot = K.motor(); mot.position.set(-.3, .22, 0); mot.scale.setScalar(.95); cart.add(mot);
-      K.cinchos(cart, [-.42, -.18], .32, .36);
-      const kit = K.kartKit(); cart.add(kit); kit.visible = false;
-      const kart = K.gokart(); s.add(kart); kart.visible = false; const KT = kart.userData;
-      const vol = K.volante(); vol.position.set(.18, .62, 0); vol.rotation.y = Math.PI / 2; vol.rotation.x = .0; vol.rotation.z = .5; cart.add(vol); vol.visible = false;
-      const kid = K.chavo(); s.add(kid); const P = kid.userData;   // chavo de bloques sin cara: gorra roja, sudadera azul, jeans
-      const smoke = K.puffs(10, 3, '#EDEDED'); s.add(smoke);
+      luces(s);
+      const st = K.street({ shopX: 7.5, semX: 16.5, trees: [-9, -2.2, 12, 22, 31, 42, 56] }); s.add(st.group);
+      const r = K.rng(4); for (let i = 0; i < 12; i++) { const c = new THREE.Group(); for (let j = 0; j < 4; j++) c.add(K.ball(.9 + r() * .6, '#FFFFFF', j * 1.1 - 1.6, r() * .5, 0, 12)); c.position.set(-20 + i * 9, 14 + r() * 4, -30); s.add(c); }
+      const stopLine = box(.3, .015, 6, '#F4F4F4', 15.4, .008, 0); s.add(stopLine);
+      // pirámide de latas afuera de la tienda
+      const cans = []; const cr = K.rng(21), canCols = ['#E53A3A', '#F5C431', '#3E8FE0', '#36C45A'];
+      let ci = 0; for (let row = 0; row < 4; row++) for (let i = 0; i < 4 - row; i++) { const c = cyl(.06, .06, .16, canCols[ci % 4], 14); const x0 = 6.3, z0 = -1.95 + (i - (3 - row) / 2) * .13, y0 = .08 + row * .16; c.position.set(x0, y0, z0); s.add(c); cans.push({ c, x0, y0, z0, vx: 1 + cr() * 2.5, vy: 1.5 + cr() * 2.5, vz: (cr() - .5) * 2.4, sp: (cr() - .5) * 18 }); ci++; }
+      // puesto de elotes
+      const elote = new THREE.Group(); elote.position.set(27.5, 0, -1.4); s.add(elote);
+      elote.add(box(.9, .5, .6, '#F4F0E6', 0, .55, 0)); elote.add(box(.95, .05, .65, '#3E8FE0', 0, .82, 0));
+      for (const [x, z] of [[-.4, -.25], [.4, -.25], [-.4, .25], [.4, .25]]) elote.add(cyl(.02, .02, .3, '#5B616C', 6, x, .15, z));
+      elote.add(cyl(.02, .02, 1.6, '#5B616C', 6, .3, 1.1, 0));
+      const umb = new THREE.Group(); umb.position.set(.3, 1.9, 0); elote.add(umb);
+      for (let i = 0; i < 8; i++) umb.add(K.mesh(new THREE.ConeGeometry(.75, .3, 2, 1, true, i * Math.PI / 4, Math.PI / 4), toon(i % 2 ? '#FFFFFF' : '#36C45A', { side: THREE.DoubleSide })));
+      const elotes = []; for (let i = 0; i < 6; i++) { const e = new THREE.Group(); e.add(cyl(.035, .035, .2, '#F5C431', 8)); e.add(cyl(.008, .008, .1, '#C9A06A', 5, 0, -.13, 0)); e.position.set(-.3 + i * .12, .9, 0); e.rotation.z = Math.PI / 2; elote.add(e); elotes.push({ e, x0: -.3 + i * .12, vx: 1 + i * .3, vy: 2 + (i % 3) * .6, sp: 6 + i }); }
+      const rig = makeRig(s); const { cart, C, mot, kid, P, smoke, sparks } = rig;
       const camera = cam(40);
+      const segS2 = [[11.95, 13.55, 0, 5.5]], segV = [[30.2, 33.0, 0, 3.2]], segE = [[48.0, 50.3, 4.2, 4.2]], segG = [[57.6, 62.0, 2.5, 3.5]], segF = [[62.0, 65.6, 9, 6.5], [72.6, 75.0, 6.5, 0]];
       function update(t, mode, lt) {
-        st.setLight(2);
-        if (mode === 'arranque') {   // escena 1: amarra el motor y jala la cuerda
-          cart.visible = true; kart.visible = false; cart.position.set(0, 0, 0); cart.rotation.set(0, 0, 0); kit.visible = vol.visible = false; C.wires.forEach(w => w.visible = true);
-          kid.position.set(-.95, 0, .12); kid.rotation.y = Math.PI / 2;
-          const pull = ease(prog(lt, .4, .9)) * (1 - ease(prog(lt, 1.1, 1.6)));
-          K.pose(P, { armR: [-.6 - 1.2 * pull, 0, -.2], elbowR: [-.2, 0, 0], armL: [-.5, 0, .2], elbowL: [-.9, 0, 0], legL: [-.25, 0, 0], legR: [.2, 0, 0], kneeL: [.3, 0, 0], head: [.25, -.3, 0] });
-          P.torso.rotation.x = .1 + .15 * pull; kid.position.y = -.02 * pull;
-          const run = lt > .9 ? 1 : 0; cart.position.y = run * Math.abs(Math.sin(lt * 40)) * .008;
-          mot.updateMatrixWorld(true); const ex = mot.localToWorld(mot.userData.exhaust.clone());
-          smoke.userData.update(lt, run * 1.6, ex, new THREE.Vector3(-.6, .9, -.2));
-          camPath(camera, lt, [[-.3, [1.0, 2.3, 4.1], [-.5, 1.15, -.2]], [4.5, [.85, 2.15, 3.7], [-.5, 1.1, -.2]]]);
-          return { tags: [] };
+        st.setLight(2); st.sem.position.x = 16.5; stopLine.position.x = 15.4; cart.visible = true; rig.compa.visible = false; sparks.userData.update(t, false, V3());
+        cans.forEach(o => { o.c.position.set(o.x0, o.y0, o.z0); o.c.rotation.set(0, 0, 0); });
+        elotes.forEach(o => { o.e.position.set(o.x0, .9, 0); o.e.rotation.set(0, 0, Math.PI / 2); }); umb.rotation.set(0, 0, 0); elote.rotation.set(0, 0, 0);
+        cart.rotation.set(0, 0, 0); rig.steerAt(0); P.torso.rotation.set(0, 0, 0);
+        let xr = 0, sol = [], tags = [], g = { fuerza: .2, kmh: 0 };
+        const engOn = (on, rate = 1.4) => { mot.updateMatrixWorld(true); const ex = mot.localToWorld(mot.userData.exhaust.clone()); smoke.userData.update(t, on ? rate : 0, ex, V3(-.6 - (g.kmh || 0) * .02, .8, .1)); };
+        if (mode === 'amarra') {
+          rig.stage(0); cart.position.set(0, 0, 0); rig.roll(0, t > T.arranca ? t : 0);
+          rig.ties.children.forEach((c, i) => { const k = backOut(prog(t, T.cinchos[i], T.cinchos[i] + .25)); c.scale.set(1, k || .001, k || .001); });
+          kid.position.set(-.95, 0, .12); kid.rotation.set(0, Math.PI / 2, 0);
+          const pull = ease(prog(t, T.jala - .3, T.jala + .15)) * (1 - ease(prog(t, T.jala + .35, T.jala + .8)));
+          if (t < T.cinchos[1] + .3) { K.pose(P, { armR: [-1.3, 0, -.3], armL: [-1.3, 0, .3], elbowR: [-.6, 0, 0], elbowL: [-.6, 0, 0], head: [.5, 0, 0] }); P.torso.rotation.x = .5; }
+          else { K.pose(P, { armR: [-.6 - 1.2 * pull, 0, -.2], elbowR: [-.2, 0, 0], armL: [-.5, 0, .2], elbowL: [-.9, 0, 0], legL: [-.25, 0, 0], legR: [.2, 0, 0], kneeL: [.3, 0, 0], head: [.25, -.3, 0] }); P.torso.rotation.x = .1 + .15 * pull; }
+          g = { fuerza: t > T.arranca ? .3 + .05 * Math.sin(t * 20) : 0, kmh: 0 }; engOn(t > T.arranca, 1.6);
+          camPath(camera, t, [[-.3, [1.0, 2.3, 4.1], [-.5, 1.15, -.2]], [5.4, [.8, 2.1, 3.5], [-.5, 1.05, -.2]]]);
+        } else if (mode === 'nomueve') {
+          rig.stage(0); cart.position.set(0, Math.abs(Math.sin(t * 45)) * .006, 0); rig.roll(0, t); rig.sit(kid);
+          K.pose(P, { legL: [-1.45, 0, 0], legR: [-1.45, 0, 0], kneeL: [1, 0, 0], kneeR: [1, 0, 0], armL: [-.2, 0, 1.0], armR: [-.2, 0, -1.0], elbowL: [-1.4, 0, 0], elbowR: [-1.4, 0, 0], head: [0, Math.sin(t * 6) * .5, 0] });
+          g = { fuerza: .35 + .05 * Math.sin(t * 20), kmh: 0 }; engOn(true, 1.8);
+          camPath(camera, lt, [[-.3, [1.8, 1.6, 3.2], [0, .7, 0]], [2.0, [1.6, 1.5, 2.8], [0, .7, 0]]]);
+        } else if (mode === 'xcadena') {
+          rig.stage(1); cart.position.set(0, 0, 0); rig.sit(kid);
+          const app = [prog(lt, .25, .6), prog(lt, .55, .9), prog(lt, 1.0, 1.5)];
+          rig.small.scale.setScalar(backOut(app[0]) || .001); rig.big.scale.setScalar(backOut(app[1]) || .001); rig.chain.visible = app[2] > 0;
+          rig.roll(lt > 2 ? (lt - 2) * 1.2 : 0, t); g = { fuerza: .45, kmh: 0 }; engOn(true, 1.8);
+          xr = .75; sol = [rig.small, rig.big, rig.chain];
+          tags = [['ENGRANE CHICO', rig.small, V3(0, .06, 0)], ['ENGRANE GRANDE', rig.big, V3(-.05, -.14, 0)], ['CADENA', rig.chain, V3(.2, .06, 0)]].filter((_, i) => app[i] >= 1);
+          camPath(camera, lt, [[-.3, [.2, .75, 1.75], [-.3, .25, .2]], [4.8, [.05, .65, 1.45], [-.3, .22, .2]]]);
+        } else if (mode === 'latas') {
+          rig.stage(1); const dd = Math.min(dist(t, segS2), 6.35); const crash = t >= T.latas;
+          const zz = lerp(0, -1.9, ease(prog(t, 12.4, 13.55)));
+          cart.position.set(dd, crash ? Math.max(0, Math.sin((t - T.latas) * 9) * .06 * Math.exp(-(t - T.latas) * 2)) : 0, zz); cart.rotation.y = -.35 * ease(prog(t, 12.4, 13.0)) * (1 - ease(prog(t, 13.2, 13.55)));
+          rig.roll(dd, t); rig.sit(kid);
+          const jerk = t > T.lurch ? Math.exp(-(t - T.lurch) * 4) : 0;
+          K.pose(P, { legL: [-1.45, 0, 0], legR: [-1.45, 0, 0], kneeL: [1, 0, 0], kneeR: [1, 0, 0], armL: [-2.6 * jerk - .6, 0, .3], armR: [-2.6 * jerk - .6, 0, -.3], elbowL: [-.3, 0, 0], elbowR: [-.3, 0, 0] });
+          P.torso.rotation.x = -jerk * .9 + (crash ? Math.exp(-(t - T.latas) * 3) * .8 : 0);
+          cans.forEach(o => { if (!crash) return; const a = t - T.latas; const y = o.y0 + o.vy * a - 4.9 * a * a; if (y > .06) { o.c.position.set(o.x0 + o.vx * a, y, o.z0 + o.vz * a); o.c.rotation.set(o.sp * a, 0, o.sp * a * .7); } else { const tl = (o.vy + Math.sqrt(o.vy * o.vy + 19.6 * (o.y0 - .06))) / 9.8; o.c.position.set(o.x0 + o.vx * tl + o.vx * .2 * Math.min(1, a - tl), .06, o.z0 + o.vz * tl); o.c.rotation.set(Math.PI / 2, o.sp * .3, 0); } });
+          const v = crash ? 0 : speed(t, segS2); g = { fuerza: crash ? .2 : .7, kmh: v * 4.5, speed: !crash && v > 1 }; engOn(true, crash ? .6 : 2.4);
+          const cx = Math.min(cart.position.x, 6.0);
+          camera.position.set(cx + 1.8, 2.0, 3.4 + zz * .5); camera.lookAt(cx - .1, .7, -.8 + zz * .4);
+          if (crash) { const a = t - T.latas; camera.position.x += Math.sin(a * 60) * .05 * Math.exp(-a * 4); }
+        } else if (mode === 'semaforo') {
+          rig.stage(1); st.setLight(0); const xs = 14.0 + 1.2 * easeOut(prog(t, 17.5, 18.2)); cart.position.set(xs, 0, 0); rig.roll(xs, t < T.apaga ? t : 0);
+          rig.sit(kid); if (t > T.apaga + .2) K.pose(P, { legL: [-1.45, 0, 0], legR: [-1.45, 0, 0], kneeL: [1, 0, 0], kneeR: [1, 0, 0], armR: [-2.4, 0, -.3], elbowR: [-1.9, 0, 0], armL: [-.6, 0, .2], head: [.35, 0, 0] });
+          if (t > T.apaga - .4 && t < T.apaga) mot.position.y = .22 + Math.sin(t * 70) * .012;
+          g = { fuerza: t < T.apaga ? .3 : 0, kmh: t < 18.2 ? 10 * (1 - prog(t, 17.5, 18.2)) : 0 };
+          if (t < T.apaga) engOn(true, 1.4); else { mot.updateMatrixWorld(true); smoke.userData.update(t - T.apaga, t < T.apaga + .8 ? .8 : 0, mot.localToWorld(mot.userData.exhaust.clone()), V3(-.2, 1.2, 0)); }
+          camPath(camera, lt, [[-.3, [16.2, 2.1, 3.9], [15.2, 1.3, -.6]], [3.3, [16.0, 2.0, 3.5], [15.0, 1.2, -.6]]]);
+        } else if (mode === 'verde') {
+          rig.stage(2); st.setLight(2); const dd = dist(t, segV); cart.position.set(15.2 + dd, 0, 0); rig.roll(15.2 + dd, t); rig.sit(kid);
+          g = { fuerza: .35 + .3 * prog(t, 30.2, 31.5), kmh: speed(t, segV) * 4.5 }; engOn(true, 1.4 + dd * .3);
+          camera.position.set(cart.position.x + 1.9, 2.1, 3.7); camera.lookAt(cart.position.x - .1, .85, -.5);
+        } else if (mode === 'elotes') {
+          rig.stage(3); const crash = t >= T.choqueElote; const dEnd = dist(T.choqueElote, segE), dd = crash ? dEnd : dist(t, segE);
+          cart.position.set(27.5 - .62 - dEnd + dd, 0, -1.4); rig.roll(dd, t);
+          C.wheels.forEach((o, i) => { if (o.front) o.piv.rotation.y = crash ? .4 : Math.sin(t * 9 + i * 2) * .9; });
+          rig.sit(kid);
+          if (crash) { const a = t - T.choqueElote; P.torso.rotation.x = Math.exp(-a * 3) * .9; elote.rotation.z = Math.sin(a * 18) * .06 * Math.exp(-a * 3); umb.rotation.x = Math.sin(a * 14) * .25 * Math.exp(-a * 2);
+            elotes.forEach(o => { const y = .9 + o.vy * a - 4.9 * a * a; o.e.position.set(o.x0 + o.vx * a, Math.max(-.6, y), o.vx * .2 * a); o.e.rotation.set(o.sp * a, 0, Math.PI / 2 + o.sp * a); }); }
+          g = { fuerza: .5, kmh: crash ? 0 : 19, speed: !crash }; engOn(true, crash ? .5 : 2);
+          const cx = cart.position.x; camera.position.set(cx + 1.4, 1.9, 1.0); camera.lookAt(cx + .3, .6, -1.4);
+          if (crash) { const a = t - T.choqueElote; camera.position.x += Math.sin(a * 60) * .05 * Math.exp(-a * 4); }
+        } else if (mode === 'xdireccion') {
+          rig.stage(4); cart.position.set(20, 0, 0); rig.roll(0, t); rig.sit(kid);
+          const a = lt < 1.2 ? 0 : Math.sin((lt - 1.2) * 1.6) * .45; rig.steerAt(a);
+          K.pose(P, { legL: [-1.45, 0, 0], legR: [-1.45, 0, 0], kneeL: [1, 0, 0], kneeR: [1, 0, 0], armL: [-1.2, 0, .1 + a * .5], armR: [-1.2, 0, -.1 + a * .5], elbowL: [-.6, 0, 0], elbowR: [-.6, 0, 0] });
+          rig.steer.scale.setScalar(backOut(prog(lt, .3, .9)) || .001);
+          g = { fuerza: .3, kmh: 0 }; engOn(true, 1.2); xr = .75; sol = [rig.steer];
+          tags = lt > 1 ? [['VOLANTE', rig.vol, V3(0, .12, 0)], ['BARRAS', rig.knuckles[1].k, V3(-.1, .08, -.1)]] : [];
+          camPath(camera, lt, [[-.3, [21.3, 1.45, 1.2], [20.3, .4, 0]], [7, [21.1, 1.35, 1.05], [20.3, .4, 0]]]);
+        } else if (mode === 'giro') {
+          rig.stage(4); const dd = dist(t, segG); const Rr = 1.6, a = Math.PI + Math.min(Math.PI, dd / Rr), cx = 27.5, cz = -1.4;
+          cart.position.set(cx + Rr * Math.cos(a) - .4, 0, cz - Rr * Math.sin(a)); cart.rotation.y = Math.atan2(Rr * Math.cos(a), -Rr * Math.sin(a));
+          rig.steerAt(.3); rig.roll(dd, t); rig.sit(kid);
+          g = { fuerza: .45, kmh: speed(t, segG) * 4.5 }; engOn(true, 1.8);
+          const mx = (cart.position.x + cx) / 2, mz = (cart.position.z + cz) / 2; camera.position.set(mx, 3.4, mz + 4.6); camera.lookAt(mx, .3, mz);
+        } else if (mode === 'frenatenis') {
+          rig.stage(4); st.sem.position.x = 52; stopLine.position.x = 50.9; st.setLight(t > 62.8 ? 0 : 1);
+          const dd = dist(t, segF); cart.position.set(42 + dd, 0, 0); rig.roll(dd, t); rig.sit(kid);
+          const brake = t > T.tenis; if (brake) K.pose(P, { legL: [-.2, 0, -.9], kneeL: [.2, 0, 0], legR: [-1.45, 0, 0], kneeR: [1, 0, 0], armL: [-1.2, 0, .5], armR: [-2.6, 0, -.4], head: [0, -.5, 0] });
+          kid.updateMatrixWorld(true); const foot = new THREE.Vector3(); P.kneeL.localToWorld(foot.set(0, -.4, 0)); foot.y = .02;
+          sparks.userData.update(t, brake, foot);
+          const v = speed(t, segF); g = { fuerza: .55, kmh: v * 6.7, speed: true }; engOn(true, 2.4);
+          const cx = cart.position.x; camera.position.set(cx + 1.6, 1.4, 2.6); camera.lookAt(cx, .55, -.3);
+        } else if (mode === 'para') {
+          rig.stage(5); st.sem.position.x = 52; stopLine.position.x = 50.9; st.setLight(0);
+          const dd = dist(t, segF); cart.position.set(42 + dd, 0, 0); rig.roll(dd, t); rig.sit(kid);
+          rig.D.aprieta(t < 75 ? 1 : 0); rig.D.calor(clamp((t - 72.6) / 2) * (1 - prog(t, 75, 76)));
+          const v = speed(t, segF); g = { fuerza: .3, kmh: v * 6.7 }; engOn(true, 1.2);
+          const cx = cart.position.x; camera.position.set(cx + 1.7, 1.9, 3.3); camera.lookAt(cx - .1, .6, -.3);
         }
-        // final: go-kart completo, el chavo sentado saluda al pasar
-        cart.visible = false; kart.visible = true;
-        const x = lerp(-2.5, 2.5, lt / 4); kart.position.set(x, 0, .3); const cart_ = kart;
-        KT.wheels.forEach(o => o.w.rotation.z = -x / o.r);
-        kid.position.set(x - .2, -.6, .3); kid.rotation.y = Math.PI / 2;
-        K.pose(P, { legL: [-1.45, 0, 0], legR: [-1.45, 0, 0], kneeL: [1.2, 0, 0], kneeR: [1.2, 0, 0], armR: [-1.0, 0, 0], elbowR: [-.4, 0, 0], armL: [-.4, 0, -2.4 + Math.sin(lt * 12) * .3], elbowL: [0, 0, -.4], head: [0, -.8, 0] });
-        KT.motor.updateMatrixWorld(true); const ex = KT.motor.localToWorld(KT.motor.userData.exhaust.clone());
-        smoke.userData.update(lt, 2.2, ex, new THREE.Vector3(-1.4, .5, 0));
-        camPath(camera, lt, [[-.3, [x + 0, 1.0, 3.2], [x - .1, 1.05, 0]], [4.5, [x + 0, 1.0, 3.2], [x - .1, 1.05, 0]]]);
-        camera.position.set(kart.position.x + 1.7, 2.3, 3.8); camera.lookAt(kart.position.x - .1, 1.05, .1);
-        return { tags: [], speed: 1 };
-      }
-      return { scene: s, camera, update, cart, kid };
-    })();
-
-    /* ======== DESPIECE DEL CLUTCH (rayos X) ======== */
-    const CLUTCH = (() => {
-      const s = new THREE.Scene(); s.background = new THREE.Color('#0D2A4A');
-      s.add(new THREE.HemisphereLight('#FFFFFF', '#3A4A6A', .5)); const d = new THREE.DirectionalLight('#FFFFFF', 1.2); d.position.set(2, 3, 4); s.add(d);
-      const cl = K.clutch(); cl.scale.setScalar(2.2); s.add(cl); const Q = cl.userData;
-      // flechas verdes hacia afuera (fuerza centrífuga)
-      const arrows = []; for (let i = 0; i < 3; i++) { const a = new THREE.Group(); a.add(K.box(.12, .035, .035, '#9BE53A', .06, 0, 0)); const tip = K.cyl(0, .045, .08, '#9BE53A', 10, .15, 0, 0); tip.rotation.z = -Math.PI / 2; a.add(tip); const piv = new THREE.Group(); piv.rotation.z = i * Math.PI * 2 / 3; piv.add(a); a.position.x = .45; a.position.z = .02; s.add(piv); arrows.push(a); }
-      const camera = cam(38);
-      function update(t, mode, lt) {
-        const dk = ease(prog(lt, .2, 1.2)); Q.despiece(dk);
-        const rpm = .5 + .5 * Math.sin(lt * 1.6); Q.abre(rpm); cl.rotation.z = lt * (2 + 8 * rpm);
-        arrows.forEach((a, i) => { a.position.x = .42 + .06 * rpm; a.scale.setScalar(.6 + .6 * rpm); a.parent.rotation.z = i * Math.PI * 2 / 3 + lt * (2 + 8 * rpm) * .0; });
-        cl.rotation.y = 1.25; cl.rotation.x = .12;
-        camPath(camera, lt, [[-.3, [.95, .55, 4.1], [.3, -.1, 0]], [4.5, [.85, .5, 3.7], [.3, -.1, 0]]]);
-        // posiciones 3D de las etiquetas
-        const tags = [];
-        cl.updateMatrixWorld(true);
-        const wp = (obj, v) => obj.localToWorld(v.clone());
-        tags.push(['TAMBOR', wp(Q.drum, new THREE.Vector3(.1, .17, 0))]);
-        tags.push(['ZAPATAS', wp(Q.shoes[0], new THREE.Vector3(.15, .03, .03))]);
-        tags.push(['RESORTES', wp(Q.springs[1].parent, new THREE.Vector3(.13, 0, 0))]);
-        return { tags, fuerza: .25 + .6 * rpm, xray: .35 };
+        if (!xr) camera.rotateX(.08);   // deja al chavo debajo de los medidores
+        return Object.assign(g, { xray: xr, solidas: sol, ghost: [cart, kid], tags });
       }
       return { scene: s, camera, update };
     })();
 
-    /* ======== montaje provisional para los fotogramas fijos ======== */
-    const SC = [{ a: 0, b: 4, s: CALLE, m: 'arranque' }, { a: 4, b: 8, s: CLUTCH }, { a: 8, b: 99, s: CALLE, m: 'final' }];
-    const TXT = [[0.2, 4, 'MOTOR DE PODADORA', '#FFE14A'], [4.2, 8, 'CLUTCH CENTRÍFUGO', '#7CF04A'], [8.2, 99, '¡GO-KART!', '#FFE14A']];
+    /* ======== LA CUESTA (con el compa atrás) ======== */
+    const CUESTA = (() => {
+      const s = new THREE.Scene(); s.background = new THREE.Color('#8FD3F4'); s.fog = new THREE.Fog('#BFE6F7', 30, 90);
+      luces(s);
+      const world = new THREE.Group(); s.add(world); world.rotation.z = .2;
+      const st = K.street({ shopX: -30, semX: -60, seed: 12, trees: [-6, 3, 11, 19] }); world.add(st.group);
+      const rig = makeRig(world); const { cart, kid, compa, smoke, mot } = rig;
+      const camera = cam(40);
+      const segU = [[43.6, 48.2, .6, 2.6]];
+      function update(t, mode, lt) {
+        rig.stage(mode === 'sube' ? 3 : 2);
+        let x, g;
+        if (mode === 'nosube') { x = .5 + 1.2 * easeOut(prog(t, 33, 34.6)) - .15 * ease(prog(t, 35.0, 36.2)); g = { fuerza: lerp(.55, .97, prog(t, 33.5, 34.6)) + .02 * Math.sin(t * 30), kmh: t < 34.6 ? 8 * (1 - prog(t, 33.4, 34.6)) : 0 }; }
+        else { x = 1.55 + dist(t, segU); g = { fuerza: .6 + .03 * Math.sin(t * 20), kmh: Math.min(30, 8 + (t - 43.6) * 12), speed: true }; }
+        cart.position.set(x, 0, 0); rig.roll(x, t); rig.sit(kid, .05);
+        compa.visible = true; const jump = mode === 'nosube' ? prog(t, T.compa - .5, T.compa) : 1;
+        compa.position.set(cart.position.x - .22 - (1 - jump) * .9, -.3 + Math.sin(jump * Math.PI) * .5 + (1 - jump) * .3, 0); compa.rotation.set(0, Math.PI / 2, 0);
+        K.pose(compa.userData, { legL: [-1.45, 0, 0], legR: [-1.45, 0, 0], kneeL: [1, 0, 0], kneeR: [1, 0, 0], armL: [mode === 'sube' ? -2.8 : -.6, 0, .3], armR: [mode === 'sube' ? -2.8 : -.6, 0, -.3], elbowL: [-.3, 0, 0], elbowR: [-.3, 0, 0], head: [0, .3, 0] });
+        if (mode === 'nosube' && t > 34.6) mot.position.y = .22 + Math.sin(t * 80) * .01;
+        world.updateMatrixWorld(true); mot.updateMatrixWorld(true); const ex = world.worldToLocal(mot.localToWorld(mot.userData.exhaust.clone()));
+        smoke.userData.update(t, mode === 'nosube' && t > 34.4 ? 3 : 1.8, ex, V3(-.8, .9, .1));
+        const p = cart.getWorldPosition(new THREE.Vector3());
+        camera.position.set(p.x + 1.9, p.y + 1.9, 3.6); camera.lookAt(p.x - .1, p.y + .55, -.5);
+        camera.rotateX(.08);
+        return Object.assign(g, { xray: 0, solidas: [], ghost: [] });
+      }
+      return { scene: s, camera, update };
+    })();
+
+    /* ======== DESPIECE DEL CLUTCH ======== */
+    const fondoX = (s) => { s.background = new THREE.Color('#0D2A4A'); s.add(new THREE.HemisphereLight('#FFFFFF', '#3A4A6A', .6)); const d = new THREE.DirectionalLight('#FFFFFF', 1.0); d.position.set(2, 3, 4); s.add(d); };
+    const CLUTCH = (() => {
+      const s = new THREE.Scene(); fondoX(s);
+      const cl = K.clutch(); cl.scale.setScalar(2.2); s.add(cl); const Q = cl.userData;
+      const arrows = []; for (let i = 0; i < 3; i++) { const a = new THREE.Group(); a.add(box(.12, .035, .035, '#9BE53A', .06, 0, 0)); const tip = cyl(0, .045, .08, '#9BE53A', 10, .15, 0, 0); tip.rotation.z = -Math.PI / 2; a.add(tip); const piv = new THREE.Group(); piv.rotation.z = i * Math.PI * 2 / 3; piv.add(a); cl.add(piv); a.position.set(.2, 0, .06); arrows.push(a); }
+      const camera = cam(38);
+      function update(t, mode, lt) {
+        const dk = ease(prog(lt, .1, 1.0)) * (1 - ease(prog(lt, 8.0, 8.9))); Q.despiece(dk);
+        const open = ease(prog(lt, 5.0, 5.6)) * (1 - ease(prog(lt, 7.8, 8.3)));
+        Q.abre(open); cl.rotation.set(.12, 1.25, lt * 1.2 + Math.max(0, lt - 4.6) * 9);
+        arrows.forEach(a => { a.visible = open > .05; a.scale.setScalar(.25 + .35 * open); a.position.x = .19 + .02 * open; });
+        camPath(camera, lt, [[-.3, [.95, .55, 4.1], [.3, -.1, 0]], [9, [.75, .45, 3.5], [.3, -.1, 0]]]);
+        cl.updateMatrixWorld(true); const wp = (obj, v) => obj.localToWorld(v.clone());
+        const tags = dk > .9 ? [['TAMBOR', wp(Q.drum, V3(.1, .17, 0))], ['ZAPATAS', wp(Q.shoes[0], V3(.15, .03, .03))], ['RESORTES', wp(Q.springs[1].parent, V3(.13, 0, 0))]] : [];
+        return { tags, fuerza: .12 + .75 * open, kmh: 0, xray: .3 };
+      }
+      return { scene: s, camera, update };
+    })();
+
+    /* ======== ENGRANES: chico naranja empuja a uno grande azul ======== */
+    const ENGRANES = (() => {
+      const s = new THREE.Scene(); fondoX(s);
+      const small = K.gear(10, .1, '#F58A2E', .05); small.position.set(-.3, .2, 0); s.add(small);
+      const big = K.gear(30, .3, '#3E8FE0', .05); big.position.set(.1, .2, 0); s.add(big);
+      for (const g of [small, big]) g.add(box(.02, .06, .06, '#FFFFFF', 0, g === small ? .07 : .22, .03));   // marquita para contar vueltas
+      const camera = cam(36);
+      function update(t, mode, lt) {
+        small.scale.setScalar(backOut(prog(lt, .4, 1.0)) || .001); big.scale.setScalar(backOut(prog(lt, .6, 1.2)) || .001);
+        const a = Math.max(0, lt - 1.3) * 2.2; small.rotation.z = -a * Math.PI * 2 / 3; big.rotation.z = a * Math.PI * 2 / 9 + Math.PI / 30;
+        camera.position.set(0, .25, 2.3); camera.lookAt(0, .12, 0);
+        small.updateMatrixWorld(true); big.updateMatrixWorld(true);
+        const revM = Math.min(3, Math.floor(a / 3 + 1e-6)), revL = Math.min(1, Math.floor(a / 9 + 1e-6));
+        return { tags: lt > 1.2 ? [['ENGRANE CHICO', V3(-.3, .33, 0)], ['ENGRANE GRANDE', V3(.1, .55, 0)]] : [], fuerza: .2 + .7 * prog(lt, 4, 6), kmh: 0, xray: .3,
+          cnt: lt > 1.4 ? `<span class="m">MOTOR: ${revM ? Array.from({ length: revM }, (_, i) => i + 1).join('… ') : '0'}</span><br><span class="l">LLANTA: ${revL}</span>` : '' };
+      }
+      return { scene: s, camera, update };
+    })();
+
+    /* ======== FRENO DE DISCO ======== */
+    const DISCO = (() => {
+      const s = new THREE.Scene(); fondoX(s);
+      const disc = K.disco(); disc.scale.setScalar(3); s.add(disc); const D = disc.userData;
+      const axle = cyl(.03, .03, 1.2, '#9AA2AC', 10); axle.rotation.x = Math.PI / 2; s.add(axle);
+      const sp = K.sparks(30, 9); s.add(sp);
+      const camera = cam(36);
+      function update(t, mode, lt) {
+        const squeeze = ease(prog(lt, 1.6, 2.0)); D.aprieta(squeeze); D.calor(ease(prog(lt, 2.6, 4.6)));
+        const w = lerp(14, 2, prog(lt, 2.0, 6.5)); D.disc.rotation.y = lt * w;
+        sp.userData.update(t, squeeze > .5 && lt < 6.2, V3(.05, .32, .05));
+        disc.rotation.set(.2, -.5, 0);
+        camPath(camera, lt, [[-.3, [.15, .3, 1.6], [0, .12, 0]], [7.2, [.1, .26, 1.3], [0, .14, 0]]]);
+        disc.updateMatrixWorld(true);
+        return { tags: lt > .8 ? [['DISCO', disc.localToWorld(V3(-.06, -.1, 0))], ['MORDAZA', D.caliper.localToWorld(V3(0, .04, 0))]].concat(lt > 2 ? [['PASTILLAS', D.pads[1].localToWorld(V3(.02, .02, .03))]] : []) : [], fuerza: .3 + .6 * squeeze, kmh: lerp(60, 0, prog(lt, 2.0, 6.5)), xray: .3 };
+      }
+      return { scene: s, camera, update };
+    })();
+
+    /* ======== FINAL: se transforma en go-kart ======== */
+    const FINAL = (() => {
+      const s = new THREE.Scene(); s.background = new THREE.Color('#8FD3F4'); s.fog = new THREE.Fog('#BFE6F7', 30, 90);
+      luces(s);
+      const st = K.street({ shopX: 74, semX: 95, seed: 3, trees: [64, 70, 78, 86] }); s.add(st.group);
+      const rig = makeRig(s); const { cart, kid, P, smoke } = rig;
+      const kart = K.gokart(); s.add(kart); const KT = kart.userData;
+      const camera = cam(40);
+      function update(t, mode, lt) {
+        const swap = t > T.flash[1]; const x0 = 70 + (t - 76) * .5, x = swap ? 70 + (T.flash[1] - 76) * .5 + (t - T.flash[1]) * 2.8 : x0;
+        rig.stage(5); cart.visible = !swap; kart.visible = swap; cart.position.set(x0, 0, .3); kart.position.set(x, 0, .3);
+        KT.wheels.forEach(o => o.w.rotation.z = -x / o.r); rig.roll(x0, t);
+        if (swap) { kid.position.set(x - .2, -.6, .3); kid.rotation.set(0, Math.PI / 2, 0); P.torso.rotation.set(0, 0, 0);
+          K.pose(P, { legL: [-1.45, 0, 0], legR: [-1.45, 0, 0], kneeL: [1.2, 0, 0], kneeR: [1.2, 0, 0], armR: [-1.0, 0, 0], elbowR: [-.4, 0, 0], armL: [-.4, 0, -2.4 + Math.sin(t * 12) * .3], elbowL: [0, 0, -.4], head: [0, -.8, 0] }); }
+        else rig.sit(kid);
+        const m = swap ? KT.motor : rig.mot; m.updateMatrixWorld(true); smoke.userData.update(t, 2.2, m.localToWorld(m.userData.exhaust.clone()), V3(-1.4, .5, 0));
+        const px = swap ? x : cart.position.x;
+        camera.position.set(px + 1.7, 2.3, 3.8); camera.lookAt(px - .1, 1.05, .1);
+        camera.rotateX(.03);
+        return { xray: 0, solidas: [], ghost: [], fuerza: .5, kmh: swap ? 55 : 10, speed: swap };
+      }
+      return { scene: s, camera, update };
+    })();
+
+    /* ======== montaje ======== */
+    const c = T.cuts;
+    const SC = [
+      { a: 0, b: c[0], s: CALLE, m: 'amarra' }, { a: c[0], b: c[1], s: CALLE, m: 'nomueve' }, { a: c[1], b: c[2], s: CALLE, m: 'xcadena' }, { a: c[2], b: c[3], s: CALLE, m: 'latas' },
+      { a: c[3], b: c[4], s: CALLE, m: 'semaforo' }, { a: c[4], b: c[5], s: CLUTCH }, { a: c[5], b: c[6], s: CALLE, m: 'verde' },
+      { a: c[6], b: c[7], s: CUESTA, m: 'nosube' }, { a: c[7], b: c[8], s: ENGRANES }, { a: c[8], b: c[9], s: CUESTA, m: 'sube' },
+      { a: c[9], b: c[10], s: CALLE, m: 'elotes' }, { a: c[10], b: c[11], s: CALLE, m: 'xdireccion' }, { a: c[11], b: c[12], s: CALLE, m: 'giro' },
+      { a: c[12], b: c[13], s: CALLE, m: 'frenatenis' }, { a: c[13], b: c[14], s: DISCO }, { a: c[14], b: c[15], s: CALLE, m: 'para' },
+      { a: c[15], b: 99, s: FINAL },
+    ];
+    const Y = '#FFE14A', RJ = '#FF5A4A', G = '#7CF04A', B = '#FFFFFF', A = '#7FD3FF';
+    const TXT = [[.55, 'TU CARRITO', Y], [1.65, 'MOTOR DE PODADORA', RJ], [5.25, '¡NO SE MUEVE!', B], [7.0, 'CADENA', G], [8.4, 'AL EJE', A], [12.0, '¡ARRANCA!', Y], [13.6, '¡LAS LATAS!', RJ],
+      [17.75, 'SE APAGA', RJ], [20.2, 'CLUTCH CENTRÍFUGO', G], [21.85, 'MOTOR LENTO', A], [24.1, 'LA LLANTA DESCANSA', B], [25.2, '¡ACELERAS!', Y], [26.25, 'SE ABREN', RJ], [27.2, 'AGARRAN EL TAMBOR', G],
+      [33.4, 'CON TU COMPA', A], [34.25, 'NO SUBE', RJ], [35.6, 'ENGRANE CHICO', Y], [36.3, 'EMPUJA AL GRANDE', A], [37.85, '3 VUELTAS = 1', B], [40.15, 'MENOS VELOCIDAD', A], [41.35, 'MÁS FUERZA', G],
+      [48.25, 'LLANTITAS LOCAS', Y], [50.3, '¡PUM!', RJ], [51.05, 'VOLANTE', RJ], [52.1, 'BARRAS DE DIRECCIÓN', G], [53.95, 'GIRAN JUNTAS', B],
+      [62.2, 'SIN FRENOS', RJ], [63.25, '¿CON LOS TENIS?', Y], [65.1, 'DISCO DE ACERO', A], [66.6, 'MORDAZA', G], [67.95, 'PURO ROCE', Y], [69.0, 'VELOCIDAD → CALOR', RJ],
+      [76.3, 'PIEZA POR PIEZA', Y], [79.2, '¡GO-KART!', G], [80.8, 'SÍGUENOS', B]];
+    window.__CARRITO_TXT = TXT;
     const $ = id => document.getElementById(id);
-    const txt = $('txt'), tagsEl = $('tags'), gFn = $('gFn'), gVn = $('gVn'), gVv = $('gVv'), lines = $('lines');
-    // marcas del velocímetro 0–80
+    const txt = $('txt'), tagsEl = $('tags'), gFn = $('gFn'), gVn = $('gVn'), gVv = $('gVv'), lines = $('lines'), cnt = $('cnt'), fx = $('fx');
     (() => { const g = $('gVt'); for (let v = 0; v <= 80; v += 10) { const a = (-135 + v / 80 * 270) * Math.PI / 180; const x1 = 115 + Math.sin(a) * 86, y1 = 115 - Math.cos(a) * 86, x2 = 115 + Math.sin(a) * (v % 20 ? 76 : 68), y2 = 115 - Math.cos(a) * (v % 20 ? 76 : 68); g.insertAdjacentHTML('beforeend', `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#111" stroke-width="${v % 20 ? 4 : 7}"/>`); if (v % 20 === 0) g.insertAdjacentHTML('beforeend', `<text x="${115 + Math.sin(a) * 52}" y="${115 - Math.cos(a) * 52 + 8}" font-family="Anton" font-size="22" text-anchor="middle" fill="#111">${v}</text>`); } })();
     const tagPool = [];
     function setTags(list, camera) {
       while (tagPool.length < list.length) { const d = document.createElement('div'); d.className = 'tag'; tagsEl.appendChild(d); tagPool.push(d); }
-      tagPool.forEach((d, i) => { if (i >= list.length) { d.style.display = 'none'; return; } const [label, p] = list[i]; const v = p.clone().project(camera); d.style.display = 'block'; d.textContent = label; d.style.left = ((v.x + 1) / 2 * W) + 'px'; d.style.top = ((1 - v.y) / 2 * H - 50) + 'px'; });
+      tagPool.forEach((d, i) => { if (i >= list.length) { d.style.display = 'none'; return; } const [label, a, b] = list[i]; const p = a.isVector3 ? a : (a.updateMatrixWorld(true), a.localToWorld(b.clone())); const v = p.clone().project(camera); d.style.display = 'block'; d.textContent = label; d.style.left = clamp((v.x + 1) / 2 * W, 200, 760) + 'px'; d.style.top = clamp((1 - v.y) / 2 * H - 44, 700, 1500) + 'px'; });
     }
     function renderAt(t) {
-      let sc = SC.find(x => t >= x.a && t < x.b) || SC[SC.length - 1];
-      const lt = t - sc.a, g = sc.s.update(t, sc.m, lt) || {};
-      R.render(sc.s.scene, sc.s.camera, { xray: g.xray || 0 });
+      let i = SC.findIndex(x => t >= x.a && t < x.b); if (i < 0) i = SC.length - 1; const sc = SC[i];
+      const lt = t - sc.a; const g = sc.s.update(t, sc.m, lt) || {};
+      if (g.xray) K.rayosX(g.ghost || [], true, g.solidas || []);
+      const flashCut = i > 0 ? Math.max(0, 1 - lt / .12) * .45 : 0;
+      const fl = T.flash.reduce((m, f) => Math.max(m, Math.max(0, 1 - Math.abs(t - f) / .18)), 0);
+      R.render(sc.s.scene, sc.s.camera, { xray: g.xray || 0, flash: Math.max(flashCut, fl * .9) });
+      if (g.xray) K.rayosX(g.ghost || [], false);
       setTags(g.tags || [], sc.s.camera);
-      // texto principal con "pop"
-      const f = TXT.find(([a, b]) => t >= a && t < b);
-      if (f) { txt.textContent = f[2]; txt.style.color = f[3]; const k = prog(t, f[0], f[0] + .22); txt.style.transform = `scale(${.4 + .6 * backOut(k)}) rotate(${(1 - k) * -6}deg)`; txt.style.opacity = k > 0 ? 1 : 0; } else txt.style.opacity = 0;
-      // medidores
-      const fu = g.fuerza ?? .2, kmh = g.kmh ?? (g.speed ? 45 : 0);
-      gFn.setAttribute('transform', `rotate(${-135 + fu * 270} 115 115)`);
+      let f = null; for (let j = TXT.length - 1; j >= 0; j--) if (t >= TXT[j][0]) { f = TXT[j]; const next = TXT[j + 1]; if ((next && t >= next[0]) || t - TXT[j][0] > 3.6) f = null; break; }
+      if (f) { txt.textContent = f[1]; txt.style.color = f[2]; const k = prog(t, f[0], f[0] + .2); txt.style.transform = `scale(${.4 + .6 * backOut(k)}) rotate(${(1 - k) * -6}deg)`; txt.style.opacity = 1; } else txt.style.opacity = 0;
+      const fz = clamp(g.fuerza ?? .2), kmh = g.kmh ?? 0;
+      gFn.setAttribute('transform', `rotate(${-135 + fz * 270} 115 115)`);
       gVn.setAttribute('transform', `rotate(${-135 + clamp(kmh / 80) * 270} 115 115)`); gVv.textContent = Math.round(kmh);
-      // líneas de velocidad
-      lines.innerHTML = g.speed ? Array.from({ length: 14 }, (_, i) => { const y = 760 + ((i * 97 + 31) % 900), x = ((i * 233 - t * 2600) % 1300 + 1300) % 1300 - 200, w = 120 + (i * 37) % 160; return `<line x1="${x}" y1="${y}" x2="${x + w}" y2="${y}" stroke="#fff" stroke-width="${6 + i % 3 * 2}" stroke-linecap="round" opacity=".85"/>`; }).join('') : '';
+      cnt.innerHTML = g.cnt || '';
+      lines.innerHTML = g.speed ? Array.from({ length: 14 }, (_, k) => { const y = 760 + ((k * 97 + 31) % 900), x = ((k * 233 - t * 2600) % 1300 + 1300) % 1300 - 200, w = 120 + (k * 37) % 160; return `<line x1="${x}" y1="${y}" x2="${x + w}" y2="${y}" stroke="#fff" stroke-width="${6 + k % 3 * 2}" stroke-linecap="round" opacity=".85"/>`; }).join('') : '';
+      const hits = [T.latas, T.choqueElote].map(h => t - h).filter(a => a >= 0 && a < .7);
+      fx.innerHTML = hits.map(a => { const s = 1 + a * 2, o = 1 - a / .7; return Array.from({ length: 8 }, (_, k) => { const an = k * Math.PI / 4, r1 = 60 * s, r2 = 130 * s; return `<line x1="${540 + Math.cos(an) * r1}" y1="${1150 + Math.sin(an) * r1}" x2="${540 + Math.cos(an) * r2}" y2="${1150 + Math.sin(an) * r2}" stroke="#FFE14A" stroke-width="14" stroke-linecap="round" opacity="${o}"/>`; }).join(''); }).join('');
     }
     window.addEventListener('hf-seek', e => renderAt(e.detail.time));
     renderAt(0);
