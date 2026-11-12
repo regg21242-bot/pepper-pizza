@@ -182,11 +182,15 @@
         }
         if (mode === 'abrazo') {   // abrazo largo, luz cálida
           p.visible = m.visible = true; redW.intensity = 0; warm.intensity = 3.2; lamp.color.set('#FFC27A'); lamp.intensity = 2.2;
-          p.position.set(.38, 0, .12); p.rotation.y = -Math.PI / 2 - .3; m.position.set(-.16, 0, .68); m.rotation.y = Math.PI / 2;
-          P.armL.rotation.set(-1.25, 0, -.55); P.armR.rotation.set(-1.25, 0, .55); P.elbowL.rotation.set(-.9, 0, 0); P.elbowR.rotation.set(-.9, 0, 0); P.head.rotation.set(.2, -.7, -.15); P.brows(.2); P.sleep(true);
-          M_.armL.rotation.set(-1.35, 0, -.45); M_.armR.rotation.set(-1.35, 0, .45); M_.elbowL.rotation.x = M_.elbowR.rotation.x = -1.0; M_.head.rotation.set(-.05, .7, .15);
-          const sway = Math.sin(lt * 1.6) * .03; p.rotation.z = sway; m.rotation.z = -sway;
-          camPath(camera, lt, [[-.3, [2.4, 2.3, 4.4], [.1, 1.55, .4]], [2.6, [1.6, 2.2, 4.0], [.1, 1.6, .4]]]);
+          // de frente, pegados: él la rodea por los hombros y ella lo abraza de la cintura
+          p.position.set(.27, 0, .4); p.rotation.y = -Math.PI / 2; m.position.set(-.17, 0, .4); m.rotation.y = Math.PI / 2;
+          P.armL.rotation.set(-1.15, 0, -.35); P.armR.rotation.set(-1.15, 0, .35); P.elbowL.rotation.set(-.2, 0, 0); P.elbowR.rotation.set(-.2, 0, 0);
+          P.elbowL.rotation.z = .9; P.elbowR.rotation.z = -.9;
+          P.head.rotation.set(.38, 0, 0); P.brows(.1); P.sleep(true);
+          M_.armL.rotation.set(-.95, 0, -.45); M_.armR.rotation.set(-.95, 0, .45); M_.elbowL.rotation.set(-.15, 0, .8); M_.elbowR.rotation.set(-.15, 0, -.8);
+          M_.head.rotation.set(-.12, .35, 0); M_.look(0, -.6);
+          const sway = Math.sin(lt * 1.4) * .025; p.rotation.x = sway; m.rotation.x = -sway;
+          camPath(camera, lt, [[-.3, [.5, 2.2, 5.4], [.05, 1.55, .4]], [2.6, [.3, 2.1, 4.5], [.05, 1.6, .4]]]);
           return { red: 0 };
         }
         // estantes: el vecino cuenta los garrafones
@@ -312,24 +316,30 @@
       const beam = new THREE.Mesh(new THREE.ConeGeometry(1.4, 14, 20, 1, true), beamM); s.add(beam);
       const rn = rain(900, [30, 30, 30, -12], 19, '#A8B8E8', .3); s.add(rn);
       // el cerro de la casita (para ver a los cinco bajar con sus linternas)
-      const myHill = new THREE.Mesh(new THREE.ConeGeometry(40, 30, 24, 1), mat('#22302A', { flatShading: true })); myHill.position.set(0, -15.05, 0); s.add(myHill);
-      const walkers = strangers(); const wl = walkers.map((w, i) => { s.add(w); const g = flashGlow('rgba(255,236,180,.9)'); g.scale.set(1.4, 1.4, 1); s.add(g); const L = new THREE.PointLight('#FFE7B0', 2, 8, 2); s.add(L); return { w, g, L, ang: .15 + i * .14, r0: 5.5 + i * .7 }; });
+      const myHill = new THREE.Mesh(new THREE.CylinderGeometry(4.5, 44.5, 30, 28, 1), mat('#22302A', { flatShading: true })); myHill.position.set(0, -15.02, 0); s.add(myHill);
+      // la reja del terreno del vecino (la misma de las partes 1 y 2) en lo alto del cerro
+      const reja = new THREE.Group(); s.add(reja); const ironR = mat('#3A3A44', { metalness: .6, roughness: .45 });
+      for (let i = -8; i <= 8; i++) if (i < -1 || i > 1) reja.add(box(.12, 2.3, .12, ironR, i * 1.3, 1.15, 0));
+      reja.add(box(8.6, .08, .08, ironR, -6.5, 2.1, 0)); reja.add(box(8.6, .08, .08, ironR, -6.5, .4, 0)); reja.add(box(8.6, .08, .08, ironR, 6.5, 2.1, 0)); reja.add(box(8.6, .08, .08, ironR, 6.5, .4, 0));
+      const gtR = gate(); gtR.position.set(-1.3, 0, 0); gtR.userData.leaf.rotation.y = 1.1; reja.add(gtR); reja.add(box(.2, 2.6, .2, ironR, 1.4, 1.3, 0));
+      reja.position.set(Math.sin(.25) * 4.1, 0, -Math.cos(.25) * 4.1); reja.rotation.y = -.25; reja.visible = false;
+      const walkers = strangers(); const wl = walkers.map((w, i) => { s.add(w); const g = flashGlow('rgba(255,236,180,.9)'); g.scale.set(1.4, 1.4, 1); s.add(g); const L = new THREE.PointLight('#FFE7B0', 2, 8, 2); s.add(L); return { w, g, L, ang: -.05 + i * .14, r0: 5.0 + (i % 2) * .6 + i * .25 }; });
       const camera = cam(36);
       const blink = (k, starts) => { for (const a of starts) if (k >= a && k < a + .3) return 1 - Math.abs(k - a - .15) / .3 * .6; return 0; };
       function update(t, mode, lt) {
         const k = lt; rn.userData.update(t, 0, -10, 0);
         if (mode === 'escuela') {   // los cinco bajan del cerro rumbo a la escuela
-          room.visible = p.visible = beam.visible = myGlow.visible = false; walkers.forEach(w => w.visible = true);
-          wl.forEach((o, i) => { const r = o.r0 + k * 1.6, a = o.ang, x = Math.sin(a) * r + 2, z = -Math.cos(a) * r - 2, y = -.75 * Math.hypot(x, z);
-            o.w.position.set(x, y, z); o.w.rotation.y = Math.PI - a + .3; walk(o.w.userData, k * 8 + i, 1); o.w.userData.armR.rotation.x = -1.0;
+          room.visible = p.visible = beam.visible = myGlow.visible = false; reja.visible = true; walkers.forEach(w => w.visible = true);
+          wl.forEach((o, i) => { const r = o.r0 + k * 1.5, a = o.ang, x = Math.sin(a) * r, z = -Math.cos(a) * r, y = -.75 * Math.max(0, r - 4.5);
+            o.w.position.set(x, y, z); o.w.rotation.y = Math.PI - a; walk(o.w.userData, k * 8 + i, 1); o.w.userData.armR.rotation.x = -1.0;
             o.w.updateMatrixWorld(true); const hp = new THREE.Vector3(); o.w.userData.elbowR.localToWorld(hp.set(0, -.45, .15)); o.g.position.copy(hp); o.L.position.copy(hp); o.g.material.opacity = .9; });
           roofGlow.material.opacity = .1; roofL.intensity = 0;
           camera.fov = 54; camera.updateProjectionMatrix();
-          camPath(camera, k, [[-.3, [-1.8, 4.0, 5.0], [9, -11, -32]], [5.2, [-1.4, 3.4, 3.8], [11, -12, -38]]]);
+          camPath(camera, k, [[-.3, [-.5, 4.7, 4.2], [5, -7.5, -24]], [5.2, [-.3, 4.3, 3.5], [6, -8.5, -28]]]);
           return { red: .06 };
         }
         camera.fov = 36; camera.updateProjectionMatrix();
-        room.visible = p.visible = beam.visible = myGlow.visible = true; walkers.forEach(w => w.visible = false); wl.forEach(o => { o.g.material.opacity = 0; o.L.intensity = 0; });
+        reja.visible = false; room.visible = p.visible = beam.visible = myGlow.visible = true; walkers.forEach(w => w.visible = false); wl.forEach(o => { o.g.material.opacity = 0; o.L.intensity = 0; });
         P.armR.rotation.set(-1.45, 0, .1); P.elbowR.rotation.set(-.15, 0, 0); P.armL.rotation.set(-.2, 0, .05);
         P.head.rotation.set(-.08, .1, 0); P.brows(.4);
         p.updateMatrixWorld(true);
