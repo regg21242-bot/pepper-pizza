@@ -43,12 +43,12 @@
     const R = K.crearRender(document.getElementById('gl'), W, H);
     const cam = (fov = 40) => new THREE.PerspectiveCamera(fov, W / H, .05, 400);
     function camPath(c, t, keys) { let i = 0; while (i < keys.length - 2 && t > keys[i + 1][0]) i++; const [t0, p0, l0] = keys[i], [t1, p1, l1] = keys[Math.min(i + 1, keys.length - 1)]; const k = t1 > t0 ? ease(prog(t, t0, t1)) : 0; c.position.set(lerp(p0[0], p1[0], k), lerp(p0[1], p1[1], k), lerp(p0[2], p1[2], k)); c.lookAt(lerp(l0[0], l1[0], k), lerp(l0[1], l1[1], k), lerp(l0[2], l1[2], k)); }
-    function luces(s, sun = 1.6) { s.add(new THREE.HemisphereLight('#FFFFFF', '#8A7A6A', .55)); const d = new THREE.DirectionalLight('#FFF4E0', sun); d.shadow.bias = -.0006; d.shadow.normalBias = .03; d.position.set(6, 12, 8); d.castShadow = true; d.shadow.mapSize.set(2048, 2048); const sc = d.shadow.camera; sc.left = sc.bottom = -8; sc.right = sc.top = 8; sc.far = 40; s.add(d, d.target); return d; }
+    function luces(s, sun = 1.6) { s.add(new THREE.HemisphereLight('#DDEBFF', '#8A7A6A', .45)); const d = new THREE.DirectionalLight('#FFF0D8', sun); d.shadow.bias = -.0006; d.shadow.normalBias = .03; d.position.set(6, 12, 8); d.castShadow = true; d.shadow.mapSize.set(2048, 2048); const sc = d.shadow.camera; sc.left = sc.bottom = -8; sc.right = sc.top = 8; sc.far = 40; s.add(d, d.target); return d; }
 
     /* ======== CALLE: el mismo carrito, el chavo y la calle en todo el video ======== */
     const CALLE = (() => {
       const s = new THREE.Scene(); s.background = new THREE.Color('#8FD3F4'); s.fog = new THREE.Fog('#BFE6F7', 30, 90);
-      const sun = luces(s, 1.05);
+      const sun = luces(s, 1.25);
       const st = K.street({ shopX: .8, semX: 7.5, trees: [-9, -3.8, 4.2, 12, 20] }); s.add(st.group);
       // nubes caricatura
       const r = K.rng(4); for (let i = 0; i < 6; i++) { const c = new THREE.Group(); for (let j = 0; j < 4; j++) c.add(K.ball(.9 + r() * .6, '#FFFFFF', j * 1.1 - 1.6, r() * .5, 0, 12)); c.position.set(-20 + i * 9, 14 + r() * 4, -30); s.add(c); }
@@ -57,7 +57,11 @@
       K.cinchos(cart, [-.42, -.18], .32, .36);
       const kit = K.kartKit(); cart.add(kit); kit.visible = false;
       const vol = K.volante(); vol.position.set(.18, .62, 0); vol.rotation.y = Math.PI / 2; vol.rotation.x = .0; vol.rotation.z = .5; cart.add(vol); vol.visible = false;
-      const kid = K.chavo(); s.add(kid); const P = kid.userData;
+      // el chavo: el mismo estilo de muchacho de los videos del tsunami, con gorra roja y sudadera azul
+      const kid = new THREE.Group(); const body = window.M.person3d({ shirt: '#2F6FD6', pants: '#2E4A7E', skin: '#D9A27A', hair: '#2A1C14', hairStyle: 'corto', seed: 5 }); body.scale.setScalar(.7); kid.add(body); s.add(kid); const P = body.userData;
+      P.head.traverse(o => { if (o.isMesh && o.material && o.material.color && o.material.color.getHexString() === new THREE.Color('#2A1C14').getHexString() && !(o.geometry.type === 'BoxGeometry' && o.geometry.parameters.height < .05)) o.visible = false; });   // pelo bajo la gorra (se quedan las cejas)
+      const capM = toon('#E33A2E'); const capD = new THREE.Mesh(new THREE.SphereGeometry(.255, 20, 10, 0, Math.PI * 2, 0, Math.PI * .5), capM); capD.position.y = .09; capD.scale.set(1.02, .8, 1.06); P.head.add(capD);
+      const visor = K.box(.34, .025, .2, capM, 0, .12, .27); visor.rotation.x = -.12; P.head.add(visor);
       const smoke = K.puffs(10, 3, '#EDEDED'); s.add(smoke);
       const camera = cam(40);
       function update(t, mode, lt) {
@@ -66,8 +70,8 @@
           cart.position.set(0, 0, 0); cart.rotation.set(0, 0, 0); kit.visible = vol.visible = false; C.wires.forEach(w => w.visible = true);
           kid.position.set(-.95, 0, .12); kid.rotation.y = Math.PI / 2;
           const pull = ease(prog(lt, .4, .9)) * (1 - ease(prog(lt, 1.1, 1.6)));
-          K.pose(P, { torso: [0, 0, 0], armR: [-.6 - 1.2 * pull, 0, -.2], elbowR: [-.2, 0, 0], armL: [-.5, 0, .2], elbowL: [-.9, 0, 0], legL: [-.25, 0, 0], legR: [.2, 0, 0], kneeL: [.3, 0, 0], head: [.25, -.3, 0] });
-          P.torso.rotation.x = .1 + .15 * pull; kid.position.y = -.03 * pull;
+          K.pose(P, { armR: [-.6 - 1.2 * pull, 0, -.2], elbowR: [-.2, 0, 0], armL: [-.5, 0, .2], elbowL: [-.9, 0, 0], legL: [-.25, 0, 0], legR: [.2, 0, 0], kneeL: [.3, 0, 0], head: [.25, -.3, 0] });
+          kid.rotation.z = 0; body.rotation.x = .08 + .12 * pull; kid.position.y = -.02 * pull;
           const run = lt > .9 ? 1 : 0; cart.position.y = run * Math.abs(Math.sin(lt * 40)) * .008;
           mot.updateMatrixWorld(true); const ex = mot.localToWorld(mot.userData.exhaust.clone());
           smoke.userData.update(lt, run * 1.6, ex, new THREE.Vector3(-.6, .9, -.2));
@@ -78,7 +82,7 @@
         kit.visible = vol.visible = true; C.wires.forEach(w => w.visible = false);
         const x = lerp(-2.5, 2.5, lt / 4); cart.position.set(x, 0, .3); cart.rotation.set(0, 0, 0);
         C.wheels.forEach(o => o.w.rotation.z = -x / .07);
-        kid.position.set(x - .15, -.52, .3); kid.rotation.y = Math.PI / 2;
+        kid.position.set(x - .15, -.38, .3); kid.rotation.y = Math.PI / 2;
         K.pose(P, { legL: [-1.45, 0, 0], legR: [-1.45, 0, 0], kneeL: [1.2, 0, 0], kneeR: [1.2, 0, 0], armR: [-1.0, 0, 0], elbowR: [-.4, 0, 0], armL: [-.9, 0, -1.9 + Math.sin(lt * 12) * .3], elbowL: [0, 0, -.5], head: [0, -1.0, 0] });
         mot.updateMatrixWorld(true); const ex = mot.localToWorld(mot.userData.exhaust.clone());
         smoke.userData.update(lt, 2.2, ex, new THREE.Vector3(-1.4, .5, 0));
@@ -92,7 +96,7 @@
     /* ======== DESPIECE DEL CLUTCH (rayos X) ======== */
     const CLUTCH = (() => {
       const s = new THREE.Scene(); s.background = new THREE.Color('#0D2A4A');
-      s.add(new THREE.HemisphereLight('#FFFFFF', '#3A4A6A', .6)); const d = new THREE.DirectionalLight('#FFFFFF', .95); d.position.set(2, 3, 4); s.add(d);
+      s.add(new THREE.HemisphereLight('#FFFFFF', '#3A4A6A', .5)); const d = new THREE.DirectionalLight('#FFFFFF', 1.2); d.position.set(2, 3, 4); s.add(d);
       const cl = K.clutch(); cl.scale.setScalar(2.2); s.add(cl); const Q = cl.userData;
       // flechas verdes hacia afuera (fuerza centrífuga)
       const arrows = []; for (let i = 0; i < 3; i++) { const a = new THREE.Group(); a.add(K.box(.12, .035, .035, '#9BE53A', .06, 0, 0)); const tip = K.cyl(0, .045, .08, '#9BE53A', 10, .15, 0, 0); tip.rotation.z = -Math.PI / 2; a.add(tip); const piv = new THREE.Group(); piv.rotation.z = i * Math.PI * 2 / 3; piv.add(a); a.position.x = .45; a.position.z = .02; s.add(piv); arrows.push(a); }

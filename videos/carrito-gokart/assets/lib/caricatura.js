@@ -5,6 +5,7 @@
    Uso: const K = window.K;  (necesita three.min.js antes) */
 (function () {
   const THREE = window.THREE;
+  if (THREE.ColorManagement) THREE.ColorManagement.legacyMode = false;   // colores hex en sRGB → saturados
   // ---------- utilidades ----------
   function rng(seed) { let s = seed >>> 0 || 1; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; }
   const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v)), lerp = (a, b, k) => a + (b - a) * k, prog = (t, a, b) => clamp((t - a) / (b - a));
@@ -14,7 +15,11 @@
   // ---------- materiales caricatura ----------
   const grad = (() => { const d = new Uint8Array([70, 150, 255]); const t = new THREE.DataTexture(d, 3, 1, THREE.RedFormat); t.minFilter = t.magFilter = THREE.NearestFilter; t.generateMipmaps = false; t.needsUpdate = true; return t; })();
   const cache = {};
-  function toon(color, o = {}) { const k = color + JSON.stringify(o); if (!o.noCache && cache[k]) return cache[k]; const m = new THREE.MeshToonMaterial(Object.assign({ color, gradientMap: grad }, o)); delete m.noCache; if (!o.noCache) cache[k] = m; return m; }
+  // estilo 3D de la serie (igual que los videos del tsunami): sombreado suave, sin contornos.  K.estilo = 'caricatura' vuelve al cel-shading
+  const estilo = { modo: 'suave' };
+  function toon(color, o = {}) { const k = estilo.modo + color + JSON.stringify(o); if (!o.noCache && cache[k]) return cache[k]; const oo = Object.assign({}, o); const nc = oo.noCache; delete oo.noCache;
+    const m = estilo.modo === 'caricatura' ? new THREE.MeshToonMaterial(Object.assign({ color, gradientMap: grad }, oo)) : new THREE.MeshStandardMaterial(Object.assign({ color, roughness: .62, metalness: .05 }, oo)); if (!nc) cache[k] = m; return m; }
+  function toonMap(map, o = {}) { return estilo.modo === 'caricatura' ? new THREE.MeshToonMaterial(Object.assign({ map, gradientMap: grad }, o)) : new THREE.MeshStandardMaterial(Object.assign({ map, roughness: .7 }, o)); }
   function flat(color, o = {}) { return new THREE.MeshBasicMaterial(Object.assign({ color, toneMapped: false }, o)); }
   function mesh(geo, m, x = 0, y = 0, z = 0) { const me = new THREE.Mesh(geo, m); me.position.set(x, y, z); me.castShadow = true; me.receiveShadow = true; return me; }
   const box = (w, h, d, m, x, y, z) => mesh(new THREE.BoxGeometry(w, h, d), typeof m === 'string' ? toon(m) : m, x, y, z);
@@ -58,12 +63,12 @@
     const shop = new THREE.Group(); shop.position.set(o.shopX ?? 6, 0, -8.6); g.add(shop);
     shop.add(box(8, 5.2, 5, '#F7E7C4', 0, 2.6, 0));
     const signT = canvasTex(1024, 192, (c, w, h) => { c.fillStyle = '#1F6FC8'; c.fillRect(0, 0, w, h); c.strokeStyle = '#111'; c.lineWidth = 14; c.strokeRect(7, 7, w - 14, h - 14); c.fillStyle = '#FFF4C0'; c.font = '900 130px Anton, Impact, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('ABARROTES', w / 2, h / 2 + 6); });
-    shop.add(mesh(new THREE.BoxGeometry(6.6, 1.25, .2), [toon('#1F6FC8'), toon('#1F6FC8'), toon('#1F6FC8'), toon('#1F6FC8'), new THREE.MeshToonMaterial({ map: signT, gradientMap: grad }), toon('#1F6FC8')], 0, 4.3, 2.6));
+    shop.add(mesh(new THREE.BoxGeometry(6.6, 1.25, .2), [toon('#1F6FC8'), toon('#1F6FC8'), toon('#1F6FC8'), toon('#1F6FC8'), toonMap(signT), toon('#1F6FC8')], 0, 4.3, 2.6));
     const awT = canvasTex(512, 64, (c, w, h) => { for (let i = 0; i < 16; i++) { c.fillStyle = i % 2 ? '#FFFFFF' : '#E53A3A'; c.fillRect(i * 32, 0, 32, h); } });
     awT.wrapS = THREE.RepeatWrapping;
-    const aw = mesh(new THREE.BoxGeometry(7.4, .08, 1.8), [toon('#E53A3A'), toon('#E53A3A'), new THREE.MeshToonMaterial({ map: awT, gradientMap: grad }), toon('#E53A3A'), toon('#E53A3A'), toon('#E53A3A')], 0, 3.25, 3.4); aw.rotation.x = .32; shop.add(aw);
+    const aw = mesh(new THREE.BoxGeometry(7.4, .08, 1.8), [toon('#E53A3A'), toon('#E53A3A'), toonMap(awT), toon('#E53A3A'), toon('#E53A3A'), toon('#E53A3A')], 0, 3.25, 3.4); aw.rotation.x = .32; shop.add(aw);
     const valT = canvasTex(512, 64, (c, w, h) => { for (let i = 0; i < 16; i++) { c.fillStyle = i % 2 ? '#FFFFFF' : '#E53A3A'; c.beginPath(); c.moveTo(i * 32, 0); c.lineTo(i * 32 + 32, 0); c.lineTo(i * 32 + 32, h * .55); c.arc(i * 32 + 16, h * .55, 16, 0, Math.PI); c.fill(); } });
-    const val = mesh(new THREE.PlaneGeometry(7.4, .45), new THREE.MeshToonMaterial({ map: valT, gradientMap: grad, transparent: true, side: THREE.DoubleSide }), 0, 2.78, 4.25); shop.add(val);
+    const val = mesh(new THREE.PlaneGeometry(7.4, .45), toonMap(valT, { transparent: true, side: THREE.DoubleSide }), 0, 2.78, 4.25); shop.add(val);
     shop.add(box(2.4, 2.4, .12, '#2A3A58', -2.2, 1.6, 2.52)); shop.add(box(1.3, 2.4, .12, '#2A3A58', 2.4, 1.2, 2.52));
     // árboles low-poly
     const trees = [];
@@ -115,7 +120,7 @@
 
   // ---------- carrito del súper (eje x = hacia adelante) ----------
   function carrito() {
-    const g = new THREE.Group(), parts = {}, metal = toon('#A9B0BA'), dark = toon('#5B616C');
+    const g = new THREE.Group(), parts = {}, metal = toon('#B4BAC4', { metalness: .55, roughness: .35 }), dark = toon('#5B616C', { metalness: .4, roughness: .5 });
     const body = new THREE.Group(); g.add(body); parts.body = body;
     const L = 1.0, W = .58, y0 = .42, H = .48;
     // canasta de rejilla
@@ -215,7 +220,7 @@
     const bumperF = new THREE.Group(); bumperF.add(box(.06, .1, .7, '#36D46A', 0, 0, 0)); for (const z of [-.25, .25]) bumperF.add(box(.2, .05, .05, '#36D46A', -.1, 0, z)); bumperF.position.set(.66, .2, 0); g.add(bumperF); P.bumperF = bumperF;
     const bumperR = bumperF.clone(); bumperR.rotation.y = Math.PI; bumperR.position.set(-.66, .2, 0); g.add(bumperR); P.bumperR = bumperR;
     const numT = canvasTex(256, 256, (c, w, h) => { c.fillStyle = '#FFFFFF'; c.beginPath(); c.arc(128, 128, 120, 0, 7); c.fill(); c.lineWidth = 14; c.strokeStyle = '#111'; c.stroke(); c.fillStyle = '#E33A2E'; c.font = '200px Anton, Impact, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('7', 128, 140); });
-    const plate = mesh(new THREE.PlaneGeometry(.26, .26), new THREE.MeshToonMaterial({ map: numT, gradientMap: grad, transparent: true }), .72, .42, 0); plate.rotation.y = Math.PI / 2; plate.rotation.x = 0; g.add(plate); P.plate = plate;
+    const plate = mesh(new THREE.PlaneGeometry(.26, .26), toonMap(numT, { transparent: true }), .72, .42, 0); plate.rotation.y = Math.PI / 2; plate.rotation.x = 0; g.add(plate); P.plate = plate;
     const nose = box(.28, .14, .5, '#F5C431', .55, .34, 0); nose.rotation.z = -.35; g.add(nose); P.nose = nose;
     for (const z of [-.33, .33]) { const sp = box(.5, .06, .1, '#F5C431', 0, .18, z * 1.05); g.add(sp); }   // pontones
     g.userData = P; return g;
@@ -239,15 +244,15 @@
   // ---------- render con contornos y rayos X ----------
   function crearRender(canvas, W, H) {
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, preserveDrawingBuffer: true });
-    renderer.setPixelRatio(1); renderer.setSize(W, H, false); renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.setPixelRatio(1); renderer.setSize(W, H, false); renderer.outputEncoding = THREE.sRGBEncoding; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = .9;
     renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap;
-    const rtC = new THREE.WebGLRenderTarget(W, H, { samples: 4 }); rtC.texture.encoding = THREE.sRGBEncoding;
+    const rtC = new THREE.WebGLRenderTarget(W, H, { samples: 4 });
     const rtN = new THREE.WebGLRenderTarget(W, H); rtN.depthTexture = new THREE.DepthTexture(W, H); rtN.depthTexture.type = THREE.UnsignedIntType;
     const normalMat = new THREE.MeshNormalMaterial();
     const post = new THREE.ShaderMaterial({
-      uniforms: { tC: { value: rtC.texture }, tN: { value: rtN.texture }, tD: { value: rtN.depthTexture }, res: { value: new THREE.Vector2(W, H) }, near: { value: .05 }, far: { value: 400 }, thick: { value: 2.2 }, xray: { value: 0 }, flash: { value: 0 } },
+      uniforms: { tC: { value: rtC.texture }, tN: { value: rtN.texture }, tD: { value: rtN.depthTexture }, res: { value: new THREE.Vector2(W, H) }, near: { value: .05 }, far: { value: 400 }, thick: { value: 2.2 }, xray: { value: 0 }, flash: { value: 0 }, outline: { value: 0 } },
       vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }',
-      fragmentShader: `uniform sampler2D tC, tN, tD; uniform vec2 res; uniform float near, far, thick, xray, flash; varying vec2 vUv;
+      fragmentShader: `uniform sampler2D tC, tN, tD; uniform vec2 res; uniform float near, far, thick, xray, flash, outline; varying vec2 vUv;
         float lin(vec2 uv){ float z = texture2D(tD, uv).x; return (near * far) / ((far - near) * z - far) * -1.; }
         void main(){
           vec3 c = texture2D(tC, vUv).rgb;
@@ -255,18 +260,21 @@
           for (int i = 0; i < 4; i++) { vec2 o = i == 0 ? vec2(px.x, 0.) : i == 1 ? vec2(-px.x, 0.) : i == 2 ? vec2(0., px.y) : vec2(0., -px.y);
             float d1 = lin(vUv + o); vec3 n1 = texture2D(tN, vUv + o).rgb;
             e = max(e, step(.035 * min(d0, d1) + .002, abs(d0 - d1))); e = max(e, step(.32, length(n0 - n1))); }
-          c = mix(c, vec3(.03, .03, .05), e);
+          c = mix(c, vec3(.03, .03, .05), e * outline);
           // rayos X: tinte azul y rejilla tenue
           vec3 xr = mix(vec3(.05, .12, .28), vec3(.35, .75, 1.0), smoothstep(.0, 1.2, dot(c, vec3(.33))));
           float grid = step(.985, fract(vUv.x * res.x / 36.)) + step(.985, fract(vUv.y * res.y / 36.));
           c = mix(c, xr + grid * .05, xray * .55);
           c = mix(c, vec3(1.), flash);
           gl_FragColor = vec4(c, 1.);
+          #include <tonemapping_fragment>
+          #include <encodings_fragment>
         }`, depthTest: false, depthWrite: false });
     const ps = new THREE.Scene(); ps.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), post)); const pc = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
     function render(scene, camera, o = {}) {
-      post.uniforms.near.value = camera.near; post.uniforms.far.value = camera.far; post.uniforms.xray.value = o.xray || 0; post.uniforms.flash.value = o.flash || 0;
+      post.uniforms.near.value = camera.near; post.uniforms.far.value = camera.far; post.uniforms.xray.value = o.xray || 0; post.uniforms.flash.value = o.flash || 0; const ol = estilo.modo === 'caricatura' ? 1 : 0; post.uniforms.outline.value = ol;
       renderer.setRenderTarget(rtC); renderer.render(scene, camera);
+      if (!ol) { renderer.setRenderTarget(null); renderer.render(ps, pc); return; }
       const hidden = []; scene.traverse(ob => { if (ob.userData.sinContorno && ob.visible) { ob.visible = false; hidden.push(ob); } });
       const bg = scene.background; scene.background = null; scene.overrideMaterial = normalMat; renderer.setClearColor(0x000000, 1);
       renderer.setRenderTarget(rtN); renderer.render(scene, camera);
@@ -284,5 +292,5 @@
   }
   const ghostMat = new THREE.MeshBasicMaterial({ color: '#8FE0FF', transparent: true, opacity: .16, depthWrite: false, toneMapped: false, blending: THREE.AdditiveBlending });
 
-  window.K = { repaint, THREE, rng, clamp, lerp, prog, ease, easeOut, easeIn, backOut, toon, flat, mesh, box, cyl, ball, torus, canvasTex, gear, street, chavo, pose, carrito, motor, cinchos, cadena, clutch, kartKit, volante, disco, puffs, sparks, crearRender, rayosX };
+  window.K = { estilo, repaint, THREE, rng, clamp, lerp, prog, ease, easeOut, easeIn, backOut, toon, flat, mesh, box, cyl, ball, torus, canvasTex, gear, street, chavo, pose, carrito, motor, cinchos, cadena, clutch, kartKit, volante, disco, puffs, sparks, crearRender, rayosX };
 })();
