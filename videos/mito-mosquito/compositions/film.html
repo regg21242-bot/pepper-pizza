@@ -3,7 +3,7 @@
     #root { position: absolute; inset: 0; background: #14171D; overflow: hidden; font-family: Nunito, sans-serif; }
     #cv { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 50% 50%; }
     /* badge de dato: número/palabra gigante + texto + fuente en gris */
-    #badge { position: absolute; left: 70px; top: 420px; display: flex; align-items: center; gap: 22px; transform-origin: 0 50%; }
+    #badge { position: absolute; left: 70px; top: 400px; display: flex; align-items: center; gap: 22px; transform-origin: 0 50%; }
     #badge .big { font-size: 150px; font-weight: 900; color: #fff; line-height: .9; text-shadow: 0 6px 30px rgba(0,0,0,.6); }
     #badge .txt { font-size: 92px; font-weight: 900; color: #fff; line-height: 1.05; text-shadow: 0 4px 20px rgba(0,0,0,.6); }
     #badge .src { display: block; font-size: 32px; font-weight: 700; color: rgba(210,215,225,.75); margin-top: 8px; }
@@ -23,7 +23,7 @@
     #ticket .k { font-size: 30px; font-weight: 900; letter-spacing: 4px; color: #A0453A; } #ticket .n { font-size: 150px; font-weight: 900; line-height: 1; margin: 8px 0; }
     #ticket .d { font-size: 44px; font-weight: 800; line-height: 1.15; } #ticket .s { font-size: 26px; font-weight: 700; color: #7A6E5C; margin-top: 18px; border-top: 3px dashed rgba(0,0,0,.2); padding-top: 14px; }
   </style>
-  <div id="root" data-composition-id="film" data-start="0" data-duration="12" data-width="1080" data-height="1920">
+  <div id="root" data-composition-id="film" data-start="0" data-duration="45.6" data-width="1080" data-height="1920">
     <canvas id="cv" width="1080" height="1920" data-layout-ignore></canvas>
     <svg id="lines" viewBox="0 0 1080 1920" data-layout-ignore></svg>
     <div id="rl" data-layout-ignore></div>
@@ -60,7 +60,7 @@
       MT.mosquito(c, 540, 1000, z, 0, t, { vuela: false, antenas: glowK, sombra: false });
       for (const sd of [-1, 1]) MT.anillos(c, 540 + sd * 8 * z * .9, 1000 - 30 * z, glowK, t + sd, [90, 220, 255], 3, 260);
       MT.vineta(c, W, H, .75);
-      return { label: glowK > .5 ? [['sensores de olor y CO2', 540, 520, 540 + 7 * z, 1000 - 31 * z]] : [] };
+      return { label: glowK > .5 ? [['sensores de olor y CO2', 540, 640, 540 + 7 * z, 1000 - 31 * z]] : [] };
     }
     function escenaCelular(t, lt) {
       c.setTransform(1, 0, 0, 1, 0, 0); c.fillStyle = '#1A1D24'; c.fillRect(0, 0, W, H);
@@ -79,19 +79,89 @@
       return {};
     }
 
-    // montaje provisional para los fotogramas fijos
-    const SC = [{ a: 0, b: 4, f: (t, lt) => escenaCama(t, lt, { mosq: true, z: 1.0 + lt * .02 }) }, { a: 4, b: 8, f: escenaMosquito }, { a: 8, b: 99, f: escenaCelular }];
-    function badgeSet(html, k, tach = 0) { badge.innerHTML = html + (tach > 0 ? `<div class="tach" style="transform: rotate(-8deg) scaleX(${tach})"></div>` : ''); badge.style.opacity = k > 0 ? 1 : 0; badge.style.transform = `scale(${.5 + .5 * backOut(k)})`; }
+    /* tiempos (de la voz). mezcla.py lee T */
+    const T = { cuts: [3.9, 8.7, 12.3, 17.8, 23.2, 27.3, 31.7, 36.7, 40.3], end: 45.6,
+      posa: .6, noCierto: 5.3, azucar: 6.45, comp: 9.0, antenas: 14.9, diez: 16.4, aliento: 20.4, calor: 21.1, olor: 22.2, rojo: 23.5, co2: 28.1, ticket: 31.9, tacha: 37.6, compartir: 41.0, contacto: 42.1, enviar: 43.3 };
+    window.__MITO = T;
+    const C = T.cuts;
+    // proyección mundo → pantalla para la cámara de la recámara
+    let camS = { cx: 540, cy: 900, z: 1 };
+    const scr = (x, y) => [W / 2 + (x - camS.cx) * camS.z, H / 2 + (y - camS.cy) * camS.z];
+    function cama(t, cx, cy, z, o = {}) { camS = { cx, cy, z }; return escenaCama(t, 0, Object.assign({ cx, cy, z }, o)); }
+    function mosquitosVolando(t, n = 3, k = 1, toward = null) {
+      camara(camS.cx, camS.cy, camS.z);
+      const pts = [[300, 520, 0], [780, 700, 1.7], [700, 430, 3.1], [260, 820, 4.4]].slice(0, n);
+      pts.forEach(([x0, y0, ph], i) => { let x = x0 + Math.sin(t * 1.3 + ph) * 60, y = y0 + Math.cos(t * 1.1 + ph) * 40, a = Math.sin(t + ph) * .6;
+        if (toward) { const kk = toward.k; x = lerp(x, toward.x + Math.cos(i * 2) * 70, kk * .45); y = lerp(y, toward.y + Math.sin(i * 2) * 70, kk * .45); a = lerp(a, Math.atan2(toward.x - x, -(toward.y - y)), kk); }
+        MT.mosquito(c, x, y, .9 * k, a, t, { vuela: true }); });
+      c.setTransform(1, 0, 0, 1, 0, 0);
+    }
+    function anillosMujer(t, k, color, labels, P) {
+      camara(camS.cx, camS.cy, camS.z); MT.anillos(c, P.cara[0], P.cara[1] + 60, k, t, color, 4, 620); c.setTransform(1, 0, 0, 1, 0, 0);
+      return labels;
+    }
+    const SC = [
+      { a: 0, b: C[0], f: (t, lt) => { cama(t, 540, 900, 1.0 + lt * .03, { mosq: t > T.posa }); if (t < T.posa + .2) mosquitosVolando(t, 1); return { badge: 'mito' }; } },
+      { a: C[0], b: C[1], f: (t, lt) => { const k = ease(prog(lt, 0, 4.6)); cama(t, 540, lerp(900, 680, k), lerp(1.12, 2.0, k), { mosq: true }); mosquitosVolando(t, 3, 1); return { badge: t > T.azucar ? 'cero' : 'mito', tach: prog(t, T.noCierto, T.noCierto + .35) }; } },
+      { a: C[1], b: C[2], f: (t, lt) => { cama(t, 540, 1000, lerp(.92, .85, prog(lt, 0, 3.6)), { mosq: true }); mosquitosVolando(t, 2); return { comp: prog(t, T.comp, T.comp + .3) }; } },
+      { a: C[2], b: C[3], f: (t, lt) => escenaMosquito(t, lt) },
+      { a: C[3], b: C[4], f: (t, lt) => { const P = cama(t, 540, 760, lerp(1.0, .9, prog(lt, 0, 5.4))); const k = ease(prog(lt, .3, 1.2));
+          const L = []; for (const [txt, tt, ang, r] of [['aliento', T.aliento, -2.2, 330], ['calor', T.calor, -.6, 400], ['olor de piel', T.olor, 1.9, 470]]) if (t > tt) L.push([txt, tt, P.cara[0] + Math.cos(ang) * r, P.cara[1] + 60 + Math.sin(ang) * r]);
+          anillosMujer(t, k, [90, 220, 255], L, P); mosquitosVolando(t, 2, .9); return { ringLabels: L, P }; } },
+      { a: C[4], b: C[5], f: (t, lt) => { const P = cama(t, 540, 760, lerp(.9, .95, prog(lt, 0, 4))); const red = ease(prog(t, T.rojo, T.rojo + .6));
+          const col = [lerp(90, 255, red), lerp(220, 46, red), lerp(255, 99, red)];
+          anillosMujer(t, 1, col, [], P); mosquitosVolando(t, 3, 1, { x: P.cara[0], y: P.cara[1], k: ease(prog(lt, .6, 3.5)) });
+          return { ringLabels: [['te encontró', T.rojo + .4, P.cara[0] + 300, P.cara[1] - 260]], red: true }; } },
+      { a: C[5], b: C[6], f: (t, lt) => { const k = ease(prog(lt, 0, 4.4)); const P = cama(t, 540, lerp(760, 712, k), lerp(1.3, 2.6, k)); camara(camS.cx, camS.cy, camS.z); MT.aliento(c, P.boca[0], P.boca[1] - 10, ease(prog(lt, .3, 1)), t); c.setTransform(1, 0, 0, 1, 0, 0); mosquitosVolando(t, 2, 1);
+          return { ringLabels: t > T.co2 ? [['CO2', T.co2, P.boca[0] + 40, P.boca[1] + 170]] : [] }; } },
+      { a: C[6], b: C[7], f: (t, lt) => { cama(t, 540, 900, .95); c.fillStyle = 'rgba(8,10,14,.55)'; c.fillRect(0, 0, W, H); return { ticket: prog(t, T.ticket, T.ticket + .35) }; } },
+      { a: C[7], b: C[8], f: (t, lt) => { const P = cama(t, 540, 860, lerp(.95, 1.05, prog(lt, 0, 3.6))); anillosMujer(t, 1, [255, 46, 99], [], P); return { badge: 'mito', tach: prog(t, T.tacha, T.tacha + .4) }; } },
+      { a: C[8], b: 99, f: (t, lt) => escenaCelular2(t, lt) },
+    ];
+    function escenaCelular2(t, lt) {
+      c.setTransform(1, 0, 0, 1, 0, 0);
+      const g = c.createRadialGradient(540, 900, 100, 540, 900, 1100); g.addColorStop(0, '#2A2F3A'); g.addColorStop(1, '#101216'); c.fillStyle = g; c.fillRect(0, 0, W, H);
+      const st = { hoja: ease(prog(t, T.compartir + .15, T.compartir + .55)), sel: t > T.contacto + .1 ? 0 : -1, enviado: t > T.enviar + .1 ? 1 : 0 };
+      const zIn = lerp(1.6, 1, ease(prog(lt, 0, .7)));
+      c.save(); c.translate(540, 900); c.scale(zIn, zIn); c.translate(-540, -900);
+      const r = MT.celular(c, W, H, t, (cc) => { MT.recamara(cc, t); MT.mosquito(cc, 385, 1060, 1.7, -.4, t, {}); MT.vineta(cc, W, H, .7); }, st);
+      c.restore();
+      const pts = [[860, 1750], [r.share.x, r.share.y], st.avatar ? st.avatar(0) : [r.share.x, r.share.y], st.botonEnviar || [540, 1400]];
+      const times = [T.compartir - .7, T.compartir, T.contacto, T.enviar];
+      let i = 0; while (i < 3 && t > times[i + 1]) i++;
+      const k = i < 3 ? ease(prog(t, times[i + 1] - .55, times[i + 1])) : 1; const a = pts[i], b = pts[Math.min(i + 1, 3)];
+      let tap = 0; for (const tt of times.slice(1)) if (t > tt && t < tt + .3) tap = 1 - (t - tt) / .3;
+      if (lt > .5) MT.dedo(c, lerp(a[0], b[0], k), lerp(a[1], b[1], k) + 40, 1, tap);
+      MT.vineta(c, W, H, .5);
+      return {};
+    }
+    const badges = {
+      mito: () => `${gota}<div class="txt">sangre dulce<span class="src">lo que dicen</span></div>`,
+      cero: () => `<div class="big">0</div><div class="txt">azúcar<span class="src">Cameron Webb · entomólogo, Univ. de Sídney</span></div>`,
+      diez: () => `<div class="big">+10 m</div><div class="txt" style="font-size:54px">te huelen<span class="src">CO2 del aliento · de 10 a 50 m</span></div>`,
+    };
+    let lastBadge = '', badgeT0 = 0;
     function renderAt(t) {
-      const sc = SC.find(x => t >= x.a && t < x.b) || SC[SC.length - 1], lt = t - sc.a;
+      let i = SC.findIndex(x => t >= x.a && t < x.b); if (i < 0) i = SC.length - 1; const sc = SC[i], lt = t - sc.a;
       c.setTransform(1, 0, 0, 1, 0, 0); c.filter = 'none';
       const g = sc.f(t, lt) || {};
-      // transición: desenfoque fuerte que se aclara
-      const bl = Math.max(0, 1 - lt / .45); cv.style.filter = sc.a > 0 && bl > 0 ? `blur(${18 * bl}px)` : 'none'; cv.style.transform = `scale(${1 + .06 * bl})`;
-      // UI provisional
-      badge.style.opacity = 0; comp.style.opacity = 0; ticket.style.opacity = 0; rl.innerHTML = ''; lines.innerHTML = '';
-      if (sc === SC[0]) badgeSet(`${gota}<div class="txt">sangre dulce<span class="src">lo que dicen</span></div>`, prog(t, .4, .7));
+      // transición: desenfoque fuerte que se aclara + pequeño zoom
+      const bl = i > 0 ? Math.max(0, 1 - lt / .5) : 0; cv.style.filter = bl > 0 ? `blur(${26 * bl * bl}px)` : 'none'; cv.style.transform = `scale(${1 + .08 * bl})`;
+      // badge
+      let bk = g.badge; if (i === 3 && t > T.diez) bk = 'diez';
+      if (bk) { const t0 = bk === 'mito' ? (i === 0 ? .35 : i === 8 ? C[7] + .1 : 0) : bk === 'cero' ? T.azucar : T.diez; const k = i === 1 && bk === 'mito' ? 1 : prog(t, t0, t0 + .3);
+        badge.innerHTML = badges[bk]() + (g.tach > 0 ? `<div class="tach" style="transform: rotate(-8deg) scaleX(${g.tach})"></div>` : ''); badge.style.opacity = k > 0 ? 1 : 0; badge.style.transform = `scale(${.5 + .5 * backOut(k)})`; } else badge.style.opacity = 0;
+      // tarjeta comparativa
+      const ck = g.comp || 0; comp.style.opacity = ck; comp.style.transform = `translateY(${(1 - easeOut(ck)) * 60}px) scale(${.92 + .08 * backOut(ck)})`;
+      // tarjeta crema
+      const tk = g.ticket || 0; ticket.style.opacity = tk > 0 ? 1 : 0; ticket.style.transform = `rotate(${-3 + 3 * easeOut(tk)}deg) scale(${.6 + .4 * backOut(tk)})`;
+      // etiquetas de anillos (con línea fina hacia la mujer)
+      rl.innerHTML = ''; lines.innerHTML = '';
       (g.label || []).forEach(([txt, x, y, tx, ty]) => { rl.insertAdjacentHTML('beforeend', `<div class="ring-lbl" style="left:${x}px;top:${y}px">${txt}</div>`); lines.insertAdjacentHTML('beforeend', `<line x1="${x}" y1="${y + 26}" x2="${tx}" y2="${ty}" stroke="rgba(255,255,255,.8)" stroke-width="3"/>`); });
+      (g.ringLabels || []).forEach(([txt, t0, wx, wy]) => { const k = prog(t, t0, t0 + .25); const [x, y] = txt === 'te encontró' ? [wx, wy] : scr(wx, wy); const [fx, fy] = scr(540, 700);
+        const col = g.red ? '#FF4F7B' : '#fff';
+        rl.insertAdjacentHTML('beforeend', `<div class="ring-lbl" style="left:${clamp(x, 160, 800)}px;top:${clamp(y, 430, 1450)}px;opacity:${k};color:${col};transform:translate(-50%,-50%) scale(${.6 + .4 * backOut(k)})">${txt}</div>`);
+        if (txt !== 'te encontró') lines.insertAdjacentHTML('beforeend', `<line x1="${clamp(x, 160, 800)}" y1="${clamp(y, 430, 1450) + 26}" x2="${lerp(clamp(x, 160, 800), fx, .55)}" y2="${lerp(clamp(y, 430, 1450), fy, .55)}" stroke="rgba(255,255,255,${.7 * k})" stroke-width="2.5"/>`); });
     }
     window.addEventListener('hf-seek', e => renderAt(e.detail.time));
     renderAt(0);

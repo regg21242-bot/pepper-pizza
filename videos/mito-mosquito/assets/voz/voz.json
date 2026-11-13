@@ -1,0 +1,990 @@
+{
+ "texto": "Si te pican más que a los demás, es porque tienes la sangre dulce. Lo has oído mil veces, pero no es cierto, el azúcar de tu sangre no tiene nada que ver. Lo que te delata es otra cosa, y empieza antes de que te piquen. Las hembras, que son las únicas que pican, tienen antenas que detectan tu aliento a más de 10 metros. Tú, dormida, eres un faro, sueltas aire, das calor y tu piel tiene un olor único. Y si tu olor les gusta más que el de otros, ahí sí, eres la elegida. Y lo peor es tu boca, una chimenea de aire caliente que les dice dónde estás. En un estudio, la persona más atractiva para los mosquitos atraía 100 veces más que la menos. Así que no es tu sangre, es tu aliento, tu calor y tu olor. Envíaselo a quien dice que lo pican porque es muy dulce.",
+ "idioma": "es",
+ "duracion": 44.63,
+ "segmentos": [
+  {
+   "inicio": 0.0,
+   "fin": 4.94,
+   "texto": "Si te pican más que a los demás, es porque tienes la sangre dulce. Lo has oído mil veces,"
+  },
+  {
+   "inicio": 5.3,
+   "fin": 9.66,
+   "texto": "pero no es cierto, el azúcar de tu sangre no tiene nada que ver. Lo que te delata es"
+  },
+  {
+   "inicio": 9.66,
+   "fin": 14.42,
+   "texto": "otra cosa, y empieza antes de que te piquen. Las hembras, que son las únicas que pican,"
+  },
+  {
+   "inicio": 14.72,
+   "fin": 19.78,
+   "texto": "tienen antenas que detectan tu aliento a más de 10 metros. Tú, dormida, eres un faro,"
+  },
+  {
+   "inicio": 20.08,
+   "fin": 24.48,
+   "texto": "sueltas aire, das calor y tu piel tiene un olor único. Y si tu olor les gusta más"
+  },
+  {
+   "inicio": 24.48,
+   "fin": 29.6,
+   "texto": "que el de otros, ahí sí, eres la elegida. Y lo peor es tu boca, una chimenea de aire"
+  },
+  {
+   "inicio": 29.6,
+   "fin": 34.6,
+   "texto": "caliente que les dice dónde estás. En un estudio, la persona más atractiva para los mosquitos"
+  },
+  {
+   "inicio": 34.6,
+   "fin": 39.98,
+   "texto": "atraía 100 veces más que la menos. Así que no es tu sangre, es tu aliento, tu calor y tu olor."
+  },
+  {
+   "inicio": 40.58,
+   "fin": 42.98,
+   "texto": "Envíaselo a quien dice que lo pican porque es muy dulce."
+  }
+ ],
+ "palabras": [
+  {
+   "palabra": "Si",
+   "inicio": 0.0,
+   "fin": 0.44,
+   "prob": 0.603
+  },
+  {
+   "palabra": "te",
+   "inicio": 0.44,
+   "fin": 0.56,
+   "prob": 0.983
+  },
+  {
+   "palabra": "pican",
+   "inicio": 0.56,
+   "fin": 0.78,
+   "prob": 0.901
+  },
+  {
+   "palabra": "más",
+   "inicio": 0.78,
+   "fin": 1.02,
+   "prob": 0.918
+  },
+  {
+   "palabra": "que",
+   "inicio": 1.02,
+   "fin": 1.14,
+   "prob": 0.993
+  },
+  {
+   "palabra": "a",
+   "inicio": 1.14,
+   "fin": 1.2,
+   "prob": 0.94
+  },
+  {
+   "palabra": "los",
+   "inicio": 1.2,
+   "fin": 1.3,
+   "prob": 0.996
+  },
+  {
+   "palabra": "demás,",
+   "inicio": 1.3,
+   "fin": 1.58,
+   "prob": 0.991
+  },
+  {
+   "palabra": "es",
+   "inicio": 1.9,
+   "fin": 2.06,
+   "prob": 0.991
+  },
+  {
+   "palabra": "porque",
+   "inicio": 2.06,
+   "fin": 2.26,
+   "prob": 0.982
+  },
+  {
+   "palabra": "tienes",
+   "inicio": 2.26,
+   "fin": 2.58,
+   "prob": 0.995
+  },
+  {
+   "palabra": "la",
+   "inicio": 2.58,
+   "fin": 2.76,
+   "prob": 0.994
+  },
+  {
+   "palabra": "sangre",
+   "inicio": 2.76,
+   "fin": 3.0,
+   "prob": 0.999
+  },
+  {
+   "palabra": "dulce.",
+   "inicio": 3.0,
+   "fin": 3.4,
+   "prob": 0.997
+  },
+  {
+   "palabra": "Lo",
+   "inicio": 3.92,
+   "fin": 4.12,
+   "prob": 0.943
+  },
+  {
+   "palabra": "has",
+   "inicio": 4.12,
+   "fin": 4.26,
+   "prob": 0.978
+  },
+  {
+   "palabra": "oído",
+   "inicio": 4.26,
+   "fin": 4.44,
+   "prob": 0.993
+  },
+  {
+   "palabra": "mil",
+   "inicio": 4.44,
+   "fin": 4.64,
+   "prob": 0.949
+  },
+  {
+   "palabra": "veces,",
+   "inicio": 4.64,
+   "fin": 4.94,
+   "prob": 0.999
+  },
+  {
+   "palabra": "pero",
+   "inicio": 5.3,
+   "fin": 5.48,
+   "prob": 0.992
+  },
+  {
+   "palabra": "no",
+   "inicio": 5.48,
+   "fin": 5.62,
+   "prob": 0.996
+  },
+  {
+   "palabra": "es",
+   "inicio": 5.62,
+   "fin": 5.78,
+   "prob": 0.999
+  },
+  {
+   "palabra": "cierto,",
+   "inicio": 5.78,
+   "fin": 6.04,
+   "prob": 0.997
+  },
+  {
+   "palabra": "el",
+   "inicio": 6.36,
+   "fin": 6.48,
+   "prob": 0.994
+  },
+  {
+   "palabra": "azúcar",
+   "inicio": 6.48,
+   "fin": 6.76,
+   "prob": 0.997
+  },
+  {
+   "palabra": "de",
+   "inicio": 6.76,
+   "fin": 6.96,
+   "prob": 0.999
+  },
+  {
+   "palabra": "tu",
+   "inicio": 6.96,
+   "fin": 7.08,
+   "prob": 0.991
+  },
+  {
+   "palabra": "sangre",
+   "inicio": 7.08,
+   "fin": 7.38,
+   "prob": 0.999
+  },
+  {
+   "palabra": "no",
+   "inicio": 7.38,
+   "fin": 7.58,
+   "prob": 0.991
+  },
+  {
+   "palabra": "tiene",
+   "inicio": 7.58,
+   "fin": 7.78,
+   "prob": 0.998
+  },
+  {
+   "palabra": "nada",
+   "inicio": 7.78,
+   "fin": 7.98,
+   "prob": 0.998
+  },
+  {
+   "palabra": "que",
+   "inicio": 7.98,
+   "fin": 8.14,
+   "prob": 0.984
+  },
+  {
+   "palabra": "ver.",
+   "inicio": 8.14,
+   "fin": 8.32,
+   "prob": 0.999
+  },
+  {
+   "palabra": "Lo",
+   "inicio": 8.78,
+   "fin": 8.96,
+   "prob": 0.983
+  },
+  {
+   "palabra": "que",
+   "inicio": 8.96,
+   "fin": 9.06,
+   "prob": 0.999
+  },
+  {
+   "palabra": "te",
+   "inicio": 9.06,
+   "fin": 9.18,
+   "prob": 0.993
+  },
+  {
+   "palabra": "delata",
+   "inicio": 9.18,
+   "fin": 9.46,
+   "prob": 0.879
+  },
+  {
+   "palabra": "es",
+   "inicio": 9.46,
+   "fin": 9.66,
+   "prob": 0.998
+  },
+  {
+   "palabra": "otra",
+   "inicio": 9.66,
+   "fin": 9.84,
+   "prob": 0.999
+  },
+  {
+   "palabra": "cosa,",
+   "inicio": 9.84,
+   "fin": 10.14,
+   "prob": 0.998
+  },
+  {
+   "palabra": "y",
+   "inicio": 10.44,
+   "fin": 10.6,
+   "prob": 0.995
+  },
+  {
+   "palabra": "empieza",
+   "inicio": 10.6,
+   "fin": 10.9,
+   "prob": 0.986
+  },
+  {
+   "palabra": "antes",
+   "inicio": 10.9,
+   "fin": 11.16,
+   "prob": 0.999
+  },
+  {
+   "palabra": "de",
+   "inicio": 11.16,
+   "fin": 11.34,
+   "prob": 0.983
+  },
+  {
+   "palabra": "que",
+   "inicio": 11.34,
+   "fin": 11.42,
+   "prob": 0.998
+  },
+  {
+   "palabra": "te",
+   "inicio": 11.42,
+   "fin": 11.54,
+   "prob": 0.999
+  },
+  {
+   "palabra": "piquen.",
+   "inicio": 11.54,
+   "fin": 11.88,
+   "prob": 0.97
+  },
+  {
+   "palabra": "Las",
+   "inicio": 12.4,
+   "fin": 12.6,
+   "prob": 0.978
+  },
+  {
+   "palabra": "hembras,",
+   "inicio": 12.6,
+   "fin": 12.9,
+   "prob": 0.962
+  },
+  {
+   "palabra": "que",
+   "inicio": 13.24,
+   "fin": 13.34,
+   "prob": 0.997
+  },
+  {
+   "palabra": "son",
+   "inicio": 13.34,
+   "fin": 13.52,
+   "prob": 0.997
+  },
+  {
+   "palabra": "las",
+   "inicio": 13.52,
+   "fin": 13.64,
+   "prob": 0.996
+  },
+  {
+   "palabra": "únicas",
+   "inicio": 13.64,
+   "fin": 13.92,
+   "prob": 0.998
+  },
+  {
+   "palabra": "que",
+   "inicio": 13.92,
+   "fin": 14.12,
+   "prob": 0.998
+  },
+  {
+   "palabra": "pican,",
+   "inicio": 14.12,
+   "fin": 14.42,
+   "prob": 0.964
+  },
+  {
+   "palabra": "tienen",
+   "inicio": 14.72,
+   "fin": 14.9,
+   "prob": 0.987
+  },
+  {
+   "palabra": "antenas",
+   "inicio": 14.9,
+   "fin": 15.34,
+   "prob": 0.994
+  },
+  {
+   "palabra": "que",
+   "inicio": 15.34,
+   "fin": 15.48,
+   "prob": 0.999
+  },
+  {
+   "palabra": "detectan",
+   "inicio": 15.48,
+   "fin": 15.86,
+   "prob": 0.994
+  },
+  {
+   "palabra": "tu",
+   "inicio": 15.86,
+   "fin": 16.0,
+   "prob": 0.997
+  },
+  {
+   "palabra": "aliento",
+   "inicio": 16.0,
+   "fin": 16.24,
+   "prob": 0.996
+  },
+  {
+   "palabra": "a",
+   "inicio": 16.24,
+   "fin": 16.42,
+   "prob": 0.998
+  },
+  {
+   "palabra": "más",
+   "inicio": 16.42,
+   "fin": 16.52,
+   "prob": 0.992
+  },
+  {
+   "palabra": "de",
+   "inicio": 16.52,
+   "fin": 16.66,
+   "prob": 0.999
+  },
+  {
+   "palabra": "10",
+   "inicio": 16.66,
+   "fin": 16.86,
+   "prob": 0.734
+  },
+  {
+   "palabra": "metros.",
+   "inicio": 16.86,
+   "fin": 17.14,
+   "prob": 0.96
+  },
+  {
+   "palabra": "Tú,",
+   "inicio": 17.86,
+   "fin": 18.06,
+   "prob": 0.925
+  },
+  {
+   "palabra": "dormida,",
+   "inicio": 18.38,
+   "fin": 18.74,
+   "prob": 0.984
+  },
+  {
+   "palabra": "eres",
+   "inicio": 19.12,
+   "fin": 19.28,
+   "prob": 0.996
+  },
+  {
+   "palabra": "un",
+   "inicio": 19.28,
+   "fin": 19.5,
+   "prob": 0.998
+  },
+  {
+   "palabra": "faro,",
+   "inicio": 19.5,
+   "fin": 19.78,
+   "prob": 0.988
+  },
+  {
+   "palabra": "sueltas",
+   "inicio": 20.08,
+   "fin": 20.44,
+   "prob": 0.989
+  },
+  {
+   "palabra": "aire,",
+   "inicio": 20.44,
+   "fin": 20.64,
+   "prob": 0.999
+  },
+  {
+   "palabra": "das",
+   "inicio": 21.04,
+   "fin": 21.16,
+   "prob": 0.984
+  },
+  {
+   "palabra": "calor",
+   "inicio": 21.16,
+   "fin": 21.42,
+   "prob": 0.999
+  },
+  {
+   "palabra": "y",
+   "inicio": 21.42,
+   "fin": 21.54,
+   "prob": 0.988
+  },
+  {
+   "palabra": "tu",
+   "inicio": 21.54,
+   "fin": 21.62,
+   "prob": 0.996
+  },
+  {
+   "palabra": "piel",
+   "inicio": 21.62,
+   "fin": 21.82,
+   "prob": 1.0
+  },
+  {
+   "palabra": "tiene",
+   "inicio": 21.82,
+   "fin": 22.08,
+   "prob": 0.998
+  },
+  {
+   "palabra": "un",
+   "inicio": 22.08,
+   "fin": 22.2,
+   "prob": 0.998
+  },
+  {
+   "palabra": "olor",
+   "inicio": 22.2,
+   "fin": 22.38,
+   "prob": 0.995
+  },
+  {
+   "palabra": "único.",
+   "inicio": 22.38,
+   "fin": 22.6,
+   "prob": 0.998
+  },
+  {
+   "palabra": "Y",
+   "inicio": 23.26,
+   "fin": 23.42,
+   "prob": 0.966
+  },
+  {
+   "palabra": "si",
+   "inicio": 23.42,
+   "fin": 23.52,
+   "prob": 0.996
+  },
+  {
+   "palabra": "tu",
+   "inicio": 23.52,
+   "fin": 23.64,
+   "prob": 0.991
+  },
+  {
+   "palabra": "olor",
+   "inicio": 23.64,
+   "fin": 23.84,
+   "prob": 0.998
+  },
+  {
+   "palabra": "les",
+   "inicio": 23.84,
+   "fin": 24.02,
+   "prob": 0.996
+  },
+  {
+   "palabra": "gusta",
+   "inicio": 24.02,
+   "fin": 24.24,
+   "prob": 0.999
+  },
+  {
+   "palabra": "más",
+   "inicio": 24.24,
+   "fin": 24.48,
+   "prob": 0.995
+  },
+  {
+   "palabra": "que",
+   "inicio": 24.48,
+   "fin": 24.68,
+   "prob": 0.996
+  },
+  {
+   "palabra": "el",
+   "inicio": 24.68,
+   "fin": 24.76,
+   "prob": 0.993
+  },
+  {
+   "palabra": "de",
+   "inicio": 24.76,
+   "fin": 24.86,
+   "prob": 0.999
+  },
+  {
+   "palabra": "otros,",
+   "inicio": 24.86,
+   "fin": 25.06,
+   "prob": 0.998
+  },
+  {
+   "palabra": "ahí",
+   "inicio": 25.5,
+   "fin": 25.64,
+   "prob": 0.929
+  },
+  {
+   "palabra": "sí,",
+   "inicio": 25.64,
+   "fin": 25.9,
+   "prob": 0.891
+  },
+  {
+   "palabra": "eres",
+   "inicio": 26.18,
+   "fin": 26.34,
+   "prob": 0.994
+  },
+  {
+   "palabra": "la",
+   "inicio": 26.34,
+   "fin": 26.52,
+   "prob": 0.999
+  },
+  {
+   "palabra": "elegida.",
+   "inicio": 26.52,
+   "fin": 26.92,
+   "prob": 0.997
+  },
+  {
+   "palabra": "Y",
+   "inicio": 27.42,
+   "fin": 27.58,
+   "prob": 0.975
+  },
+  {
+   "palabra": "lo",
+   "inicio": 27.58,
+   "fin": 27.7,
+   "prob": 0.998
+  },
+  {
+   "palabra": "peor",
+   "inicio": 27.7,
+   "fin": 27.9,
+   "prob": 0.875
+  },
+  {
+   "palabra": "es",
+   "inicio": 27.9,
+   "fin": 28.06,
+   "prob": 0.996
+  },
+  {
+   "palabra": "tu",
+   "inicio": 28.06,
+   "fin": 28.14,
+   "prob": 0.997
+  },
+  {
+   "palabra": "boca,",
+   "inicio": 28.14,
+   "fin": 28.38,
+   "prob": 0.997
+  },
+  {
+   "palabra": "una",
+   "inicio": 28.7,
+   "fin": 28.86,
+   "prob": 0.994
+  },
+  {
+   "palabra": "chimenea",
+   "inicio": 28.86,
+   "fin": 29.36,
+   "prob": 0.966
+  },
+  {
+   "palabra": "de",
+   "inicio": 29.36,
+   "fin": 29.46,
+   "prob": 0.998
+  },
+  {
+   "palabra": "aire",
+   "inicio": 29.46,
+   "fin": 29.6,
+   "prob": 0.999
+  },
+  {
+   "palabra": "caliente",
+   "inicio": 29.6,
+   "fin": 30.06,
+   "prob": 0.938
+  },
+  {
+   "palabra": "que",
+   "inicio": 30.06,
+   "fin": 30.22,
+   "prob": 0.973
+  },
+  {
+   "palabra": "les",
+   "inicio": 30.22,
+   "fin": 30.36,
+   "prob": 0.956
+  },
+  {
+   "palabra": "dice",
+   "inicio": 30.36,
+   "fin": 30.6,
+   "prob": 0.998
+  },
+  {
+   "palabra": "dónde",
+   "inicio": 30.6,
+   "fin": 30.8,
+   "prob": 0.53
+  },
+  {
+   "palabra": "estás.",
+   "inicio": 30.8,
+   "fin": 31.12,
+   "prob": 0.982
+  },
+  {
+   "palabra": "En",
+   "inicio": 31.8,
+   "fin": 31.98,
+   "prob": 0.93
+  },
+  {
+   "palabra": "un",
+   "inicio": 31.98,
+   "fin": 32.1,
+   "prob": 0.996
+  },
+  {
+   "palabra": "estudio,",
+   "inicio": 32.1,
+   "fin": 32.38,
+   "prob": 1.0
+  },
+  {
+   "palabra": "la",
+   "inicio": 32.8,
+   "fin": 32.88,
+   "prob": 0.996
+  },
+  {
+   "palabra": "persona",
+   "inicio": 32.88,
+   "fin": 33.2,
+   "prob": 1.0
+  },
+  {
+   "palabra": "más",
+   "inicio": 33.2,
+   "fin": 33.4,
+   "prob": 0.992
+  },
+  {
+   "palabra": "atractiva",
+   "inicio": 33.4,
+   "fin": 33.88,
+   "prob": 0.996
+  },
+  {
+   "palabra": "para",
+   "inicio": 33.88,
+   "fin": 34.06,
+   "prob": 0.997
+  },
+  {
+   "palabra": "los",
+   "inicio": 34.06,
+   "fin": 34.22,
+   "prob": 0.999
+  },
+  {
+   "palabra": "mosquitos",
+   "inicio": 34.22,
+   "fin": 34.6,
+   "prob": 0.954
+  },
+  {
+   "palabra": "atraía",
+   "inicio": 34.6,
+   "fin": 34.98,
+   "prob": 0.87
+  },
+  {
+   "palabra": "100",
+   "inicio": 34.98,
+   "fin": 35.16,
+   "prob": 0.605
+  },
+  {
+   "palabra": "veces",
+   "inicio": 35.16,
+   "fin": 35.48,
+   "prob": 0.996
+  },
+  {
+   "palabra": "más",
+   "inicio": 35.48,
+   "fin": 35.7,
+   "prob": 0.994
+  },
+  {
+   "palabra": "que",
+   "inicio": 35.7,
+   "fin": 35.84,
+   "prob": 0.998
+  },
+  {
+   "palabra": "la",
+   "inicio": 35.84,
+   "fin": 35.94,
+   "prob": 0.994
+  },
+  {
+   "palabra": "menos.",
+   "inicio": 35.94,
+   "fin": 36.14,
+   "prob": 0.998
+  },
+  {
+   "palabra": "Así",
+   "inicio": 36.8,
+   "fin": 37.1,
+   "prob": 0.985
+  },
+  {
+   "palabra": "que",
+   "inicio": 37.1,
+   "fin": 37.28,
+   "prob": 0.997
+  },
+  {
+   "palabra": "no",
+   "inicio": 37.28,
+   "fin": 37.4,
+   "prob": 0.985
+  },
+  {
+   "palabra": "es",
+   "inicio": 37.4,
+   "fin": 37.54,
+   "prob": 0.999
+  },
+  {
+   "palabra": "tu",
+   "inicio": 37.54,
+   "fin": 37.62,
+   "prob": 0.991
+  },
+  {
+   "palabra": "sangre,",
+   "inicio": 37.62,
+   "fin": 37.92,
+   "prob": 0.999
+  },
+  {
+   "palabra": "es",
+   "inicio": 38.24,
+   "fin": 38.38,
+   "prob": 0.962
+  },
+  {
+   "palabra": "tu",
+   "inicio": 38.38,
+   "fin": 38.46,
+   "prob": 0.999
+  },
+  {
+   "palabra": "aliento,",
+   "inicio": 38.46,
+   "fin": 38.76,
+   "prob": 0.997
+  },
+  {
+   "palabra": "tu",
+   "inicio": 39.12,
+   "fin": 39.22,
+   "prob": 0.99
+  },
+  {
+   "palabra": "calor",
+   "inicio": 39.22,
+   "fin": 39.46,
+   "prob": 0.998
+  },
+  {
+   "palabra": "y",
+   "inicio": 39.46,
+   "fin": 39.6,
+   "prob": 0.999
+  },
+  {
+   "palabra": "tu",
+   "inicio": 39.6,
+   "fin": 39.7,
+   "prob": 0.998
+  },
+  {
+   "palabra": "olor.",
+   "inicio": 39.7,
+   "fin": 39.98,
+   "prob": 0.996
+  },
+  {
+   "palabra": "Envíaselo",
+   "inicio": 40.58,
+   "fin": 41.02,
+   "prob": 0.852
+  },
+  {
+   "palabra": "a",
+   "inicio": 41.02,
+   "fin": 41.14,
+   "prob": 0.998
+  },
+  {
+   "palabra": "quien",
+   "inicio": 41.14,
+   "fin": 41.22,
+   "prob": 0.946
+  },
+  {
+   "palabra": "dice",
+   "inicio": 41.22,
+   "fin": 41.5,
+   "prob": 0.999
+  },
+  {
+   "palabra": "que",
+   "inicio": 41.5,
+   "fin": 41.64,
+   "prob": 0.999
+  },
+  {
+   "palabra": "lo",
+   "inicio": 41.64,
+   "fin": 41.74,
+   "prob": 0.994
+  },
+  {
+   "palabra": "pican",
+   "inicio": 41.74,
+   "fin": 42.02,
+   "prob": 0.904
+  },
+  {
+   "palabra": "porque",
+   "inicio": 42.02,
+   "fin": 42.24,
+   "prob": 0.981
+  },
+  {
+   "palabra": "es",
+   "inicio": 42.24,
+   "fin": 42.48,
+   "prob": 0.998
+  },
+  {
+   "palabra": "muy",
+   "inicio": 42.48,
+   "fin": 42.62,
+   "prob": 0.999
+  },
+  {
+   "palabra": "dulce.",
+   "inicio": 42.62,
+   "fin": 42.98,
+   "prob": 0.998
+  }
+ ]
+}

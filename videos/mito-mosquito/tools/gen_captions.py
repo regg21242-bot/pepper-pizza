@@ -6,7 +6,7 @@ También acepta el JSON completo de transcribir.py (usa la clave "palabras").
 """
 import json, sys, re, html, argparse
 
-CLAVE = {"helicóptero", "prendida", "cuatrocientos", "voltios", "pájaro", "solo", "tierra", "torre", "camino", "metal", "jaula", "varilla", "arco", "manos", "luz"}
+CLAVE = {"dulce", "azúcar", "hembras", "antenas", "aliento", "diez", "faro", "calor", "olor", "elegida", "boca", "chimenea", "cien", "sangre"}
 MAX_PAL = 6          # palabras por grupo (2 líneas máximo con letra de 66 px)
 PAUSA = 0.15
 
@@ -51,19 +51,23 @@ for sel, ws, wnext, gid, key in js:
     if key:
         tw.append(f'tl.fromTo("{sel}", {{"--box":0}}, {{"--box":1, duration:0.2, ease:"power2.out"}}, {t:.3f});')
     if wnext is not None:
-        tw.append(f'tl.to("{sel}", {{color:"rgba(255,255,255,0.5)", duration:0.12}}, {g0 + wnext:.3f});')
+        tw.append(f'tl.to("{sel}", {{color:"rgba(185,190,200,0.75)", duration:0.12}}, {g0 + wnext:.3f});')
 
 page = f'''<template>
   <style>
     #root {{ position: absolute; inset: 0; pointer-events: none; }}
     .cgroup {{ position: absolute; left: 0; top: 200px; width: 1080px; padding: 0 130px;
-      text-align: center; font-family: Nunito, sans-serif; font-weight: 900; font-size: 66px; line-height: 1.22;
+      text-align: center; font-family: Nunito, sans-serif; font-weight: 900; font-size: 64px; line-height: 1.22;
       color: #fff; overflow: visible; text-shadow: 0 4px 18px rgba(0,0,0,0.65), 0 1px 3px rgba(0,0,0,0.6); }}
     .w {{ display: inline-block; opacity: 0; position: relative; }}
     .w.key {{ --box: 0; }}
-    .w.key::after {{ content: ""; position: absolute; left: -12px; right: -12px; top: 2px; bottom: 0;
-      border: 3px solid rgba(255,255,255,0.95); border-radius: 14px; opacity: var(--box);
-      box-shadow: 0 0 18px rgba(255,210,120,0.45); }}
+    .w.key::after {{ content: ""; position: absolute; left: -10px; right: -10px; top: 4px; bottom: 0;
+      border: 2px solid #4AA3FF; border-radius: 3px; opacity: var(--box); background: rgba(74,163,255,.14); }}
+    .w.key::before {{ content: ""; position: absolute; left: -16px; right: -16px; top: -2px; bottom: -6px; opacity: var(--box);
+      background: radial-gradient(circle, #fff 2.5px, #4AA3FF 3.5px, transparent 5px) 0 0/12px 12px no-repeat,
+                  radial-gradient(circle, #fff 2.5px, #4AA3FF 3.5px, transparent 5px) 100% 0/12px 12px no-repeat,
+                  radial-gradient(circle, #fff 2.5px, #4AA3FF 3.5px, transparent 5px) 0 100%/12px 12px no-repeat,
+                  radial-gradient(circle, #fff 2.5px, #4AA3FF 3.5px, transparent 5px) 100% 100%/12px 12px no-repeat; }}
   </style>
   <div id="root" data-composition-id="captions" data-width="1080" data-height="1920">
 {chr(10).join(out)}
