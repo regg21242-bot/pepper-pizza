@@ -23,11 +23,11 @@
     /* ---------- tiempos (s) — tools/mezcla.py también los lee ---------- */
     const T = { end: 58, crece: 12.35, fundido: 12.2, mapaOn: 5.4, gpsBloq: 6.4, mapa: 9.3, wifi: 13.2, muro1: 16.3, rafaga1: 17.3, sale1: 19.25, escucha: 19.0, sinPass: 20.2,
       filas: 21.8, circulos: 24.9, pin: 26.6, millones: 29.6, suben: 30.6, heroeCel: 32.6, barrido: 34.5, cierra: 35.9, llave: 36.3, f1: 36.6, f2: 37.0, f3: 37.4,
-      soloNombre: 38.6, letrero: 40.6, sube: 42.0, cuenta: 42.6, muro2: 47.1, rafaga2: 47.9, sale2: 49.5, desconocido: 48.9, pregunta: 52.7, util: 53.7, miedo: 54.5, vuelve: 55.0 };
+      soloNombre: 38.6, letrero: 40.6, sube: 42.0, cuenta: 42.6, rafaga2: 48.4, sale2: 49.5, desconocido: 48.9, pregunta: 52.7, util: 53.7, miedo: 54.5, vuelve: 55.0 };
 
     const renderer = N.crearRender(document.getElementById('gl'), W, H); renderer.toneMappingExposure = 1.1;
     const scene = new THREE.Scene();
-    const C = window.CIUDAD(renderer, scene, { evitar: [[14.4, 20.0, -6, 18, 1], [45.8, 50.0, -9, 18, 1], [26.0, 35.0, -22, 14, -1]] });
+    const C = window.CIUDAD(renderer, scene, { evitar: [[14.4, 20.0, -6, 18, 1], [45.8, 53.0, -12, 18, 1], [26.0, 43.0, -32, 14, -1]] });
     const M = C.M, MZ = C.MZ, GZ = C.GZ, ZC = -23;       // ZC: centro de la calle cruzada
 
     /* ---------- 1. el celular despiezado flotando sobre la ciudad ---------- */
@@ -92,7 +92,7 @@
       const d = new THREE.Mesh(new THREE.CircleGeometry(1, 96), new THREE.MeshBasicMaterial({ color: HDR(.1, .6, .7), transparent: true, opacity: .12, blending: THREE.AdditiveBlending, depthWrite: false })); d.rotation.x = -Math.PI / 2; d.position.copy(c).add(V3(0, -.01, 0)); scene.add(d);
       const g = N.glow('#5CE8FF', 2.4, 0); g.material.color = HDR(.6, 2.6, 3); g.position.copy(c).add(V3(0, 1.5, 0)); scene.add(g); return { m, d, g, c }; });
     // candado morado y llave
-    const LK = V3(-15, 3.0, ZC);
+    const LKt = t => V3(-4.1, 3.05, hz(t) - 1.4), LK = LKt(37);
     const lock = new THREE.Group(); lock.position.copy(LK); scene.add(lock);
     const rrGeo = (w, h, rad, d) => { const sh = new THREE.Shape(); sh.moveTo(-w / 2 + rad, -h / 2); sh.lineTo(w / 2 - rad, -h / 2); sh.quadraticCurveTo(w / 2, -h / 2, w / 2, -h / 2 + rad); sh.lineTo(w / 2, h / 2 - rad); sh.quadraticCurveTo(w / 2, h / 2, w / 2 - rad, h / 2); sh.lineTo(-w / 2 + rad, h / 2); sh.quadraticCurveTo(-w / 2, h / 2, -w / 2, h / 2 - rad); sh.lineTo(-w / 2, -h / 2 + rad); sh.quadraticCurveTo(-w / 2, -h / 2, -w / 2 + rad, -h / 2);
       const g = new THREE.ExtrudeGeometry(sh, { depth: d, bevelEnabled: true, bevelSize: .06, bevelThickness: .06, bevelSegments: 4 }); g.translate(0, 0, -d / 2); return g; };
@@ -105,7 +105,7 @@
     const keyG = new THREE.Group(); scene.add(keyG); const goldM = new THREE.MeshStandardMaterial({ color: '#E8C060', metalness: .85, roughness: .25, envMap: studio });
     keyG.add(N.M(new THREE.TorusGeometry(.3, .08, 12, 32), goldM, .75, 0, 0)); keyG.add(N.box(.95, .11, .07, goldM, 0, 0, 0)); keyG.add(N.box(.08, .2, .07, goldM, -.32, -.12, 0)); keyG.add(N.box(.08, .14, .07, goldM, -.16, -.1, 0));
     // letrero de calle con el nombre de la red
-    const SG = V3(-5.2, 0, -19.8);
+    const SG = V3(-6.6, 0, hz(40.6) - .6);
     const letrero = new THREE.Group(); letrero.position.copy(SG); scene.add(letrero);
     const posteL = N.M(new THREE.CylinderGeometry(.06, .08, 3.6, 10), N.std('#6A707C', { metalness: .6, roughness: .4, flatShading: false }), 0, 1.8, 0); letrero.add(posteL);
     const placa = new THREE.Group(); placa.position.y = 3.25; letrero.add(placa);
@@ -114,7 +114,7 @@
       x.font = '900 140px Nunito, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('RED-7F3A', 600, 158); });
     placa.add(N.box(2.72, .82, .06, N.std('#E8E8EC'))); const cara = new THREE.Mesh(new THREE.PlaneGeometry(2.66, .78), new THREE.MeshBasicMaterial({ map: signT, color: HDR(.85, .85, .85) })); cara.position.z = .035; placa.add(cara);
     const cara2 = cara.clone(); cara2.rotation.y = Math.PI; cara2.position.z = -.035; placa.add(cara2);
-    placa.rotation.y = Math.atan2(-3.6, -4.8);
+    placa.rotation.y = 0;
     const etqVuela = N.etiqueta('RED-7F3A', { s: 1.1 }); etqVuela.material.fog = false; scene.add(etqVuela);
     // datos que suben de los celulares (escena 6)
     const coords = ['24.14°N', '24.15°N', '24.13°N', '24.16°N'];
@@ -161,26 +161,16 @@
       [31.0, [HX + .4, 1.73, hz(31) + 2.7], [HX, 1.5, hz(31) - 5]],
       [31.5, ...orb(31.5, Math.PI * .25)], [32.0, ...orb(32.0, Math.PI * .5)], [32.5, ...orb(32.5, Math.PI * .75)], [33.0, ...orb(33.0, Math.PI)],
       [33.9, [HX, 1.75, hz(33.9) - 3.4], [HX, 1.45, hz(33.9)]],
-      [34.45, [-3.0, 2.4, -15.5], [-14, 2.3, -15.6]],                             // barrido junto a la pared
-      [34.85, [-3.4, 2.7, ZC], [-26, 2.6, ZC]],
-      [35.8, [-6.5, 2.7, ZC - .2], [LK.x, LK.y - .1, ZC]],                        // candado
-      [37.6, [-9.6, 2.8, ZC - .6], [LK.x, LK.y - .1, ZC]],
-      [39.2, [-10.6, 2.5, -25.4], [-8.4, 3.0, -21]],
-      [40.9, [-8.8, 2.6, -24.6], [SG.x, 3.1, SG.z]],                              // letrero
-      [41.8, [-8.2, 4.2, -24.2], [SG.x, 3.3, SG.z]],
+      [35.6, [-4.5, 2.3, hz(35.6) - 6.6], [-4.8, 2.2, hz(35.6) - 1]],          // se aleja despacio: candado junto a la persona
+      [38.0, [-4.3, 2.4, hz(38) - 6.9], [-4.7, 2.3, hz(38) - 1]],
+      [40.9, [-4.2, 2.6, hz(40.9) - 7.4], [-5.9, 2.8, SG.z]],         // letrero
+      [41.8, [-4.0, 4.2, hz(41.8) - 8.2], [-5.7, 3.0, SG.z]],
       [43.2, [-2, 70, 30], [0, 0, -40]],                                          // toda la ciudad
       [44.6, [0, 170, 90], [0, 0, -60]],
-      [45.6, [4, 60, MZ + 40], [6, 0, MZ]],                                       // de vuelta a la casa
-      [46.4, [1.8, 6, MZ + 12], [7, 1.8, MZ + .5]],
-      [46.8, [3.6, 1.9, GZ + 4.6], [8.4, 1.6, GZ - 1.0]],
-      [47.08, [6.75, 1.75, GZ + .5], [MX, 1.4, lerp(GZ, MZ, .5)]],
-      [47.35, [8.8, 1.55, lerp(GZ, MZ, .6)], [MX, 1.3, MZ]],
-      [48.05, [MX - 1.45, 1.33, MZ + .1], [MX, 1.27, MZ]],
-      [48.5, [MX - 1.8, 1.4, MZ + .5], [MX, 1.27, MZ]],
-      [49.2, [8.0, 1.7, lerp(GZ, MZ, .4)], [MX - 1, 1.3, MZ - .6]],
-      [49.75, [5.0, 1.9, GZ + .8], [6, 1.5, MZ - 3]],                            // afuera: el desconocido
-      [51.0, [2.0, 2.4, MZ + 5], [5.6, 1.5, sz(51)]],
-      [52.5, [.5, 3.2, MZ + 7], [5.5, 1.6, sz(52.5)]],
+      [46.2, [-2, 40, MZ + 40], [4, 1, MZ]],                                      // baja directo a la calle de la casa
+      [47.6, [.5, 2.8, MZ + 9], [6, 1.6, MZ - 1]],
+      [50.0, [1.5, 2.4, MZ + 7], [5.8, 1.5, sz(50)]],                            // el desconocido
+      [52.5, [.5, 3.2, MZ + 8], [5.5, 1.6, sz(52.5)]],
       [54.0, [0, 9, MZ + 20], [3, 3, MZ - 2]],
       [55.6, [0, 28, 34], [0, 30, -40]],                                          // sube al cielo
       [56.9, [0, 50, 50.5], [0, 47, -40]],
@@ -228,8 +218,8 @@
     function dof(t) { const c = camera.position, dPH = c.distanceTo(PH), dM = c.distanceTo(M);
       const hero = V3(HX, 1.6, hz(t)), ex = V3(SX, 1.6, sz(t));
       const tramos = [  // [t0, t1, foco, apertura]
-        [16.0, 19.5, dM, 1.0], [27.9, 34.3, c.distanceTo(hero), .55], [35.4, 38.6, c.distanceTo(LK), .5], [39.2, 41.9, c.distanceTo(V3(SG.x, 3.2, SG.z)), .45],
-        [46.7, 49.6, dM, 1.0], [49.6, 52.8, c.distanceTo(ex), .4], [55.9, 59, dPH, .7]];
+        [16.0, 19.5, dM, 1.0], [27.9, 34.3, c.distanceTo(hero), .55], [35.4, 38.6, c.distanceTo(LKt(t)), .5], [39.2, 41.9, c.distanceTo(V3(SG.x, 3.2, SG.z)), .45],
+        [47.4, 52.8, c.distanceTo(ex), .4], [55.9, 59, dPH, .7]];
       let focus = 18, ap = .0; for (const [a, b, f, k] of tramos) { const w = prog(t, a - .35, a) * (1 - prog(t, b, b + .35)); if (w > 0) { focus = f; ap = Math.max(ap, k * w); } }
       if (t < 12.25) { focus = dPH; ap = .7; } return [focus, ap]; }
 
@@ -282,8 +272,8 @@
       C.update(t, camera, { crece: T.crece, tg: t < 55.2 ? t : T.crece + 2.4 - (t - 55.2) * 1.2, pin: pinS, rafagas: [T.rafaga1, T.rafaga2], brillo });
       // la persona que sigue la cámara y el desconocido
       const mov = (q, x, z, rot, on, luz) => { q.p.visible = on; q.halo.visible = on; if (!on) return; q.p.position.set(x, .19, z); q.p.rotation.y = rot; q.p.userData.camina(t * 5.4, .9); q.p.updateMatrixWorld(true);
-        q.halo.position.copy(q.p.userData.phone.getWorldPosition(V3())); q.halo.material.opacity = luz * (1 + .15 * Math.sin(t * 9)); q.halo.scale.setScalar(.35 + 1.0 * luz); q.scr.color.setRGB(.3 + 2.4 * luz, .5 + 2.6 * luz, .9 + 2.8 * luz); };
-      mov(heroe, HX, hz(t), Math.PI, t > 20 && t < 36, Math.max(.25, easeOut(prog(t, T.heroeCel, T.heroeCel + .3))));
+        q.halo.position.copy(q.p.userData.phone.getWorldPosition(V3())); q.halo.material.opacity = luz * (1 + .15 * Math.sin(t * 9)); q.halo.scale.setScalar(.25 + .55 * luz); q.scr.color.setRGB(.3 + 2.4 * luz, .5 + 2.6 * luz, .9 + 2.8 * luz); };
+      mov(heroe, HX, hz(t), Math.PI, t > 20 && t < 43, Math.max(.25, easeOut(prog(t, T.heroeCel, T.heroeCel + .3))));
       mov(extr, SX, sz(t), 0, t > 45.5 && t < 56, .35 + .65 * easeOut(prog(t, T.desconocido - .2, T.desconocido + .2)));
       // etiquetas con nombres de red (escenas 4–5)
       etq.forEach(({ l, p, i }) => { const k = easeOut(prog(t, T.escucha + i * .12, T.escucha + .35 + i * .12)) * (1 - prog(t, 23.6, 24.1)); l.visible = k > .01; if (!l.visible) return; l.material.opacity = k; l.position.copy(p).add(V3(0, (1 - k) * 1.2, 0)); });
@@ -295,14 +285,14 @@
       const cerca = C.gente.filter(q => q.cel && q.pos && Math.abs(q.pos.z - hz(t)) < 22).slice(0, ups.length);
       ups.forEach((l, j) => { const q = cerca[j]; if (!q || t < T.suben || t > 35) { l.visible = false; return; } const u = ((t - T.suben) * .4 + j * .37) % 1; l.visible = true; l.position.set(q.pos.x, q.pos.y + .5 + u * 9, q.pos.z); l.material.opacity = Math.sin(Math.PI * u) * prog(t, T.suben, T.suben + .5); });
       // candado, llave y letrero (escena 7)
-      const cand = t > 34.6 && t < 39.4; lock.visible = cand;
-      if (cand) { const intro = backOut(prog(t, 35.0, 35.7)), sal = ease(prog(t, 38.4, 39.2)); lock.scale.setScalar(Math.max(.001, intro * (1 - sal)));
-        lock.position.set(LK.x, LK.y + Math.sin(t * 1.2) * .08 + sal * 1.5, LK.z); lock.rotation.y = Math.PI / 2 + .3 * Math.sin(t * .6);
+      const cand = t > 35.0 && t < 39.4; lock.visible = cand;
+      if (cand) { const intro = backOut(prog(t, 35.0, 35.7)), sal = ease(prog(t, 38.4, 39.2)); lock.scale.setScalar(Math.max(.001, .5 * intro * (1 - sal)));
+        const L = LKt(t); lock.position.set(L.x, L.y + Math.sin(t * 1.2) * .08 + sal * 1.5, L.z); lock.rotation.y = Math.PI + .3 * Math.sin(t * .6);
         shackle.position.y = lerp(.45, 0, easeOut(prog(t, T.cierra - .15, T.cierra))); lockGlow.material.opacity = Math.max(0, 1 - Math.abs(t - T.llave - .1) / .3) * .9; }
       const kin = ease(prog(t, T.llave - .35, T.llave)), kout = easeOut(prog(t, T.llave + .05, T.llave + .6)); keyG.visible = t > 35.6 && t < T.llave + .7;
-      if (keyG.visible) { keyG.position.set(LK.x + lerp(lerp(3.8, 1.05, kin), 3.2, kout), LK.y + .1 + kout * .6, LK.z + .05); keyG.rotation.set(0, 0, kout * 1.4); }
+      if (keyG.visible) { const L = LKt(t); keyG.scale.setScalar(.5); keyG.position.set(L.x - .03, L.y + .05 + kout * .3, L.z - lerp(lerp(1.8, .45, kin), 1.4, kout)); keyG.rotation.set(kout * 1.4, Math.PI / 2, 0); }
       const vu = prog(t, T.soloNombre, T.soloNombre + .4), va = ease(prog(t, 39.6, 40.5)); etqVuela.visible = vu > 0 && t < T.letrero + .3;
-      if (etqVuela.visible) { etqVuela.position.lerpVectors(V3(LK.x, LK.y + 1.8, LK.z), V3(SG.x, 3.25, SG.z), va); etqVuela.material.opacity = vu * (1 - prog(t, T.letrero, T.letrero + .3)); }
+      if (etqVuela.visible) { { const L = LKt(t); etqVuela.position.lerpVectors(V3(L.x, L.y + 1.8, L.z), V3(SG.x, 3.25, SG.z), va); } etqVuela.material.opacity = vu * (1 - prog(t, T.letrero, T.letrero + .3)); }
       const sk2 = backOut(prog(t, T.letrero - .1, T.letrero + .35)); letrero.visible = t > T.letrero - .45; placa.scale.set(Math.max(.001, sk2), Math.max(.001, sk2), 1); posteL.scale.y = Math.max(.001, Math.min(1, prog(t, T.letrero - .45, T.letrero)));
       // puntos WiFi de toda la ciudad (escena 8)
       const pk = prog(t, T.sube, T.sube + .8) * (1 - prog(t, 45.0, 45.8)); puntos.visible = pk > .01; puntos.material.opacity = pk * (.75 + .25 * Math.sin(t * 7)); puntos.material.size = 7 + 2 * Math.sin(t * 4);

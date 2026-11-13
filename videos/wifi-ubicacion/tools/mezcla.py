@@ -36,9 +36,9 @@ def error(t0, db=-6):
 def click(t0, db=-4):
     x = tt(.12); s = np.random.default_rng(int(t0 * 100)).standard_normal(len(x)) * np.exp(-x * 90) * .5 + np.sin(2 * np.pi * 2200 * x) * np.exp(-x * 60) * .4; place(fx, st(s), t0, db)
 # whoosh en cada movimiento grande de cámara
-for t0, db in ((5.0, -14), (12.0, -9), (13.7, -8), (16.05, -6), (18.9, -8), (21.8, -12), (27.0, -11), (31.4, -14), (34.3, -4), (39.0, -12), (42.0, -6), (45.2, -6), (46.9, -6), (49.0, -8), (54.5, -10), (56.5, -9)):
+for t0, db in ((5.0, -14), (12.0, -9), (13.7, -8), (16.05, -6), (18.9, -8), (21.8, -12), (27.0, -11), (31.4, -14), (35.0, -14), (42.0, -6), (45.2, -6), (54.5, -10), (56.5, -9)):
     place(fx, S("whoosh.wav"), t0, db)
-place(fx, S("golpe.wav"), T["muro1"] - .05, -14); place(fx, S("golpe.wav"), T["muro2"] - .05, -14)   # atraviesa el muro
+place(fx, S("golpe.wav"), T["muro1"] - .05, -14)   # atraviesa el muro
 # celular: GPS bloqueado, mapa y pin
 error(T["gpsBloq"]); ping(T["mapaOn"] + .2, -12); place(fx, S("pop.wav"), T["mapa"], -6)
 # ciudad que crece: tics rápidos
@@ -59,7 +59,7 @@ tono(T["heroeCel"], 1318, .5, -10)
 # candado: clic, llave rechazada, palomita y taches, letrero
 click(T["cierra"], -2); place(fx, S("metal.wav"), T["llave"] + .05, -8); error(T["llave"] + .08, -10)
 tono(T["f1"], 1046, .4, -10); tono(T["f2"], 220, .4, -9); tono(T["f3"], 220, .4, -9)
-place(fx, S("whoosh_corto.wav"), 39.6, -10); place(fx, S("golpe.wav"), T["letrero"] + .1, -8)
+place(fx, S("golpe.wav"), T["letrero"] + .1, -8)
 # toda la ciudad: brillo ascendente + contador
 x = tt(2.6); fr = 300 * 2 ** (x * 1.4); sh = sum(np.sin(2 * np.pi * fr * h * x) / h for h in (1, 2, 3)) * np.minimum(1, x / 1.6) * np.exp(-np.maximum(0, x - 1.8) * 4) * .12
 place(fx, st(sh), T["sube"] - .1, -6)

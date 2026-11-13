@@ -185,7 +185,7 @@
       f.add(N.M(new THREE.CylinderGeometry(.07, .11, 4.8, 8), poste, 0, 2.4, 0)); f.add(N.M(new THREE.BoxGeometry(.9, .07, .07), poste, .42, 4.7, 0));
       f.add(N.M(new THREE.CylinderGeometry(.16, .24, .36, 6), poste, .82, 4.5, 0)); const b = new THREE.Mesh(new THREE.SphereGeometry(.16, 10, 8), bulbM); b.position.set(.82, 4.32, 0); f.add(b);
       const c = new THREE.Mesh(new THREE.PlaneGeometry(6, 6), charcoM); c.rotation.x = -Math.PI / 2; c.position.set(x + Math.cos(rot) * .82, .2, z - Math.sin(rot) * .82); c.renderOrder = 2; g.add(c); charcos.push(c); };
-    for (let z = 36; z > -230; z -= 12) { if (Math.abs(z - MZ) > 2.5) addFarol(-4.6, z, 0); if (Math.abs(z - 6 - MZ) > 3.5) addFarol(4.6, z - 6, Math.PI); }
+    for (let z = 36; z > -230; z -= 12) { if (Math.abs(z - MZ) > 2.5 && !(z < MZ - 3 && z > MZ - 21)) addFarol(-4.6, z, 0); if (Math.abs(z - 6 - MZ) > 3.5) addFarol(4.6, z - 6, Math.PI); }
     ROWS.slice(0, 4).forEach(([z0]) => { const zc = z0 - 5; for (let x = -74; x < 75; x += 14) if (Math.abs(x) > 10) { addFarol(x, zc - 3.6, -Math.PI / 2); } });
     for (const [x, z] of [[-4.6, MZ + 6], [4.6, MZ - 8], [-4.6, MZ - 18], [4.6, MZ + 10]]) { const L = new THREE.PointLight('#FFB060', 6, 14, 2); L.position.set(x, 4.3, z); g.add(L); }
 
