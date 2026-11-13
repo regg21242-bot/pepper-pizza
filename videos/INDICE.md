@@ -4,6 +4,7 @@ Todos son verticales (1080×1920), con la voz de Álvaro, música, efectos y sub
 
 | Carpeta | Título | Dura | Peso | Estilo | Estado |
 |---|---|---|---|---|---|
+| `wifi-ubicacion` | ¿Tu celular sabe dónde estás sin GPS? (serie «Nunca te lo explicaron»; `wifi-ubicacion-ligero.mp4` = 9.5 MB, subtítulos `wifi-ubicacion.srt`) | 58 s | 32 MB | 3D ciudad en una sola escena, cámara continua (HyperFrames + Three.js) | ✅ nuevo (loop) |
 | `tsunami/parte-3` | Alerta de tsunami · Parte 3: ¿lo dejas ir? (`tsunami-parte-3-ligero.mp4` = 9.6 MB) | 60 s | 58 MB | 3D low-poly (HyperFrames + Three.js) | ✅ nuevo |
 | `gracias-100` | ¡Gracias por los 100 seguidores! (cuenta 1→100 con confeti) | 10 s | 6 MB | 3D (HyperFrames + Three.js) | ✅ nuevo |
 | `tsunami/parte-2` | Alerta de tsunami · Parte 2: ¿abres el portón? (`tsunami-parte-2-ligero.mp4` = 9.5 MB) | 59 s | 61 MB | 3D low-poly (HyperFrames + Three.js) | ✅ nuevo |
@@ -107,4 +108,9 @@ Formato: una pregunta para que comenten y 5 hashtags. Los de Torre Eiffel, Hamel
 ```
 ¿Lo dejas ir o le pides que se quede? 👇
 #tsunami #historiainteractiva #supervivencia #quéharías #dilemamoral
+```
+**¿Tu celular sabe dónde estás sin GPS?**
+```
+¿Te parece útil o te da miedo? 👇
+#wifi #gps #tecnologia #sabiasque #nuncateloexplicaron
 ```
