@@ -35,6 +35,17 @@
     const studio = window.CEL.estudio(renderer);
     const ph = window.CEL.crear(renderer); const holder = new THREE.Group(); holder.add(ph); holder.position.copy(PH); scene.add(holder); const P = ph.userData; holder.rotation.order = 'YXZ';
     ph.traverse(o => { if (o.isMesh && o.material && 'envMap' in o.material) { o.material.envMap = studio; o.material.needsUpdate = true; } });
+    // celular blanco: cristal frontal blanco con pantalla negra, marco claro y tapa blanca
+    P.cristal.children[0].material = new THREE.MeshPhysicalMaterial({ color: '#F3F3F5', roughness: .14, metalness: 0, clearcoat: 1, clearcoatRoughness: .05, envMap: studio, envMapIntensity: 1.2 });
+    const apagada = new THREE.Mesh(new THREE.PlaneGeometry(.66, 1.44), new THREE.MeshPhysicalMaterial({ color: '#06070C', roughness: .05, metalness: .1, clearcoat: 1, envMap: studio, envMapIntensity: 1.0 })); apagada.position.z = .0088; P.cristal.add(apagada);
+    P.tapa.children[0].material = new THREE.MeshPhysicalMaterial({ color: '#F0F0F2', roughness: .12, metalness: .05, clearcoat: 1, clearcoatRoughness: .04, envMap: studio });
+    P.marco.children[0].material = new THREE.MeshPhysicalMaterial({ color: '#E4E4E8', metalness: .85, roughness: .28, clearcoat: .3, envMap: studio });
+    P.marco.traverse(o => { if (o.isMesh && o.material && o.material.color && o.material.color.getHexString() === 'b9bec7') o.material = P.marco.children[0].material; });
+    // fondo oscuro alrededor del celular (se abre cuando la cámara entra al mapa y vuelve al final para el loop)
+    const fondoT = N.canvasTex(16, 512, (x, w, h) => { const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#05060F'); g.addColorStop(.45, '#0B1030'); g.addColorStop(.6, '#141038'); g.addColorStop(1, '#05040C'); x.fillStyle = g; x.fillRect(0, 0, w, h); });
+    const fondo = new THREE.Mesh(new THREE.SphereGeometry(30, 40, 24), new THREE.MeshBasicMaterial({ map: fondoT, side: THREE.BackSide, fog: false, transparent: true })); fondo.position.copy(PH); fondo.renderOrder = -1; scene.add(fondo);
+    const bokeh = new THREE.Group(); bokeh.position.copy(PH); scene.add(bokeh);
+    { const r = N.rng(13); for (let i = 0; i < 46; i++) { const sp = N.glow(['#3A5AFF', '#3AB8FF', '#8A6AFF', '#FF9A5A'][i % 4], .6 + r() * 2.2, .15 + r() * .25); sp.material.fog = false; const a = r() * Math.PI * 2, e = (r() - .5) * 1.6, d = 10 + r() * 14; sp.position.set(Math.cos(a) * Math.cos(e) * d, Math.sin(e) * d, Math.sin(a) * Math.cos(e) * d); sp.userData.op = sp.material.opacity; bokeh.add(sp); } }
     const kL = new THREE.PointLight('#FFF4E8', 3.2, 14, 1); kL.position.copy(PH).add(V3(.8, 4, 3)); scene.add(kL);
     const rL = new THREE.PointLight('#5CA8FF', 3.0, 10, 1); rL.position.copy(PH).add(V3(-2.5, 1.2, -2.5)); scene.add(rL);
     const rL2 = new THREE.PointLight('#8A6AFF', 1.6, 10, 1); rL2.position.copy(PH).add(V3(3, -1, -2.5)); scene.add(rL2);
@@ -261,6 +272,8 @@
     function mundo(t) {
       // celular: escena 1 (0–5), mapa en la pantalla (5–12.6) y regreso para el loop (≥54.5)
       const lt = t < 54 ? t : t - 58, verCel = t < 12.6 || t > 54.5; holder.visible = polvo.visible = verCel; kL.visible = rL.visible = rL2.visible = verCel;
+      const fk = t < 10.4 ? 1 : t < 12.3 ? 1 - ease(prog(t, 10.4, 12.0)) : t > 56.3 ? ease(prog(t, 56.3, 57.5)) : 0;
+      fondo.visible = bokeh.visible = fk > .002; fondo.material.opacity = fk; fondo.material.depthWrite = fk > .99; bokeh.children.forEach(b => b.material.opacity = b.userData.op * fk);
       const st = verCel ? phoneState(lt) : null; if (!verCel) { ring.visible = false; redGlow.material.opacity = 0; }
       const sk = t < 12.6 && t > 5 ? prog(t, T.mapaOn, T.mapaOn + .8) : 0; screen.material.opacity = sk; barra.material.opacity = sk * (1 - prog(t, 11.6, 12.1));
       // ciudad
@@ -312,7 +325,7 @@
       const hy = Math.max(0, camera.position.y - 20); scene.fog.near = 70 + hy * 1.4; scene.fog.far = 320 + hy * 2.6;
       const fade = t >= T.fundido && t < 12.5 ? 1 - ease(prog(t, T.fundido, 12.5)) : 0;
       // pantalla del celular: render cenital de la ciudad
-      if (screen.material.opacity > 0) { const hv = holder.visible; holder.visible = false; renderer.setRenderTarget(rtMap); renderer.render(scene, mapCam); holder.visible = hv; }
+      if (screen.material.opacity > 0) { const hv = holder.visible, fv = fondo.visible; holder.visible = fondo.visible = bokeh.visible = false; renderer.setRenderTarget(rtMap); renderer.render(scene, mapCam); holder.visible = hv; fondo.visible = bokeh.visible = fv; }
       if (fade > 0) { const [pa, la] = pose(K1, C1, t); apunta(camA, pa, la); renderer.setRenderTarget(rtA); renderer.render(scene, camA); holder.visible = false; }
       renderer.setRenderTarget(rtS); renderer.render(scene, camera);
       const [focus, ap] = dof(t); dofM.uniforms.focus.value = focus; dofM.uniforms.ap.value = ap; pass(dofM, rtD);
