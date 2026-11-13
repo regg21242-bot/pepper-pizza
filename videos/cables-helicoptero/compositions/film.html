@@ -1,0 +1,115 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; background: #2B1652; overflow: hidden; }
+    #vA, #gl { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 50% 45%; }
+    .lbl { position: absolute; padding: 10px 22px; border-radius: 18px; background: rgba(14,16,26,.82); color: #fff; font-family: Nunito, sans-serif; font-weight: 900; font-size: 44px;
+      white-space: nowrap; transform: translate(-50%, -100%); box-shadow: 0 6px 20px rgba(0,0,0,.45); border: 2px solid rgba(255,255,255,.18); }
+    .lbl::after { content: ""; position: absolute; left: 50%; top: 100%; width: 3px; height: 34px; background: rgba(255,255,255,.85); transform: translateX(-50%); }
+    .lbl.sin::after { display: none; }
+    #cnt { position: absolute; left: 90px; top: 1180px; padding: 14px 34px; border-radius: 24px; background: rgba(14,16,26,.86); font-family: Nunito, sans-serif; font-weight: 900; font-size: 110px; color: #FF3B30; letter-spacing: 2px; box-shadow: 0 10px 30px rgba(0,0,0,.5); }
+    #cnt small { font-size: 54px; color: #fff; margin-left: 10px; }
+    #fl { position: absolute; inset: 0; background: radial-gradient(circle at 50% 45%, #fff, rgba(190,225,255,.6) 40%, rgba(150,200,255,0) 75%); opacity: 0; }
+  </style>
+  <div id="root" data-composition-id="film" data-start="0" data-duration="12" data-width="1080" data-height="1920">
+    <canvas id="vA" width="1080" height="1920" data-layout-ignore></canvas>
+    <canvas id="gl" width="1080" height="1920" data-layout-ignore></canvas>
+    <div id="labels" data-layout-ignore></div>
+    <div id="cnt" data-layout-ignore></div>
+    <div id="fl" data-layout-ignore></div>
+  </div>
+  <script>
+  (function () {
+    /* ¿Sabías que los cables de alta tensión se reparan con la luz prendida, desde un helicóptero?
+       Look A (2D) en #vA, look B (3D) en #gl. Librería: assets/lib/arreglos.js */
+    const A = window.ARR, THREE = A.THREE, { clamp, lerp, prog, ease, easeOut } = A;
+    const W = 1080, H = 1920;
+    const cvA = document.getElementById('vA'), ctxA = cvA.getContext('2d');
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gl'), antialias: true, preserveDrawingBuffer: true, alpha: true });
+    renderer.setPixelRatio(1); renderer.setSize(W, H, false); renderer.outputEncoding = THREE.sRGBEncoding; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
+    renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    const env = A.sunsetEnv(renderer);
+    const cam = (fov = 35) => new THREE.PerspectiveCamera(fov, W / H, .02, 400);
+    function camPath(c, t, keys) { let i = 0; while (i < keys.length - 2 && t > keys[i + 1][0]) i++; const [t0, p0, l0] = keys[i], [t1, p1, l1] = keys[Math.min(i + 1, keys.length - 1)]; const k = t1 > t0 ? ease(prog(t, t0, t1)) : 0; c.position.set(lerp(p0[0], p1[0], k), lerp(p0[1], p1[1], k), lerp(p0[2], p1[2], k)); c.lookAt(lerp(l0[0], l1[0], k), lerp(l0[1], l1[1], k), lerp(l0[2], l1[2], k)); }
+    const V3 = (x, y, z) => new THREE.Vector3(x, y, z);
+    function luces(s) { s.environment = env; s.add(new THREE.HemisphereLight('#FFD8B0', '#3A2040', .5)); const sun = new THREE.DirectionalLight('#FFB070', 2.2); sun.position.set(-6, 3, -8); s.add(sun); const fill = new THREE.DirectionalLight('#9AA8FF', .5); fill.position.set(5, 4, 6); s.add(fill); const key = new THREE.DirectionalLight('#FFE6CC', 1.0); key.position.set(3, 6, 5); key.castShadow = true; s.add(key); return sun; }
+
+    /* ======== B: el cable de cerca con el liniero y el helicóptero ======== */
+    const CABLE = (() => {
+      const s = new THREE.Scene(); luces(s);
+      const sky = A.bokehSky(3, 40); s.add(sky);
+      const cb = A.cable(16, .12); cb.position.set(0, 0, 0); s.add(cb); const CB = cb.userData;
+      const heli = A.helicoptero(); s.add(heli); heli.scale.setScalar(.75); const HL = heli.userData;
+      const man = A.liniero(); s.add(man); const P = man.userData;
+      // varilla metálica
+      const rod = new THREE.Group(); rod.add(A.cyl(.012, .012, 1.4, A.std('#C8CDD4', { metalness: .9, roughness: .25 }), 8, 0, .7, 0)); rod.add(A.cyl(.03, .03, .12, A.std('#E2572A'), 10, 0, 0, 0)); s.add(rod);
+      const arc = A.arco(); s.add(arc); const star = A.starburst(1); s.add(star); const sp = A.chispas(40, 11); s.add(sp);
+      const camera = cam(35);
+      function update(t, mode, lt) {
+        sky.userData.update(t); HL.spin(t); CB.flow(t, 1);
+        if (mode === 'traje') {   // primer plano del traje plateado con hilos que brillan
+          heli.position.set(-1.3, -1.1, -1.8); heli.rotation.set(0, .5, 0);
+          man.position.set(.15, -1.1, .4); man.rotation.set(0, .15, 0); man.scale.setScalar(1);
+          P.armR.rotation.set(-.5, 0, -.15); P.elbowR.rotation.set(-.5, 0, 0); P.armL.rotation.set(-.15, 0, .12); P.head.rotation.set(-.05, .3, 0);
+          P.brilla(.15 + .35 * (.5 + .5 * Math.sin(lt * 3)));
+          rod.visible = false; arc.userData.set(V3(), V3(0, .1, 0), t, 0); star.visible = false;
+          camPath(camera, lt, [[-.3, [1.1, .75, 3.6], [.05, .45, .3]], [4.5, [.9, .8, 3.1], [.05, .5, .3]]]);
+          return { labels: [] };
+        }
+        // contacto: el helicóptero se acerca, toca el cable con la varilla y salta el arco
+        const near = ease(prog(lt, 0, 2.2));
+        heli.position.set(-.9, lerp(-3.4, -2.75, near), lerp(3.4, 2.3, near)); heli.rotation.set(0, -.25, Math.sin(t * 1.3) * .015);
+        heli.updateMatrixWorld(true); const pp = HL.plat.localToWorld(V3(0, .05, .3));
+        man.position.copy(pp); man.rotation.set(0, Math.PI - .4, 0); man.scale.setScalar(.9);
+        P.legL.rotation.set(-1.4, 0, 0); P.legR.rotation.set(-1.4, 0, 0); P.kneeL.rotation.set(1.3, 0, 0); P.kneeR.rotation.set(1.3, 0, 0);
+        const reach = ease(prog(lt, 1.2, 2.2)); P.armR.rotation.set(-1.2 - 1.0 * reach, 0, -.15); P.elbowR.rotation.set(-.2, 0, 0); P.armL.rotation.set(-.8, 0, .2); P.head.rotation.set(-.35 * reach, 0, 0);
+        man.updateMatrixWorld(true); const hand = P.elbowR.localToWorld(V3(0, -.32, 0)); rod.position.copy(hand);
+        const tip = V3(lerp(hand.x, -.1, .9), 0, .05); rod.lookAt(tip); rod.rotateX(Math.PI / 2); rod.visible = true;
+        const tipW = rod.localToWorld(V3(0, 1.4, 0));
+        const zap = lt > 2.3 && lt < 3.3 ? 1 - (lt - 2.3) / 1.0 : 0;
+        arc.userData.set(tipW, V3(tipW.x, 0, 0), t, zap > 0 ? Math.min(1, zap * 1.6) : 0);
+        star.visible = zap > 0; star.position.set(tipW.x, 0, 0); star.scale.setScalar(.2 + 1.4 * zap); star.material.rotation = t * 2; star.material.opacity = zap;
+        sp.userData.update(2.3, lt, V3(tipW.x, 0, 0));
+        P.brilla(lt > 2.3 ? .9 : .15);
+        camPath(camera, lt, [[-.3, [2.0, -.2, 11.0], [-.85, -.95, 2.4]], [4.5, [1.8, -.3, 10.2], [-.85, -.95, 2.4]]]);
+        camera.position.x += zap * Math.sin(t * 70) * .03;
+        const head = man.localToWorld(V3(0, 2.1, 0));
+        return { labels: lt > 2.5 ? [['400,000 V', head]] : [], flash: zap * .55 };
+      }
+      return { scene: s, camera, update };
+    })();
+
+    /* ======== montaje provisional para los fotogramas fijos ======== */
+    const SC = [{ a: 0, b: 4, look: 'A' }, { a: 4, b: 8, look: 'B', s: CABLE, m: 'traje' }, { a: 8, b: 99, look: 'B', s: CABLE, m: 'contacto' }];
+    const $ = id => document.getElementById(id);
+    const labelsEl = $('labels'), cnt = $('cnt'), fl = $('fl'), gl = $('gl');
+    const pool = [];
+    function setLabels(list, camera) {
+      while (pool.length < list.length) { const d = document.createElement('div'); d.className = 'lbl'; labelsEl.appendChild(d); pool.push(d); }
+      pool.forEach((d, i) => { if (i >= list.length) { d.style.display = 'none'; return; } const [txt, p, k = 1] = list[i]; let x, y; if (p.isVector3) { const v = p.clone().project(camera); x = (v.x + 1) / 2 * W; y = (1 - v.y) / 2 * H; } else [x, y] = p;
+        d.style.display = 'block'; d.textContent = txt; d.style.left = clamp(x, 170, 760) + 'px'; d.style.top = (y - 40) + 'px'; d.style.opacity = k; d.style.transform = `translate(-50%, -100%) scale(${.6 + .4 * k})`; });
+    }
+    function renderAt(t) {
+      const sc = SC.find(x => t >= x.a && t < x.b) || SC[SC.length - 1], lt = t - sc.a;
+      let g = { labels: [] };
+      if (sc.look === 'A') {
+        const z = 1 + lt * .03; cvA.style.transform = `scale(${z})`; gl.style.opacity = 0; cvA.style.opacity = 1;
+        const r = A.vista(ctxA, W, H, t, { horizon: .46 });
+        const cb = r.cables[2]; const u = .5, x = lerp(cb.a[0], cb.b[0], u), y = lerp(cb.a[1], cb.b[1], u) + cb.sag;
+        g.labels = [['400,000 V', [x, y - 10]]];
+        setLabels(g.labels, null);
+      } else {
+        cvA.style.opacity = 0; gl.style.opacity = 1; gl.style.transform = 'none';
+        g = sc.s.update(t, sc.m, lt) || {};
+        renderer.render(sc.s.scene, sc.s.camera);
+        setLabels(g.labels || [], sc.s.camera);
+      }
+      fl.style.opacity = g.flash || 0;
+      cnt.style.display = 'none';
+    }
+    window.addEventListener('hf-seek', e => renderAt(e.detail.time));
+    renderAt(0);
+    window.__timelines = window.__timelines || {};
+    window.__timelines['film'] = gsap.timeline({ paused: true });
+  })();
+  </script>
+</template>
