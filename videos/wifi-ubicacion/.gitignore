@@ -17,3 +17,5 @@ renders/
 assets/audio/mezcla_sin_master.wav
 renders/
 .tmp/
+snaps/
+assets/voz/*.mp3

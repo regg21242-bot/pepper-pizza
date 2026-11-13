@@ -6,7 +6,7 @@ También acepta el JSON completo de transcribir.py (usa la clave "palabras").
 """
 import json, sys, re, html, argparse
 
-CLAVE = {"dulce", "azúcar", "hembras", "antenas", "aliento", "diez", "faro", "calor", "olor", "elegida", "boca", "chimenea", "cien", "sangre"}
+CLAVE = {"gps", "apagado", "wifi", "vecinos", "módem", "nombre", "contraseña", "mapa", "calle", "millones", "letrero", "mundo", "casa", "desconocido", "útil", "miedo"}
 MAX_PAL = 6          # palabras por grupo (2 líneas máximo con letra de 66 px)
 PAUSA = 0.15
 
@@ -33,7 +33,7 @@ js = []
 for gi, g in enumerate(grupos):
     g0 = max(0.0, g[0]["inicio"] - 0.08)
     nxt = grupos[gi + 1][0]["inicio"] - 0.08 if gi + 1 < len(grupos) else min(a.fin, g[-1]["fin"] + 0.8)
-    g1 = max(g[-1]["fin"] + 0.05, nxt)
+    g1 = max(g0 + 0.1, nxt) if gi + 1 < len(grupos) else max(g[-1]["fin"] + 0.05, nxt)
     gid = f"cg{gi}"
     spans = []
     for wi, w in enumerate(g):

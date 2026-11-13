@@ -1,0 +1,1221 @@
+{
+ "texto": "¿Sabías que tu celular puede saber dónde estás, con el GPS apagado? Adentro de un edificio el GPS casi no llega. Y aun así, tu mapa te ubica en que parte del centro comercial estás. Su truco, usa el wifi de tus vecinos. Cada mod en grita su nombre todo el tiempo, aunque nadie se conecte. Tu celular escucha esos nombres, sin contraseña. Y los compara con un mapa gigante que dice dónde está cada red. Con unas cuantas redes ya saben qué calle estás. ¿Y quién hizo ese mapa? Millones de celulares que sí tenían GPS y pasaron por tu calle. Casi sin que sus dueños lo notaran. Ojo, no entra a tu red nivel o qué haces. Sólo usa el nombre de la red, como si fuera un letrero en la calle. Y así funcionan miles de millones de redes wifi por todo el mundo. Y piénsalo, el modem de tu casa, ahora mismo, le está diciendo a un desconocido dónde está. Sin que ninguno de los dos lo sepa. ¿Y a ti, te parece útil, o te da miedo? Te leo en los comentarios.",
+ "idioma": "es",
+ "duracion": 58.0,
+ "segmentos": [
+  {
+   "inicio": 0.0,
+   "fin": 3.58,
+   "texto": "¿Sabías que tu celular puede saber dónde estás, con el GPS apagado?"
+  },
+  {
+   "inicio": 5.1,
+   "fin": 7.4,
+   "texto": "Adentro de un edificio el GPS casi no llega."
+  },
+  {
+   "inicio": 8.2,
+   "fin": 11.48,
+   "texto": "Y aun así, tu mapa te ubica en que parte del centro comercial estás."
+  },
+  {
+   "inicio": 12.16,
+   "fin": 14.04,
+   "texto": "Su truco, usa el wifi de tus vecinos."
+  },
+  {
+   "inicio": 14.72,
+   "fin": 17.68,
+   "texto": "Cada mod en grita su nombre todo el tiempo, aunque nadie se conecte."
+  },
+  {
+   "inicio": 18.5,
+   "fin": 20.88,
+   "texto": "Tu celular escucha esos nombres, sin contraseña."
+  },
+  {
+   "inicio": 21.42,
+   "fin": 24.16,
+   "texto": "Y los compara con un mapa gigante que dice dónde está cada red."
+  },
+  {
+   "inicio": 24.96,
+   "fin": 27.14,
+   "texto": "Con unas cuantas redes ya saben qué calle estás."
+  },
+  {
+   "inicio": 27.7,
+   "fin": 28.56,
+   "texto": "¿Y quién hizo ese mapa?"
+  },
+  {
+   "inicio": 29.56,
+   "fin": 32.54,
+   "texto": "Millones de celulares que sí tenían GPS y pasaron por tu calle."
+  },
+  {
+   "inicio": 33.38,
+   "fin": 34.92,
+   "texto": "Casi sin que sus dueños lo notaran."
+  },
+  {
+   "inicio": 35.48,
+   "fin": 37.58,
+   "texto": "Ojo, no entra a tu red nivel o qué haces."
+  },
+  {
+   "inicio": 38.52,
+   "fin": 41.46,
+   "texto": "Sólo usa el nombre de la red, como si fuera un letrero en la calle."
+  },
+  {
+   "inicio": 41.96,
+   "fin": 44.76,
+   "texto": "Y así funcionan miles de millones de redes wifi por todo el mundo."
+  },
+  {
+   "inicio": 45.3,
+   "fin": 49.92,
+   "texto": "Y piénsalo, el modem de tu casa, ahora mismo, le está diciendo a un desconocido dónde está."
+  },
+  {
+   "inicio": 50.92,
+   "fin": 52.42,
+   "texto": "Sin que ninguno de los dos lo sepa."
+  },
+  {
+   "inicio": 52.74,
+   "fin": 54.76,
+   "texto": "¿Y a ti, te parece útil, o te da miedo?"
+  },
+  {
+   "inicio": 55.62,
+   "fin": 56.74,
+   "texto": "Te leo en los comentarios."
+  }
+ ],
+ "palabras": [
+  {
+   "palabra": "¿Sabías",
+   "inicio": 0.0,
+   "fin": 0.56,
+   "prob": 0.887
+  },
+  {
+   "palabra": "que",
+   "inicio": 0.56,
+   "fin": 0.74,
+   "prob": 0.983
+  },
+  {
+   "palabra": "tu",
+   "inicio": 0.74,
+   "fin": 0.86,
+   "prob": 0.98
+  },
+  {
+   "palabra": "celular",
+   "inicio": 0.86,
+   "fin": 1.14,
+   "prob": 0.997
+  },
+  {
+   "palabra": "puede",
+   "inicio": 1.14,
+   "fin": 1.42,
+   "prob": 0.933
+  },
+  {
+   "palabra": "saber",
+   "inicio": 1.42,
+   "fin": 1.64,
+   "prob": 0.999
+  },
+  {
+   "palabra": "dónde",
+   "inicio": 1.64,
+   "fin": 1.86,
+   "prob": 0.853
+  },
+  {
+   "palabra": "estás,",
+   "inicio": 1.86,
+   "fin": 2.18,
+   "prob": 0.99
+  },
+  {
+   "palabra": "con",
+   "inicio": 2.52,
+   "fin": 2.64,
+   "prob": 0.984
+  },
+  {
+   "palabra": "el",
+   "inicio": 2.64,
+   "fin": 2.76,
+   "prob": 0.999
+  },
+  {
+   "palabra": "GPS",
+   "inicio": 2.76,
+   "fin": 2.98,
+   "prob": 0.912
+  },
+  {
+   "palabra": "apagado?",
+   "inicio": 2.98,
+   "fin": 3.58,
+   "prob": 0.97
+  },
+  {
+   "palabra": "Adentro",
+   "inicio": 5.1,
+   "fin": 5.54,
+   "prob": 0.933
+  },
+  {
+   "palabra": "de",
+   "inicio": 5.54,
+   "fin": 5.62,
+   "prob": 0.998
+  },
+  {
+   "palabra": "un",
+   "inicio": 5.62,
+   "fin": 5.74,
+   "prob": 0.998
+  },
+  {
+   "palabra": "edificio",
+   "inicio": 5.74,
+   "fin": 6.18,
+   "prob": 0.999
+  },
+  {
+   "palabra": "el",
+   "inicio": 6.18,
+   "fin": 6.28,
+   "prob": 0.929
+  },
+  {
+   "palabra": "GPS",
+   "inicio": 6.28,
+   "fin": 6.56,
+   "prob": 0.962
+  },
+  {
+   "palabra": "casi",
+   "inicio": 6.56,
+   "fin": 7.02,
+   "prob": 0.944
+  },
+  {
+   "palabra": "no",
+   "inicio": 7.02,
+   "fin": 7.18,
+   "prob": 0.996
+  },
+  {
+   "palabra": "llega.",
+   "inicio": 7.18,
+   "fin": 7.4,
+   "prob": 0.998
+  },
+  {
+   "palabra": "Y",
+   "inicio": 8.2,
+   "fin": 8.54,
+   "prob": 0.969
+  },
+  {
+   "palabra": "aun",
+   "inicio": 8.54,
+   "fin": 8.64,
+   "prob": 0.515
+  },
+  {
+   "palabra": "así,",
+   "inicio": 8.64,
+   "fin": 8.92,
+   "prob": 0.992
+  },
+  {
+   "palabra": "tu",
+   "inicio": 9.22,
+   "fin": 9.3,
+   "prob": 0.989
+  },
+  {
+   "palabra": "mapa",
+   "inicio": 9.3,
+   "fin": 9.48,
+   "prob": 0.993
+  },
+  {
+   "palabra": "te",
+   "inicio": 9.48,
+   "fin": 9.64,
+   "prob": 0.991
+  },
+  {
+   "palabra": "ubica",
+   "inicio": 9.64,
+   "fin": 9.9,
+   "prob": 0.996
+  },
+  {
+   "palabra": "en",
+   "inicio": 9.9,
+   "fin": 10.04,
+   "prob": 0.992
+  },
+  {
+   "palabra": "que",
+   "inicio": 10.04,
+   "fin": 10.12,
+   "prob": 0.793
+  },
+  {
+   "palabra": "parte",
+   "inicio": 10.12,
+   "fin": 10.34,
+   "prob": 0.999
+  },
+  {
+   "palabra": "del",
+   "inicio": 10.34,
+   "fin": 10.52,
+   "prob": 0.994
+  },
+  {
+   "palabra": "centro",
+   "inicio": 10.52,
+   "fin": 10.78,
+   "prob": 0.977
+  },
+  {
+   "palabra": "comercial",
+   "inicio": 10.78,
+   "fin": 11.1,
+   "prob": 1.0
+  },
+  {
+   "palabra": "estás.",
+   "inicio": 11.1,
+   "fin": 11.48,
+   "prob": 0.924
+  },
+  {
+   "palabra": "Su",
+   "inicio": 12.16,
+   "fin": 12.42,
+   "prob": 0.972
+  },
+  {
+   "palabra": "truco,",
+   "inicio": 12.42,
+   "fin": 12.68,
+   "prob": 0.993
+  },
+  {
+   "palabra": "usa",
+   "inicio": 12.92,
+   "fin": 13.1,
+   "prob": 0.99
+  },
+  {
+   "palabra": "el",
+   "inicio": 13.1,
+   "fin": 13.24,
+   "prob": 0.998
+  },
+  {
+   "palabra": "wifi",
+   "inicio": 13.24,
+   "fin": 13.42,
+   "prob": 0.694
+  },
+  {
+   "palabra": "de",
+   "inicio": 13.42,
+   "fin": 13.58,
+   "prob": 0.999
+  },
+  {
+   "palabra": "tus",
+   "inicio": 13.58,
+   "fin": 13.68,
+   "prob": 0.992
+  },
+  {
+   "palabra": "vecinos.",
+   "inicio": 13.68,
+   "fin": 14.04,
+   "prob": 0.999
+  },
+  {
+   "palabra": "Cada",
+   "inicio": 14.72,
+   "fin": 14.92,
+   "prob": 0.99
+  },
+  {
+   "palabra": "mod",
+   "inicio": 14.92,
+   "fin": 15.08,
+   "prob": 0.895
+  },
+  {
+   "palabra": "en",
+   "inicio": 15.08,
+   "fin": 15.22,
+   "prob": 0.541
+  },
+  {
+   "palabra": "grita",
+   "inicio": 15.22,
+   "fin": 15.44,
+   "prob": 0.783
+  },
+  {
+   "palabra": "su",
+   "inicio": 15.44,
+   "fin": 15.6,
+   "prob": 0.992
+  },
+  {
+   "palabra": "nombre",
+   "inicio": 15.6,
+   "fin": 15.82,
+   "prob": 1.0
+  },
+  {
+   "palabra": "todo",
+   "inicio": 15.82,
+   "fin": 16.0,
+   "prob": 0.996
+  },
+  {
+   "palabra": "el",
+   "inicio": 16.0,
+   "fin": 16.16,
+   "prob": 0.998
+  },
+  {
+   "palabra": "tiempo,",
+   "inicio": 16.16,
+   "fin": 16.46,
+   "prob": 0.998
+  },
+  {
+   "palabra": "aunque",
+   "inicio": 16.68,
+   "fin": 16.86,
+   "prob": 0.987
+  },
+  {
+   "palabra": "nadie",
+   "inicio": 16.86,
+   "fin": 17.08,
+   "prob": 0.999
+  },
+  {
+   "palabra": "se",
+   "inicio": 17.08,
+   "fin": 17.24,
+   "prob": 0.999
+  },
+  {
+   "palabra": "conecte.",
+   "inicio": 17.24,
+   "fin": 17.68,
+   "prob": 0.992
+  },
+  {
+   "palabra": "Tu",
+   "inicio": 18.5,
+   "fin": 18.72,
+   "prob": 0.981
+  },
+  {
+   "palabra": "celular",
+   "inicio": 18.72,
+   "fin": 19.0,
+   "prob": 0.998
+  },
+  {
+   "palabra": "escucha",
+   "inicio": 19.0,
+   "fin": 19.46,
+   "prob": 0.98
+  },
+  {
+   "palabra": "esos",
+   "inicio": 19.46,
+   "fin": 19.6,
+   "prob": 0.992
+  },
+  {
+   "palabra": "nombres,",
+   "inicio": 19.6,
+   "fin": 19.94,
+   "prob": 0.993
+  },
+  {
+   "palabra": "sin",
+   "inicio": 20.18,
+   "fin": 20.34,
+   "prob": 0.997
+  },
+  {
+   "palabra": "contraseña.",
+   "inicio": 20.34,
+   "fin": 20.88,
+   "prob": 0.972
+  },
+  {
+   "palabra": "Y",
+   "inicio": 21.42,
+   "fin": 21.66,
+   "prob": 0.956
+  },
+  {
+   "palabra": "los",
+   "inicio": 21.66,
+   "fin": 21.76,
+   "prob": 0.995
+  },
+  {
+   "palabra": "compara",
+   "inicio": 21.76,
+   "fin": 22.1,
+   "prob": 0.987
+  },
+  {
+   "palabra": "con",
+   "inicio": 22.1,
+   "fin": 22.24,
+   "prob": 0.995
+  },
+  {
+   "palabra": "un",
+   "inicio": 22.24,
+   "fin": 22.36,
+   "prob": 0.993
+  },
+  {
+   "palabra": "mapa",
+   "inicio": 22.36,
+   "fin": 22.52,
+   "prob": 0.994
+  },
+  {
+   "palabra": "gigante",
+   "inicio": 22.52,
+   "fin": 22.94,
+   "prob": 0.996
+  },
+  {
+   "palabra": "que",
+   "inicio": 22.94,
+   "fin": 23.12,
+   "prob": 0.903
+  },
+  {
+   "palabra": "dice",
+   "inicio": 23.12,
+   "fin": 23.3,
+   "prob": 0.999
+  },
+  {
+   "palabra": "dónde",
+   "inicio": 23.3,
+   "fin": 23.48,
+   "prob": 0.741
+  },
+  {
+   "palabra": "está",
+   "inicio": 23.48,
+   "fin": 23.76,
+   "prob": 0.993
+  },
+  {
+   "palabra": "cada",
+   "inicio": 23.76,
+   "fin": 23.96,
+   "prob": 0.999
+  },
+  {
+   "palabra": "red.",
+   "inicio": 23.96,
+   "fin": 24.16,
+   "prob": 0.958
+  },
+  {
+   "palabra": "Con",
+   "inicio": 24.96,
+   "fin": 25.2,
+   "prob": 0.967
+  },
+  {
+   "palabra": "unas",
+   "inicio": 25.2,
+   "fin": 25.4,
+   "prob": 0.996
+  },
+  {
+   "palabra": "cuantas",
+   "inicio": 25.4,
+   "fin": 25.7,
+   "prob": 0.995
+  },
+  {
+   "palabra": "redes",
+   "inicio": 25.7,
+   "fin": 25.96,
+   "prob": 0.984
+  },
+  {
+   "palabra": "ya",
+   "inicio": 25.96,
+   "fin": 26.2,
+   "prob": 0.95
+  },
+  {
+   "palabra": "saben",
+   "inicio": 26.2,
+   "fin": 26.48,
+   "prob": 0.968
+  },
+  {
+   "palabra": "qué",
+   "inicio": 26.48,
+   "fin": 26.68,
+   "prob": 0.291
+  },
+  {
+   "palabra": "calle",
+   "inicio": 26.68,
+   "fin": 26.86,
+   "prob": 0.911
+  },
+  {
+   "palabra": "estás.",
+   "inicio": 26.86,
+   "fin": 27.14,
+   "prob": 0.988
+  },
+  {
+   "palabra": "¿Y",
+   "inicio": 27.7,
+   "fin": 27.88,
+   "prob": 0.892
+  },
+  {
+   "palabra": "quién",
+   "inicio": 27.88,
+   "fin": 28.0,
+   "prob": 0.847
+  },
+  {
+   "palabra": "hizo",
+   "inicio": 28.0,
+   "fin": 28.2,
+   "prob": 0.999
+  },
+  {
+   "palabra": "ese",
+   "inicio": 28.2,
+   "fin": 28.36,
+   "prob": 0.961
+  },
+  {
+   "palabra": "mapa?",
+   "inicio": 28.36,
+   "fin": 28.56,
+   "prob": 0.998
+  },
+  {
+   "palabra": "Millones",
+   "inicio": 29.56,
+   "fin": 29.96,
+   "prob": 0.591
+  },
+  {
+   "palabra": "de",
+   "inicio": 29.96,
+   "fin": 30.14,
+   "prob": 0.998
+  },
+  {
+   "palabra": "celulares",
+   "inicio": 30.14,
+   "fin": 30.46,
+   "prob": 0.996
+  },
+  {
+   "palabra": "que",
+   "inicio": 30.46,
+   "fin": 30.66,
+   "prob": 0.989
+  },
+  {
+   "palabra": "sí",
+   "inicio": 30.66,
+   "fin": 30.78,
+   "prob": 0.786
+  },
+  {
+   "palabra": "tenían",
+   "inicio": 30.78,
+   "fin": 31.02,
+   "prob": 0.988
+  },
+  {
+   "palabra": "GPS",
+   "inicio": 31.02,
+   "fin": 31.36,
+   "prob": 0.758
+  },
+  {
+   "palabra": "y",
+   "inicio": 31.36,
+   "fin": 31.68,
+   "prob": 0.986
+  },
+  {
+   "palabra": "pasaron",
+   "inicio": 31.68,
+   "fin": 32.0,
+   "prob": 0.993
+  },
+  {
+   "palabra": "por",
+   "inicio": 32.0,
+   "fin": 32.18,
+   "prob": 0.999
+  },
+  {
+   "palabra": "tu",
+   "inicio": 32.18,
+   "fin": 32.32,
+   "prob": 0.992
+  },
+  {
+   "palabra": "calle.",
+   "inicio": 32.32,
+   "fin": 32.54,
+   "prob": 0.978
+  },
+  {
+   "palabra": "Casi",
+   "inicio": 33.38,
+   "fin": 33.76,
+   "prob": 0.924
+  },
+  {
+   "palabra": "sin",
+   "inicio": 33.76,
+   "fin": 33.96,
+   "prob": 0.995
+  },
+  {
+   "palabra": "que",
+   "inicio": 33.96,
+   "fin": 34.06,
+   "prob": 0.997
+  },
+  {
+   "palabra": "sus",
+   "inicio": 34.06,
+   "fin": 34.22,
+   "prob": 0.996
+  },
+  {
+   "palabra": "dueños",
+   "inicio": 34.22,
+   "fin": 34.46,
+   "prob": 0.996
+  },
+  {
+   "palabra": "lo",
+   "inicio": 34.46,
+   "fin": 34.6,
+   "prob": 0.983
+  },
+  {
+   "palabra": "notaran.",
+   "inicio": 34.6,
+   "fin": 34.92,
+   "prob": 0.974
+  },
+  {
+   "palabra": "Ojo,",
+   "inicio": 35.48,
+   "fin": 35.82,
+   "prob": 0.906
+  },
+  {
+   "palabra": "no",
+   "inicio": 36.18,
+   "fin": 36.26,
+   "prob": 0.991
+  },
+  {
+   "palabra": "entra",
+   "inicio": 36.26,
+   "fin": 36.46,
+   "prob": 0.99
+  },
+  {
+   "palabra": "a",
+   "inicio": 36.46,
+   "fin": 36.58,
+   "prob": 0.948
+  },
+  {
+   "palabra": "tu",
+   "inicio": 36.58,
+   "fin": 36.66,
+   "prob": 0.995
+  },
+  {
+   "palabra": "red",
+   "inicio": 36.66,
+   "fin": 36.84,
+   "prob": 0.917
+  },
+  {
+   "palabra": "nivel",
+   "inicio": 36.84,
+   "fin": 37.04,
+   "prob": 0.578
+  },
+  {
+   "palabra": "o",
+   "inicio": 37.04,
+   "fin": 37.14,
+   "prob": 0.53
+  },
+  {
+   "palabra": "qué",
+   "inicio": 37.14,
+   "fin": 37.3,
+   "prob": 0.451
+  },
+  {
+   "palabra": "haces.",
+   "inicio": 37.3,
+   "fin": 37.58,
+   "prob": 0.994
+  },
+  {
+   "palabra": "Sólo",
+   "inicio": 38.52,
+   "fin": 38.92,
+   "prob": 0.804
+  },
+  {
+   "palabra": "usa",
+   "inicio": 38.92,
+   "fin": 39.1,
+   "prob": 0.992
+  },
+  {
+   "palabra": "el",
+   "inicio": 39.1,
+   "fin": 39.2,
+   "prob": 0.999
+  },
+  {
+   "palabra": "nombre",
+   "inicio": 39.2,
+   "fin": 39.4,
+   "prob": 0.999
+  },
+  {
+   "palabra": "de",
+   "inicio": 39.4,
+   "fin": 39.54,
+   "prob": 0.998
+  },
+  {
+   "palabra": "la",
+   "inicio": 39.54,
+   "fin": 39.64,
+   "prob": 0.998
+  },
+  {
+   "palabra": "red,",
+   "inicio": 39.64,
+   "fin": 39.8,
+   "prob": 0.985
+  },
+  {
+   "palabra": "como",
+   "inicio": 40.1,
+   "fin": 40.24,
+   "prob": 0.993
+  },
+  {
+   "palabra": "si",
+   "inicio": 40.24,
+   "fin": 40.4,
+   "prob": 0.996
+  },
+  {
+   "palabra": "fuera",
+   "inicio": 40.4,
+   "fin": 40.58,
+   "prob": 0.999
+  },
+  {
+   "palabra": "un",
+   "inicio": 40.58,
+   "fin": 40.72,
+   "prob": 0.998
+  },
+  {
+   "palabra": "letrero",
+   "inicio": 40.72,
+   "fin": 41.02,
+   "prob": 0.975
+  },
+  {
+   "palabra": "en",
+   "inicio": 41.02,
+   "fin": 41.12,
+   "prob": 0.997
+  },
+  {
+   "palabra": "la",
+   "inicio": 41.12,
+   "fin": 41.22,
+   "prob": 0.999
+  },
+  {
+   "palabra": "calle.",
+   "inicio": 41.22,
+   "fin": 41.46,
+   "prob": 0.998
+  },
+  {
+   "palabra": "Y",
+   "inicio": 41.96,
+   "fin": 42.08,
+   "prob": 0.98
+  },
+  {
+   "palabra": "así",
+   "inicio": 42.08,
+   "fin": 42.22,
+   "prob": 0.995
+  },
+  {
+   "palabra": "funcionan",
+   "inicio": 42.22,
+   "fin": 42.72,
+   "prob": 0.998
+  },
+  {
+   "palabra": "miles",
+   "inicio": 42.72,
+   "fin": 42.9,
+   "prob": 0.99
+  },
+  {
+   "palabra": "de",
+   "inicio": 42.9,
+   "fin": 43.08,
+   "prob": 0.999
+  },
+  {
+   "palabra": "millones",
+   "inicio": 43.08,
+   "fin": 43.3,
+   "prob": 0.994
+  },
+  {
+   "palabra": "de",
+   "inicio": 43.3,
+   "fin": 43.52,
+   "prob": 0.999
+  },
+  {
+   "palabra": "redes",
+   "inicio": 43.52,
+   "fin": 43.68,
+   "prob": 0.978
+  },
+  {
+   "palabra": "wifi",
+   "inicio": 43.68,
+   "fin": 43.98,
+   "prob": 0.358
+  },
+  {
+   "palabra": "por",
+   "inicio": 43.98,
+   "fin": 44.22,
+   "prob": 0.989
+  },
+  {
+   "palabra": "todo",
+   "inicio": 44.22,
+   "fin": 44.38,
+   "prob": 0.998
+  },
+  {
+   "palabra": "el",
+   "inicio": 44.38,
+   "fin": 44.54,
+   "prob": 0.997
+  },
+  {
+   "palabra": "mundo.",
+   "inicio": 44.54,
+   "fin": 44.76,
+   "prob": 0.998
+  },
+  {
+   "palabra": "Y",
+   "inicio": 45.3,
+   "fin": 45.48,
+   "prob": 0.952
+  },
+  {
+   "palabra": "piénsalo,",
+   "inicio": 45.48,
+   "fin": 45.88,
+   "prob": 0.881
+  },
+  {
+   "palabra": "el",
+   "inicio": 46.18,
+   "fin": 46.26,
+   "prob": 0.978
+  },
+  {
+   "palabra": "modem",
+   "inicio": 46.26,
+   "fin": 46.5,
+   "prob": 0.706
+  },
+  {
+   "palabra": "de",
+   "inicio": 46.5,
+   "fin": 46.6,
+   "prob": 0.998
+  },
+  {
+   "palabra": "tu",
+   "inicio": 46.6,
+   "fin": 46.72,
+   "prob": 0.996
+  },
+  {
+   "palabra": "casa,",
+   "inicio": 46.72,
+   "fin": 46.94,
+   "prob": 0.998
+  },
+  {
+   "palabra": "ahora",
+   "inicio": 47.3,
+   "fin": 47.46,
+   "prob": 0.995
+  },
+  {
+   "palabra": "mismo,",
+   "inicio": 47.46,
+   "fin": 47.76,
+   "prob": 0.999
+  },
+  {
+   "palabra": "le",
+   "inicio": 48.1,
+   "fin": 48.22,
+   "prob": 0.984
+  },
+  {
+   "palabra": "está",
+   "inicio": 48.22,
+   "fin": 48.38,
+   "prob": 0.988
+  },
+  {
+   "palabra": "diciendo",
+   "inicio": 48.38,
+   "fin": 48.7,
+   "prob": 0.987
+  },
+  {
+   "palabra": "a",
+   "inicio": 48.7,
+   "fin": 48.88,
+   "prob": 0.981
+  },
+  {
+   "palabra": "un",
+   "inicio": 48.88,
+   "fin": 48.94,
+   "prob": 0.996
+  },
+  {
+   "palabra": "desconocido",
+   "inicio": 48.94,
+   "fin": 49.46,
+   "prob": 0.996
+  },
+  {
+   "palabra": "dónde",
+   "inicio": 49.46,
+   "fin": 49.62,
+   "prob": 0.671
+  },
+  {
+   "palabra": "está.",
+   "inicio": 49.62,
+   "fin": 49.92,
+   "prob": 0.994
+  },
+  {
+   "palabra": "Sin",
+   "inicio": 50.92,
+   "fin": 51.14,
+   "prob": 0.93
+  },
+  {
+   "palabra": "que",
+   "inicio": 51.14,
+   "fin": 51.28,
+   "prob": 0.985
+  },
+  {
+   "palabra": "ninguno",
+   "inicio": 51.28,
+   "fin": 51.6,
+   "prob": 0.998
+  },
+  {
+   "palabra": "de",
+   "inicio": 51.6,
+   "fin": 51.7,
+   "prob": 0.999
+  },
+  {
+   "palabra": "los",
+   "inicio": 51.7,
+   "fin": 51.82,
+   "prob": 0.998
+  },
+  {
+   "palabra": "dos",
+   "inicio": 51.82,
+   "fin": 51.98,
+   "prob": 0.979
+  },
+  {
+   "palabra": "lo",
+   "inicio": 51.98,
+   "fin": 52.14,
+   "prob": 0.881
+  },
+  {
+   "palabra": "sepa.",
+   "inicio": 52.14,
+   "fin": 52.42,
+   "prob": 0.996
+  },
+  {
+   "palabra": "¿Y",
+   "inicio": 52.74,
+   "fin": 52.88,
+   "prob": 0.772
+  },
+  {
+   "palabra": "a",
+   "inicio": 52.88,
+   "fin": 52.96,
+   "prob": 0.989
+  },
+  {
+   "palabra": "ti,",
+   "inicio": 52.96,
+   "fin": 53.1,
+   "prob": 0.946
+  },
+  {
+   "palabra": "te",
+   "inicio": 53.42,
+   "fin": 53.52,
+   "prob": 0.649
+  },
+  {
+   "palabra": "parece",
+   "inicio": 53.52,
+   "fin": 53.72,
+   "prob": 0.997
+  },
+  {
+   "palabra": "útil,",
+   "inicio": 53.72,
+   "fin": 54.02,
+   "prob": 0.995
+  },
+  {
+   "palabra": "o",
+   "inicio": 54.32,
+   "fin": 54.42,
+   "prob": 0.96
+  },
+  {
+   "palabra": "te",
+   "inicio": 54.42,
+   "fin": 54.46,
+   "prob": 0.801
+  },
+  {
+   "palabra": "da",
+   "inicio": 54.46,
+   "fin": 54.6,
+   "prob": 0.882
+  },
+  {
+   "palabra": "miedo?",
+   "inicio": 54.6,
+   "fin": 54.76,
+   "prob": 0.999
+  },
+  {
+   "palabra": "Te",
+   "inicio": 55.62,
+   "fin": 55.92,
+   "prob": 0.936
+  },
+  {
+   "palabra": "leo",
+   "inicio": 55.92,
+   "fin": 56.12,
+   "prob": 0.977
+  },
+  {
+   "palabra": "en",
+   "inicio": 56.12,
+   "fin": 56.18,
+   "prob": 0.999
+  },
+  {
+   "palabra": "los",
+   "inicio": 56.18,
+   "fin": 56.28,
+   "prob": 0.998
+  },
+  {
+   "palabra": "comentarios.",
+   "inicio": 56.28,
+   "fin": 56.74,
+   "prob": 0.997
+  }
+ ]
+}

@@ -1,0 +1,184 @@
+1
+00:00:00,000 --> 00:00:01,640
+¿Sabías que tu celular puede saber
+
+2
+00:00:01,640 --> 00:00:02,180
+dónde estás…
+
+3
+00:00:02,520 --> 00:00:03,580
+con el GPS apagado?
+
+4
+00:00:05,100 --> 00:00:06,560
+Adentro de un edificio el GPS
+
+5
+00:00:06,560 --> 00:00:07,400
+casi no llega.
+
+6
+00:00:08,200 --> 00:00:08,920
+Y aun así,
+
+7
+00:00:09,220 --> 00:00:10,120
+tu mapa te ubica en qué
+
+8
+00:00:10,120 --> 00:00:11,480
+parte del centro comercial estás.
+
+9
+00:00:12,160 --> 00:00:12,680
+Su truco:
+
+10
+00:00:12,920 --> 00:00:14,040
+usa el WiFi de tus vecinos.
+
+11
+00:00:14,720 --> 00:00:16,000
+Cada módem grita su nombre todo
+
+12
+00:00:16,000 --> 00:00:16,460
+el tiempo,
+
+13
+00:00:16,680 --> 00:00:17,680
+aunque nadie se conecte.
+
+14
+00:00:18,500 --> 00:00:19,940
+Tu celular escucha esos nombres,
+
+15
+00:00:20,180 --> 00:00:20,880
+sin contraseña.
+
+16
+00:00:21,420 --> 00:00:22,520
+Y los compara con un mapa
+
+17
+00:00:22,520 --> 00:00:23,960
+gigante que dice dónde está cada
+
+18
+00:00:23,960 --> 00:00:24,160
+red.
+
+19
+00:00:24,960 --> 00:00:26,387
+Con unas cuantas redes ya sabe
+
+20
+00:00:26,387 --> 00:00:27,140
+en qué calle estás.
+
+21
+00:00:27,700 --> 00:00:28,560
+¿Y quién hizo ese mapa?
+
+22
+00:00:29,560 --> 00:00:31,020
+Millones de celulares que sí tenían
+
+23
+00:00:31,020 --> 00:00:32,540
+GPS y pasaron por tu calle.
+
+24
+00:00:33,380 --> 00:00:34,600
+Casi sin que sus dueños lo
+
+25
+00:00:34,600 --> 00:00:34,920
+notaran.
+
+26
+00:00:35,480 --> 00:00:35,820
+Ojo:
+
+27
+00:00:36,180 --> 00:00:36,942
+no entra a tu red ni
+
+28
+00:00:36,942 --> 00:00:37,580
+ve lo que haces.
+
+29
+00:00:38,520 --> 00:00:39,640
+Solo usa el nombre de la
+
+30
+00:00:39,640 --> 00:00:39,800
+red,
+
+31
+00:00:40,100 --> 00:00:41,120
+como si fuera un letrero en
+
+32
+00:00:41,120 --> 00:00:41,460
+la calle.
+
+33
+00:00:41,960 --> 00:00:43,300
+Y así funcionan miles de millones
+
+34
+00:00:43,300 --> 00:00:44,540
+de redes WiFi por todo el
+
+35
+00:00:44,540 --> 00:00:44,760
+mundo.
+
+36
+00:00:45,300 --> 00:00:45,880
+Y piénsalo:
+
+37
+00:00:46,180 --> 00:00:46,940
+el módem de tu casa,
+
+38
+00:00:47,300 --> 00:00:47,760
+ahora mismo,
+
+39
+00:00:48,100 --> 00:00:49,460
+le está diciendo a un desconocido
+
+40
+00:00:49,460 --> 00:00:49,920
+dónde está.
+
+41
+00:00:50,920 --> 00:00:51,980
+Sin que ninguno de los dos
+
+42
+00:00:51,980 --> 00:00:52,420
+lo sepa.
+
+43
+00:00:52,740 --> 00:00:53,100
+¿Y a ti…
+
+44
+00:00:53,420 --> 00:00:54,020
+te parece útil,
+
+45
+00:00:54,320 --> 00:00:54,760
+o te da miedo?
+
+46
+00:00:55,620 --> 00:00:56,740
+Te leo en los comentarios.
+

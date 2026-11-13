@@ -1,0 +1,16 @@
+{
+ "voz": "es-ES-AlvaroNeural",
+ "rate": "+14%",
+ "escenas": [
+  "¿Sabías que tu celular puede saber dónde estás… con el GPS apagado?",
+  "Adentro de un edificio el GPS casi no llega. Y aun así, tu mapa te ubica en qué parte del centro comercial estás.",
+  "Su truco: usa el WiFi de tus vecinos.",
+  "Cada módem grita su nombre todo el tiempo, aunque nadie se conecte. Tu celular escucha esos nombres, sin contraseña.",
+  "Y los compara con un mapa gigante que dice dónde está cada red. Con unas cuantas redes ya sabe en qué calle estás.",
+  "¿Y quién hizo ese mapa? Millones de celulares que sí tenían GPS y pasaron por tu calle. Casi sin que sus dueños lo notaran.",
+  "Ojo: no entra a tu red ni ve lo que haces. Solo usa el nombre de la red, como si fuera un letrero en la calle.",
+  "Y así funcionan miles de millones de redes WiFi por todo el mundo.",
+  "Y piénsalo: el módem de tu casa, ahora mismo, le está diciendo a un desconocido dónde está. Sin que ninguno de los dos lo sepa.",
+  "¿Y a ti… te parece útil, o te da miedo? Te leo en los comentarios."
+ ]
+}
