@@ -1,0 +1,119 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; background: #120E2A; overflow: hidden; }
+    #gl { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+  </style>
+  <div id="root" data-composition-id="ciudad" data-start="0" data-duration="10" data-width="1080" data-height="1920">
+    <canvas id="gl" width="1080" height="1920" data-layout-ignore></canvas>
+  </div>
+  <script>
+  (function () {
+    /* Prueba de ciudad: UNA escena, UNA cámara con ruta CatmullRom continua.
+       T1 mapa del celular → ciudad que crece → picada de dron · T2 acercamiento al módem con anillos y DOF ·
+       T3 seguimiento por detrás + medio giro + paneo rápido junto a una pared (desenfoque de movimiento). */
+    const N = window.N, THREE = N.THREE, { clamp, lerp, prog, ease, easeOut } = N;
+    const W = 1080, H = 1920, V3 = (x, y, z) => new THREE.Vector3(x, y, z);
+    const renderer = N.crearRender(document.getElementById('gl'), W, H); renderer.toneMappingExposure = 1.1;
+    const scene = new THREE.Scene();
+    const C = window.CIUDAD(renderer, scene);
+    const M = C.M, HX = C.HX, hz = C.heroeZ;
+
+    /* ---------- celular flotando: su pantalla muestra la vista cenital de esta misma ciudad ---------- */
+    const rtMap = new THREE.WebGLRenderTarget(540, 960, { type: THREE.HalfFloatType });
+    const phone = new THREE.Group(); scene.add(phone); const PH = V3(M.x - 3, 40, M.z + 90); phone.position.copy(PH);
+    const sh = new THREE.Shape(), bw = 1.0, bh = 1.74, br = .13; sh.moveTo(-bw / 2 + br, -bh / 2); sh.lineTo(bw / 2 - br, -bh / 2); sh.quadraticCurveTo(bw / 2, -bh / 2, bw / 2, -bh / 2 + br); sh.lineTo(bw / 2, bh / 2 - br); sh.quadraticCurveTo(bw / 2, bh / 2, bw / 2 - br, bh / 2); sh.lineTo(-bw / 2 + br, bh / 2); sh.quadraticCurveTo(-bw / 2, bh / 2, -bw / 2, bh / 2 - br); sh.lineTo(-bw / 2, -bh / 2 + br); sh.quadraticCurveTo(-bw / 2, -bh / 2, -bw / 2 + br, -bh / 2);
+    const bodyG = new THREE.ExtrudeGeometry(sh, { depth: .07, bevelEnabled: true, bevelSize: .025, bevelThickness: .025, bevelSegments: 4 }); bodyG.translate(0, 0, -.07);
+    phone.add(new THREE.Mesh(bodyG, new THREE.MeshStandardMaterial({ color: '#16181F', metalness: .7, roughness: .3, envMap: C.env })));
+    const screen = new THREE.Mesh(new THREE.PlaneGeometry(.9, 1.6), new THREE.MeshBasicMaterial({ map: rtMap.texture, fog: false })); screen.position.z = .028; phone.add(screen);
+    const notch = new THREE.Mesh(new THREE.CircleGeometry(.025, 16), new THREE.MeshBasicMaterial({ color: '#05060A', fog: false })); notch.position.set(0, .75, .03); 
+    const rim = new THREE.PointLight('#9AB8FF', 3, 6, 2); rim.position.set(-1.2, .8, 1.2); phone.add(rim);
+    const FILL = .8 / Math.tan(THREE.MathUtils.degToRad(20));   // distancia a la que la pantalla 9:16 llena el cuadro
+
+    /* ---------- ruta de cámara: CatmullRomCurve3 para posición y para el punto que mira ---------- */
+    const orb = (t, a, r = 2.7) => [[HX + Math.sin(a) * r, 1.68, hz(t) + Math.cos(a) * r], [HX, 1.5, hz(t)]];
+    const K = [
+      [1.50, [M.x - 3, 72, M.z + 4], [M.x - 3, 0, M.z + 3.9]],            // cenital = misma toma que el mapa del celular
+      [2.40, [M.x - 3, 57, M.z + 6], [M.x - 2.8, 0, M.z + 4.6]],          // los edificios crecen
+      [3.25, [M.x - 5, 24, M.z + 25], [M.x - 1.5, 2.5, M.z + 3]],         // picada de dron
+      [4.00, [M.x - 8.6, 3.4, M.z + 13], [M.x - .6, 1.6, M.z + 1]],       // ya entre los edificios, a la altura de una persona
+      [4.55, [M.x - 6, 1.7, M.z + 5.5], [M.x, 1.45, M.z]],
+      [5.25, [M.x - 1.45, 1.5, M.z + .45], [M.x, 1.38, M.z]],             // el módem llena la pantalla
+      [5.80, [M.x - 1.65, 1.56, M.z + .8], [M.x, 1.4, M.z]],
+      [6.60, [M.x - 10.5, 3.0, M.z + 12], [M.x - 4, 1.4, M.z - 3]],        // retrocede: los anillos llegan a la gente
+      [7.20, [HX + .5, 1.75, hz(7.2) + 3.0], [HX, 1.5, hz(7.2) - 6]],      // detrás de la persona, a la altura del hombro
+      [7.75, [HX + .4, 1.72, hz(7.75) + 2.8], [HX, 1.5, hz(7.75) - 5]],
+      [7.95, ...orb(7.95, Math.PI * .25)], [8.15, ...orb(8.15, Math.PI * .5)], [8.35, ...orb(8.35, Math.PI * .75)], [8.55, ...orb(8.55, Math.PI)],   // medio giro hasta verla de frente
+      [8.95, [-3.0, 2.4, -8], [-14, 2.3, -8.1]],                          // paneo rápido pegado a la pared
+      [9.30, [-6.2, 2.6, -23], [-26, 2.2, -23]],                           // del otro lado: la calle cruzada
+      [10.05, [-10.5, 3.8, -23.5], [-34, 2.4, -23]],
+    ];
+    const cPos = new THREE.CatmullRomCurve3(K.map(k => V3(...k[1])), false, 'centripetal');
+    const cLook = new THREE.CatmullRomCurve3(K.map(k => V3(...k[2])), false, 'centripetal');
+    function pose(t) { let i = 0; while (i < K.length - 2 && t > K[i + 1][0]) i++; const l = clamp((t - K[i][0]) / (K[i + 1][0] - K[i][0]), 0, 1.02);
+      const w = lerp(l, l * l * (3 - 2 * l), .35), u = clamp((i + w) / (K.length - 1)); return [cPos.getPoint(u), cLook.getPoint(u)]; }
+    const camera = new THREE.PerspectiveCamera(40, W / H, .1, 900);
+    function ponCam(cam, t) { const [p, l] = pose(t); cam.position.copy(p); const dir = l.clone().sub(p).normalize(); const vert = -dir.y;
+      const wu = clamp((.985 - vert) / .3); const s = wu * wu * (3 - 2 * wu); cam.up.set(0, s, -(1 - s)).normalize(); cam.lookAt(l.x, l.y, l.z - .001); cam.updateMatrixWorld(); }
+    const camA = new THREE.PerspectiveCamera(40, W / H, .05, 900), mapCam = new THREE.PerspectiveCamera(40, 9 / 16, .1, 900);
+    function ponCamA(t) { const u = clamp(t / 1.5), k = lerp(u, u * u * (3 - 2 * u), .6);
+      const off = t <= 1.5 ? V3(lerp(1.7, 0, k), lerp(.7, 0, k), lerp(7.5, FILL, k)) : V3(0, 0, FILL - (t - 1.5) * .45);
+      camA.position.copy(PH).add(off); camA.lookAt(PH.x + lerp(.3, 0, k), PH.y + lerp(.1, 0, k), PH.z); camA.updateMatrixWorld();
+      const e = 1 - k; phone.rotation.set(-.12 * e, .45 * e, .06 * e); }
+
+    /* ---------- post: DOF + bloom + desenfoque de movimiento + fundido ---------- */
+    const mkRT = (w, h, o = {}) => new THREE.WebGLRenderTarget(w, h, Object.assign({ type: THREE.HalfFloatType }, o));
+    const rtS = mkRT(W, H, { samples: 4 }); rtS.depthTexture = new THREE.DepthTexture(W, H); rtS.depthTexture.type = THREE.UnsignedIntType;
+    const rtA = mkRT(W, H, { samples: 4 }), rtD = mkRT(W, H), rtB1 = mkRT(W / 4, H / 4), rtB2 = mkRT(W / 4, H / 4);
+    const quadCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1), quadScene = new THREE.Scene(), quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2)); quadScene.add(quad);
+    const VS = 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }';
+    const dofM = new THREE.ShaderMaterial({ uniforms: { tC: { value: rtS.texture }, tZ: { value: rtS.depthTexture }, focus: { value: 10 }, ap: { value: 0 }, near: { value: .1 }, far: { value: 900 }, res: { value: new THREE.Vector2(W, H) } }, vertexShader: VS,
+      fragmentShader: `uniform sampler2D tC, tZ; uniform float focus, ap, near, far; uniform vec2 res; varying vec2 vUv;
+        float vz(vec2 uv){ float d = texture2D(tZ, uv).x * 2. - 1.; return 2. * near * far / (far + near - d * (far - near)); }
+        float coc(float z){ return clamp(ap * abs(z - focus) / max(z, .01), 0., 1.) * 22.; }
+        void main(){ vec3 c0 = texture2D(tC, vUv).rgb; float z = vz(vUv), r = coc(z); if (r < .6) { gl_FragColor = vec4(c0, 1.); return; }
+          vec3 acc = c0; float ws = 1.;
+          for (int i = 0; i < 40; i++) { float fi = float(i) + .5; float rr = sqrt(fi / 40.) * r; float th = fi * 2.39996; vec2 o = vec2(cos(th), sin(th)) * rr / res;
+            float zs = vz(vUv + o); float w = zs < z ? clamp(coc(zs) / max(rr, 1.), 0., 1.) : 1.; acc += texture2D(tC, vUv + o).rgb * w; ws += w; }
+          gl_FragColor = vec4(acc / ws, 1.); }` });
+    const brightM = new THREE.ShaderMaterial({ uniforms: { tC: { value: null } }, vertexShader: VS, fragmentShader: `uniform sampler2D tC; varying vec2 vUv; void main(){ vec3 c = vec3(0.); for(int i=0;i<4;i++){ vec2 o = vec2(float(i/2)-.5, float(i-2*(i/2))-.5)/vec2(270.,480.); c += texture2D(tC, vUv+o).rgb; } c *= .25; gl_FragColor = vec4(max(c - 1.2, 0.), 1.); }` });
+    const blurM = new THREE.ShaderMaterial({ uniforms: { tC: { value: null }, dir: { value: new THREE.Vector2() } }, vertexShader: VS, fragmentShader: `uniform sampler2D tC; uniform vec2 dir; varying vec2 vUv; void main(){ vec3 c = texture2D(tC, vUv).rgb * .227; float w[4]; w[0]=.194; w[1]=.121; w[2]=.054; w[3]=.016; for(int i=1;i<5;i++){ c += (texture2D(tC, vUv + dir*float(i)).rgb + texture2D(tC, vUv - dir*float(i)).rgb) * w[i-1]; } gl_FragColor = vec4(c, 1.); }` });
+    const finM = new THREE.ShaderMaterial({ uniforms: { tC: { value: rtD.texture }, tB: { value: rtB1.texture }, tA: { value: rtA.texture }, fade: { value: 0 }, mv: { value: new THREE.Vector2() }, bloom: { value: .7 } }, vertexShader: VS,
+      fragmentShader: `uniform sampler2D tC, tB, tA; uniform float fade, bloom; uniform vec2 mv; varying vec2 vUv;
+        void main(){ vec3 c = vec3(0.); for (int i = 0; i < 32; i++) { float s = float(i) / 31. - .5; c += texture2D(tC, vUv + mv * s).rgb; } c /= 32.;
+          c += texture2D(tB, vUv).rgb * bloom; c = mix(c, texture2D(tA, vUv).rgb, fade);
+          vec2 q = vUv - .5; c *= 1. - .35 * dot(q * vec2(1.2, .9), q * vec2(1.2, .9)) * 2.;
+          gl_FragColor = vec4(c, 1.);
+          #include <tonemapping_fragment>
+          #include <encodings_fragment>
+        }` });
+    const pass = (mat, target) => { quad.material = mat; renderer.setRenderTarget(target); renderer.render(quadScene, quadCam); };
+
+    /* ---------- enfoque y apertura según el momento ---------- */
+    const prev = new THREE.PerspectiveCamera(40, W / H, .1, 900);
+    function dof(t) { const hero = V3(HX, 1.6, hz(t));
+      const tgt = t < 6.9 ? M : t < 8.75 ? hero : null; const focus = tgt ? camera.position.distanceTo(tgt) : t < 9.35 ? Math.max(2.4, Math.abs(camera.position.x + 7.2)) : 18;
+      const ap = Math.max(1.0 * prog(t, 4.3, 4.9) * (1 - prog(t, 5.9, 6.5)), .55 * prog(t, 6.9, 7.3) * (1 - prog(t, 8.7, 8.9)), .12 * prog(t, 3.8, 4.3)); return [focus, ap]; }
+
+    function renderAt(t) {
+      C.update(t, camera);
+      const fade = t < 1.5 ? 1 : 1 - ease(prog(t, 1.5, 1.8));
+      ponCam(camera, Math.max(t, 1.5)); if (t >= 1.5) ponCam(prev, Math.max(1.5, t - 1 / 30)); else prev.copy(camera);
+      phone.visible = fade > 0;
+      if (fade > 0) { ponCamA(t); ponCam(mapCam, 1.5); phone.visible = false; renderer.setRenderTarget(rtMap); renderer.render(scene, mapCam); phone.visible = true;
+        renderer.setRenderTarget(rtA); renderer.render(scene, camA); }
+      if (fade < 1) { phone.visible = false; renderer.setRenderTarget(rtS); renderer.render(scene, camera); }
+      const [focus, ap] = dof(t); dofM.uniforms.focus.value = focus; dofM.uniforms.ap.value = ap; pass(dofM, rtD);
+      brightM.uniforms.tC.value = rtS.texture; pass(brightM, rtB1);
+      for (let i = 0; i < 3; i++) { blurM.uniforms.tC.value = rtB1.texture; blurM.uniforms.dir.value.set((1 + i) / 270, 0); pass(blurM, rtB2); blurM.uniforms.tC.value = rtB2.texture; blurM.uniforms.dir.value.set(0, (1 + i) / 480); pass(blurM, rtB1); }
+      // desenfoque de movimiento: dónde estaba hace 1/30 s el punto enfocado
+      const fwd = new THREE.Vector3(); camera.getWorldDirection(fwd); const q = camera.position.clone().addScaledVector(fwd, Math.min(focus, 30)); const v = q.clone().project(prev);
+      const mv = new THREE.Vector2(v.x * .5, v.y * .5).multiplyScalar(-.75); if (mv.length() < .004) mv.set(0, 0); if (mv.length() > .2) mv.setLength(.2);
+      finM.uniforms.mv.value.copy(t < 1.8 ? mv.set(0, 0) : mv); finM.uniforms.fade.value = fade; pass(finM, null);
+    }
+    window.addEventListener('hf-seek', e => renderAt(e.detail.time));
+    renderAt(0);
+    window.__timelines = window.__timelines || {};
+    window.__timelines['ciudad'] = gsap.timeline({ paused: true });
+  })();
+  </script>
+</template>
