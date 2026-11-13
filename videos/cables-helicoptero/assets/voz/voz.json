@@ -1,0 +1,1096 @@
+{
+ "texto": "¿Sabías que los cables de alta tensión se arreglan con la luz prendida, desde un helicóptero? Por esos cables viaja la luz de ciudades enteras, a 400.000 voltios. Apagarlos dejaría a mucha gente sin luz, pero un pájaro separa en el cable y no le pasa nada. ¿Por qué? Porque toca un solo cable. La corriente solo pasa si encuentra un camino a la tierra. Si tocara el cable y la torre al mismo tiempo, ahí sí, ese sería el camino. Por eso el técnico usa un traje tejido con hilos de metal, la electricidad corre por fuera del traje, como una jaula, y no por su cuerpo. Al acercarse, toca el cable con una varilla, salta un arco, y en ese instante, el también queda a 400.000 voltios. Igual que el pájaro, y ya puede trabajar con las manos, mientras el piloto lo mantiene quieto a metros de la torre. Así que mientras tú ves la tele, alguien está arreglando tu luz, colgado de un helicóptero. Sígueme para más.",
+ "idioma": "es",
+ "duracion": 48.0,
+ "segmentos": [
+  {
+   "inicio": 0.0,
+   "fin": 3.9,
+   "texto": "¿Sabías que los cables de alta tensión se arreglan con la luz prendida, desde un helicóptero?"
+  },
+  {
+   "inicio": 4.2,
+   "fin": 7.7,
+   "texto": "Por esos cables viaja la luz de ciudades enteras, a 400.000 voltios."
+  },
+  {
+   "inicio": 8.58,
+   "fin": 12.58,
+   "texto": "Apagarlos dejaría a mucha gente sin luz, pero un pájaro separa en el cable y no le pasa nada."
+  },
+  {
+   "inicio": 13.34,
+   "fin": 15.72,
+   "texto": "¿Por qué? Porque toca un solo cable."
+  },
+  {
+   "inicio": 16.62,
+   "fin": 18.9,
+   "texto": "La corriente solo pasa si encuentra un camino a la tierra."
+  },
+  {
+   "inicio": 19.3,
+   "fin": 22.84,
+   "texto": "Si tocara el cable y la torre al mismo tiempo, ahí sí, ese sería el camino."
+  },
+  {
+   "inicio": 23.26,
+   "fin": 29.2,
+   "texto": "Por eso el técnico usa un traje tejido con hilos de metal, la electricidad corre por fuera del traje, como una jaula, y no por su cuerpo."
+  },
+  {
+   "inicio": 29.2,
+   "fin": 35.88,
+   "texto": "Al acercarse, toca el cable con una varilla, salta un arco, y en ese instante, el también queda a 400.000 voltios."
+  },
+  {
+   "inicio": 36.56,
+   "fin": 41.56,
+   "texto": "Igual que el pájaro, y ya puede trabajar con las manos, mientras el piloto lo mantiene quieto a metros de la torre."
+  },
+  {
+   "inicio": 41.88,
+   "fin": 45.76,
+   "texto": "Así que mientras tú ves la tele, alguien está arreglando tu luz, colgado de un helicóptero."
+  },
+  {
+   "inicio": 46.5,
+   "fin": 47.28,
+   "texto": "Sígueme para más."
+  }
+ ],
+ "palabras": [
+  {
+   "palabra": "¿Sabías",
+   "inicio": 0.0,
+   "fin": 0.54,
+   "prob": 0.833
+  },
+  {
+   "palabra": "que",
+   "inicio": 0.54,
+   "fin": 0.7,
+   "prob": 0.993
+  },
+  {
+   "palabra": "los",
+   "inicio": 0.7,
+   "fin": 0.82,
+   "prob": 0.996
+  },
+  {
+   "palabra": "cables",
+   "inicio": 0.82,
+   "fin": 1.02,
+   "prob": 0.984
+  },
+  {
+   "palabra": "de",
+   "inicio": 1.02,
+   "fin": 1.2,
+   "prob": 0.997
+  },
+  {
+   "palabra": "alta",
+   "inicio": 1.2,
+   "fin": 1.32,
+   "prob": 0.998
+  },
+  {
+   "palabra": "tensión",
+   "inicio": 1.32,
+   "fin": 1.7,
+   "prob": 0.996
+  },
+  {
+   "palabra": "se",
+   "inicio": 1.7,
+   "fin": 1.86,
+   "prob": 0.994
+  },
+  {
+   "palabra": "arreglan",
+   "inicio": 1.86,
+   "fin": 2.14,
+   "prob": 0.985
+  },
+  {
+   "palabra": "con",
+   "inicio": 2.14,
+   "fin": 2.28,
+   "prob": 0.995
+  },
+  {
+   "palabra": "la",
+   "inicio": 2.28,
+   "fin": 2.4,
+   "prob": 0.996
+  },
+  {
+   "palabra": "luz",
+   "inicio": 2.4,
+   "fin": 2.52,
+   "prob": 0.997
+  },
+  {
+   "palabra": "prendida,",
+   "inicio": 2.52,
+   "fin": 2.88,
+   "prob": 0.995
+  },
+  {
+   "palabra": "desde",
+   "inicio": 3.16,
+   "fin": 3.28,
+   "prob": 0.991
+  },
+  {
+   "palabra": "un",
+   "inicio": 3.28,
+   "fin": 3.46,
+   "prob": 0.997
+  },
+  {
+   "palabra": "helicóptero?",
+   "inicio": 3.46,
+   "fin": 3.9,
+   "prob": 0.993
+  },
+  {
+   "palabra": "Por",
+   "inicio": 4.2,
+   "fin": 4.36,
+   "prob": 0.911
+  },
+  {
+   "palabra": "esos",
+   "inicio": 4.36,
+   "fin": 4.5,
+   "prob": 0.608
+  },
+  {
+   "palabra": "cables",
+   "inicio": 4.5,
+   "fin": 4.74,
+   "prob": 0.994
+  },
+  {
+   "palabra": "viaja",
+   "inicio": 4.74,
+   "fin": 5.12,
+   "prob": 0.926
+  },
+  {
+   "palabra": "la",
+   "inicio": 5.12,
+   "fin": 5.24,
+   "prob": 0.993
+  },
+  {
+   "palabra": "luz",
+   "inicio": 5.24,
+   "fin": 5.38,
+   "prob": 0.995
+  },
+  {
+   "palabra": "de",
+   "inicio": 5.38,
+   "fin": 5.52,
+   "prob": 0.998
+  },
+  {
+   "palabra": "ciudades",
+   "inicio": 5.52,
+   "fin": 5.82,
+   "prob": 0.996
+  },
+  {
+   "palabra": "enteras,",
+   "inicio": 5.82,
+   "fin": 6.24,
+   "prob": 0.992
+  },
+  {
+   "palabra": "a",
+   "inicio": 6.42,
+   "fin": 6.52,
+   "prob": 0.989
+  },
+  {
+   "palabra": "400",
+   "inicio": 6.52,
+   "fin": 6.78,
+   "prob": 0.955
+  },
+  {
+   "palabra": ".000",
+   "inicio": 6.78,
+   "fin": 7.18,
+   "prob": 0.726
+  },
+  {
+   "palabra": "voltios.",
+   "inicio": 7.18,
+   "fin": 7.7,
+   "prob": 0.854
+  },
+  {
+   "palabra": "Apagarlos",
+   "inicio": 8.58,
+   "fin": 8.94,
+   "prob": 0.905
+  },
+  {
+   "palabra": "dejaría",
+   "inicio": 8.94,
+   "fin": 9.3,
+   "prob": 0.948
+  },
+  {
+   "palabra": "a",
+   "inicio": 9.3,
+   "fin": 9.4,
+   "prob": 0.998
+  },
+  {
+   "palabra": "mucha",
+   "inicio": 9.4,
+   "fin": 9.52,
+   "prob": 0.997
+  },
+  {
+   "palabra": "gente",
+   "inicio": 9.52,
+   "fin": 9.82,
+   "prob": 0.999
+  },
+  {
+   "palabra": "sin",
+   "inicio": 9.82,
+   "fin": 10.0,
+   "prob": 0.987
+  },
+  {
+   "palabra": "luz,",
+   "inicio": 10.0,
+   "fin": 10.18,
+   "prob": 0.999
+  },
+  {
+   "palabra": "pero",
+   "inicio": 10.5,
+   "fin": 10.66,
+   "prob": 0.977
+  },
+  {
+   "palabra": "un",
+   "inicio": 10.66,
+   "fin": 10.8,
+   "prob": 0.994
+  },
+  {
+   "palabra": "pájaro",
+   "inicio": 10.8,
+   "fin": 11.06,
+   "prob": 0.942
+  },
+  {
+   "palabra": "separa",
+   "inicio": 11.06,
+   "fin": 11.42,
+   "prob": 0.622
+  },
+  {
+   "palabra": "en",
+   "inicio": 11.42,
+   "fin": 11.5,
+   "prob": 0.947
+  },
+  {
+   "palabra": "el",
+   "inicio": 11.5,
+   "fin": 11.6,
+   "prob": 0.998
+  },
+  {
+   "palabra": "cable",
+   "inicio": 11.6,
+   "fin": 11.8,
+   "prob": 0.996
+  },
+  {
+   "palabra": "y",
+   "inicio": 11.8,
+   "fin": 11.98,
+   "prob": 0.994
+  },
+  {
+   "palabra": "no",
+   "inicio": 11.98,
+   "fin": 12.08,
+   "prob": 0.998
+  },
+  {
+   "palabra": "le",
+   "inicio": 12.08,
+   "fin": 12.18,
+   "prob": 0.998
+  },
+  {
+   "palabra": "pasa",
+   "inicio": 12.18,
+   "fin": 12.34,
+   "prob": 0.999
+  },
+  {
+   "palabra": "nada.",
+   "inicio": 12.34,
+   "fin": 12.58,
+   "prob": 0.996
+  },
+  {
+   "palabra": "¿Por",
+   "inicio": 13.34,
+   "fin": 13.7,
+   "prob": 0.964
+  },
+  {
+   "palabra": "qué?",
+   "inicio": 13.7,
+   "fin": 13.84,
+   "prob": 0.977
+  },
+  {
+   "palabra": "Porque",
+   "inicio": 14.54,
+   "fin": 14.9,
+   "prob": 0.952
+  },
+  {
+   "palabra": "toca",
+   "inicio": 14.9,
+   "fin": 15.12,
+   "prob": 0.993
+  },
+  {
+   "palabra": "un",
+   "inicio": 15.12,
+   "fin": 15.28,
+   "prob": 0.974
+  },
+  {
+   "palabra": "solo",
+   "inicio": 15.28,
+   "fin": 15.46,
+   "prob": 0.922
+  },
+  {
+   "palabra": "cable.",
+   "inicio": 15.46,
+   "fin": 15.72,
+   "prob": 0.998
+  },
+  {
+   "palabra": "La",
+   "inicio": 16.62,
+   "fin": 16.88,
+   "prob": 0.979
+  },
+  {
+   "palabra": "corriente",
+   "inicio": 16.88,
+   "fin": 17.18,
+   "prob": 1.0
+  },
+  {
+   "palabra": "solo",
+   "inicio": 17.18,
+   "fin": 17.4,
+   "prob": 0.665
+  },
+  {
+   "palabra": "pasa",
+   "inicio": 17.4,
+   "fin": 17.64,
+   "prob": 0.998
+  },
+  {
+   "palabra": "si",
+   "inicio": 17.64,
+   "fin": 17.82,
+   "prob": 0.96
+  },
+  {
+   "palabra": "encuentra",
+   "inicio": 17.82,
+   "fin": 18.14,
+   "prob": 0.997
+  },
+  {
+   "palabra": "un",
+   "inicio": 18.14,
+   "fin": 18.3,
+   "prob": 0.991
+  },
+  {
+   "palabra": "camino",
+   "inicio": 18.3,
+   "fin": 18.5,
+   "prob": 0.999
+  },
+  {
+   "palabra": "a",
+   "inicio": 18.5,
+   "fin": 18.64,
+   "prob": 0.995
+  },
+  {
+   "palabra": "la",
+   "inicio": 18.64,
+   "fin": 18.7,
+   "prob": 0.999
+  },
+  {
+   "palabra": "tierra.",
+   "inicio": 18.7,
+   "fin": 18.9,
+   "prob": 0.675
+  },
+  {
+   "palabra": "Si",
+   "inicio": 19.3,
+   "fin": 19.5,
+   "prob": 0.989
+  },
+  {
+   "palabra": "tocara",
+   "inicio": 19.5,
+   "fin": 19.76,
+   "prob": 0.9
+  },
+  {
+   "palabra": "el",
+   "inicio": 19.76,
+   "fin": 19.88,
+   "prob": 0.996
+  },
+  {
+   "palabra": "cable",
+   "inicio": 19.88,
+   "fin": 20.06,
+   "prob": 0.999
+  },
+  {
+   "palabra": "y",
+   "inicio": 20.06,
+   "fin": 20.2,
+   "prob": 0.998
+  },
+  {
+   "palabra": "la",
+   "inicio": 20.2,
+   "fin": 20.3,
+   "prob": 0.993
+  },
+  {
+   "palabra": "torre",
+   "inicio": 20.3,
+   "fin": 20.48,
+   "prob": 0.978
+  },
+  {
+   "palabra": "al",
+   "inicio": 20.48,
+   "fin": 20.56,
+   "prob": 0.998
+  },
+  {
+   "palabra": "mismo",
+   "inicio": 20.56,
+   "fin": 20.74,
+   "prob": 0.998
+  },
+  {
+   "palabra": "tiempo,",
+   "inicio": 20.74,
+   "fin": 21.1,
+   "prob": 0.998
+  },
+  {
+   "palabra": "ahí",
+   "inicio": 21.42,
+   "fin": 21.58,
+   "prob": 0.912
+  },
+  {
+   "palabra": "sí,",
+   "inicio": 21.58,
+   "fin": 21.82,
+   "prob": 0.934
+  },
+  {
+   "palabra": "ese",
+   "inicio": 22.08,
+   "fin": 22.26,
+   "prob": 0.962
+  },
+  {
+   "palabra": "sería",
+   "inicio": 22.26,
+   "fin": 22.54,
+   "prob": 0.996
+  },
+  {
+   "palabra": "el",
+   "inicio": 22.54,
+   "fin": 22.66,
+   "prob": 0.998
+  },
+  {
+   "palabra": "camino.",
+   "inicio": 22.66,
+   "fin": 22.84,
+   "prob": 0.999
+  },
+  {
+   "palabra": "Por",
+   "inicio": 23.26,
+   "fin": 23.42,
+   "prob": 0.989
+  },
+  {
+   "palabra": "eso",
+   "inicio": 23.42,
+   "fin": 23.54,
+   "prob": 0.998
+  },
+  {
+   "palabra": "el",
+   "inicio": 23.54,
+   "fin": 23.66,
+   "prob": 0.991
+  },
+  {
+   "palabra": "técnico",
+   "inicio": 23.66,
+   "fin": 23.96,
+   "prob": 0.992
+  },
+  {
+   "palabra": "usa",
+   "inicio": 23.96,
+   "fin": 24.14,
+   "prob": 0.998
+  },
+  {
+   "palabra": "un",
+   "inicio": 24.14,
+   "fin": 24.28,
+   "prob": 0.998
+  },
+  {
+   "palabra": "traje",
+   "inicio": 24.28,
+   "fin": 24.5,
+   "prob": 0.997
+  },
+  {
+   "palabra": "tejido",
+   "inicio": 24.5,
+   "fin": 24.82,
+   "prob": 0.998
+  },
+  {
+   "palabra": "con",
+   "inicio": 24.82,
+   "fin": 24.98,
+   "prob": 0.999
+  },
+  {
+   "palabra": "hilos",
+   "inicio": 24.98,
+   "fin": 25.1,
+   "prob": 0.963
+  },
+  {
+   "palabra": "de",
+   "inicio": 25.1,
+   "fin": 25.24,
+   "prob": 0.999
+  },
+  {
+   "palabra": "metal,",
+   "inicio": 25.24,
+   "fin": 25.46,
+   "prob": 0.982
+  },
+  {
+   "palabra": "la",
+   "inicio": 25.76,
+   "fin": 25.86,
+   "prob": 0.979
+  },
+  {
+   "palabra": "electricidad",
+   "inicio": 25.86,
+   "fin": 26.3,
+   "prob": 0.992
+  },
+  {
+   "palabra": "corre",
+   "inicio": 26.3,
+   "fin": 26.56,
+   "prob": 0.991
+  },
+  {
+   "palabra": "por",
+   "inicio": 26.56,
+   "fin": 26.72,
+   "prob": 0.998
+  },
+  {
+   "palabra": "fuera",
+   "inicio": 26.72,
+   "fin": 26.9,
+   "prob": 0.997
+  },
+  {
+   "palabra": "del",
+   "inicio": 26.9,
+   "fin": 27.06,
+   "prob": 0.995
+  },
+  {
+   "palabra": "traje,",
+   "inicio": 27.06,
+   "fin": 27.38,
+   "prob": 0.999
+  },
+  {
+   "palabra": "como",
+   "inicio": 27.7,
+   "fin": 27.88,
+   "prob": 0.993
+  },
+  {
+   "palabra": "una",
+   "inicio": 27.88,
+   "fin": 28.06,
+   "prob": 0.99
+  },
+  {
+   "palabra": "jaula,",
+   "inicio": 28.06,
+   "fin": 28.34,
+   "prob": 0.983
+  },
+  {
+   "palabra": "y",
+   "inicio": 28.6,
+   "fin": 28.66,
+   "prob": 0.997
+  },
+  {
+   "palabra": "no",
+   "inicio": 28.66,
+   "fin": 28.72,
+   "prob": 0.999
+  },
+  {
+   "palabra": "por",
+   "inicio": 28.72,
+   "fin": 28.88,
+   "prob": 0.997
+  },
+  {
+   "palabra": "su",
+   "inicio": 28.88,
+   "fin": 29.0,
+   "prob": 0.999
+  },
+  {
+   "palabra": "cuerpo.",
+   "inicio": 29.0,
+   "fin": 29.2,
+   "prob": 1.0
+  },
+  {
+   "palabra": "Al",
+   "inicio": 29.2,
+   "fin": 29.86,
+   "prob": 0.734
+  },
+  {
+   "palabra": "acercarse,",
+   "inicio": 29.86,
+   "fin": 30.32,
+   "prob": 0.995
+  },
+  {
+   "palabra": "toca",
+   "inicio": 30.6,
+   "fin": 30.78,
+   "prob": 0.989
+  },
+  {
+   "palabra": "el",
+   "inicio": 30.78,
+   "fin": 30.92,
+   "prob": 0.998
+  },
+  {
+   "palabra": "cable",
+   "inicio": 30.92,
+   "fin": 31.1,
+   "prob": 0.995
+  },
+  {
+   "palabra": "con",
+   "inicio": 31.1,
+   "fin": 31.28,
+   "prob": 0.997
+  },
+  {
+   "palabra": "una",
+   "inicio": 31.28,
+   "fin": 31.42,
+   "prob": 0.998
+  },
+  {
+   "palabra": "varilla,",
+   "inicio": 31.42,
+   "fin": 31.72,
+   "prob": 0.978
+  },
+  {
+   "palabra": "salta",
+   "inicio": 32.02,
+   "fin": 32.32,
+   "prob": 0.956
+  },
+  {
+   "palabra": "un",
+   "inicio": 32.32,
+   "fin": 32.44,
+   "prob": 0.98
+  },
+  {
+   "palabra": "arco,",
+   "inicio": 32.44,
+   "fin": 32.68,
+   "prob": 0.994
+  },
+  {
+   "palabra": "y",
+   "inicio": 32.94,
+   "fin": 32.98,
+   "prob": 0.994
+  },
+  {
+   "palabra": "en",
+   "inicio": 32.98,
+   "fin": 33.06,
+   "prob": 0.994
+  },
+  {
+   "palabra": "ese",
+   "inicio": 33.06,
+   "fin": 33.2,
+   "prob": 0.994
+  },
+  {
+   "palabra": "instante,",
+   "inicio": 33.2,
+   "fin": 33.66,
+   "prob": 0.994
+  },
+  {
+   "palabra": "el",
+   "inicio": 34.0,
+   "fin": 34.16,
+   "prob": 0.544
+  },
+  {
+   "palabra": "también",
+   "inicio": 34.16,
+   "fin": 34.42,
+   "prob": 0.994
+  },
+  {
+   "palabra": "queda",
+   "inicio": 34.42,
+   "fin": 34.66,
+   "prob": 0.997
+  },
+  {
+   "palabra": "a",
+   "inicio": 34.66,
+   "fin": 34.76,
+   "prob": 0.819
+  },
+  {
+   "palabra": "400",
+   "inicio": 34.76,
+   "fin": 34.96,
+   "prob": 0.949
+  },
+  {
+   "palabra": ".000",
+   "inicio": 34.96,
+   "fin": 35.42,
+   "prob": 0.678
+  },
+  {
+   "palabra": "voltios.",
+   "inicio": 35.42,
+   "fin": 35.88,
+   "prob": 0.702
+  },
+  {
+   "palabra": "Igual",
+   "inicio": 36.56,
+   "fin": 36.96,
+   "prob": 0.985
+  },
+  {
+   "palabra": "que",
+   "inicio": 36.96,
+   "fin": 37.1,
+   "prob": 0.993
+  },
+  {
+   "palabra": "el",
+   "inicio": 37.1,
+   "fin": 37.18,
+   "prob": 0.997
+  },
+  {
+   "palabra": "pájaro,",
+   "inicio": 37.18,
+   "fin": 37.52,
+   "prob": 0.973
+  },
+  {
+   "palabra": "y",
+   "inicio": 37.88,
+   "fin": 38.0,
+   "prob": 0.981
+  },
+  {
+   "palabra": "ya",
+   "inicio": 38.0,
+   "fin": 38.12,
+   "prob": 0.999
+  },
+  {
+   "palabra": "puede",
+   "inicio": 38.12,
+   "fin": 38.24,
+   "prob": 0.996
+  },
+  {
+   "palabra": "trabajar",
+   "inicio": 38.24,
+   "fin": 38.6,
+   "prob": 0.996
+  },
+  {
+   "palabra": "con",
+   "inicio": 38.6,
+   "fin": 38.8,
+   "prob": 0.999
+  },
+  {
+   "palabra": "las",
+   "inicio": 38.8,
+   "fin": 38.94,
+   "prob": 0.995
+  },
+  {
+   "palabra": "manos,",
+   "inicio": 38.94,
+   "fin": 39.16,
+   "prob": 0.999
+  },
+  {
+   "palabra": "mientras",
+   "inicio": 39.48,
+   "fin": 39.68,
+   "prob": 0.998
+  },
+  {
+   "palabra": "el",
+   "inicio": 39.68,
+   "fin": 39.86,
+   "prob": 0.999
+  },
+  {
+   "palabra": "piloto",
+   "inicio": 39.86,
+   "fin": 40.14,
+   "prob": 0.992
+  },
+  {
+   "palabra": "lo",
+   "inicio": 40.14,
+   "fin": 40.24,
+   "prob": 0.994
+  },
+  {
+   "palabra": "mantiene",
+   "inicio": 40.24,
+   "fin": 40.56,
+   "prob": 0.999
+  },
+  {
+   "palabra": "quieto",
+   "inicio": 40.56,
+   "fin": 40.86,
+   "prob": 0.978
+  },
+  {
+   "palabra": "a",
+   "inicio": 40.86,
+   "fin": 40.9,
+   "prob": 0.997
+  },
+  {
+   "palabra": "metros",
+   "inicio": 40.9,
+   "fin": 41.06,
+   "prob": 0.986
+  },
+  {
+   "palabra": "de",
+   "inicio": 41.06,
+   "fin": 41.22,
+   "prob": 0.999
+  },
+  {
+   "palabra": "la",
+   "inicio": 41.22,
+   "fin": 41.3,
+   "prob": 0.998
+  },
+  {
+   "palabra": "torre.",
+   "inicio": 41.3,
+   "fin": 41.56,
+   "prob": 0.985
+  },
+  {
+   "palabra": "Así",
+   "inicio": 41.88,
+   "fin": 42.06,
+   "prob": 0.957
+  },
+  {
+   "palabra": "que",
+   "inicio": 42.06,
+   "fin": 42.22,
+   "prob": 0.996
+  },
+  {
+   "palabra": "mientras",
+   "inicio": 42.22,
+   "fin": 42.4,
+   "prob": 0.954
+  },
+  {
+   "palabra": "tú",
+   "inicio": 42.4,
+   "fin": 42.62,
+   "prob": 0.895
+  },
+  {
+   "palabra": "ves",
+   "inicio": 42.62,
+   "fin": 42.72,
+   "prob": 0.978
+  },
+  {
+   "palabra": "la",
+   "inicio": 42.72,
+   "fin": 42.86,
+   "prob": 0.996
+  },
+  {
+   "palabra": "tele,",
+   "inicio": 42.86,
+   "fin": 43.02,
+   "prob": 0.983
+  },
+  {
+   "palabra": "alguien",
+   "inicio": 43.32,
+   "fin": 43.52,
+   "prob": 0.997
+  },
+  {
+   "palabra": "está",
+   "inicio": 43.52,
+   "fin": 43.74,
+   "prob": 0.989
+  },
+  {
+   "palabra": "arreglando",
+   "inicio": 43.74,
+   "fin": 44.1,
+   "prob": 0.988
+  },
+  {
+   "palabra": "tu",
+   "inicio": 44.1,
+   "fin": 44.24,
+   "prob": 0.992
+  },
+  {
+   "palabra": "luz,",
+   "inicio": 44.24,
+   "fin": 44.48,
+   "prob": 1.0
+  },
+  {
+   "palabra": "colgado",
+   "inicio": 44.72,
+   "fin": 45.0,
+   "prob": 0.992
+  },
+  {
+   "palabra": "de",
+   "inicio": 45.0,
+   "fin": 45.14,
+   "prob": 0.999
+  },
+  {
+   "palabra": "un",
+   "inicio": 45.14,
+   "fin": 45.26,
+   "prob": 0.998
+  },
+  {
+   "palabra": "helicóptero.",
+   "inicio": 45.26,
+   "fin": 45.76,
+   "prob": 0.992
+  },
+  {
+   "palabra": "Sígueme",
+   "inicio": 46.5,
+   "fin": 46.9,
+   "prob": 0.895
+  },
+  {
+   "palabra": "para",
+   "inicio": 46.9,
+   "fin": 47.1,
+   "prob": 0.984
+  },
+  {
+   "palabra": "más.",
+   "inicio": 47.1,
+   "fin": 47.28,
+   "prob": 0.99
+  }
+ ]
+}

@@ -50,11 +50,11 @@
     const core = cyl(r * .78, r * .78, len, std('#8E959E', { metalness: .8, roughness: .45 }), 20); core.rotation.z = Math.PI / 2; g.add(core);
     const strands = [], n = 12, pitch = .55;
     for (let i = 0; i < n; i++) {
-      const pts = []; for (let k = 0; k <= 260; k++) { const x = -len / 2 + len * k / 260, a = i / n * Math.PI * 2 + x / pitch * Math.PI * 2; pts.push(new THREE.Vector3(x, Math.cos(a) * r * .82, Math.sin(a) * r * .82)); }
-      const s = M(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 520, r * .2, 8, false), alu); g.add(s); strands.push(s);
+      const pts = []; const NS = Math.round(len * 45); for (let k = 0; k <= NS; k++) { const x = -len / 2 + len * k / NS, a = i / n * Math.PI * 2 + x / pitch * Math.PI * 2; pts.push(new THREE.Vector3(x, Math.cos(a) * r * .82, Math.sin(a) * r * .82)); }
+      const s = M(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), Math.round(len * 90), r * .2, 6, false), alu); g.add(s); strands.push(s);
     }
     // hilo roto: un tramo de un hilo que se levanta (se usa en el gancho)
-    const brokenPts = []; for (let k = 0; k <= 30; k++) { const x = .0 + .6 * k / 30, a = x / pitch * Math.PI * 2; brokenPts.push(new THREE.Vector3(x, Math.cos(a) * r * .82 + Math.pow(k / 30, 2) * .35, Math.sin(a) * r * .82 + Math.pow(k / 30, 2) * .15)); }
+    const brokenPts = []; for (let k = 0; k <= 30; k++) { const x = .0 + .6 * k / 30, a = x / pitch * Math.PI * 2; brokenPts.push(new THREE.Vector3(x, Math.cos(a) * r * .82 + Math.pow(k / 30, 2) * .14, Math.sin(a) * r * .82 + Math.pow(k / 30, 2) * .08)); }
     const broken = M(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(brokenPts), 60, r * .2, 8, false), alu); broken.visible = false; g.add(broken);
     // puntos de luz que viajan por el cable (la energía)
     const dots = []; const dr = rng(o.seed || 5); for (let i = 0; i < (o.dots ?? 14); i++) { const d = glow(r * 2.2, 'rgba(255,255,255,1)', 'rgba(120,190,255,.7)'); g.add(d); dots.push({ d, ph: dr(), sp: .25 + dr() * .2, a: dr() * 6 }); }
@@ -199,10 +199,10 @@
     };
     return g;
   }
-  function chispas(n = 40, seed = 7) {
+  function chispas(n = 40, seed = 7, size = 1) {
     const g = new THREE.Group(), r = rng(seed), list = [];
-    for (let i = 0; i < n; i++) { const s = new THREE.Mesh(new THREE.BoxGeometry(.008, .008, .09), glowM(i % 3 ? '#CFE8FF' : '#FFFFFF')); g.add(s); list.push({ s, v: new THREE.Vector3((r() - .5) * 3, r() * 2.5 + .5, (r() - .5) * 3), d: r() * .15 }); }
-    g.userData.update = (t0, t, origin) => list.forEach(o => { const a = t - t0 - o.d; o.s.visible = a > 0 && a < .9; if (!o.s.visible) return; const p = origin.clone().addScaledVector(o.v, a).add(new THREE.Vector3(0, -4.9 * a * a, 0)); o.s.position.copy(p); o.s.lookAt(p.clone().add(o.v.clone().add(new THREE.Vector3(0, -9.8 * a, 0)))); o.s.material.opacity = 1 - a / .9; o.s.material.transparent = true; });
+    for (let i = 0; i < n; i++) { const s = new THREE.Mesh(new THREE.BoxGeometry(.008 * size, .008 * size, .09 * size), glowM(i % 3 ? '#CFE8FF' : '#FFFFFF')); g.add(s); list.push({ s, v: new THREE.Vector3((r() - .5) * 3, r() * 2.5 + .5, (r() - .5) * 3).multiplyScalar(size), d: r() * .15 }); }
+    g.userData.update = (t0, t, origin) => list.forEach(o => { const a = t - t0 - o.d; o.s.visible = a > 0 && a < .9; if (!o.s.visible) return; const p = origin.clone().addScaledVector(o.v, a).add(new THREE.Vector3(0, -4.9 * a * a * size, 0)); o.s.position.copy(p); o.s.lookAt(p.clone().add(o.v.clone().add(new THREE.Vector3(0, -9.8 * a * size, 0)))); o.s.material.opacity = 1 - a / .9; o.s.material.transparent = true; });
     return g;
   }
 
