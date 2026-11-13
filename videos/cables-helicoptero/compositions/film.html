@@ -27,7 +27,7 @@
     const A = window.ARR, THREE = A.THREE, { clamp, lerp, prog, ease, easeOut } = A;
     const W = 1080, H = 1920;
     const T = { cuts: [4.1, 10.4, 19.2, 23.1, 29.1, 37.7, 41.7, 47.5], end: 48,
-      rompe: .55, cuenta1: [6.45, 7.4], pajaro: 10.6, patas: 14.9, camino: [19.9, 21.0], equis: 21.45, cero: 20.3, hilos: 24.95, jaula: 27.85,
+      rompe: 1.05, cuenta1: [6.45, 7.4], pajaro: 10.6, patas: 14.9, camino: [19.9, 21.0], equis: 21.45, cero: 20.3, hilos: 24.95, jaula: 27.85,
       varilla: 31.25, arco: 32.0, cuenta2: [34.7, 35.5], manguito: [38.2, 39.4] };
     window.__CABLES = T;
     const cvA = document.getElementById('vA'), ctxA = cvA.getContext('2d'), cOut = document.getElementById('cOut'), ctxO = cOut.getContext('2d'), gl = document.getElementById('gl');
@@ -53,6 +53,13 @@
       const bird = A.pajaro(); s.add(bird); const BD = bird.userData;
       const rod = new THREE.Group(); rod.add(A.cyl(.012, .012, 1.4, A.std('#C8CDD4', { metalness: .9, roughness: .25 }), 8, 0, .7, 0)); rod.add(A.cyl(.03, .03, .12, A.std('#E2572A'), 10, 0, 0, 0)); s.add(rod);
       const arc = A.arco(); s.add(arc); const star = A.starburst(1); s.add(star); const sp = A.chispas(40, 11); s.add(sp); const spC = A.chispas(36, 5, .18); s.add(spC);
+      // cable que se rompe en el gancho: dos tramos que se separan desde x = .3
+      const brk = [-1, 1].map(sg => { const piv = new THREE.Group(); piv.position.set(.3 + sg * 15, 0, 0); s.add(piv); const c = A.cable(15, .12, { seed: 8 + sg, dots: 8 }); c.position.x = -sg * 7.5; piv.add(c);
+        const tip = A.glow(.9, 'rgba(255,255,255,1)', 'rgba(120,200,255,.75)'); s.add(tip); return { piv, c, tip, sg }; });
+      const ringM = new THREE.MeshBasicMaterial({ color: '#BFE6FF', transparent: true, toneMapped: false, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+      const ring = new THREE.Mesh(new THREE.RingGeometry(.3, .345, 72), ringM); s.add(ring);
+      const ring2 = new THREE.Mesh(new THREE.RingGeometry(.3, .32, 72), ringM.clone()); s.add(ring2);
+      const pulse = A.glow(.7, 'rgba(255,255,255,1)', 'rgba(120,200,255,.8)'); s.add(pulse);
       const camera = cam(35);
       function heliOnLine(t, near = 1) {
         heli.visible = man.visible = true;
@@ -61,19 +68,31 @@
         P.legL.rotation.set(-1.4, 0, 0); P.legR.rotation.set(-1.4, 0, 0); P.kneeL.rotation.set(1.3, 0, 0); P.kneeR.rotation.set(1.3, 0, 0);
       }
       function update(t, mode, lt) {
-        sky.userData.update(t); HL.spin(t); HL.rotor.visible = true;
+        sky.userData.update(t); HL.spin(t); HL.rotor.visible = true; camera.up.set(0, 1, 0); cb.visible = true;
+        brk.forEach(b => { b.piv.visible = b.tip.visible = false; }); ring.visible = ring2.visible = pulse.visible = false;
         heli.visible = man.visible = bird.visible = rod.visible = false; star.visible = false; arc.userData.set(V3(), V3(0, .1, 0), t, 0); sp.userData.update(-9, -9, V3()); spC.userData.update(-9, -9, V3()); ground.visible = tower.visible = false;
         CB.broken.visible = false; CB.sleeve.visible = false; P.brilla(.08); P.torso.rotation.set(0, 0, 0);
         ['legL', 'legR', 'kneeL', 'kneeR', 'armL', 'armR', 'elbowL', 'elbowR', 'head'].forEach(n => P[n].rotation.set(0, 0, 0));
         let labels = [], path = null, flash = 0, cnt = null;
-        if (mode === 'gancho') {
-          CB.flow(t, 1);
-          const br = t >= T.rompe; CB.broken.visible = br; CB.broken.scale.set(1, br ? Math.max(.01, easeOut(prog(t, T.rompe, T.rompe + .25))) : 1, 1);
-          const z = br ? Math.max(0, 1 - (t - T.rompe) / .7) : 0; star.visible = z > 0; star.position.set(.55, .2, .1); star.scale.setScalar(.1 + .5 * z); star.material.opacity = z; star.material.rotation = t;
-          spC.userData.update(T.rompe, t, V3(.55, .2, .1)); flash = z * .45;
-          const near = ease(prog(t, 1.4, 3.9)); heliOnLine(t, near); heli.position.x = lerp(7, -.9, near);
+        if (mode === 'gancho') {          // 1: pulsos de luz por el cable, se rompe con destello y onda; las puntas se separan; zoom out al helicóptero
+          cb.visible = false; const br = t >= T.rompe, a = t - T.rompe;
+          brk.forEach(b => { b.piv.visible = true; b.c.userData.flow(t, 1);
+            const k = br ? 1 - Math.exp(-a * 3.5) : 0, wob = br ? Math.sin(a * 9) * Math.exp(-a * 2.5) * .03 : 0;
+            b.piv.rotation.z = b.sg * (.012 * k + wob * .3); b.piv.position.x = .3 + b.sg * (15 + .3 * k);
+            b.piv.updateMatrixWorld(true); const end = b.piv.localToWorld(V3(-b.sg * 15, 0, 0));
+            b.tip.visible = br; b.tip.position.copy(end); b.tip.scale.setScalar(.35 + 1.4 * Math.exp(-a * 2.2) + .08 * Math.sin(t * 30)); });
+          // pulsos de luz que corren hacia el punto de ruptura
+          pulse.visible = t > .15 && !br; pulse.position.set(lerp(-3.2, .3, prog(t, .15, T.rompe)), 0, .2); pulse.scale.setScalar(1.1 + .3 * Math.sin(t * 40));
+          // destello, onda expansiva y chispas
+          const z = br ? Math.max(0, 1 - a / .6) : 0; star.visible = z > 0; star.position.set(.3, 0, .1); star.scale.setScalar(.3 + 1.6 * z); star.material.opacity = z; star.material.rotation = t;
+          [ring, ring2].forEach((r, j) => { const aa = a - j * .12; r.visible = br && aa > 0 && aa < .7; if (!r.visible) return; r.position.set(.3, 0, .05); r.lookAt(camera.position); r.scale.setScalar(1 + aa * 9); r.material.opacity = (1 - aa / .7) * (j ? .6 : 1); });
+          spC.userData.update(T.rompe, t, V3(.3, 0, .05)); flash = z * .6;
+          const near = ease(prog(t, 1.9, 4.0)); heliOnLine(t, near); heli.position.x = lerp(7, -.9, near);
           P.armR.rotation.set(-.6, 0, -.1); P.armL.rotation.set(-.6, 0, .1); P.head.rotation.set(-.2, 0, 0);
-          camPath(camera, t, [[0, [.75, .22, .95], [.3, .08, 0]], [.9, [.85, .25, 1.2], [.3, .08, 0]], [4.0, [2.4, .2, 9.5], [-.7, -1.3, -1.6]]]);
+          // cámara inclinada (cable en diagonal) que se endereza al alejarse
+          const roll = .55 * (1 - ease(prog(t, 1.8, 3.6))); camera.up.set(Math.sin(roll), Math.cos(roll), 0);
+          camPath(camera, t, [[0, [.7, .1, 4.6], [.3, 0, 0]], [1.7, [.75, .15, 3.8], [.3, 0, 0]], [4.0, [2.4, .2, 9.5], [-.7, -1.3, -1.6]]]);
+          if (br && a < .25) camera.position.x += Math.sin(t * 80) * .02 * (1 - a / .25);
         } else if (mode === 'pajaro') {
           CB.flow(t, 1); bird.visible = true;
           const land = easeOut(prog(t, T.pajaro, T.pajaro + .6)); bird.position.set(-1.0, .12 + (1 - land) * 1.2, 0); bird.rotation.set(0, .55, 0);
