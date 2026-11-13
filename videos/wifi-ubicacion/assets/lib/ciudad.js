@@ -130,13 +130,51 @@
     function instancias(kb) { IM.forEach(m => { m.userData.list.forEach((it, i) => { const k = kb[it[0]]; Q.setFromAxisAngle(Yax, it[7]); if (m === IM[6]) Q.multiply(tilt);
         Pv.set(it[1], it[2] * k, it[3]); S.set(it[4], it[5] * k, it[6]); Mx.compose(Pv, Q, S); m.setMatrixAt(i, Mx); }); m.instanceMatrix.needsUpdate = true; }); }
 
-    // ---------- el módem (en la repisa de una ventana de planta baja, sobre la calle principal) ----------
-    const casa = edif.filter(e => e.faces.some(f => f[0] === -1) && Math.abs(e.x - e.w / 2 - 7.2) < .01 && e.z < 2 && e.z > -14).sort((a, b) => Math.abs(a.z + 6) - Math.abs(b.z + 6))[0];
-    const MZ = casa.z, MX = 7.2 - .32;
-    const modem = N.modem(); modem.scale.setScalar(1.25); modem.rotation.y = -Math.PI / 2; modem.position.set(MX, 1.12, MZ); g.add(modem);
-    g.add(N.M(new THREE.BoxGeometry(.7, .14, 1.6), cream, 7.2 - .3, 1.03, MZ));
+    // ---------- la casa: cuarto amueblado en planta baja con el módem ADENTRO ----------
+    const casa = edif.filter(e => Math.abs(e.x - e.w / 2 - 7.2) < .01 && e.w > 8 && e.d > 7.4 && e.z < 2 && e.z > -16).sort((a, b) => Math.abs(a.z + 6) - Math.abs(b.z + 6))[0];
+    const MZ = casa.z, nCas = Math.max(1, Math.floor((casa.d - 1.4) / 2.8)), uCas = -(nCas - 1) * 1.4, GZ = MZ + [...Array(nCas + 1)].map((_, c) => uCas + c * 2.8 - 1.4).sort((x, y) => Math.abs(x) - Math.abs(y))[0], RX0 = 7.32, RW = Math.min(6.2, casa.w - .5), RD = Math.min(6.6, casa.d - .5), RH = 3.75, RX1 = RX0 + RW;
+    const cuarto = new THREE.Group(); g.add(cuarto);
+    const madera = N.canvasTex(512, 512, (x, w, h) => { const r2 = rng(4); for (let j = 0; j < 8; j++) { const y0 = j * 64; let xx = -r2() * 200; while (xx < w) { const L = 160 + r2() * 200, v = r2() * 26 - 13; x.fillStyle = `rgb(${150 + v | 0},${98 + v | 0},${62 + v | 0})`; x.fillRect(xx, y0, L - 3, 61);
+        x.strokeStyle = 'rgba(80,45,25,.25)'; x.lineWidth = 2; for (let k = 0; k < 4; k++) { x.beginPath(); x.moveTo(xx, y0 + 10 + k * 13 + r2() * 4); x.bezierCurveTo(xx + L * .3, y0 + 8 + k * 13, xx + L * .6, y0 + 16 + k * 13, xx + L - 4, y0 + 12 + k * 13); x.stroke(); } xx += L; } } });
+    madera.wrapS = madera.wrapT = THREE.RepeatWrapping; madera.repeat.set(RW / 2.4, RD / 2.4);
+    const papel = N.canvasTex(256, 256, (x, w, h) => { x.fillStyle = '#F1DCC4'; x.fillRect(0, 0, w, h); x.fillStyle = 'rgba(200,140,110,.22)'; for (let j = 0; j < 4; j++) for (let k = 0; k < 4; k++) { x.beginPath(); x.ellipse(k * 64 + (j % 2) * 32 + 16, j * 64 + 32, 7, 13, .5, 0, 7); x.fill(); } });
+    papel.wrapS = papel.wrapT = THREE.RepeatWrapping; papel.repeat.set(3, 1.6);
+    const pared = new THREE.MeshStandardMaterial({ map: papel, roughness: .9, side: THREE.BackSide });
+    const room = new THREE.Mesh(new THREE.BoxGeometry(RW, RH, RD), [pared, pared, new THREE.MeshStandardMaterial({ color: '#FBF4EA', roughness: 1, side: THREE.BackSide }), new THREE.MeshStandardMaterial({ map: madera, roughness: .55, side: THREE.BackSide }), pared, pared]);
+    room.position.set(RX0 + RW / 2, .19 + RH / 2, MZ); cuarto.add(room);
+    const zoc = (x0, x1, z0, z1) => cuarto.add(N.M(new THREE.BoxGeometry(Math.max(.04, x1 - x0), .14, Math.max(.04, z1 - z0)), std('#FFFFFF'), (x0 + x1) / 2, .26, (z0 + z1) / 2));
+    zoc(RX1 - .04, RX1, MZ - RD / 2, MZ + RD / 2); zoc(RX0, RX1, MZ - RD / 2, MZ - RD / 2 + .04); zoc(RX0, RX1, MZ + RD / 2 - .04, MZ + RD / 2);
+    // ventanas por dentro (luz de la calle)
+    const vent = new THREE.MeshBasicMaterial({ color: HDR(1.6, 1.25, 1.05) });
+    for (const dz of [-RD / 2 + 1.1, RD / 2 - 1.1]) { const v = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.8), vent); v.rotation.y = Math.PI / 2; v.position.set(RX0 + .02, 1.85, MZ + dz); cuarto.add(v);
+      const mr = N.M(new THREE.BoxGeometry(.06, 2.0, 1.7), std('#FFFFFF'), RX0 + .01, 1.85, MZ + dz); mr.scale.set(1, 1, 1); cuarto.add(mr); cuarto.add(v); }
+    // mueble con el módem, cuadro, planta, sillón, mesita, tapete, lámpara, librero
+    const mad = std('#8A5634', { roughness: .6 }), madOsc = std('#5E3820', { roughness: .5 });
+    cuarto.add(N.M(new THREE.BoxGeometry(.55, .86, 1.9), mad, RX1 - .33, .19 + .43, MZ)); cuarto.add(N.M(new THREE.BoxGeometry(.6, .05, 2.0), madOsc, RX1 - .33, 1.08, MZ));
+    for (const dz of [-.47, .47]) cuarto.add(N.M(new THREE.BoxGeometry(.02, .6, .86), std('#A06A44'), RX1 - .6, .62, MZ + dz));
+    const modem = N.modem(); modem.scale.setScalar(1.25); modem.rotation.y = -Math.PI / 2; modem.position.set(RX1 - .36, 1.105, MZ); cuarto.add(modem);
     modem.userData.leds.forEach(l => l.material = new THREE.MeshBasicMaterial({ color: HDR(.6, 3, 3.2) }));
-    const M = new THREE.Vector3(MX, 1.3, MZ);
+    const M = new THREE.Vector3(RX1 - .36, 1.3, MZ);
+    const arte = N.canvasTex(256, 192, (x, w, h) => { const gr = x.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#3A3C8A'); gr.addColorStop(.55, '#E88A6A'); gr.addColorStop(1, '#F6C88A'); x.fillStyle = gr; x.fillRect(0, 0, w, h); x.fillStyle = '#FFE2A0'; x.beginPath(); x.arc(w * .5, h * .58, 26, 0, 7); x.fill(); x.fillStyle = '#2A3A6A'; x.fillRect(0, h * .66, w, h * .34); x.fillStyle = 'rgba(255,220,170,.5)'; for (let i = 0; i < 6; i++) x.fillRect(w * .5 - 30 + i * 4, h * .7 + i * 8, 60 - i * 8, 3); });
+    const cuadro = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.1), new THREE.MeshStandardMaterial({ map: arte, roughness: .7 })); cuadro.rotation.y = -Math.PI / 2; cuadro.position.set(RX1 - .03, 2.45, MZ); cuarto.add(cuadro);
+    cuarto.add(N.M(new THREE.BoxGeometry(.04, 1.24, 1.64), std('#2A2220'), RX1 - .015, 2.45, MZ));
+    const maceta = new THREE.Group(); maceta.position.set(RX1 - .45, .19, MZ + 1.45); cuarto.add(maceta); maceta.add(N.M(new THREE.CylinderGeometry(.22, .17, .45, 10), std('#C0603A'), 0, .22, 0));
+    for (let k = 0; k < 9; k++) { const hj = N.M(new THREE.BoxGeometry(.12, .7, .03), std(k % 2 ? '#3A8A4A' : '#2E7A40'), 0, .8, 0); hj.rotation.set(Math.sin(k * 2.1) * .5, k * .7, Math.cos(k * 1.3) * .5); maceta.add(hj); }
+    const sillon = new THREE.Group(); sillon.position.set(RX0 + RW * .55, .19, MZ - RD / 2 + .55); cuarto.add(sillon); const tela = std('#2E7A80', { roughness: 1 });
+    sillon.add(N.M(new THREE.BoxGeometry(2.4, .42, .9), tela, 0, .25, 0)); sillon.add(N.M(new THREE.BoxGeometry(2.4, .7, .25), tela, 0, .7, -.33)); for (const sx of [-1.12, 1.12]) sillon.add(N.M(new THREE.BoxGeometry(.2, .6, .9), tela, sx, .4, 0));
+    for (const sx of [-.55, .55]) sillon.add(N.M(new THREE.BoxGeometry(1.0, .14, .75), std('#3A8E94', { roughness: 1 }), sx, .52, .04)); sillon.add(N.M(new THREE.BoxGeometry(.45, .4, .14), std('#E8B84A'), -.7, .78, -.15));
+    const tapete = N.canvasTex(256, 256, (x, w, h) => { x.fillStyle = '#B8443A'; x.fillRect(0, 0, w, h); x.strokeStyle = '#F2D9A0'; x.lineWidth = 8; x.strokeRect(14, 14, w - 28, h - 28); x.fillStyle = '#2E4A7A'; for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) { x.beginPath(); x.moveTo(48 + i * 54, 40 + j * 54); x.lineTo(68 + i * 54, 60 + j * 54); x.lineTo(48 + i * 54, 80 + j * 54); x.lineTo(28 + i * 54, 60 + j * 54); x.fill(); } });
+    const tap = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 2.0), new THREE.MeshStandardMaterial({ map: tapete, roughness: 1 })); tap.rotation.x = -Math.PI / 2; tap.position.set(RX0 + RW * .55, .2, MZ - .5); tap.receiveShadow = true; cuarto.add(tap);
+    cuarto.add(N.M(new THREE.BoxGeometry(1.2, .06, .6), madOsc, RX0 + RW * .55, .62, MZ - .5)); for (const [dx, dz] of [[-.5, -.22], [.5, -.22], [-.5, .22], [.5, .22]]) cuarto.add(N.M(new THREE.BoxGeometry(.05, .42, .05), madOsc, RX0 + RW * .55 + dx, .4, MZ - .5 + dz));
+    const lap = new THREE.Group(); lap.position.set(RX0 + RW * .55, .65, MZ - .5); lap.rotation.y = .5; cuarto.add(lap); lap.add(N.M(new THREE.BoxGeometry(.5, .02, .34), std('#B8BEC8', { metalness: .6, roughness: .3 })));
+    const pant = new THREE.Mesh(new THREE.PlaneGeometry(.46, .28), new THREE.MeshBasicMaterial({ color: HDR(.6, 1.2, 2.0) })); pant.position.set(0, .16, -.17); pant.rotation.x = -.25; lap.add(pant);
+    const lamp = new THREE.Group(); lamp.position.set(RX1 - .5, .19, MZ - RD / 2 + .5); cuarto.add(lamp); lamp.add(N.M(new THREE.CylinderGeometry(.03, .03, 1.6, 8), std('#2A2220'), 0, .8, 0)); lamp.add(N.M(new THREE.CylinderGeometry(.18, .18, .04, 12), std('#2A2220'), 0, .02, 0));
+    lamp.add(new THREE.Mesh(new THREE.CylinderGeometry(.2, .32, .38, 16, 1, true), new THREE.MeshBasicMaterial({ color: HDR(2.4, 1.7, 1.0), side: THREE.DoubleSide }))); lamp.children[2].position.y = 1.7;
+    const libr = new THREE.Group(); libr.position.set(RX0 + RW * .45, .19, MZ + RD / 2 - .2); cuarto.add(libr); libr.add(N.M(new THREE.BoxGeometry(1.8, 2.2, .36), mad, 0, 1.1, 0));
+    const r3 = rng(12); for (let sh = 0; sh < 4; sh++) { libr.add(N.M(new THREE.BoxGeometry(1.7, .04, .34), madOsc, 0, .3 + sh * .5, -.02)); let bx = -.8; while (bx < .78) { const bw = .05 + r3() * .07, bh = .26 + r3() * .16; libr.add(N.M(new THREE.BoxGeometry(bw, bh, .24), std(['#C8403A', '#2E6FD0', '#E8B02A', '#3A9A6A', '#F2EEE6', '#7A4FC0'][Math.floor(r3() * 6)]), bx + bw / 2, .32 + sh * .5 + bh / 2, -.06)); bx += bw + .01; } }
+    const luzCuarto = new THREE.PointLight('#FFC890', 9, 9, 2); luzCuarto.position.set(RX0 + RW * .5, 3.3, MZ); cuarto.add(luzCuarto);
+    const luzLamp = new THREE.PointLight('#FFB070', 4, 5, 2); luzLamp.position.set(RX1 - .5, 1.75, MZ - RD / 2 + .5); cuarto.add(luzLamp);
+    cuarto.traverse(o2 => { if (o2.isMesh) { o2.castShadow = false; o2.receiveShadow = false; } });
     const pin = new THREE.Sprite(new THREE.SpriteMaterial({ map: pinTex, transparent: true, depthWrite: false, fog: false })); pin.renderOrder = 20; g.add(pin);
 
     // ---------- faroles con charcos de luz ----------
@@ -147,24 +185,22 @@
       f.add(N.M(new THREE.CylinderGeometry(.07, .11, 4.8, 8), poste, 0, 2.4, 0)); f.add(N.M(new THREE.BoxGeometry(.9, .07, .07), poste, .42, 4.7, 0));
       f.add(N.M(new THREE.CylinderGeometry(.16, .24, .36, 6), poste, .82, 4.5, 0)); const b = new THREE.Mesh(new THREE.SphereGeometry(.16, 10, 8), bulbM); b.position.set(.82, 4.32, 0); f.add(b);
       const c = new THREE.Mesh(new THREE.PlaneGeometry(6, 6), charcoM); c.rotation.x = -Math.PI / 2; c.position.set(x + Math.cos(rot) * .82, .2, z - Math.sin(rot) * .82); c.renderOrder = 2; g.add(c); charcos.push(c); };
-    for (let z = 36; z > -230; z -= 12) { addFarol(-4.6, z, 0); addFarol(4.6, z - 6, Math.PI); }
+    for (let z = 36; z > -230; z -= 12) { if (Math.abs(z - MZ) > 2.5) addFarol(-4.6, z, 0); if (Math.abs(z - 6 - MZ) > 3.5) addFarol(4.6, z - 6, Math.PI); }
     ROWS.slice(0, 4).forEach(([z0]) => { const zc = z0 - 5; for (let x = -74; x < 75; x += 14) if (Math.abs(x) > 10) { addFarol(x, zc - 3.6, -Math.PI / 2); } });
-    for (const [x, z] of [[-4.6, MZ + 6], [4.6, MZ - 2], [-4.6, MZ - 18], [4.6, MZ + 10]]) { const L = new THREE.PointLight('#FFB060', 6, 14, 2); L.position.set(x, 4.3, z); g.add(L); }
+    for (const [x, z] of [[-4.6, MZ + 6], [4.6, MZ - 8], [-4.6, MZ - 18], [4.6, MZ + 10]]) { const L = new THREE.PointLight('#FFB060', 6, 14, 2); L.position.set(x, 4.3, z); g.add(L); }
 
     // ---------- personas ----------
     const ropa = ['#E86A4A', '#3A9A6A', '#E8D07A', '#5A6AE0', '#C85A9A', '#F2EEE6', '#7A4FC0', '#3AB0C0', '#D88A3A'];
     const gente = [];
-    for (let i = 0; i < 34; i++) { const p = N.persona(ropa[i % ropa.length], { piel: ['#C68D68', '#E0B090', '#A87050', '#8A5A40'][i % 4], coleta: i % 4 === 0, pelo: ['#1E1A18', '#5A3A20', '#2A2A2A'][i % 3], pantalon: ['#2E3448', '#4A3A30', '#22252E'][i % 3] });
+    for (let i = 0; i < 40; i++) { const p = N.persona(ropa[i % ropa.length], { piel: ['#C68D68', '#E0B090', '#A87050', '#8A5A40'][i % 4], coleta: i % 4 === 0, pelo: ['#1E1A18', '#5A3A20', '#2A2A2A'][i % 3], pantalon: ['#2E3448', '#4A3A30', '#22252E'][i % 3] });
       const cel = i % 2 === 0; p.userData.phone.visible = cel; const scr = new THREE.MeshBasicMaterial({ color: HDR(.5, 1.4, 2.4) }); p.userData.screen.material = scr;
       const halo = N.glow('#6FD0FF', .55, cel ? .55 : 0); halo.material.color = HDR(.6, 1.6, 3); g.add(halo);
-      const lane = [-6.2, -5.0, 5.2, 6.3][i % 4], dir = (i % 4 < 2) ? (i % 8 < 4 ? -1 : 1) : (i % 8 < 6 ? 1 : -1);
+      const lane = [-6.4, -4.8, 5.0, 6.3][i % 4], dir = (i % 4 < 2) ? (i % 8 < 4 ? -1 : 1) : (i % 8 < 6 ? 1 : -1);
       g.add(p); gente.push({ p, cel, scr, halo, x: lane, z0: 40 - ((i * 37) % 130), dir, sp: 1.1 + (i % 5) * .08, ph: i * 1.7, hit: 0 }); }
     const zPer = (q, t) => { const span = 130; return ((q.z0 + q.dir * q.sp * t - 40) % span + span) % span + 40 - span; };
-    gente.forEach(q => { if (q.x < 0) return; for (let k = 0; k < 40; k++) { let ok = true; for (let t = 3.4; t < 6.6; t += .1) { const z = zPer(q, t); if (z > MZ - 6 && z < MZ + 16) { ok = false; break; } } if (ok) break; q.z0 += 4; } });
-    const heroe = N.persona('#E8B84A', { piel: '#C68D68', pelo: '#2A1A14', coleta: true, pantalon: '#2E3448' }); g.add(heroe);
-    const heroeScr = new THREE.MeshBasicMaterial({ color: HDR(.3, .5, .9) }); heroe.userData.screen.material = heroeScr;
-    const heroeHalo = N.glow('#6FD0FF', 1, 0); heroeHalo.material.color = HDR(.6, 1.8, 3.2); g.add(heroeHalo);
-    const heroeZ = t => 4 - (t - 6.4) * 1.35, HX = -5.6;
+    // nadie se atraviesa entre la cámara y la casa en los momentos indicados (o.evitar = [[t0, t1, zmin, zmax, lado], ...])
+    const EV = o.evitar || [];
+    gente.forEach(q => { for (let k = 0; k < 60; k++) { let ok = true; for (const [a, b, z0, z1, lado] of EV) { if (lado && Math.sign(q.x) !== lado) continue; for (let t = a; t < b && ok; t += .1) { const z = zPer(q, t); if (z > MZ + z0 && z < MZ + z1) ok = false; } } if (ok) break; q.z0 += 3.3; } });
 
     // ---------- anillos de señal cian ----------
     const ringGeo = new THREE.RingGeometry(.94, 1, 96);
@@ -174,44 +210,40 @@
 
     // ---------- mapa (plano encima de la ciudad aplanada) ----------
     const mapT = mapaTex();
-    const mapa = new THREE.Mesh(new THREE.PlaneGeometry(MAP.X1 - MAP.X0, MAP.Z1 - MAP.Z0), new THREE.MeshBasicMaterial({ map: mapT, transparent: true, fog: false, depthWrite: false }));
+    const mapa = new THREE.Mesh(new THREE.PlaneGeometry(MAP.X1 - MAP.X0, MAP.Z1 - MAP.Z0), new THREE.MeshBasicMaterial({ map: mapT, transparent: true, depthWrite: false }));
     mapa.rotation.x = -Math.PI / 2; mapa.position.set((MAP.X0 + MAP.X1) / 2, .4, (MAP.Z0 + MAP.Z1) / 2); mapa.renderOrder = 1; g.add(mapa);
 
     // ---------- animación ----------
-    const T = Object.assign({ crece: 1.62, anillos: 5.35, heroeCel: 8.35 }, o.T || {});
+    // S = { crece, pin: { k, s, y }, rafagas: [t0, ...] }
     const kb = new Float32Array(edif.length); let firma = null;
-    const cam = new THREE.Vector3();
-    function update(t, camera) {
-      // edificios que crecen desde el mapa (primero los cercanos al pin)
-      edif.forEach((e, i) => { const dd = Math.hypot(e.x - M.x, e.z - M.z), t0 = T.crece + dd / 130 * .9 + (i % 7) * .025; kb[i] = Math.max(.012, backOut(prog(t, t0, t0 + .75)));
-        e.grp.scale.y = kb[i]; e.mat.color.copy(e.colBase).lerp(new THREE.Color('#DED3BF'), 1 - clamp(kb[i])); });
-      const f = t < T.crece ? 'a' : t > T.crece + 2.2 ? 'b' : t.toFixed(4); if (f !== firma) { instancias(kb); firma = f; }
-      const kEnv = easeOut(prog(t, T.crece + .3, T.crece + 1.0));
-      mapa.material.opacity = 1 - ease(prog(t, T.crece + .05, T.crece + .55)); mapa.visible = mapa.material.opacity > .003;
+    const cam = new THREE.Vector3(), tan = new THREE.Color('#DED3BF');
+    function update(t, camera, S) {
+      const T0 = S.crece, tg = S.tg != null ? S.tg : t;
+      edif.forEach((e, i) => { const dd = Math.hypot(e.x - M.x, e.z - M.z), t0 = T0 + dd / 130 * .9 + (i % 7) * .025; kb[i] = Math.max(.012, backOut(prog(tg, t0, t0 + .75)));
+        e.grp.scale.y = kb[i]; e.mat.color.copy(e.colBase).lerp(tan, 1 - clamp(kb[i])); });
+      const f = tg < T0 ? 'a' : tg > T0 + 2.2 ? 'b' : tg.toFixed(4); if (f !== firma) { instancias(kb); firma = f; }
+      const kEnv = easeOut(prog(tg, T0 + .3, T0 + 1.0));
+      cuarto.visible = kb[edif.indexOf(casa)] > .9; cuarto.scale.y = 1;
+      mapa.material.opacity = 1 - ease(prog(tg, T0 + .05, T0 + .55)); mapa.visible = mapa.material.opacity > .003;
       farol.forEach(f2 => f2.scale.set(1, Math.max(.001, kEnv), 1)); charcoM.opacity = .75 * kEnv; bulbM.visible = kEnv > .1;
-      dashes.visible = zebra.visible = kEnv > .01; modem.scale.setScalar(1.25 * Math.max(.001, kEnv));
-      // pin: grande en el mapa, luego flota sobre el módem y se desvanece al bajar
-      const pk = 1 - ease(prog(t, 3.5, 4.1)); pin.visible = pk > .01; pin.material.opacity = pk;
-      const py = lerp(2.4, 5.2, kEnv) + Math.sin(t * 4) * .15 * kEnv, ps = lerp(5.6, 2.2, kEnv); pin.position.set(M.x - .6, py + ps * .62, M.z); pin.scale.set(ps * .8, ps, 1);
-      // gente caminando
-      const ring = (tt) => (tt - T.anillos) * 7;   // radio del primer anillo
-      gente.forEach((q, i) => { let z = zPer(q, t); if (Math.abs(q.x + 5.6) < 1 && Math.abs(z - heroeZ(t)) < 2.5) z += 5;
+      dashes.visible = zebra.visible = kEnv > .01;
+      const P = S.pin; pin.visible = !!P && P.k > .01; if (pin.visible) { pin.material.opacity = P.k; pin.position.set(P.x, P.y + P.s * .62, P.z); pin.scale.set(P.s * .8, P.s, 1); }
+      // ráfagas de anillos desde el módem
+      const R0 = (S.rafagas || []).filter(a => t >= a).pop();
+      gente.forEach((q, i) => { const z = zPer(q, t);
         q.p.position.set(q.x, .19, z); q.p.rotation.y = q.dir > 0 ? 0 : Math.PI; q.p.scale.setScalar(Math.max(.001, kEnv)); q.p.userData.camina(t * 5.6 + q.ph, .9);
         if (!q.cel) q.p.userData.armR.rotation.x = -q.p.userData.armL.rotation.x;
-        q.p.updateMatrixWorld(true); const pp = q.p.userData.phone.getWorldPosition(cam); q.halo.position.copy(pp);
-        const dist = Math.hypot(q.x - M.x, z - M.z), rr = ring(t), hit = q.cel && rr > dist ? Math.max(0, 1 - (rr - dist) / 9) : 0;
-        q.halo.material.opacity = q.cel ? (.45 + 1.2 * hit) * kEnv : 0; q.halo.scale.setScalar(.5 + 1.4 * hit); q.scr.color.setRGB(.5 + 2 * hit, 1.4 + 2 * hit, 2.4 + 2 * hit); });
-      // la persona que sigue la cámara
-      heroe.visible = t > 4; heroe.position.set(HX, .19, heroeZ(t)); heroe.rotation.y = Math.PI; heroe.userData.camina(t * 5.4, .9);
-      heroe.updateMatrixWorld(true); heroeHalo.position.copy(heroe.userData.phone.getWorldPosition(cam)); const hl = easeOut(prog(t, T.heroeCel, T.heroeCel + .3));
-      heroeHalo.material.opacity = hl * (1 + .2 * Math.sin(t * 9)); heroeHalo.scale.setScalar(.4 + 1.1 * hl); heroeScr.color.setRGB(.3 + 2.4 * hl, .5 + 2.6 * hl, .9 + 2.8 * hl);
-      // anillos: verticales mirando a la cámara + en el piso
-      anillos.forEach((a, i) => { const rr = (t - T.anillos - i * .32) * 4.2; a.visible = rr > .05 && rr < 26; if (!a.visible) return; a.position.copy(M); if (camera) a.lookAt(camera.position); a.scale.setScalar(rr); a.material.opacity = Math.min(1, rr * 3) * Math.max(0, 1 - rr / 26); });
-      anillosPiso.forEach((a, i) => { const rr = (t - T.anillos - .1 - i * .4) * 7; a.visible = rr > .1 && rr < 60; if (!a.visible) return; a.position.set(M.x, .23, M.z); a.scale.setScalar(rr); a.material.opacity = Math.max(0, 1 - rr / 60) * .9; });
+        q.p.updateMatrixWorld(true); const pp = q.p.userData.phone.getWorldPosition(cam); q.halo.position.copy(pp); q.pos = pp.clone();
+        const dist = Math.hypot(q.x - M.x, z - M.z), rr = R0 != null ? (t - R0 - .1) * 7 : -1, hit = q.cel && rr > dist ? Math.max(0, 1 - (rr - dist) / 9) : 0;
+        const extra = q.cel ? (S.brillo || 0) : 0;
+        q.halo.material.opacity = q.cel ? (.45 + 1.2 * hit + extra) * kEnv : 0; q.halo.scale.setScalar(.5 + 1.4 * hit + extra * .6); q.scr.color.setRGB(.5 + 2 * hit + extra, 1.4 + 2 * hit + extra, 2.4 + 2 * hit + extra); });
+      anillos.forEach((a, i) => { const rr = R0 != null ? (t - R0 - i * .32) * 4.2 : -1; a.visible = rr > .05 && rr < 26; if (!a.visible) return; a.position.copy(M); if (camera) a.lookAt(camera.position); a.scale.setScalar(rr); a.material.opacity = Math.min(1, rr * 3) * Math.max(0, 1 - rr / 26); });
+      anillosPiso.forEach((a, i) => { const rr = R0 != null ? (t - R0 - .1 - i * .4) * 7 : -1; a.visible = rr > .1 && rr < 60; if (!a.visible) return; a.position.set(M.x, .23, M.z); a.scale.setScalar(rr); a.material.opacity = Math.max(0, 1 - rr / 60) * .9; });
       modem.userData.leds.forEach((l, j) => l.visible = Math.sin(t * 9 + j * 1.7) > -.4);
+      return { kEnv };
     }
     instancias(new Float32Array(edif.length).fill(1));
-    return { group: g, update, M, MZ, edif, heroe, heroeZ, HX, T, BLOCKS, ROWS, env };
+    return { group: g, update, M, MZ, GZ, casa, edif, gente, BLOCKS, ROWS, env, modem, pinTex, sky, sun, RX0, RX1, RD, scene };
   }
   window.CIUDAD = CIUDAD;
 })();

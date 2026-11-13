@@ -8,7 +8,7 @@ P = lambda *a: os.path.join(root, *a)
 src = open(P("compositions/film.html"), encoding="utf-8").read()
 b = re.search(r"const T = (\{.*?\});", src, re.S).group(1)
 b = re.sub(r"([{,]\s*)([A-Za-z_]\w*)\s*:", r'\1"\2":', b); b = re.sub(r"(?<![\d])\.(\d)", r"0.\1", b); T = json.loads(b)
-C, DUR = T["cuts"], T["end"]
+DUR = T["end"]
 N = int(DUR * SR); t = np.arange(N) / SR
 def read(path):
     with wave.open(path) as w: x = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(float) / 32768; ch = w.getnchannels(); sr = w.getframerate()
@@ -26,6 +26,7 @@ S = lambda n: read(P("assets/sfx", n))
 fx = np.zeros((N, 2))
 # escena 1 (clics metálicos, zumbido del chip, tono grave) ya hecha a mano
 place(fx, read(P("assets/audio/escena1.wav")), 0, 0)
+C = []
 def tono(t0, fr, d, db, pan=0):
     x = tt(d); place(fx, st(np.sin(2 * np.pi * fr * x) * np.exp(-x / (d * .35)) * .4), t0, db, pan)
 def ping(t0, db=-10, pan=0):
@@ -34,34 +35,36 @@ def error(t0, db=-6):
     x = tt(.45); s = np.sign(np.sin(2 * np.pi * 155 * x)) * .25 * np.exp(-x * 3); s = lp(s, 12); place(fx, st(s), t0, db); place(fx, st(s), t0 + .22, db - 2)
 def click(t0, db=-4):
     x = tt(.12); s = np.random.default_rng(int(t0 * 100)).standard_normal(len(x)) * np.exp(-x * 90) * .5 + np.sin(2 * np.pi * 2200 * x) * np.exp(-x * 60) * .4; place(fx, st(s), t0, db)
-# whoosh en cada vuelo de cámara / corte
-for c in C: place(fx, S("whoosh.wav"), c - .32, -9)
-place(fx, S("whoosh.wav"), 12.2, -12)                    # la cámara sube a la calle
-# GPS bloqueado en el centro comercial
-error(T["gpsBloq"]); place(fx, S("pop.wav"), T["mapa"], -8); ping(T["punto"], -9)
-# pings suaves por cada onda WiFi
-k = 0
-for t0 in np.arange(T["wifi"], C[3] - .4, .95): ping(t0, -15 if t0 < T["grita"] else -12, pan=.5 * np.sin(k * 1.7)); k += 1
-for t0 in np.arange(T["casa"], T["pregunta"], 1.43): ping(t0, -13)
-for t0 in np.arange(C[4], C[5] - .5, 1.6): ping(t0, -20, pan=.4 * np.sin(t0))   # gente (más quedito)
+# whoosh en cada movimiento grande de cámara
+for t0, db in ((5.0, -14), (12.0, -9), (13.7, -8), (16.05, -6), (18.9, -8), (21.8, -12), (27.0, -11), (31.4, -14), (34.3, -4), (39.0, -12), (42.0, -6), (45.2, -6), (46.9, -6), (49.0, -8), (54.5, -10), (56.5, -9)):
+    place(fx, S("whoosh.wav"), t0, db)
+place(fx, S("golpe.wav"), T["muro1"] - .05, -14); place(fx, S("golpe.wav"), T["muro2"] - .05, -14)   # atraviesa el muro
+# celular: GPS bloqueado, mapa y pin
+error(T["gpsBloq"]); ping(T["mapaOn"] + .2, -12); place(fx, S("pop.wav"), T["mapa"], -6)
+# ciudad que crece: tics rápidos
+for i in range(14): place(fx, S("tic.wav"), T["crece"] + i * .09, -16 - (i % 3))
+# pings de las ondas WiFi
+for k, t0 in enumerate(np.arange(T["rafaga1"], 21.4, .55)): ping(t0, -9 if t0 < 18.6 else -13, pan=.4 * np.sin(k * 1.7))
+for k, t0 in enumerate(np.arange(T["rafaga2"], 52.6, .7)): ping(t0, -10 if t0 < 49 else -15, pan=.3 * np.sin(k))
+for i in range(10): ping(T["escucha"] + i * .12, -17, pan=.5 * np.sin(i * 2.1))
 error(T["sinPass"], -12)
-# tarjetas, nube, mapa y pin
+# lista de redes, círculos y pin
 for i in range(4): place(fx, S("tic.wav"), T["filas"] + i * .22, -8)
-place(fx, S("whoosh_corto.wav"), T["nube"], -8); place(fx, S("pop.wav"), T["mapa2"], -8)
-for i in range(3): ping(24.8 + i * .4, -12)
-place(fx, S("pop.wav"), T["pin"], -4); tono(T["pin"] + .05, 880, .6, -12)
-# satélites → datos que suben
+for i in range(3): ping(T["circulos"] + i * .35, -10); tono(T["circulos"] + i * .35, 523 * (1 + i * .25), .8, -16)
+place(fx, S("pop.wav"), T["pin"] + .35, -4); tono(T["pin"] + .4, 880, .6, -12)
+# millones de celulares: datos que suben
 x = tt(1.6); place(fx, st(np.sin(2 * np.pi * (600 + 500 * x) * x) * np.exp(-x * 2) * .15), T["millones"], -10)
-for t0 in np.arange(T["suben"], C[5] - .5, .9): tono(t0, 1046, .3, -18)
-# candado: clic al cerrar, llave rechazada, palomita y taches
+for t0 in np.arange(T["suben"], 34.4, .8): tono(t0, 1046, .3, -18)
+tono(T["heroeCel"], 1318, .5, -10)
+# candado: clic, llave rechazada, palomita y taches, letrero
 click(T["cierra"], -2); place(fx, S("metal.wav"), T["llave"] + .05, -8); error(T["llave"] + .08, -10)
 tono(T["f1"], 1046, .4, -10); tono(T["f2"], 220, .4, -9); tono(T["f3"], 220, .4, -9)
-place(fx, S("golpe.wav"), T["letrero"] + .15, -10)
-# brillo ascendente en el zoom al planeta
+place(fx, S("whoosh_corto.wav"), 39.6, -10); place(fx, S("golpe.wav"), T["letrero"] + .1, -8)
+# toda la ciudad: brillo ascendente + contador
 x = tt(2.6); fr = 300 * 2 ** (x * 1.4); sh = sum(np.sin(2 * np.pi * fr * h * x) / h for h in (1, 2, 3)) * np.minimum(1, x / 1.6) * np.exp(-np.maximum(0, x - 1.8) * 4) * .12
-place(fx, st(sh), T["planeta"] - .2, -6)
+place(fx, st(sh), T["sube"] - .1, -6)
 for t0 in np.arange(T["cuenta"], T["cuenta"] + 1.8, .09): place(fx, S("tic.wav"), t0, -20)
-# desconocido y pregunta
+# el desconocido y la pregunta
 ping(T["desconocido"], -6); tono(T["desconocido"] + .15, 659, .8, -12)
 place(fx, S("pop.wav"), T["pregunta"], -5); place(fx, S("tic.wav"), T["util"], -8); place(fx, S("tic.wav"), T["miedo"], -8)
 # música electrónica ambiental: pad + arpegio suave + pulso grave

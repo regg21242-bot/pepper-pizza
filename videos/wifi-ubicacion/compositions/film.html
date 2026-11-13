@@ -1,313 +1,342 @@
 <template>
   <style>
     #root { position: absolute; inset: 0; background: #120E2A; overflow: hidden; font-family: Nunito, sans-serif; }
-    #stage { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 50% 50%; }
     #gl, #hud { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
-    #flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
     #pill { position: absolute; padding: 8px 30px; border-radius: 40px; border: 4px solid #FF2E3A; background: rgba(40,6,12,.75); color: #FF4A55; font-family: Nunito, sans-serif; font-weight: 900; font-size: 54px; letter-spacing: 3px; transform: translate(-50%, -100%); box-shadow: 0 0 24px rgba(255,46,58,.5); }
     #pill i { position: absolute; left: 14px; right: 14px; top: 50%; height: 7px; background: #FF2E3A; border-radius: 4px; transform-origin: 0 50%; transform: rotate(-12deg) scaleX(0); }
   </style>
   <div id="root" data-composition-id="film" data-start="0" data-duration="58" data-width="1080" data-height="1920">
-    <div id="stage" data-layout-ignore><canvas id="gl" width="1080" height="1920" data-layout-ignore></canvas><canvas id="hud" width="1080" height="1920" data-layout-ignore></canvas>
-    <div id="pill" data-layout-ignore><span>GPS</span><i></i></div></div>
-    <div id="flash" data-layout-ignore></div>
+    <canvas id="gl" width="1080" height="1920" data-layout-ignore></canvas>
+    <canvas id="hud" width="1080" height="1920" data-layout-ignore></canvas>
+    <div id="pill" data-layout-ignore><span>GPS</span><i></i></div>
   </div>
   <script>
   (function () {
-    /* ¿Tu celular sabe dónde estás sin GPS? — serie "Nunca te lo explicaron" (assets/lib/nunca.js) */
+    /* ¿Tu celular sabe dónde estás sin GPS? — UNA escena de Three.js, UNA cámara con ruta continua (CatmullRomCurve3).
+       El celular flota sobre la ciudad; su mapa es la vista cenital de esa misma ciudad; la cámara entra al mapa,
+       los edificios crecen, baja como dron, atraviesa los muros de la casa hasta el módem, sigue a la gente,
+       barre junto a una pared, sube hasta ver toda la ciudad y regresa al celular (loop). */
     const N = window.N, THREE = N.THREE, { clamp, lerp, prog, ease, easeOut } = N;
-    const W = 1080, H = 1920;
-    const renderer = N.crearRender(document.getElementById('gl'), W, H);
-    const cam = (fov = 40) => new THREE.PerspectiveCamera(fov, W / H, .05, 1200);
-    function camPath(c, t, keys) { let i = 0; while (i < keys.length - 2 && t > keys[i + 1][0]) i++; const [t0, p0, l0] = keys[i], [t1, p1, l1] = keys[Math.min(i + 1, keys.length - 1)]; const k = t1 > t0 ? ease(prog(t, t0, t1)) : 0; c.position.set(lerp(p0[0], p1[0], k), lerp(p0[1], p1[1], k), lerp(p0[2], p1[2], k)); c.lookAt(lerp(l0[0], l1[0], k), lerp(l0[1], l1[1], k), lerp(l0[2], l1[2], k)); }
-    const V3 = (x, y, z) => new THREE.Vector3(x, y, z);
-    const bokeh = (s, seed = 3) => { const g = new THREE.Group(); const r = N.rng(seed); for (let i = 0; i < 40; i++) { const sp = N.glow(['#6A4AFF', '#3AB8FF', '#FF8A3A'][i % 3], .5 + r() * 2.2, .25 + r() * .3); sp.position.set((r() - .5) * 14, (r() - .5) * 22, -6 - r() * 8); g.add(sp); } s.add(g); return g; };
+    const W = 1080, H = 1920, V3 = (x, y, z) => new THREE.Vector3(x, y, z), HDR = (r, g, b) => new THREE.Color(r, g, b);
+    const backOut = (k, c = 1.6) => { k = clamp(k); return 1 + (c + 1) * Math.pow(k - 1, 3) + c * Math.pow(k - 1, 2); };
 
-    /* ======== 1: celular girando y despiezado (escena principal) ======== */
-    const PHONE = (() => {
-      const s = new THREE.Scene(); s.background = new THREE.Color('#0A1030'); s.environment = window.CEL.estudio(renderer);
-      s.add(new THREE.HemisphereLight('#B8C8FF', '#141428', .8));
-      const key = new THREE.DirectionalLight('#FFF4E8', 3.4); key.position.set(.6, 6, 2.5); key.castShadow = true; key.shadow.mapSize.set(2048, 2048); const kc = key.shadow.camera; kc.left = kc.bottom = -2; kc.right = kc.top = 2; kc.near = .5; kc.far = 12; key.shadow.bias = -.0004; key.shadow.normalBias = .01; key.shadow.radius = 6; s.add(key, key.target);
-      const rim = new THREE.DirectionalLight('#5CA8FF', 2.6); rim.position.set(-2, 1.5, -4); s.add(rim);
-      const rim2 = new THREE.DirectionalLight('#7A6AFF', 1.2); rim2.position.set(3, -1, -3); s.add(rim2);
-      // bokeh y polvo
-      const r = N.rng(3); for (let i = 0; i < 34; i++) { const sp = N.glow(['#3A5AFF', '#3AB8FF', '#8A6AFF', '#FF9A5A'][i % 4], .4 + r() * 1.6, .18 + r() * .25); sp.position.set((r() - .5) * 9, (r() - .5) * 14, -5 - r() * 6); s.add(sp); }
-      const NP = 400, dpos = new Float32Array(NP * 3), dbase = []; for (let i = 0; i < NP; i++) dbase.push([(r() - .5) * 6, (r() - .5) * 9, (r() - .5) * 4 - 1, r()]);
-      const dgeo = new THREE.BufferGeometry(); dgeo.setAttribute('position', new THREE.BufferAttribute(dpos, 3)); s.add(new THREE.Points(dgeo, new THREE.PointsMaterial({ color: '#CFE0FF', size: .012, transparent: true, opacity: .55, depthWrite: false })));
-      const ph = window.CEL.crear(renderer); const holder = new THREE.Group(); holder.add(ph); s.add(holder); const P = ph.userData; holder.rotation.order = 'YXZ';
-      // anillo rojo punteado que gira alrededor del chip GPS
-      const ringT = N.canvasTex(256, 256, (x) => { x.strokeStyle = '#FF2E3A'; x.lineWidth = 10; x.setLineDash([20, 14]); x.lineCap = 'round'; x.beginPath(); x.arc(128, 128, 112, 0, 7); x.stroke(); }, false);
-      const ring = new THREE.Sprite(new THREE.SpriteMaterial({ map: ringT, transparent: true, depthTest: false, toneMapped: false })); ring.renderOrder = 30; s.add(ring);
-      const redGlow = N.glow('#FF2A2A', .3, 0); s.add(redGlow);
-      const camera = cam(30);
-      const backOut = (k) => { k = clamp(k); const c = 1.6; return 1 + (c + 1) * Math.pow(k - 1, 3) + c * Math.pow(k - 1, 2); };
-      function update(t, lt) {
-        // polvo flotando
-        dbase.forEach((d, i) => dpos.set([d[0] + Math.sin(t * .3 + d[3] * 9) * .1, ((d[1] + t * .05 * (d[3] + .3)) % 9 + 9) % 9 - 4.5, d[2]], i * 3)); dgeo.attributes.position.needsUpdate = true;
-        // 0–0.8 gira de pie · 0.8–2.0 se inclina y se separa en torre (ease-out + rebote) · 3–4 GPS · 4–5 se junta
-        const tilt = easeOut(prog(lt, .8, 1.6));
-        const sep = lt < 4.1 ? backOut(prog(lt, .9, 2.0)) : 1 - ease(prog(lt, 4.1, 4.8));
-        P.despiece(Math.max(0, sep), 1);
-        holder.rotation.set(lerp(0, -Math.PI / 2 + .18, tilt), lerp(lt * .9 - .6, .7, tilt) + (lt > 2 ? (lt - 2) * .1 : 0), 0);
-        ph.rotation.set(0, 0, 0);
-        // chip GPS
-        const out = ease(prog(lt, 3.0, 3.35)) * (1 - ease(prog(lt, 4.1, 4.45)));
-        P.gpsSale(out);
-        const blink = lt > 3.3 && lt < 3.75 ? (Math.sin((lt - 3.3) * Math.PI * 4.45) > 0 ? 1 : 0) : 0, off = lt >= 3.75;
-        P.gpsBrillo(blink || (lt > 3.0 && lt < 3.4 ? .5 : 0), off);
-        holder.updateMatrixWorld(true); const gw = P.gps.getWorldPosition(new THREE.Vector3());
-        const rk = clamp((lt - 3.05) / .3) * (1 - ease(prog(lt, 4.1, 4.35)));
-        ring.position.copy(gw); ring.scale.setScalar(.34 * (.6 + .4 * rk)); ring.material.rotation = -lt * 2.2; ring.material.opacity = rk * (off ? .75 : 1);
-        redGlow.position.copy(gw); redGlow.material.opacity = blink * .9; redGlow.scale.setScalar(.35);
-        // cámara: frontal → acercamiento y órbita de 25° → sale
-        const orb = ease(prog(lt, 2.0, 3.2)) * .45, dist = lerp(lerp(5.6, 11.5, tilt), 9.0, ease(prog(lt, 2.0, 3.2))) + ease(prog(lt, 4.0, 5.0)) * 2.0;
-        const elev = lerp(.1, .4, tilt);
-        camera.position.set(Math.sin(orb) * dist * Math.cos(elev), Math.sin(elev) * dist, Math.cos(orb) * dist * Math.cos(elev));
-        const look = new THREE.Vector3(0, .05, 0).lerp(gw, .35 * rk); camera.lookAt(look);
-        camera.updateMatrixWorld(); const v = gw.clone().project(camera);
-        return { gps: rk > .05 ? { x: (v.x + 1) / 2 * W, y: (1 - v.y) / 2 * H, k: rk, tach: ease(prog(lt, 3.75, 3.95)) } : null };
-      }
-      return { scene: s, camera, update };
-    })();
+    /* ---------- tiempos (s) — tools/mezcla.py también los lee ---------- */
+    const T = { end: 58, crece: 12.35, fundido: 12.2, mapaOn: 5.4, gpsBloq: 6.4, mapa: 9.3, wifi: 13.2, muro1: 16.3, rafaga1: 17.3, sale1: 19.25, escucha: 19.0, sinPass: 20.2,
+      filas: 21.8, circulos: 24.9, pin: 26.6, millones: 29.6, suben: 30.6, heroeCel: 32.6, barrido: 34.5, cierra: 35.9, llave: 36.3, f1: 36.6, f2: 37.0, f3: 37.4,
+      soloNombre: 38.6, letrero: 40.6, sube: 42.0, cuenta: 42.6, muro2: 47.1, rafaga2: 47.9, sale2: 49.5, desconocido: 48.9, pregunta: 52.7, util: 53.7, miedo: 54.5, vuelve: 55.0 };
 
-    /* tiempos (s) — tools/mezcla.py también los lee */
-    const T = { cuts: [5.0, 12.0, 14.6, 21.4, 27.6, 35.4, 41.8, 45.2, 57.2], end: 58, voz: [0.3, 5.2, 12.3, 14.8, 21.6, 27.8, 35.6, 42.0, 45.4, 52.8],
-      gpsBloq: 6.4, mapa: 9.2, punto: 9.7, wifi: 13.1, grita: 15.2, escucha: 18.9, sinPass: 20.2, filas: 21.8, nube: 23.1, mapa2: 24.4, pin: 26.6,
-      millones: 29.6, suben: 30.8, cierra: 35.7, llave: 36.2, f1: 36.6, f2: 37.0, f3: 37.4, soloNombre: 38.6, letrero: 40.6, planeta: 41.9, cuenta: 42.6,
-      casa: 46.2, desconocido: 48.9, pregunta: 52.7, util: 53.7, miedo: 54.5 };
-    const UP = V3(0, 1, 0), beamGeo = new THREE.CylinderGeometry(1, 1, 1, 8, 1, true);
-    function setBeam(mesh, a, b, r) { const d = b.clone().sub(a), L = d.length(); mesh.position.copy(a).addScaledVector(d, .5); mesh.quaternion.setFromUnitVectors(UP, d.normalize()); mesh.scale.set(r, L, r); }
-    function satelite() { const g = new THREE.Group(), gold = N.std('#D8A840', { metalness: .8, roughness: .3, flatShading: false });
-      g.add(N.box(1.4, 1.4, 2, gold)); const pm = N.std('#2A4AB0', { metalness: .4, roughness: .35, flatShading: false, emissive: '#0A1A50' });
-      for (const s of [-1, 1]) { g.add(N.box(3.6, .07, 1.3, pm, s * 2.7, 0, 0)); g.add(N.box(.9, .1, .1, '#C8C8D0', s * 1.15, 0, 0)); for (let k = 1; k < 4; k++) g.add(N.box(.03, .09, 1.32, '#8AA0E0', s * (.9 + k * .9), 0, 0)); }
-      const dish = N.M(new THREE.ConeGeometry(.6, .45, 18, 1, true), N.std('#E8E8F0', { side: THREE.DoubleSide, flatShading: false }), 0, -.95, 0); g.add(dish); return g; }
+    const renderer = N.crearRender(document.getElementById('gl'), W, H); renderer.toneMappingExposure = 1.1;
+    const scene = new THREE.Scene();
+    const C = window.CIUDAD(renderer, scene, { evitar: [[14.4, 20.0, -6, 18, 1], [45.8, 50.0, -9, 18, 1], [26.0, 35.0, -22, 14, -1]] });
+    const M = C.M, MZ = C.MZ, GZ = C.GZ, ZC = -23;       // ZC: centro de la calle cruzada
 
-    /* ======== 2: centro comercial — el GPS no entra ======== */
-    const MALL = (() => {
-      const s = new THREE.Scene(); N.atardecer(s, { near: 70, far: 220 });
-      const mall = N.centroComercial(); s.add(mall);
-      s.add(N.box(24.6, 12.4, .4, '#D8D2C8', 0, 6.2, -7));
-      const chica = N.persona('#7A4FC0', { capucha: true, coleta: true, pelo: '#2A1A14' }); chica.position.set(2.5, 4.2, 1.5); chica.rotation.y = .5; s.add(chica); chica.userData.camina(0, 0);
-      const halo = N.glow('#7FE8FF', .7, .8); s.add(halo);
-      [['#E8B84A', -6, 0.2, 2], ['#3A9A6A', 7, 4.2, -1], ['#C8403A', -3, 8.2, 0], ['#3A7AE0', 6, 0.2, 3]].forEach(([c, x, y, z], i) => { const p = N.persona(c, { piel: ['#C68D68', '#E0B090', '#A87050'][i % 3] }); p.position.set(x, y, z); p.rotation.y = i % 2 ? -1.2 : 1.2; p.userData.camina(i * 1.3, .6); s.add(p); });
-      const sat = satelite(); sat.position.set(-7, 30, -4); sat.rotation.set(.3, .6, .2); s.add(sat);
-      const S0 = V3(-7, 29, -4), HIT = V3(0.5, 12.6, 0);
-      const pulses = [...Array(8)].map(() => { const g = N.glow('#FFD25A', 1.3, 0); s.add(g); return g; });
-      const beam = new THREE.Mesh(beamGeo, N.glowM('#FFD25A', .25)); setBeam(beam, S0, HIT, .08); s.add(beam);
-      const spark = N.glow('#FF3A3A', 4, 0); spark.position.copy(HIT); s.add(spark);
-      const xt = N.canvasTex(256, 256, (x) => { x.strokeStyle = '#FF3A46'; x.lineWidth = 34; x.lineCap = 'round'; x.beginPath(); x.moveTo(50, 50); x.lineTo(206, 206); x.moveTo(206, 50); x.lineTo(50, 206); x.stroke(); }, false);
-      const equis = new THREE.Sprite(new THREE.SpriteMaterial({ map: xt, transparent: true, depthTest: false, toneMapped: false })); equis.position.copy(HIT).add(V3(0, 1.4, 0)); equis.renderOrder = 20; s.add(equis);
-      const camera = cam(40);
-      function update(t, lt) {
-        const on = prog(lt, .4, .9);
-        pulses.forEach((g, i) => { const u = (lt * .8 + i / 8) % 1; g.position.lerpVectors(S0, HIT, u); g.material.opacity = on * Math.min(1, (1 - u) * 6, u * 6) * .9; });
-        beam.material.opacity = .22 * on;
-        const hit = lt > T.gpsBloq - 5 - .5; spark.material.opacity = hit ? .5 + .4 * Math.sin(lt * 40) : 0;
-        const xk = N.easeOut(prog(t, T.gpsBloq, T.gpsBloq + .3)); equis.scale.setScalar(2.6 * xk * (1 + .15 * Math.sin(prog(t, T.gpsBloq, T.gpsBloq + .6) * Math.PI))); equis.material.opacity = xk;
-        sat.rotation.y = .6 + lt * .15;
-        chica.updateMatrixWorld(true); halo.position.copy(chica.userData.phone.getWorldPosition(V3())); halo.material.opacity = .6 + .3 * Math.sin(t * 5);
-        camPath(camera, lt, [[0, [0, 16, 50], [0, 15, 0]], [2.6, [0, 15, 46], [0, 13.5, 0]], [4.0, [3.6, 7.2, 13.5], [3.8, 5.4, 0]], [7, [3.2, 6.9, 12], [3.6, 5.3, 0]]]);
-        return {};
-      }
-      return { scene: s, camera, update };
-    })();
+    /* ---------- 1. el celular despiezado flotando sobre la ciudad ---------- */
+    const PH = V3(0, 55, 60);
+    const studio = window.CEL.estudio(renderer);
+    const ph = window.CEL.crear(renderer); const holder = new THREE.Group(); holder.add(ph); holder.position.copy(PH); scene.add(holder); const P = ph.userData; holder.rotation.order = 'YXZ';
+    ph.traverse(o => { if (o.isMesh && o.material && 'envMap' in o.material) { o.material.envMap = studio; o.material.needsUpdate = true; } });
+    const kL = new THREE.PointLight('#FFF4E8', 3.2, 14, 1); kL.position.copy(PH).add(V3(.8, 4, 3)); scene.add(kL);
+    const rL = new THREE.PointLight('#5CA8FF', 3.0, 10, 1); rL.position.copy(PH).add(V3(-2.5, 1.2, -2.5)); scene.add(rL);
+    const rL2 = new THREE.PointLight('#8A6AFF', 1.6, 10, 1); rL2.position.copy(PH).add(V3(3, -1, -2.5)); scene.add(rL2);
+    const ringT = N.canvasTex(256, 256, (x) => { x.strokeStyle = '#FF2E3A'; x.lineWidth = 10; x.setLineDash([20, 14]); x.lineCap = 'round'; x.beginPath(); x.arc(128, 128, 112, 0, 7); x.stroke(); }, false);
+    const ring = new THREE.Sprite(new THREE.SpriteMaterial({ map: ringT, transparent: true, depthTest: false, fog: false })); ring.material.color = HDR(1.6, 1.6, 1.6); ring.renderOrder = 30; scene.add(ring);
+    const redGlow = N.glow('#FF2A2A', .3, 0); redGlow.material.fog = false; scene.add(redGlow);
+    const NP = 380, dpos = new Float32Array(NP * 3), dbase = []; { const r = N.rng(3); for (let i = 0; i < NP; i++) dbase.push([(r() - .5) * 6, (r() - .5) * 9, (r() - .5) * 4 - 1, r()]); }
+    const dgeo = new THREE.BufferGeometry(); dgeo.setAttribute('position', new THREE.BufferAttribute(dpos, 3));
+    const polvo = new THREE.Points(dgeo, new THREE.PointsMaterial({ color: '#FFE6C8', size: .012, transparent: true, opacity: .6, depthWrite: false, fog: false })); polvo.position.copy(PH); scene.add(polvo);
+    // pantalla: muestra lo que ve la cámara cenital de esta misma ciudad
+    const SW = .66, SH = 1.44, rtMap = new THREE.WebGLRenderTarget(330, 720, { type: THREE.HalfFloatType });
+    const screen = new THREE.Mesh(new THREE.PlaneGeometry(SW, SH), new THREE.MeshBasicMaterial({ map: rtMap.texture, transparent: true, opacity: 0, fog: false })); screen.position.z = .0092; P.cristal.add(screen);
+    const barraT = N.canvasTex(330, 70, (x, w, h) => { x.fillStyle = 'rgba(10,12,24,.82)'; x.fillRect(0, 0, w, h); x.save(); x.translate(44, 35); x.rotate(-.6); x.fillStyle = '#8A8FA0'; x.fillRect(-9, -9, 18, 18); x.fillRect(-30, -6, 18, 12); x.fillRect(12, -6, 18, 12); x.restore();
+      x.strokeStyle = '#FF4A55'; x.lineWidth = 5; x.beginPath(); x.moveTo(20, 12); x.lineTo(68, 58); x.stroke(); x.fillStyle = '#8A8FA0'; x.font = '900 28px Nunito, sans-serif'; x.fillText('GPS', 80, 45);
+      x.strokeStyle = '#5CE8FF'; x.lineWidth = 5; x.lineCap = 'round'; for (let i = 0; i < 3; i++) { x.beginPath(); x.arc(286, 52, 10 + i * 10, Math.PI * 1.25, Math.PI * 1.75); x.stroke(); } });
+    const barra = new THREE.Mesh(new THREE.PlaneGeometry(SW, SW * 70 / 330), new THREE.MeshBasicMaterial({ map: barraT, transparent: true, opacity: 0, fog: false })); barra.position.set(0, SH / 2 - SW * 35 / 330, .0096); P.cristal.add(barra);
 
-    /* ======== 3,4,6,9: la calle (sube, ondas, gente, casa) ======== */
-    const CALLE = (() => {
-      const s = new THREE.Scene(); N.atardecer(s, { near: 34, far: 160 });
-      const st = N.calle(); s.add(st); st.userData.casas.forEach(b => { if (b.position.z > 0) b.scale.y = .12; });
-      st.updateMatrixWorld(true); const wpos = m => m.getWorldPosition(V3());
-      const modems = st.userData.modems.filter(m => m.parent.position.z < 0);
-      const casaM = modems.filter(m => wpos(m).y < 3).sort((a, b) => Math.abs(wpos(a).x - 6) - Math.abs(wpos(b).x - 6))[0];
-      const ond = modems.map((m, i) => { const o = N.ondas(3); s.add(o); const r = N.rng(30 + i); const hx = () => '0123456789ABCDEF'[Math.floor(r() * 16)];
-        const lbl = N.etiqueta(`RED-${hx()}${hx()}${hx()}${hx()}`, { s: 2.0 }); s.add(lbl); return { m, o, lbl, ph: r(), w: wpos(m), i }; });
-      const chica = N.persona('#7A4FC0', { capucha: true, coleta: true, pelo: '#2A1A14' }); s.add(chica); const CP = chica.userData;
-      const people = ['#E8B84A', '#3A9A6A', '#C8403A', '#3A7AE0', '#F2EEE6'].map((c, i) => { const p = N.persona(c, { piel: ['#C68D68', '#E0B090', '#A87050'][i % 3] }); s.add(p); return p; });
-      const extra = [...Array(12)].map((_, i) => { const p = N.persona(['#E86A4A', '#4AB0A0', '#E8D07A', '#5A6AE0', '#C85A9A', '#7AC05A'][i % 6], { piel: ['#C68D68', '#E0B090', '#A87050', '#8A5A40'][i % 4], coleta: i % 3 === 0, pelo: ['#1E1A18', '#5A3A20', '#2A2A2A'][i % 3] }); s.add(p); return p; });
-      const halos = extra.map(() => { const g = N.glow('#9FF4FF', 1.1, 0); s.add(g); return g; });
-      const sats = [[-15, 23, -18], [1, 26, -22], [16, 22, -16]].map(([x, y, z], i) => { const g = satelite(); g.position.set(x, y, z); g.rotation.set(.3, i, .2); s.add(g); return g; });
-      const gold = [...Array(12)].map(() => { const g = N.glow('#FFD25A', .9, 0); s.add(g); return g; });
-      const goldB = [...Array(12)].map(() => { const b = new THREE.Mesh(beamGeo, N.glowM('#FFD25A', .2)); s.add(b); return b; });
-      const coords = ['24.14°N', '24.15°N', '24.13°N', '24.16°N'];
-      const ups = [...Array(8)].map((_, j) => { const r = N.rng(70 + j); const hx = () => '0123456789ABCDEF'[Math.floor(r() * 16)]; const l = N.etiqueta(`${hx()}${hx()}${hx()}${hx()} + ${coords[j % 4]}`, { s: 1.1, w: 640, fs: 54, border: 'rgba(255,210,90,.9)' }); s.add(l); return l; });
-      const cyanB = [...Array(24)].map(() => { const b = new THREE.Mesh(beamGeo, N.glowM('#7FF0FF', .5)); s.add(b); return b; });
-      const extranio = N.persona('#5A5E6A', { capucha: true, pelo: '#26262A', pantalon: '#1E2230', piel: '#B88060' }); s.add(extranio);
-      const exHalo = N.glow('#9FF4FF', .5, 0); s.add(exHalo);
-      const casaLbl = N.etiqueta('ESTOY AQUÍ', { s: .55, w: 512, fs: 64 }); s.add(casaLbl);
-      const pinT = N.canvasTex(128, 160, (x) => { x.fillStyle = '#FF4A5A'; x.beginPath(); x.arc(64, 58, 50, Math.PI, 0); x.quadraticCurveTo(114, 100, 64, 156); x.quadraticCurveTo(14, 100, 14, 58); x.fill(); x.fillStyle = '#fff'; x.beginPath(); x.arc(64, 58, 20, 0, 7); x.fill(); }, false);
-      const pin = new THREE.Sprite(new THREE.SpriteMaterial({ map: pinT, transparent: true, depthTest: false, toneMapped: false })); pin.renderOrder = 15; s.add(pin);
-      const camera = cam(46);
-      function update(t, lt, m) {
-        const gente = m === 'gente', casa = m === 'casa', cx = -2 + (t - 12) * .9;
-        chica.visible = !casa; chica.position.set(cx, .25, 4.2); chica.rotation.y = Math.PI / 2; CP.camina(t * 6);
-        people.forEach((p, i) => { const dir = i % 2 ? 1 : -1; p.position.set(((i * 13 + t * 1.2 * dir) % 60 + 60) % 60 - 30, .25, dir > 0 ? 5.6 : -5.2); p.rotation.y = dir * Math.PI / 2; p.userData.camina(t * 6 + i); });
-        const camX = gente ? 6 + lt * .35 : 0;
-        extra.forEach((p, i) => { p.visible = gente; halos[i].material.opacity = 0; if (!gente) return; const dir = i % 2 ? 1 : -1, lane = [4.6, 5.5, 6.6, -4.8, -5.8, -6.8][i % 6];
-          p.position.set(camX + ((i * 5.3 + t * 1.1 * dir) % 26 + 26) % 26 - 13, .25, lane); p.rotation.y = dir * Math.PI / 2; p.userData.camina(t * 6 + i * 1.3);
-          p.updateMatrixWorld(true); halos[i].position.copy(p.userData.phone.getWorldPosition(V3())); halos[i].material.opacity = (.5 + .3 * Math.sin(t * 4 + i)) * prog(t, T.millones - .3, T.millones + .3); });
-        sats.forEach((g, i) => { g.visible = gente; g.rotation.y = t * .25 + i; });
-        // ondas wifi
-        const wk = m === 'sube' ? N.easeOut(prog(t, T.wifi - .3, T.wifi + .4)) : gente ? .45 : 1;
-        ond.forEach(({ m: mm, o, lbl, ph: p0, w, i }) => { const k = casa ? (mm === casaM ? 1 : 0) : wk; o.visible = k > .01; o.position.copy(w).add(V3(0, .6, 0)); o.userData.update(t + p0 * 2, k, casa ? 2.6 : 9);
-          const lk = m === 'ondas' ? N.easeOut(prog(t, T.grita + (i % 8) * .13, T.grita + .35 + (i % 8) * .13)) : 0; lbl.visible = lk > .01; lbl.material.opacity = lk; lbl.position.copy(w).add(V3(0, 3.6 + (1 - lk) * 1.5, 0));
-          mm.userData.leds.forEach((l, j) => l.visible = Math.sin(t * 8 + j * 1.7 + p0 * 9) > -.3); });
-        // líneas cian: módems → celular de la chica
-        chica.updateMatrixWorld(true); const ph = CP.phone.getWorldPosition(V3());
-        let nb = 0; cyanB.forEach(b => b.visible = false);
-        if (m === 'ondas' && t > T.escucha - .3) ond.forEach(({ w }, i) => { if (nb >= cyanB.length || w.distanceTo(ph) > 26) return; const b = cyanB[nb++]; const k = N.easeOut(prog(t, T.escucha - .3 + nb * .08, T.escucha + .1 + nb * .08)); if (k <= 0) return; b.visible = true; const a = w.clone().add(V3(0, .4, 0)); setBeam(b, a, a.clone().lerp(ph, k), .07); b.material.opacity = .55 + .25 * Math.sin(t * 9 + i); });
-        // gente: satélites → celulares (oro) y datos que suben
-        gold.forEach(g => g.material.opacity = 0); goldB.forEach(b => b.visible = false); ups.forEach(l => l.visible = false);
-        if (gente) { extra.forEach((p, i) => { if (i >= 12) return; const pp = halos[i].position, sp = sats[i % 3].position; const k = prog(t, T.millones + i * .05, T.millones + .4 + i * .05); if (k <= 0) return;
-            goldB[i].visible = true; setBeam(goldB[i], sp, pp, .05); goldB[i].material.opacity = .22 * k; const u = (t * .7 + i * .21) % 1; gold[i].position.lerpVectors(sp, pp, u); gold[i].material.opacity = k * Math.min(1, (1 - u) * 5, u * 5); });
-          ups.forEach((l, j) => { if (t < T.suben) return; const u = ((t - T.suben) * .42 + j * .37) % 1, p = extra[j]; const base = halos[j].position; l.visible = true; l.position.set(base.x, base.y + .8 + u * 15, base.z); l.material.opacity = Math.sin(Math.PI * u) * prog(t, T.suben, T.suben + .5); }); }
-        // casa: el módem le dice a un desconocido dónde está
-        extranio.visible = exHalo.visible = casaLbl.visible = pin.visible = casa;
-        if (casa) { const w = casaM.getWorldPosition(V3()); extranio.position.set(w.x - 6.5 + lt * 1.05, .25, w.z + 2.4); extranio.rotation.y = Math.PI / 2; extranio.userData.camina(t * 6);
-          extranio.updateMatrixWorld(true); const ep = extranio.userData.phone.getWorldPosition(V3()); exHalo.position.copy(ep); exHalo.material.opacity = .7;
-          const k = N.easeOut(prog(t, T.desconocido - .4, T.desconocido + .2)); if (k > 0) { const b = cyanB[0]; b.visible = true; const a = w.clone().add(V3(0, .2, .2)); setBeam(b, a, a.clone().lerp(ep, k), .025); b.material.opacity = .8; }
-          const u = ((t - T.desconocido) / 1.6) % 1; casaLbl.visible = t > T.desconocido; casaLbl.position.lerpVectors(w.clone().add(V3(0, .5, .2)), ep.clone().add(V3(0, .35, 0)), N.ease(u)); casaLbl.material.opacity = Math.min(1, (1 - u) * 4, u * 6);
-          pin.position.copy(w).add(V3(0, .75 + .08 * Math.sin(t * 4), .2)); pin.scale.set(.32, .4, 1); pin.material.opacity = prog(t, T.casa - .2, T.casa + .3);
-          camPath(camera, lt, [[0, [w.x + 1.0, w.y + .5, w.z + 3.0], [w.x, w.y + .25, w.z]], [3.0, [w.x + 2.5, 2.3, w.z + 11.5], [w.x - 1.5, 2.0, w.z + 1]], [7.5, [w.x + 3.5, 2.6, w.z + 12.5], [w.x - .8, 1.9, w.z + 1]], [12, [w.x + 5.0, 3.0, w.z + 14], [w.x + .5, 1.9, w.z + 1]]]);
-        } else if (m === 'sube') { const k = ease(prog(lt, .15, 2.5)); camera.position.set(lerp(cx - 3.4, cx - 14, k), lerp(2.0, 48, k), lerp(7.2, 34, k)); camera.lookAt(lerp(cx + 1.5, cx + 3, k), lerp(1.5, 0, k), lerp(3.6, -6, k)); }
-        else if (m === 'ondas') { const k = ease(prog(t, T.escucha - 1.2, T.escucha + .6)); camera.position.set(cx - lerp(14, 9, k), lerp(48, 30, k), lerp(34, 24, k)); camera.lookAt(cx + lerp(3, 2, k), 0, lerp(-6, -3, k)); }
-        else { camera.position.set(camX, 7, 34); camera.lookAt(camX, 12.5, -10); }
-        return {};
-      }
-      return { scene: s, camera, update };
-    })();
+    function phoneState(lt) {   // lt: tiempo de la escena 1 (negativo = llegando al loop)
+      dbase.forEach((d, i) => dpos.set([d[0] + Math.sin(lt * .3 + d[3] * 9) * .1, ((d[1] + lt * .05 * (d[3] + .3)) % 9 + 9) % 9 - 4.5, d[2]], i * 3)); dgeo.attributes.position.needsUpdate = true;
+      const tilt = easeOut(prog(lt, .8, 1.6)), sep = lt < 4.1 ? backOut(prog(lt, .9, 2.0)) : 1 - ease(prog(lt, 4.1, 4.8));
+      P.despiece(Math.max(0, sep), 1);
+      const flat = ease(prog(lt, 5.5, 11.0));
+      holder.rotation.set(lerp(lerp(0, -Math.PI / 2 + .18, tilt), -Math.PI / 2, flat), lerp(lerp(lt * .9 - .6, .7, tilt) + (lt > 2 ? (Math.min(lt, 5) - 2) * .1 : 0), 0, flat), 0);
+      const out = ease(prog(lt, 3.0, 3.35)) * (1 - ease(prog(lt, 4.1, 4.45))); P.gpsSale(out);
+      const blink = lt > 3.3 && lt < 3.75 ? (Math.sin((lt - 3.3) * Math.PI * 4.45) > 0 ? 1 : 0) : 0, off = lt >= 3.75;
+      P.gpsBrillo(blink || (lt > 3.0 && lt < 3.4 ? .5 : 0), off);
+      holder.updateMatrixWorld(true); const gw = P.gps.getWorldPosition(V3());
+      const rk = clamp((lt - 3.05) / .3) * (1 - ease(prog(lt, 4.1, 4.35)));
+      ring.visible = rk > .01; ring.position.copy(gw); ring.scale.setScalar(.34 * (.6 + .4 * rk)); ring.material.rotation = -lt * 2.2; ring.material.opacity = rk * (off ? .75 : 1);
+      redGlow.position.copy(gw); redGlow.material.opacity = blink * .9; redGlow.scale.setScalar(.35);
+      return { gw, rk, tach: ease(prog(lt, 3.75, 3.95)) };
+    }
+    function camEscena1(lt, gw, rk) {
+      const tilt = easeOut(prog(lt, .8, 1.6)), orb = ease(prog(lt, 2.0, 3.2)) * .45, dist = lerp(lerp(5.6, 11.5, tilt), 9.0, ease(prog(lt, 2.0, 3.2))) + ease(prog(lt, 4.0, 5.0)) * 2.0, elev = lerp(.1, .4, tilt);
+      const p = PH.clone().add(V3(Math.sin(orb) * dist * Math.cos(elev), Math.sin(elev) * dist, Math.cos(orb) * dist * Math.cos(elev)));
+      const l = PH.clone().add(V3(0, .05, 0)); if (gw) l.lerp(gw, .35 * rk); return [p, l];
+    }
 
-    /* ======== 5 y 7: fondo de datos (bokeh morado-azul) + candado ======== */
-    const DATA = (() => {
-      const s = new THREE.Scene(); s.background = new THREE.Color('#0D0A2C'); s.environment = window.CEL.estudio(renderer);
-      s.add(new THREE.HemisphereLight('#C8B8FF', '#120A30', .7)); const key = new THREE.DirectionalLight('#FFFFFF', 2.6); key.position.set(2, 5, 6); s.add(key); const rim = new THREE.DirectionalLight('#5CA8FF', 2.4); rim.position.set(-4, 2, -3); s.add(rim);
-      const r = N.rng(11), bk = []; for (let i = 0; i < 46; i++) { const sp = N.glow(['#6A4AFF', '#3A7AFF', '#9A5AFF', '#3AB8FF'][i % 4], .8 + r() * 3.2, .16 + r() * .3); sp.position.set((r() - .5) * 16, (r() - .5) * 26, -4 - r() * 10); s.add(sp); bk.push([sp, sp.position.clone(), r()]); }
-      const rrGeo = (w, h, rad, d) => { const sh = new THREE.Shape(); sh.moveTo(-w / 2 + rad, -h / 2); sh.lineTo(w / 2 - rad, -h / 2); sh.quadraticCurveTo(w / 2, -h / 2, w / 2, -h / 2 + rad); sh.lineTo(w / 2, h / 2 - rad); sh.quadraticCurveTo(w / 2, h / 2, w / 2 - rad, h / 2); sh.lineTo(-w / 2 + rad, h / 2); sh.quadraticCurveTo(-w / 2, h / 2, -w / 2, h / 2 - rad); sh.lineTo(-w / 2, -h / 2 + rad); sh.quadraticCurveTo(-w / 2, -h / 2, -w / 2 + rad, -h / 2);
-        const g = new THREE.ExtrudeGeometry(sh, { depth: d, bevelEnabled: true, bevelSize: .06, bevelThickness: .06, bevelSegments: 4 }); g.translate(0, 0, -d / 2); return g; };
-      const lock = new THREE.Group(); s.add(lock);
-      const purple = N.std('#7A4AE8', { metalness: .55, roughness: .26, flatShading: false }), silver = N.std('#D8D8E8', { metalness: .9, roughness: .2, flatShading: false });
-      lock.add(N.M(rrGeo(2.0, 1.6, .25, .6), purple));
-      const shackle = new THREE.Group(); lock.add(shackle);
-      const arc = N.M(new THREE.TorusGeometry(.6, .13, 16, 40, Math.PI), silver, 0, 1.15, 0); shackle.add(arc);
-      for (const x of [-.6, .6]) shackle.add(N.cyl(.13, .13, .5, silver, 16, x, .9, 0));
-      const hole = N.cyl(.14, .14, .1, N.std('#140A2A', { flatShading: false }), 20, 0, .1, .38); hole.rotation.x = Math.PI / 2; lock.add(hole); lock.add(N.box(.1, .32, .1, N.std('#140A2A'), 0, -.12, .38));
-      const lockGlow = N.glow('#FF3A4A', 4, 0); lock.add(lockGlow);
-      const keyG = new THREE.Group(); s.add(keyG); const goldM = N.std('#E8C060', { metalness: .85, roughness: .25, flatShading: false });
-      keyG.add(N.M(new THREE.TorusGeometry(.3, .08, 12, 32), goldM, .75, 0, 0)); keyG.add(N.box(.95, .11, .07, goldM, 0, 0, 0)); keyG.add(N.box(.08, .2, .07, goldM, -.32, -.12, 0)); keyG.add(N.box(.08, .14, .07, goldM, -.16, -.1, 0));
-      const camera = cam(40); camera.position.set(0, 0, 10); camera.lookAt(0, .3, 0);
-      function update(t, lt, m) {
-        bk.forEach(([sp, p, ph]) => { sp.position.set(p.x + Math.sin(t * .3 + ph * 9) * .5, p.y + Math.cos(t * .25 + ph * 7) * .6, p.z); });
-        const cand = m === 'candado'; lock.visible = keyG.visible = cand;
-        if (cand) { const intro = N.easeOut(prog(t, 35.4, 35.9)); lock.position.set(0, 1.3 + Math.sin(t * 1.2) * .06, lerp(-3, 0, intro)); lock.rotation.y = .32 * Math.sin(t * .6) - (1 - intro) * .8;
-          shackle.position.y = lerp(.45, 0, N.easeOut(prog(t, T.cierra - .15, T.cierra)));
-          const kin = N.ease(prog(t, T.llave - .35, T.llave)), kout = N.easeOut(prog(t, T.llave + .05, T.llave + .6));
-          keyG.position.set(lerp(lerp(3.8, 1.15, kin), 3.2, kout), lock.position.y + .1 + kout * .6, .9); keyG.rotation.set(0, 0, kout * 1.4); keyG.visible = t < T.llave + .7;
-          lockGlow.material.opacity = Math.max(0, 1 - Math.abs(t - T.llave - .1) / .3) * .9; lockGlow.position.set(0, .1, .6); }
-        return {};
-      }
-      return { scene: s, camera, update };
-    })();
+    /* ---------- personajes de la historia (los demás caminan solos en ciudad.js) ---------- */
+    const HX = -5.6, hz = t => MZ + 8 - (t - 22) * 1.0, SX = 5.6, sz = t => MZ - 7 + (t - 46) * 1.1;
+    const mkPersona = (c, o) => { const p = N.persona(c, o); scene.add(p); const scr = new THREE.MeshBasicMaterial({ color: HDR(.3, .5, .9) }); p.userData.screen.material = scr; const halo = N.glow('#6FD0FF', 1, 0); halo.material.color = HDR(.6, 1.8, 3.2); scene.add(halo); return { p, scr, halo }; };
+    const heroe = mkPersona('#E8B84A', { piel: '#C68D68', pelo: '#2A1A14', coleta: true, pantalon: '#2E3448' });
+    const extr = mkPersona('#4E5260', { capucha: true, pelo: '#26262A', pantalon: '#1E2230', piel: '#B88060' });
 
-    /* ======== 8: zoom out hasta el planeta ======== */
-    const GLOBO = (() => {
-      const s = new THREE.Scene(); s.background = new THREE.Color('#070818');
-      s.add(new THREE.HemisphereLight('#9AB0FF', '#100818', .9)); const sun = new THREE.DirectionalLight('#FFC090', 2.2); sun.position.set(-4, 3, 8); s.add(sun);
-      const r = N.rng(2); const stars = new THREE.BufferGeometry(); const sp = new Float32Array(1500 * 3); for (let i = 0; i < 1500; i++) { const v = V3(r() - .5, r() - .5, r() - .5).normalize().multiplyScalar(300); sp.set([v.x, v.y, v.z], i * 3); } stars.setAttribute('position', new THREE.BufferAttribute(sp, 3)); s.add(new THREE.Points(stars, new THREE.PointsMaterial({ color: '#FFFFFF', size: 1.2, sizeAttenuation: false })));
-      const pl = N.planeta(7000); s.add(pl);
-      const camera = cam(38);
-      function update(t, lt) { pl.rotation.y = -1.9 + lt * .08; pl.rotation.x = .25; pl.userData.pts.material.opacity = .3 + .7 * prog(lt, .2, 1.4);
-        const d = lerp(9, 36, N.easeOut(prog(lt, 0, 3.2))); camera.position.set(0, -2 * (1 - prog(lt, 0, 3)), d); camera.lookAt(0, 1.5 * prog(lt, 0, 3), 0); return {}; }
-      return { scene: s, camera, update };
-    })();
+    /* ---------- etiquetas, círculos, candado, letrero, puntos de la ciudad ---------- */
+    const hex = (r) => '0123456789ABCDEF'[Math.floor(r() * 16)];
+    const frente = C.edif.filter(e => Math.abs(Math.abs(e.x) - e.w / 2 - 7.2) < .01 && Math.abs(e.z - MZ) < 30 && e !== C.casa).slice(0, 9);
+    const etq = [C.casa, ...frente].map((e, i) => { const r = N.rng(40 + i); const s = e === C.casa ? 'RED-7F3A' : `RED-${hex(r)}${hex(r)}${hex(r)}${hex(r)}`; const l = N.etiqueta(s, { s: 1.0 }); l.material.fog = false; scene.add(l);
+      const sx = Math.sign(e.x); return { l, p: V3(sx * 6.3, 4.6 + (i % 3) * .5, e === C.casa ? MZ : e.z), i }; });
+    const circM = () => new THREE.MeshBasicMaterial({ color: HDR(.35, 2.2, 2.6), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+    const ladoO = C.edif.filter(e => Math.abs(e.x + e.w / 2 + 7.2) < .01);
+    const cerc = z => ladoO.slice().sort((a, b) => Math.abs(a.z - z) - Math.abs(b.z - z))[0];
+    const centros = [V3(M.x, .25, MZ), V3(-9.5, .25, cerc(MZ + 16).z), V3(-9.5, .25, cerc(MZ - 8).z)];
+    const circ = centros.map(c => { const m = new THREE.Mesh(new THREE.RingGeometry(.985, 1, 160), circM()); m.rotation.x = -Math.PI / 2; m.position.copy(c); m.renderOrder = 6; scene.add(m);
+      const d = new THREE.Mesh(new THREE.CircleGeometry(1, 96), new THREE.MeshBasicMaterial({ color: HDR(.1, .6, .7), transparent: true, opacity: .12, blending: THREE.AdditiveBlending, depthWrite: false })); d.rotation.x = -Math.PI / 2; d.position.copy(c).add(V3(0, -.01, 0)); scene.add(d);
+      const g = N.glow('#5CE8FF', 2.4, 0); g.material.color = HDR(.6, 2.6, 3); g.position.copy(c).add(V3(0, 1.5, 0)); scene.add(g); return { m, d, g, c }; });
+    // candado morado y llave
+    const LK = V3(-15, 3.0, ZC);
+    const lock = new THREE.Group(); lock.position.copy(LK); scene.add(lock);
+    const rrGeo = (w, h, rad, d) => { const sh = new THREE.Shape(); sh.moveTo(-w / 2 + rad, -h / 2); sh.lineTo(w / 2 - rad, -h / 2); sh.quadraticCurveTo(w / 2, -h / 2, w / 2, -h / 2 + rad); sh.lineTo(w / 2, h / 2 - rad); sh.quadraticCurveTo(w / 2, h / 2, w / 2 - rad, h / 2); sh.lineTo(-w / 2 + rad, h / 2); sh.quadraticCurveTo(-w / 2, h / 2, -w / 2, h / 2 - rad); sh.lineTo(-w / 2, -h / 2 + rad); sh.quadraticCurveTo(-w / 2, -h / 2, -w / 2 + rad, -h / 2);
+      const g = new THREE.ExtrudeGeometry(sh, { depth: d, bevelEnabled: true, bevelSize: .06, bevelThickness: .06, bevelSegments: 4 }); g.translate(0, 0, -d / 2); return g; };
+    const purple = new THREE.MeshStandardMaterial({ color: '#7A4AE8', metalness: .55, roughness: .26, envMap: studio }), silver = new THREE.MeshStandardMaterial({ color: '#D8D8E8', metalness: .9, roughness: .2, envMap: studio });
+    lock.add(N.M(rrGeo(2.0, 1.6, .25, .6), purple)); const shackle = new THREE.Group(); lock.add(shackle);
+    shackle.add(N.M(new THREE.TorusGeometry(.6, .13, 16, 40, Math.PI), silver, 0, 1.15, 0)); for (const x of [-.6, .6]) shackle.add(N.cyl(.13, .13, .5, silver, 16, x, .9, 0));
+    const hole = N.cyl(.14, .14, .1, N.std('#140A2A', { flatShading: false }), 20, 0, .1, .38); hole.rotation.x = Math.PI / 2; lock.add(hole); lock.add(N.box(.1, .32, .1, N.std('#140A2A'), 0, -.12, .38));
+    const lockGlow = N.glow('#FF3A4A', 4, 0); lockGlow.material.color = HDR(3, .4, .5); lockGlow.position.set(0, .1, .6); lock.add(lockGlow);
+    const lockLight = new THREE.PointLight('#B89AFF', 2.5, 8, 1); lockLight.position.set(1.5, 1.5, 2.5); lock.add(lockLight);
+    const keyG = new THREE.Group(); scene.add(keyG); const goldM = new THREE.MeshStandardMaterial({ color: '#E8C060', metalness: .85, roughness: .25, envMap: studio });
+    keyG.add(N.M(new THREE.TorusGeometry(.3, .08, 12, 32), goldM, .75, 0, 0)); keyG.add(N.box(.95, .11, .07, goldM, 0, 0, 0)); keyG.add(N.box(.08, .2, .07, goldM, -.32, -.12, 0)); keyG.add(N.box(.08, .14, .07, goldM, -.16, -.1, 0));
+    // letrero de calle con el nombre de la red
+    const SG = V3(-5.2, 0, -19.8);
+    const letrero = new THREE.Group(); letrero.position.copy(SG); scene.add(letrero);
+    const posteL = N.M(new THREE.CylinderGeometry(.06, .08, 3.6, 10), N.std('#6A707C', { metalness: .6, roughness: .4, flatShading: false }), 0, 1.8, 0); letrero.add(posteL);
+    const placa = new THREE.Group(); placa.position.y = 3.25; letrero.add(placa);
+    const signT = N.canvasTex(1024, 300, (x, w, h) => { x.fillStyle = '#1F7A4A'; x.beginPath(); x.roundRect(0, 0, w, h, 30); x.fill(); x.strokeStyle = '#fff'; x.lineWidth = 14; x.beginPath(); x.roundRect(22, 22, w - 44, h - 44, 18); x.stroke();
+      x.strokeStyle = '#fff'; x.lineCap = 'round'; x.lineWidth = 16; for (let i = 0; i < 3; i++) { x.beginPath(); x.arc(170, 200, 30 + i * 34, Math.PI * 1.25, Math.PI * 1.75); x.stroke(); } x.fillStyle = '#fff'; x.beginPath(); x.arc(170, 200, 12, 0, 7); x.fill();
+      x.font = '900 140px Nunito, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('RED-7F3A', 600, 158); });
+    placa.add(N.box(2.72, .82, .06, N.std('#E8E8EC'))); const cara = new THREE.Mesh(new THREE.PlaneGeometry(2.66, .78), new THREE.MeshBasicMaterial({ map: signT, color: HDR(.85, .85, .85) })); cara.position.z = .035; placa.add(cara);
+    const cara2 = cara.clone(); cara2.rotation.y = Math.PI; cara2.position.z = -.035; placa.add(cara2);
+    placa.rotation.y = Math.atan2(-3.6, -4.8);
+    const etqVuela = N.etiqueta('RED-7F3A', { s: 1.1 }); etqVuela.material.fog = false; scene.add(etqVuela);
+    // datos que suben de los celulares (escena 6)
+    const coords = ['24.14°N', '24.15°N', '24.13°N', '24.16°N'];
+    const ups = [...Array(10)].map((_, j) => { const r = N.rng(70 + j); const l = N.etiqueta(`${hex(r)}${hex(r)}${hex(r)}${hex(r)} + ${coords[j % 4]}`, { s: .55, w: 640, fs: 54, border: 'rgba(255,210,90,.9)' }); l.material.fog = false; scene.add(l); return l; });
+    // puntos WiFi sobre cada edificio (escena 8)
+    const dotT = N.canvasTex(64, 64, (x) => { const g = x.createRadialGradient(32, 32, 0, 32, 32, 30); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(.35, 'rgba(255,255,255,.6)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64); }, false);
+    const dp = new Float32Array(C.edif.length * 3); C.edif.forEach((e, i) => dp.set([e.x, e.h + 1.6, e.z], i * 3));
+    const dg = new THREE.BufferGeometry(); dg.setAttribute('position', new THREE.BufferAttribute(dp, 3));
+    const puntos = new THREE.Points(dg, new THREE.PointsMaterial({ map: dotT, color: HDR(.5, 2.6, 3.0), size: 7, sizeAttenuation: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); scene.add(puntos);
+    // haz del módem al celular del desconocido (escena 9)
+    const beamGeo = new THREE.CylinderGeometry(1, 1, 1, 8, 1, true), UP = V3(0, 1, 0);
+    const haz = new THREE.Mesh(beamGeo, new THREE.MeshBasicMaterial({ color: HDR(.5, 2.6, 3.0), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false })); scene.add(haz);
+    const setBeam = (m, a, b, r) => { const d = b.clone().sub(a), L = d.length(); m.position.copy(a).addScaledVector(d, .5); m.quaternion.setFromUnitVectors(UP, d.normalize()); m.scale.set(r, L, r); };
+    const aqui = N.etiqueta('ESTOY AQUÍ', { s: .26, w: 512, fs: 64 }); aqui.material.depthTest = false; aqui.material.fog = false; aqui.renderOrder = 40; scene.add(aqui);
 
-    /* ======== HUD 2D (tarjetas de vidrio, teléfono, letrero, pregunta) ======== */
+    /* ---------- la ruta de la cámara ---------- */
+    const S1 = (() => { phoneState(5); return camEscena1(5); })();
+    const FILL = (SW / 2) / (Math.tan(THREE.MathUtils.degToRad(20)) * 9 / 16);   // la pantalla llena el ancho del cuadro
+    const SCR = (() => { phoneState(11.5); screen.updateMatrixWorld(true); return screen.getWorldPosition(V3()); })();
+    const K1 = [[5.0, S1[0].toArray(), S1[1].toArray()], [7.2, [PH.x + 3.4, PH.y + 6.2, PH.z + 4.6], PH.toArray()], [9.2, [PH.x + 1.5, PH.y + 4.6, PH.z + 1.9], PH.toArray()],
+      [10.9, [SCR.x + .3, SCR.y + 2.6, SCR.z + .4], [SCR.x, SCR.y, SCR.z]], [12.2, [SCR.x, SCR.y + FILL, SCR.z], [SCR.x, SCR.y - 1, SCR.z - .001]], [12.6, [SCR.x, SCR.y + FILL - .35, SCR.z], [SCR.x, SCR.y - 1, SCR.z - .001]]];
+    const MX = M.x, orb = (t, a, r = 2.7) => [[HX + Math.sin(a) * r, 1.7, hz(t) + Math.cos(a) * r], [HX, 1.5, hz(t)]];
+    const FIN = camEscena1(0);
+    const K2 = [
+      [12.2, [8, 72, MZ + 4], [8, 0, MZ + 3.9]],                                  // = lo que mostraba la pantalla
+      [13.1, [8, 58, MZ + 6], [8.3, 0, MZ + 4.6]],                                // los edificios crecen
+      [14.1, [5, 26, MZ + 24], [6.5, 2.5, MZ + 3]],                               // picada de dron
+      [15.0, [1.2, 3.6, MZ + 12], [7, 1.8, MZ + 1]],
+      [15.85, [3.4, 1.9, GZ + 5.0], [8.4, 1.6, GZ - 1.0]],
+      [16.22, [6.75, 1.75, GZ + .5], [MX, 1.4, lerp(GZ, MZ, .5)]],                                // atraviesa el muro
+      [16.55, [8.6, 1.6, lerp(GZ, MZ, .6)], [MX, 1.3, MZ]],
+      [17.45, [MX - 1.35, 1.32, MZ + .1], [MX, 1.27, MZ]],                        // el módem llena la pantalla
+      [18.0, [MX - 1.55, 1.36, MZ + .35], [MX, 1.27, MZ]],
+      [18.7, [8.4, 1.65, lerp(GZ, MZ, .4)], [MX - .5, 1.3, MZ]],
+      [19.3, [5.5, 1.9, GZ + .6], [1.5, 1.7, GZ + 5]],                                // sale otra vez por el muro
+      [20.4, [-1.5, 3.4, MZ + 8.5], [5, 1.6, MZ - 2]],                            // los anillos llegan a la gente
+      [21.5, [-4, 9, MZ + 15], [3, 1.5, MZ - 3]],
+      [23.0, [-7, 22, MZ + 24], [0, 0, MZ - 2]],                                  // sube: el mapa de redes
+      [24.6, [-6, 34, MZ + 26], [-2, 0, MZ - 1]],
+      [26.0, [-8, 27, hz(26) + 16], [-5.6, 0, hz(26)]],
+      [27.2, [-7, 11, hz(27.2) + 9], [-5.6, 1.2, hz(27.2) - 1]],
+      [28.4, [HX + .5, 1.78, hz(28.4) + 3.0], [HX, 1.5, hz(28.4) - 6]],           // detrás de la persona
+      [30.0, [HX + .4, 1.75, hz(30) + 2.7], [HX, 1.5, hz(30) - 5]],
+      [31.0, [HX + .4, 1.73, hz(31) + 2.7], [HX, 1.5, hz(31) - 5]],
+      [31.5, ...orb(31.5, Math.PI * .25)], [32.0, ...orb(32.0, Math.PI * .5)], [32.5, ...orb(32.5, Math.PI * .75)], [33.0, ...orb(33.0, Math.PI)],
+      [33.9, [HX, 1.75, hz(33.9) - 3.4], [HX, 1.45, hz(33.9)]],
+      [34.45, [-3.0, 2.4, -15.5], [-14, 2.3, -15.6]],                             // barrido junto a la pared
+      [34.85, [-3.4, 2.7, ZC], [-26, 2.6, ZC]],
+      [35.8, [-6.5, 2.7, ZC - .2], [LK.x, LK.y - .1, ZC]],                        // candado
+      [37.6, [-9.6, 2.8, ZC - .6], [LK.x, LK.y - .1, ZC]],
+      [39.2, [-10.6, 2.5, -25.4], [-8.4, 3.0, -21]],
+      [40.9, [-8.8, 2.6, -24.6], [SG.x, 3.1, SG.z]],                              // letrero
+      [41.8, [-8.2, 4.2, -24.2], [SG.x, 3.3, SG.z]],
+      [43.2, [-2, 70, 30], [0, 0, -40]],                                          // toda la ciudad
+      [44.6, [0, 170, 90], [0, 0, -60]],
+      [45.6, [4, 60, MZ + 40], [6, 0, MZ]],                                       // de vuelta a la casa
+      [46.4, [1.8, 6, MZ + 12], [7, 1.8, MZ + .5]],
+      [46.8, [3.6, 1.9, GZ + 4.6], [8.4, 1.6, GZ - 1.0]],
+      [47.08, [6.75, 1.75, GZ + .5], [MX, 1.4, lerp(GZ, MZ, .5)]],
+      [47.35, [8.8, 1.55, lerp(GZ, MZ, .6)], [MX, 1.3, MZ]],
+      [48.05, [MX - 1.45, 1.33, MZ + .1], [MX, 1.27, MZ]],
+      [48.5, [MX - 1.8, 1.4, MZ + .5], [MX, 1.27, MZ]],
+      [49.2, [8.0, 1.7, lerp(GZ, MZ, .4)], [MX - 1, 1.3, MZ - .6]],
+      [49.75, [5.0, 1.9, GZ + .8], [6, 1.5, MZ - 3]],                            // afuera: el desconocido
+      [51.0, [2.0, 2.4, MZ + 5], [5.6, 1.5, sz(51)]],
+      [52.5, [.5, 3.2, MZ + 7], [5.5, 1.6, sz(52.5)]],
+      [54.0, [0, 9, MZ + 20], [3, 3, MZ - 2]],
+      [55.6, [0, 28, 34], [0, 30, -40]],                                          // sube al cielo
+      [56.9, [0, 50, 50.5], [0, 47, -40]],
+      [58.0, FIN[0].toArray(), FIN[1].toArray()],                                 // = cuadro 0 (loop)
+    ];
+    const mkCurves = K => [new THREE.CatmullRomCurve3(K.map(k => V3(...k[1])), false, 'centripetal'), new THREE.CatmullRomCurve3(K.map(k => V3(...k[2])), false, 'centripetal')];
+    const C1 = mkCurves(K1), C2 = mkCurves(K2);
+    function pose(K, CC, t) { let i = 0; while (i < K.length - 2 && t > K[i + 1][0]) i++; const l = clamp((t - K[i][0]) / (K[i + 1][0] - K[i][0]), 0, 1);
+      const w = lerp(l, l * l * (3 - 2 * l), .35), u = clamp((i + w) / (K.length - 1)); return [CC[0].getPoint(u), CC[1].getPoint(u)]; }
+    function apunta(cam, p, l) { cam.position.copy(p); const dir = l.clone().sub(p).normalize(), vert = -dir.y, wu = clamp((.985 - vert) / .3), s = wu * wu * (3 - 2 * wu); cam.up.set(0, s, -(1 - s)).normalize(); cam.lookAt(l.x, l.y, l.z - .0005); cam.updateMatrixWorld(); }
+    function poseCam(t, st) { if (t < 5) return camEscena1(t, st && st.gw, st && st.rk); if (t < 12.2) return pose(K1, C1, t); return pose(K2, C2, t); }
+    const camera = new THREE.PerspectiveCamera(40, W / H, .1, 1200), camA = new THREE.PerspectiveCamera(40, W / H, .02, 1200), prev = new THREE.PerspectiveCamera(40, W / H, .1, 1200);
+    const mapCam = new THREE.PerspectiveCamera(2 * THREE.MathUtils.radToDeg(Math.atan(Math.tan(THREE.MathUtils.degToRad(20)) * 9 / 16 / (SW / SH))), SW / SH, .1, 1200);
+    apunta(mapCam, V3(...K2[0][1]), V3(...K2[0][2]));
+
+    /* ---------- post: DOF + bloom + desenfoque de movimiento + fundido ---------- */
+    const mkRT = (w, h, o = {}) => new THREE.WebGLRenderTarget(w, h, Object.assign({ type: THREE.HalfFloatType }, o));
+    const rtS = mkRT(W, H, { samples: 4 }); rtS.depthTexture = new THREE.DepthTexture(W, H); rtS.depthTexture.type = THREE.UnsignedIntType;
+    const rtA = mkRT(W, H, { samples: 4 }), rtD = mkRT(W, H), rtB1 = mkRT(W / 4, H / 4), rtB2 = mkRT(W / 4, H / 4);
+    const quadCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1), quadScene = new THREE.Scene(), quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2)); quadScene.add(quad);
+    const VS = 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }';
+    const dofM = new THREE.ShaderMaterial({ uniforms: { tC: { value: rtS.texture }, tZ: { value: rtS.depthTexture }, focus: { value: 10 }, ap: { value: 0 }, near: { value: .1 }, far: { value: 1200 }, res: { value: new THREE.Vector2(W, H) } }, vertexShader: VS,
+      fragmentShader: `uniform sampler2D tC, tZ; uniform float focus, ap, near, far; uniform vec2 res; varying vec2 vUv;
+        float vz(vec2 uv){ float d = texture2D(tZ, uv).x * 2. - 1.; return 2. * near * far / (far + near - d * (far - near)); }
+        float coc(float z){ return clamp(ap * abs(z - focus) / max(z, .01), 0., 1.) * 22.; }
+        void main(){ vec3 c0 = texture2D(tC, vUv).rgb; float z = vz(vUv), r = coc(z); if (r < .6) { gl_FragColor = vec4(c0, 1.); return; }
+          vec3 acc = c0; float ws = 1.;
+          for (int i = 0; i < 40; i++) { float fi = float(i) + .5; float rr = sqrt(fi / 40.) * r; float th = fi * 2.39996; vec2 o = vec2(cos(th), sin(th)) * rr / res;
+            float zs = vz(vUv + o); float w = zs < z ? clamp(coc(zs) / max(rr, 1.), 0., 1.) : 1.; acc += texture2D(tC, vUv + o).rgb * w; ws += w; }
+          gl_FragColor = vec4(acc / ws, 1.); }` });
+    const brightM = new THREE.ShaderMaterial({ uniforms: { tC: { value: null } }, vertexShader: VS, fragmentShader: `uniform sampler2D tC; varying vec2 vUv; void main(){ vec3 c = vec3(0.); for(int i=0;i<4;i++){ vec2 o = vec2(float(i/2)-.5, float(i-2*(i/2))-.5)/vec2(270.,480.); c += texture2D(tC, vUv+o).rgb; } c *= .25; gl_FragColor = vec4(max(c - 1.2, 0.), 1.); }` });
+    const blurM = new THREE.ShaderMaterial({ uniforms: { tC: { value: null }, dir: { value: new THREE.Vector2() } }, vertexShader: VS, fragmentShader: `uniform sampler2D tC; uniform vec2 dir; varying vec2 vUv; void main(){ vec3 c = texture2D(tC, vUv).rgb * .227; float w[4]; w[0]=.194; w[1]=.121; w[2]=.054; w[3]=.016; for(int i=1;i<5;i++){ c += (texture2D(tC, vUv + dir*float(i)).rgb + texture2D(tC, vUv - dir*float(i)).rgb) * w[i-1]; } gl_FragColor = vec4(c, 1.); }` });
+    const finM = new THREE.ShaderMaterial({ uniforms: { tC: { value: rtD.texture }, tB: { value: rtB1.texture }, tA: { value: rtA.texture }, fade: { value: 0 }, mv: { value: new THREE.Vector2() }, bloom: { value: .7 } }, vertexShader: VS,
+      fragmentShader: `uniform sampler2D tC, tB, tA; uniform float fade, bloom; uniform vec2 mv; varying vec2 vUv;
+        void main(){ vec3 c = vec3(0.); for (int i = 0; i < 32; i++) { float s = float(i) / 31. - .5; c += texture2D(tC, vUv + mv * s).rgb; } c /= 32.;
+          c += texture2D(tB, vUv).rgb * bloom; c = mix(c, texture2D(tA, vUv).rgb, fade);
+          vec2 q = vUv - .5; c *= 1. - .35 * dot(q * vec2(1.2, .9), q * vec2(1.2, .9)) * 2.;
+          gl_FragColor = vec4(c, 1.);
+          #include <tonemapping_fragment>
+          #include <encodings_fragment>
+        }` });
+    const pass = (mat, target) => { quad.material = mat; renderer.setRenderTarget(target); renderer.render(quadScene, quadCam); };
+
+    /* ---------- enfoque según el momento ---------- */
+    function dof(t) { const c = camera.position, dPH = c.distanceTo(PH), dM = c.distanceTo(M);
+      const hero = V3(HX, 1.6, hz(t)), ex = V3(SX, 1.6, sz(t));
+      const tramos = [  // [t0, t1, foco, apertura]
+        [16.0, 19.5, dM, 1.0], [27.9, 34.3, c.distanceTo(hero), .55], [35.4, 38.6, c.distanceTo(LK), .5], [39.2, 41.9, c.distanceTo(V3(SG.x, 3.2, SG.z)), .45],
+        [46.7, 49.6, dM, 1.0], [49.6, 52.8, c.distanceTo(ex), .4], [55.9, 59, dPH, .7]];
+      let focus = 18, ap = .0; for (const [a, b, f, k] of tramos) { const w = prog(t, a - .35, a) * (1 - prog(t, b, b + .35)); if (w > 0) { focus = f; ap = Math.max(ap, k * w); } }
+      if (t < 12.25) { focus = dPH; ap = .7; } return [focus, ap]; }
+
+    /* ---------- HUD 2D (tarjetas de vidrio) ---------- */
     const hud = document.getElementById('hud'), X = hud.getContext('2d');
     const F = (w, px) => `${w} ${px}px Nunito, sans-serif`;
     function rr(x, y, w, h, r) { X.beginPath(); X.roundRect(x, y, w, h, r); }
     function glass(x, y, w, h, r, a = 1, tint = 'rgba(120,110,255,') { X.save(); X.globalAlpha *= a; X.shadowColor = 'rgba(0,0,0,.45)'; X.shadowBlur = 40; X.shadowOffsetY = 14;
-      const g = X.createLinearGradient(x, y, x + w, y + h); g.addColorStop(0, tint + '.30)'); g.addColorStop(1, 'rgba(20,16,60,.55)'); rr(x, y, w, h, r); X.fillStyle = g; X.fill(); X.shadowColor = 'transparent';
-      X.lineWidth = 3; X.strokeStyle = 'rgba(255,255,255,.38)'; X.stroke(); X.restore(); }
+      const g = X.createLinearGradient(x, y, x + w, y + h); g.addColorStop(0, tint + '.34)'); g.addColorStop(1, 'rgba(20,16,60,.62)'); rr(x, y, w, h, r); X.fillStyle = g; X.fill(); X.shadowColor = 'transparent'; X.lineWidth = 3; X.strokeStyle = 'rgba(255,255,255,.4)'; X.stroke(); X.restore(); }
     function wifiIcon(x, y, s, col, bars = 3) { X.save(); X.strokeStyle = col; X.fillStyle = col; X.lineCap = 'round'; X.lineWidth = s * .14; for (let i = 0; i < 3; i++) { X.globalAlpha = i < bars ? 1 : .25; X.beginPath(); X.arc(x, y, s * (.35 + i * .3), Math.PI * 1.25, Math.PI * 1.75); X.stroke(); } X.globalAlpha = 1; X.beginPath(); X.arc(x, y, s * .1, 0, 7); X.fill(); X.restore(); }
-    function satIcon(x, y, s, col) { X.save(); X.translate(x, y); X.rotate(-.6); X.fillStyle = col; X.fillRect(-s * .18, -s * .18, s * .36, s * .36); X.fillRect(-s * .7, -s * .12, s * .42, s * .24); X.fillRect(s * .28, -s * .12, s * .42, s * .24); X.restore(); }
-    function pinIcon(x, y, s, col) { X.save(); X.fillStyle = col; X.beginPath(); X.arc(x, y - s * .9, s * .55, Math.PI, 0); X.quadraticCurveTo(x + s * .55, y - s * .4, x, y); X.quadraticCurveTo(x - s * .55, y - s * .4, x - s * .55, y - s * .9); X.fill(); X.fillStyle = '#fff'; X.beginPath(); X.arc(x, y - s * .9, s * .22, 0, 7); X.fill(); X.restore(); }
     function text(s, x, y, px, col, w = 900, al = 'center', a = 1) { X.save(); X.globalAlpha *= a; X.font = F(w, px); X.fillStyle = col; X.textAlign = al; X.textBaseline = 'middle'; X.fillText(s, x, y); X.restore(); }
-    const back = k => { k = clamp(k); const c = 1.7; return 1 + (c + 1) * Math.pow(k - 1, 3) + c * Math.pow(k - 1, 2); };
     const REDES = [['RED-7F3A', 3, '-48 dBm'], ['CASA_2B19', 3, '-57 dBm'], ['WIFI-C04E', 2, '-66 dBm'], ['INTERNET_88D1', 1, '-74 dBm']];
-
     function drawHUD(t) {
       X.clearRect(0, 0, W, H);
-      // 2 · teléfono con mapa del centro comercial
-      if (t > T.mapa - .1 && t < 12.3) { const k = back(prog(t, T.mapa, T.mapa + .55)), x = 560, y = 1000 + (1 - k) * 900, w = 430, h = 820;
-        X.save(); X.shadowColor = 'rgba(0,0,0,.5)'; X.shadowBlur = 50; rr(x, y, w, h, 60); X.fillStyle = '#0E1226'; X.fill(); X.restore(); rr(x, y, w, h, 60); X.lineWidth = 8; X.strokeStyle = '#3A4060'; X.stroke();
-        X.save(); rr(x + 18, y + 18, w - 36, h - 36, 44); X.clip(); X.fillStyle = '#EDE8DE'; X.fillRect(x, y, w, h);
-        const mx = x + 18, my = y + 120; X.fillStyle = '#FFFFFF'; X.fillRect(mx, my + 300, w, 70); X.fillRect(mx + 170, my, 60, h);
-        [['#F6D98A', 0, 0, 160, 140], ['#A8DDD3', 240, 0, 160, 140], ['#F2B8A0', 0, 150, 160, 140], ['#B8D0EC', 240, 150, 160, 140], ['#F2E2A0', 0, 380, 160, 160], ['#D8C8F0', 240, 380, 160, 160], ['#C8E8B0', 0, 550, 160, 120], ['#F6D98A', 240, 550, 160, 120]].forEach(([c, a, b, ww, hh]) => { X.fillStyle = c; rr(mx + a + 6, my + b + 6, ww - 12, hh - 12, 10); X.fill(); });
-        X.fillStyle = '#10142A'; X.fillRect(x, y, w, 128); text('Nivel 1', x + w / 2, y + 100, 30, '#C8D0F0', 800);
-        satIcon(x + 80, y + 58, 46, '#7A7F90'); X.strokeStyle = '#FF4A55'; X.lineWidth = 6; X.beginPath(); X.moveTo(x + 52, y + 36); X.lineTo(x + 110, y + 82); X.stroke(); text('GPS', x + 150, y + 60, 30, '#7A7F90', 900);
-        wifiIcon(x + w - 70, y + 74, 52, '#5CE8FF');
-        const pk = prog(t, T.punto, T.punto + .3), px = mx + 320, py = my + 450;
-        if (pk > 0) { const pr = (t * 1.2) % 1; X.fillStyle = `rgba(58,138,255,${.35 * (1 - pr)})`; X.beginPath(); X.arc(px, py, 30 + pr * 60, 0, 7); X.fill(); X.fillStyle = 'rgba(58,138,255,.18)'; X.beginPath(); X.arc(px, py, 70 * pk, 0, 7); X.fill();
-          X.fillStyle = '#fff'; X.beginPath(); X.arc(px, py, 26 * back(pk), 0, 7); X.fill(); X.fillStyle = '#2A7AFF'; X.beginPath(); X.arc(px, py, 18 * back(pk), 0, 7); X.fill();
-          const bk2 = prog(t, T.punto + .4, T.punto + .8); if (bk2 > 0) { X.globalAlpha = bk2; rr(px - 150, py - 120, 200, 56, 28); X.fillStyle = '#2A7AFF'; X.fill(); X.globalAlpha = 1; text('Estás aquí', px - 50, py - 91, 30, '#fff', 900, 'center', bk2); } }
-        X.restore(); }
-      // 4 · sin contraseña
-      if (t > T.sinPass - .1 && t < T.cuts[3]) { const k = back(prog(t, T.sinPass, T.sinPass + .4)); X.save(); X.translate(540, 1560); X.scale(k, k); glass(-300, -60, 600, 120, 60, 1, 'rgba(255,90,120,');
+      if (t > T.sinPass - .1 && t < 21.6) { const k = backOut(prog(t, T.sinPass, T.sinPass + .4)), o = 1 - prog(t, 21.2, 21.6); X.save(); X.globalAlpha = o; X.translate(540, 1560); X.scale(k, k); glass(-300, -60, 600, 120, 60, 1, 'rgba(255,90,120,');
         X.strokeStyle = '#FFD25A'; X.lineWidth = 9; X.beginPath(); X.arc(-215, 0, 20, 0, 7); X.moveTo(-195, 0); X.lineTo(-145, 0); X.lineTo(-145, 16); X.stroke(); X.strokeStyle = '#FF4A55'; X.lineWidth = 8; X.beginPath(); X.moveTo(-245, -30); X.lineTo(-135, 30); X.stroke();
         text('Sin contraseña', 50, 3, 56, '#fff'); X.restore(); }
-      // 5 · lista de redes → nube → mapa con pin
-      if (t > T.cuts[3] - .3 && t < T.cuts[4] + .3) {
-        const fly = N.ease(prog(t, T.nube, T.nube + .9)), ck = prog(t, T.filas - .3, T.filas);
-        const cloudK = back(prog(t, T.nube - .2, T.nube + .3)), cy = 690;
-        if (fly < 1) { glass(90, 1000, 900, 560, 48, ck * (1 - fly)); text('Redes cerca de ti', 540, 1075, 52, '#fff', 900, 'center', ck * (1 - fly));
-          REDES.forEach(([n, b, d], i) => { const k = N.easeOut(prog(t, T.filas + i * .22, T.filas + .35 + i * .22)); if (k <= 0) return; const y0 = 1170 + i * 100, x0 = 130 + (1 - k) * 400;
-            const fx = lerp(x0, 540, fly), fy = lerp(y0, cy, fly), sc = 1 - fly * .8; X.save(); X.globalAlpha = k * (1 - fly * .7); X.translate(fx, fy); X.scale(sc, sc); rr(0, -40, 820, 80, 22); X.fillStyle = 'rgba(255,255,255,.08)'; X.fill();
-            wifiIcon(50, 22, 44, '#5CE8FF', b); text(n, 100, 2, 44, '#EFF6FF', 800, 'left'); text(d, 790, 2, 36, '#9FB2D8', 700, 'right'); X.restore(); }); }
-        if (cloudK > 0) { const pulse = 1 + .08 * Math.max(0, 1 - Math.abs(t - T.nube - .9) / .3); X.save(); X.translate(540, cy); X.scale(cloudK * pulse, cloudK * pulse);
-          X.shadowColor = 'rgba(92,232,255,.6)'; X.shadowBlur = 40; X.beginPath(); X.arc(-90, 20, 70, Math.PI * .5, Math.PI * 1.5); X.arc(-20, -40, 95, Math.PI, Math.PI * 1.85); X.arc(90, 5, 80, Math.PI * 1.4, Math.PI * .5); X.closePath();
-          const g = X.createLinearGradient(0, -130, 0, 100); g.addColorStop(0, 'rgba(160,200,255,.45)'); g.addColorStop(1, 'rgba(90,70,220,.45)'); X.fillStyle = g; X.fill(); X.shadowColor = 'transparent'; X.lineWidth = 4; X.strokeStyle = 'rgba(255,255,255,.7)'; X.stroke();
-          text('MAPA DE REDES', 0, 10, 34, '#fff', 900); X.restore(); }
-        const mk = back(prog(t, T.mapa2, T.mapa2 + .5));
-        if (mk > 0) { const x = 120, y = 960, w = 840, h = 700; X.save(); X.translate(540, y + h / 2); X.scale(mk, mk); X.translate(-540, -(y + h / 2)); glass(x, y, w, h, 44, 1, 'rgba(80,140,255,');
-          X.save(); rr(x + 16, y + 16, w - 32, h - 32, 32); X.clip(); X.fillStyle = 'rgba(12,16,44,.7)'; X.fillRect(x, y, w, h);
-          X.strokeStyle = 'rgba(140,170,255,.35)'; X.lineWidth = 16; for (let i = 0; i < 5; i++) { X.beginPath(); X.moveTo(x, y + 80 + i * 150); X.lineTo(x + w, y + 60 + i * 150); X.stroke(); X.beginPath(); X.moveTo(x + 90 + i * 180, y); X.lineTo(x + 110 + i * 180, y + h); X.stroke(); }
-          const P = [540, 1330], nets = [[330, 1150], [760, 1180], [600, 1560]];
-          nets.forEach(([nx, ny], i) => { const k = N.easeOut(prog(t, 24.8 + i * .4, 25.5 + i * .4)); if (k <= 0) return; const R = Math.hypot(nx - P[0], ny - P[1]) * k;
-            X.strokeStyle = `rgba(92,232,255,${.7})`; X.lineWidth = 4; X.setLineDash([14, 10]); X.beginPath(); X.arc(nx, ny, R, 0, 7); X.stroke(); X.setLineDash([]); X.fillStyle = 'rgba(92,232,255,.08)'; X.fill(); wifiIcon(nx, ny + 14, 46, '#5CE8FF'); });
-          const pk = back(prog(t, T.pin, T.pin + .4)); if (pk > 0) { pinIcon(P[0], P[1] - (1 - Math.min(1, pk)) * 200, 90 * Math.min(1.1, pk), '#FF4A5A'); const lk = prog(t, T.pin + .3, T.pin + .6); rr(P[0] - 150, P[1] + 20, 300, 64, 32); X.fillStyle = `rgba(255,74,90,${lk})`; X.fill(); text('Aquí estás', P[0], P[1] + 53, 36, '#fff', 900, 'center', lk); }
-          X.restore(); X.restore();
-          X.strokeStyle = `rgba(160,220,255,${.6 * mk})`; X.lineWidth = 4; X.setLineDash([10, 12]); X.lineDashOffset = -t * 60; X.beginPath(); X.moveTo(540, cy + 100); X.lineTo(540, 950); X.stroke(); X.setLineDash([]); } }
-      // 7 · qué sí y qué no ve + letrero
-      if (t > T.cuts[5] && t < T.cuts[6] + .3) { const out = N.ease(prog(t, T.letrero - .7, T.letrero - .2));
-        [['Nombre de la red', true, T.f1], ['Tu contraseña', false, T.f2], ['Lo que ves o haces', false, T.f3]].forEach(([s, ok, t0], i) => { const k = N.easeOut(prog(t, t0, t0 + .35)); if (k <= 0) return; const dim = ok ? 1 : 1 - .45 * prog(t, T.soloNombre, T.soloNombre + .4);
-          const y = 1080 + i * 150; X.save(); X.globalAlpha = k * (1 - out) * dim; X.translate((1 - k) * -300, 0); glass(110, y, 860, 120, 36, 1, ok ? 'rgba(80,220,140,' : 'rgba(255,80,110,');
-          X.fillStyle = ok ? '#3ADA8A' : '#FF4A5A'; X.beginPath(); X.arc(190, y + 60, 36, 0, 7); X.fill(); X.strokeStyle = '#fff'; X.lineWidth = 9; X.lineCap = 'round'; X.beginPath();
-          if (ok) { X.moveTo(172, y + 60); X.lineTo(186, y + 74); X.lineTo(210, y + 46); } else { X.moveTo(176, y + 46); X.lineTo(204, y + 74); X.moveTo(204, y + 46); X.lineTo(176, y + 74); } X.stroke();
-          text(s, 250, y + 62, 50, '#fff', 800, 'left'); if (!ok) { X.strokeStyle = 'rgba(255,255,255,.7)'; X.lineWidth = 5; const tw = X.measureText ? 0 : 0; } X.restore(); });
-        const sk = back(prog(t, T.letrero - .3, T.letrero + .25)); if (sk > 0) { X.save(); X.translate(540, 1820); X.scale(1, sk); X.fillStyle = '#7A808C'; X.fillRect(-14, -560, 28, 560); X.restore();
-          X.save(); X.translate(540, 1240 + (1 - Math.min(1, sk)) * -300); X.globalAlpha = Math.min(1, sk); X.rotate(Math.sin(t * 2) * .01);
-          X.shadowColor = 'rgba(0,0,0,.5)'; X.shadowBlur = 30; rr(-380, -110, 760, 220, 22); X.fillStyle = '#1F7A4A'; X.fill(); X.shadowColor = 'transparent'; X.lineWidth = 10; X.strokeStyle = '#fff'; rr(-360, -90, 720, 180, 14); X.stroke();
-          wifiIcon(-270, 30, 70, '#fff'); text('RED-7F3A', 50, 5, 96, '#fff', 900); X.restore(); } }
-      // 8 · contador
-      if (t > T.cuts[6] && t < T.cuts[7]) { const k = N.easeOut(prog(t, T.cuenta - .2, T.cuenta + .3)), c = N.easeOut(prog(t, T.cuenta, T.cuenta + 1.8));
-        glass(110, 1440, 860, 250, 48, k); const n = Math.round(2000 * c) * 1e6; text('+' + n.toLocaleString('en-US'), 540, 1530, 92, '#7FF0FF', 900, 'center', k);
-        text('redes WiFi en los mapas (estimado)', 540, 1630, 40, '#D8E0FF', 700, 'center', k); }
-      // 9 · pregunta final
-      if (t > T.pregunta - .1 && t < T.cuts[8]) { const k = back(prog(t, T.pregunta, T.pregunta + .5)), out = prog(t, T.cuts[8] - .35, T.cuts[8]);
-        X.fillStyle = `rgba(8,6,30,${.5 * Math.min(1, k) * (1 - out)})`; X.fillRect(0, 0, W, H);
+      if (t > T.filas - .3 && t < 24.6) { const ck = prog(t, T.filas - .3, T.filas), o = 1 - prog(t, 24.0, 24.5); X.save(); X.globalAlpha = o; glass(90, 1060, 900, 520, 48, ck); text('Redes cerca de ti', 540, 1135, 52, '#fff', 900, 'center', ck);
+        REDES.forEach(([n, b, d], i) => { const k = easeOut(prog(t, T.filas + i * .22, T.filas + .35 + i * .22)); if (k <= 0) return; const y0 = 1230 + i * 92, x0 = 130 + (1 - k) * 400;
+          X.save(); X.globalAlpha *= k; X.translate(x0, y0); rr(0, -38, 820, 76, 22); X.fillStyle = 'rgba(255,255,255,.08)'; X.fill(); wifiIcon(50, 20, 42, '#5CE8FF', b); text(n, 100, 2, 44, '#EFF6FF', 800, 'left'); text(d, 790, 2, 36, '#9FB2D8', 700, 'right'); X.restore(); }); X.restore(); }
+      if (t > T.pin + .2 && t < 28.2) { const k = backOut(prog(t, T.pin + .3, T.pin + .7)), o = 1 - prog(t, 27.8, 28.2); X.save(); X.globalAlpha = o; X.translate(540, 1580); X.scale(k, k); rr(-190, -50, 380, 100, 50); X.fillStyle = '#FF3D4F'; X.fill(); text('Aquí estás', 0, 3, 52, '#fff'); X.restore(); }
+      if (t > T.f1 - .1 && t < 39.0) { const out = ease(prog(t, 38.4, 38.95));
+        [['Nombre de la red', true, T.f1], ['Tu contraseña', false, T.f2], ['Lo que ves o haces', false, T.f3]].forEach(([s, ok, t0], i) => { const k = easeOut(prog(t, t0, t0 + .35)); if (k <= 0) return;
+          const y = 1300 + i * 140; X.save(); X.globalAlpha = k * (1 - out); X.translate((1 - k) * -300, 0); glass(110, y, 860, 115, 36, 1, ok ? 'rgba(80,220,140,' : 'rgba(255,80,110,');
+          X.fillStyle = ok ? '#3ADA8A' : '#FF4A5A'; X.beginPath(); X.arc(190, y + 57, 34, 0, 7); X.fill(); X.strokeStyle = '#fff'; X.lineWidth = 9; X.lineCap = 'round'; X.beginPath();
+          if (ok) { X.moveTo(172, y + 57); X.lineTo(186, y + 71); X.lineTo(210, y + 43); } else { X.moveTo(176, y + 43); X.lineTo(204, y + 71); X.moveTo(204, y + 43); X.lineTo(176, y + 71); } X.stroke();
+          text(s, 250, y + 59, 50, '#fff', 800, 'left'); X.restore(); }); }
+      if (t > T.cuenta - .3 && t < 45.4) { const k = easeOut(prog(t, T.cuenta - .2, T.cuenta + .3)) * (1 - prog(t, 45.0, 45.4)), c = easeOut(prog(t, T.cuenta, T.cuenta + 1.8));
+        glass(110, 1440, 860, 250, 48, k); text('+' + (Math.round(2000 * c) * 1e6).toLocaleString('en-US'), 540, 1530, 92, '#7FF0FF', 900, 'center', k); text('redes WiFi en los mapas (estimado)', 540, 1630, 40, '#D8E0FF', 700, 'center', k); }
+      if (t > T.pregunta - .1 && t < 57.3) { const k = backOut(prog(t, T.pregunta, T.pregunta + .5)), out = prog(t, 56.85, 57.25);
+        X.fillStyle = `rgba(8,6,30,${.4 * Math.min(1, k) * (1 - out)})`; X.fillRect(0, 0, W, H);
         X.save(); X.globalAlpha = 1 - out; X.translate(540, 1120); X.scale(k, k); glass(-440, -250, 880, 500, 56, 1);
         text('¿Útil o da miedo?', 0, -140, 80, '#fff'); const hu = prog(t, T.util, T.util + .2) * (1 - prog(t, T.miedo - .1, T.miedo + .1)), hm = prog(t, T.miedo, T.miedo + .2);
         [['ÚTIL', -200, '#2A8AFF', hu], ['DA MIEDO', 200, '#8A4AE8', hm]].forEach(([s, x, c, h]) => { X.save(); X.translate(x, 20); X.scale(1 + .12 * h, 1 + .12 * h); X.shadowColor = c; X.shadowBlur = 40 * h; rr(-170, -60, 340, 120, 60); X.fillStyle = c; X.fill(); X.restore(); text(s, x, 22, 52, '#fff'); });
         text('Te leo en los comentarios', 0, 165, 42, '#D8E0FF', 800); X.restore(); }
     }
 
-    const SC = [{ a: 0, b: 5, s: PHONE }, { a: 5, b: 12, s: MALL }, { a: 12, b: 14.6, s: CALLE, m: 'sube' }, { a: 14.6, b: 21.4, s: CALLE, m: 'ondas' }, { a: 21.4, b: 27.6, s: DATA, m: 'redes' },
-      { a: 27.6, b: 35.4, s: CALLE, m: 'gente' }, { a: 35.4, b: 41.8, s: DATA, m: 'candado' }, { a: 41.8, b: 45.2, s: GLOBO }, { a: 45.2, b: 57.2, s: CALLE, m: 'casa' }, { a: 57.2, b: 99, s: PHONE, off: 58 }];
-    const pill = document.getElementById('pill'), stage = document.getElementById('stage'), flash = document.getElementById('flash');
-    function renderAt(t) { const sc = SC.find(x => t >= x.a && t < x.b) || SC[SC.length - 1]; const g = sc.s.update(t, t - (sc.off != null ? sc.off : sc.a), sc.m) || {}; renderer.render(sc.s.scene, sc.s.camera);
-      if (g.gps) { pill.style.display = 'block'; pill.style.left = Math.min(820, g.gps.x + 40) + 'px'; pill.style.top = (g.gps.y - 90) + 'px'; pill.style.opacity = g.gps.k; pill.querySelector('i').style.transform = `rotate(-12deg) scaleX(${g.gps.tach})`; } else pill.style.display = 'none';
+    /* ---------- el mundo en el tiempo t ---------- */
+    function mundo(t) {
+      // celular: escena 1 (0–5), mapa en la pantalla (5–12.6) y regreso para el loop (≥54.5)
+      const lt = t < 54 ? t : t - 58, verCel = t < 12.6 || t > 54.5; holder.visible = polvo.visible = verCel; kL.visible = rL.visible = rL2.visible = verCel;
+      const st = verCel ? phoneState(lt) : null; if (!verCel) { ring.visible = false; redGlow.material.opacity = 0; }
+      const sk = t < 12.6 && t > 5 ? prog(t, T.mapaOn, T.mapaOn + .8) : 0; screen.material.opacity = sk; barra.material.opacity = sk * (1 - prog(t, 11.6, 12.1));
+      // ciudad
+      const pinK = t < 14.6 ? 1 - ease(prog(t, 13.9, 14.5)) : t > T.pin - .1 && t < 28.6 ? 1 - prog(t, 28.0, 28.6) : 0;
+      const late = (1 + .14 * Math.max(0, Math.sin((t - T.mapa) * 9)) * prog(t, T.mapa, T.mapa + .1) * (1 - prog(t, T.mapa + .7, T.mapa + .8)));
+      const pinS = t < 14.6 ? { k: pinK, x: M.x, y: lerp(.5, 3.5, prog(t, 12.4, 13.4)), z: MZ, s: lerp(6.5, 3, prog(t, 12.4, 13.4)) * late }
+        : { k: pinK, x: HX, y: lerp(12, 2.3, Math.min(1, backOut(prog(t, T.pin, T.pin + .45)))), z: hz(t), s: 2.0 };
+      const brillo = .9 * prog(t, T.millones, T.millones + .4) * (1 - prog(t, 34.2, 34.8));
+      C.update(t, camera, { crece: T.crece, tg: t < 55.2 ? t : T.crece + 2.4 - (t - 55.2) * 1.2, pin: pinS, rafagas: [T.rafaga1, T.rafaga2], brillo });
+      // la persona que sigue la cámara y el desconocido
+      const mov = (q, x, z, rot, on, luz) => { q.p.visible = on; q.halo.visible = on; if (!on) return; q.p.position.set(x, .19, z); q.p.rotation.y = rot; q.p.userData.camina(t * 5.4, .9); q.p.updateMatrixWorld(true);
+        q.halo.position.copy(q.p.userData.phone.getWorldPosition(V3())); q.halo.material.opacity = luz * (1 + .15 * Math.sin(t * 9)); q.halo.scale.setScalar(.35 + 1.0 * luz); q.scr.color.setRGB(.3 + 2.4 * luz, .5 + 2.6 * luz, .9 + 2.8 * luz); };
+      mov(heroe, HX, hz(t), Math.PI, t > 20 && t < 36, Math.max(.25, easeOut(prog(t, T.heroeCel, T.heroeCel + .3))));
+      mov(extr, SX, sz(t), 0, t > 45.5 && t < 56, .35 + .65 * easeOut(prog(t, T.desconocido - .2, T.desconocido + .2)));
+      // etiquetas con nombres de red (escenas 4–5)
+      etq.forEach(({ l, p, i }) => { const k = easeOut(prog(t, T.escucha + i * .12, T.escucha + .35 + i * .12)) * (1 - prog(t, 23.6, 24.1)); l.visible = k > .01; if (!l.visible) return; l.material.opacity = k; l.position.copy(p).add(V3(0, (1 - k) * 1.2, 0)); });
+      // círculos que se cruzan donde estás (escena 5)
+      const objetivo = V3(HX, .25, hz(26.6));
+      circ.forEach(({ m, d, g, c }, i) => { const k = easeOut(prog(t, T.circulos + i * .35, T.circulos + .8 + i * .35)) * (1 - prog(t, 28.2, 28.8)); const R = c.distanceTo(objetivo) * Math.max(.001, k);
+        m.visible = d.visible = g.visible = k > .002; m.scale.setScalar(R); d.scale.setScalar(R); m.material.opacity = k; d.material.opacity = .12 * k; g.material.opacity = k * (.7 + .3 * Math.sin(t * 6 + i)); });
+      // datos que suben (escena 6)
+      const cerca = C.gente.filter(q => q.cel && q.pos && Math.abs(q.pos.z - hz(t)) < 22).slice(0, ups.length);
+      ups.forEach((l, j) => { const q = cerca[j]; if (!q || t < T.suben || t > 35) { l.visible = false; return; } const u = ((t - T.suben) * .4 + j * .37) % 1; l.visible = true; l.position.set(q.pos.x, q.pos.y + .5 + u * 9, q.pos.z); l.material.opacity = Math.sin(Math.PI * u) * prog(t, T.suben, T.suben + .5); });
+      // candado, llave y letrero (escena 7)
+      const cand = t > 34.6 && t < 39.4; lock.visible = cand;
+      if (cand) { const intro = backOut(prog(t, 35.0, 35.7)), sal = ease(prog(t, 38.4, 39.2)); lock.scale.setScalar(Math.max(.001, intro * (1 - sal)));
+        lock.position.set(LK.x, LK.y + Math.sin(t * 1.2) * .08 + sal * 1.5, LK.z); lock.rotation.y = Math.PI / 2 + .3 * Math.sin(t * .6);
+        shackle.position.y = lerp(.45, 0, easeOut(prog(t, T.cierra - .15, T.cierra))); lockGlow.material.opacity = Math.max(0, 1 - Math.abs(t - T.llave - .1) / .3) * .9; }
+      const kin = ease(prog(t, T.llave - .35, T.llave)), kout = easeOut(prog(t, T.llave + .05, T.llave + .6)); keyG.visible = t > 35.6 && t < T.llave + .7;
+      if (keyG.visible) { keyG.position.set(LK.x + lerp(lerp(3.8, 1.05, kin), 3.2, kout), LK.y + .1 + kout * .6, LK.z + .05); keyG.rotation.set(0, 0, kout * 1.4); }
+      const vu = prog(t, T.soloNombre, T.soloNombre + .4), va = ease(prog(t, 39.6, 40.5)); etqVuela.visible = vu > 0 && t < T.letrero + .3;
+      if (etqVuela.visible) { etqVuela.position.lerpVectors(V3(LK.x, LK.y + 1.8, LK.z), V3(SG.x, 3.25, SG.z), va); etqVuela.material.opacity = vu * (1 - prog(t, T.letrero, T.letrero + .3)); }
+      const sk2 = backOut(prog(t, T.letrero - .1, T.letrero + .35)); letrero.visible = t > T.letrero - .45; placa.scale.set(Math.max(.001, sk2), Math.max(.001, sk2), 1); posteL.scale.y = Math.max(.001, Math.min(1, prog(t, T.letrero - .45, T.letrero)));
+      // puntos WiFi de toda la ciudad (escena 8)
+      const pk = prog(t, T.sube, T.sube + .8) * (1 - prog(t, 45.0, 45.8)); puntos.visible = pk > .01; puntos.material.opacity = pk * (.75 + .25 * Math.sin(t * 7)); puntos.material.size = 7 + 2 * Math.sin(t * 4);
+      // el módem le dice al desconocido dónde está (escena 9)
+      const hk = easeOut(prog(t, T.desconocido - .3, T.desconocido + .3)) * (1 - prog(t, 56.0, 56.5)); haz.visible = aqui.visible = hk > .01 && t < 56.5;
+      if (haz.visible) { const a = M.clone(), b = extr.halo.position.clone(); setBeam(haz, a, a.clone().lerp(b, hk), .03); haz.material.opacity = .9;
+        const u = ((t - T.desconocido) / 1.5) % 1; aqui.position.lerpVectors(V3(7.0, 1.6, MZ + .2), b.clone().add(V3(0, .35, 0)), ease(u)); aqui.material.opacity = Math.min(1, (1 - u) * 4, u * 6) * hk; }
+      return st;
+    }
+
+    /* ---------- un cuadro ---------- */
+    const pill = document.getElementById('pill');
+    function renderAt(t) {
+      let [p, l] = poseCam(t); apunta(camera, p, l);
+      const st = mundo(t);
+      if (t < 5 && st) { [p, l] = poseCam(t, st); apunta(camera, p, l); }
+      const hy = Math.max(0, camera.position.y - 20); scene.fog.near = 70 + hy * 1.4; scene.fog.far = 320 + hy * 2.6;
+      const fade = t >= T.fundido && t < 12.5 ? 1 - ease(prog(t, T.fundido, 12.5)) : 0;
+      // pantalla del celular: render cenital de la ciudad
+      if (screen.material.opacity > 0) { const hv = holder.visible; holder.visible = false; renderer.setRenderTarget(rtMap); renderer.render(scene, mapCam); holder.visible = hv; }
+      if (fade > 0) { const [pa, la] = pose(K1, C1, t); apunta(camA, pa, la); renderer.setRenderTarget(rtA); renderer.render(scene, camA); holder.visible = false; }
+      renderer.setRenderTarget(rtS); renderer.render(scene, camera);
+      const [focus, ap] = dof(t); dofM.uniforms.focus.value = focus; dofM.uniforms.ap.value = ap; pass(dofM, rtD);
+      brightM.uniforms.tC.value = rtS.texture; pass(brightM, rtB1);
+      for (let i = 0; i < 3; i++) { blurM.uniforms.tC.value = rtB1.texture; blurM.uniforms.dir.value.set((1 + i) / 270, 0); pass(blurM, rtB2); blurM.uniforms.tC.value = rtB2.texture; blurM.uniforms.dir.value.set(0, (1 + i) / 480); pass(blurM, rtB1); }
+      // desenfoque de movimiento de la cámara
+      const mv = new THREE.Vector2();
+      if (t > 12.6 && t < 57.6) { const [pp, lp] = poseCam(t - 1 / 30); apunta(prev, pp, lp); const fwd = new THREE.Vector3(); camera.getWorldDirection(fwd); const q = camera.position.clone().addScaledVector(fwd, Math.min(Math.max(focus, 2.5), 30)); const v = q.project(prev);
+        mv.set(v.x * .5, v.y * .5).multiplyScalar(-.75); if (mv.length() < .004) mv.set(0, 0); const lim = t > 42.2 && t < 45.8 ? .05 : .2; if (mv.length() > lim) mv.setLength(lim); }
+      finM.uniforms.mv.value.copy(mv); finM.uniforms.fade.value = fade; pass(finM, null);
+      if (st && t < 5 && st.rk > .05) { const v = st.gw.clone().project(camera); pill.style.display = 'block'; pill.style.left = Math.min(820, (v.x + 1) / 2 * W + 40) + 'px'; pill.style.top = ((1 - v.y) / 2 * H - 90) + 'px'; pill.style.opacity = st.rk; pill.querySelector('i').style.transform = `rotate(-12deg) scaleX(${st.tach})`; }
+      else pill.style.display = 'none';
       drawHUD(t);
-      // transición de zoom en cada corte
-      let sc2 = 1, bl = 0, fl = 0; T.cuts.forEach(c => { const d = t - c; if (d > -.3 && d < 0) { const k = Math.pow(1 + d / .3, 2); sc2 = 1 + .35 * k; bl = 10 * k; fl = .3 * k; } else if (d >= 0 && d < .35) { const k = 1 - N.easeOut(d / .35); sc2 = 1 + .3 * k; bl = 8 * k; fl = .3 * k; } });
-      stage.style.transform = `scale(${sc2})`; stage.style.filter = bl > .05 ? `blur(${bl.toFixed(2)}px)` : 'none'; flash.style.opacity = fl; }
+    }
     window.addEventListener('hf-seek', e => renderAt(e.detail.time));
     renderAt(0);
     window.__timelines = window.__timelines || {};
