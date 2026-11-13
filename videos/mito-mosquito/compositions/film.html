@@ -1,0 +1,102 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; background: #14171D; overflow: hidden; font-family: Nunito, sans-serif; }
+    #cv { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 50% 50%; }
+    /* badge de dato: número/palabra gigante + texto + fuente en gris */
+    #badge { position: absolute; left: 70px; top: 420px; display: flex; align-items: center; gap: 22px; transform-origin: 0 50%; }
+    #badge .big { font-size: 150px; font-weight: 900; color: #fff; line-height: .9; text-shadow: 0 6px 30px rgba(0,0,0,.6); }
+    #badge .txt { font-size: 92px; font-weight: 900; color: #fff; line-height: 1.05; text-shadow: 0 4px 20px rgba(0,0,0,.6); }
+    #badge .src { display: block; font-size: 32px; font-weight: 700; color: rgba(210,215,225,.75); margin-top: 8px; }
+    #badge svg { width: 110px; height: 140px; }
+    #badge .tach { position: absolute; left: -20px; right: -30px; top: 50%; height: 12px; background: #FF2E63; border-radius: 6px; transform-origin: 0 50%; box-shadow: 0 0 20px rgba(255,46,99,.6); }
+    /* tarjeta comparativa */
+    #comp { position: absolute; left: 60px; width: 860px; top: 1130px; display: flex; border-radius: 30px; background: rgba(12,14,20,.72); backdrop-filter: blur(6px); border: 2px solid rgba(255,255,255,.12); overflow: hidden; }
+    #comp > div { flex: 1; padding: 30px 30px 34px; }
+    #comp .l { border-right: 2px solid rgba(255,255,255,.12); color: #FF4F7B; } #comp .r { color: #fff; }
+    #comp b { display: block; font-size: 52px; font-weight: 900; line-height: 1.05; } #comp span { display: block; font-size: 26px; font-weight: 800; letter-spacing: 2px; margin-top: 12px; opacity: .8; text-transform: uppercase; }
+    /* etiquetas de los anillos */
+    .ring-lbl { position: absolute; font-size: 36px; font-weight: 900; color: #fff; white-space: nowrap; text-shadow: 0 2px 12px rgba(0,0,0,.8); transform: translate(-50%, -50%); }
+    #lines { position: absolute; inset: 0; }
+    /* tarjeta crema (estilo boleto) */
+    #ticket { position: absolute; left: 90px; width: 820px; top: 640px; padding: 46px 50px 40px; background: #F3E9D2; color: #2A241C; border-radius: 10px; box-shadow: 0 20px 60px rgba(0,0,0,.55);
+      -webkit-mask: radial-gradient(circle 22px at 0 50%, transparent 98%, #000) left / 51% 100% no-repeat, radial-gradient(circle 22px at 100% 50%, transparent 98%, #000) right / 51% 100% no-repeat; transform-origin: 50% 50%; }
+    #ticket .k { font-size: 30px; font-weight: 900; letter-spacing: 4px; color: #A0453A; } #ticket .n { font-size: 150px; font-weight: 900; line-height: 1; margin: 8px 0; }
+    #ticket .d { font-size: 44px; font-weight: 800; line-height: 1.15; } #ticket .s { font-size: 26px; font-weight: 700; color: #7A6E5C; margin-top: 18px; border-top: 3px dashed rgba(0,0,0,.2); padding-top: 14px; }
+  </style>
+  <div id="root" data-composition-id="film" data-start="0" data-duration="12" data-width="1080" data-height="1920">
+    <canvas id="cv" width="1080" height="1920" data-layout-ignore></canvas>
+    <svg id="lines" viewBox="0 0 1080 1920" data-layout-ignore></svg>
+    <div id="rl" data-layout-ignore></div>
+    <div id="badge" data-layout-ignore></div>
+    <div id="comp" data-layout-ignore><div class="l"><b>sangre dulce</b><span>lo que dicen</span></div><div class="r"><b>aliento, calor y olor</b><span>dato real</span></div></div>
+    <div id="ticket" data-layout-ignore><div class="k">DATO</div><div class="n">100×</div><div class="d">La persona más "sabrosa" del estudio atraía 100 veces más mosquitos que la menos.</div><div class="s">Laboratorio de Leslie Vosshall · Universidad Rockefeller (revista Cell, 2022)</div></div>
+  </div>
+  <script>
+  (function () {
+    /* Mito: "te pican porque tienes la sangre dulce". Plantilla de mitos de animales (assets/lib/mitos.js). */
+    const MT = window.MT, { clamp, lerp, prog, ease, easeOut, backOut } = MT;
+    const W = 1080, H = 1920;
+    const cv = document.getElementById('cv'), c = cv.getContext('2d');
+    const $ = id => document.getElementById(id);
+    const badge = $('badge'), comp = $('comp'), ticket = $('ticket'), rl = $('rl'), lines = $('lines');
+    const gota = '<svg viewBox="0 0 100 130"><path d="M50 6 C50 6 12 58 12 84 a38 38 0 0 0 76 0 C88 58 50 6 50 6Z" fill="#D8344A"/><path d="M32 86 a18 18 0 0 0 18 18" stroke="rgba(255,255,255,.6)" stroke-width="7" fill="none" stroke-linecap="round"/></svg>';
+    // cámara del mundo: escala y centro
+    function camara(cx, cy, z) { c.setTransform(z, 0, 0, z, W / 2 - cx * z, H / 2 - cy * z); }
+
+    function escenaCama(t, lt, o = {}) {
+      camara(o.cx ?? 540, o.cy ?? 900, o.z ?? 1);
+      const P = MT.recamara(c, t);
+      if (o.mosq) MT.mosquito(c, 385, 1060, 1.7, -.4, t, { vuela: false });
+      if (o.vuelan) for (const [x0, y0, ph] of [[380, 560, 0], [700, 760, 1.7], [620, 470, 3.1]]) MT.mosquito(c, x0 + Math.sin(t * 1.3 + ph) * 60, y0 + Math.cos(t * 1.1 + ph) * 40, .9, Math.sin(t + ph) * .6, t, { vuela: true });
+      c.setTransform(1, 0, 0, 1, 0, 0); MT.vineta(c, W, H, .7);
+      return P;
+    }
+    function escenaMosquito(t, lt) {   // primer plano del mosquito con antenas que brillan y ondas cian
+      c.setTransform(1, 0, 0, 1, 0, 0);
+      const g = c.createRadialGradient(540, 900, 50, 540, 900, 1100); g.addColorStop(0, '#3A4250'); g.addColorStop(1, '#14171D'); c.fillStyle = g; c.fillRect(0, 0, W, H);
+      // piel desenfocada abajo
+      c.save(); c.filter = 'blur(18px)'; c.fillStyle = '#B98F79'; c.beginPath(); c.ellipse(540, 1750, 700, 380, 0, 0, 7); c.fill(); c.restore();
+      const z = 9 + lt * .25, glowK = ease(prog(lt, .6, 1.4));
+      MT.mosquito(c, 540, 1000, z, 0, t, { vuela: false, antenas: glowK, sombra: false });
+      for (const sd of [-1, 1]) MT.anillos(c, 540 + sd * 8 * z * .9, 1000 - 30 * z, glowK, t + sd, [90, 220, 255], 3, 260);
+      MT.vineta(c, W, H, .75);
+      return { label: glowK > .5 ? [['sensores de olor y CO2', 540, 520, 540 + 7 * z, 1000 - 31 * z]] : [] };
+    }
+    function escenaCelular(t, lt) {
+      c.setTransform(1, 0, 0, 1, 0, 0); c.fillStyle = '#1A1D24'; c.fillRect(0, 0, W, H);
+      const g = c.createRadialGradient(540, 900, 100, 540, 900, 1100); g.addColorStop(0, '#2A2F3A'); g.addColorStop(1, '#101216'); c.fillStyle = g; c.fillRect(0, 0, W, H);
+      const hoja = ease(prog(lt, .9, 1.3)), sel = lt > 2.0 ? 0 : -1, env = lt > 3.0 ? 1 : 0;
+      const st = { hoja, sel, enviado: env };
+      const r = MT.celular(c, W, H, t, (cc) => { const save = c; MT.recamara(cc, t); MT.mosquito(cc, 385, 1080, 1.25, -.4, t, {}); MT.vineta(cc, W, H, .7); }, st);
+      // el dedo: va a compartir, luego a un contacto, luego a "Enviar"
+      let fx = 820, fy = 1500, tap = 0;
+      const tgt = lt < 1.1 ? [r.share.x, r.share.y] : lt < 2.2 ? (st.avatar ? st.avatar(0) : [540, 1200]) : (st.botonEnviar || [540, 1400]);
+      const k = ease(prog(lt % 99, lt < 1.1 ? 0 : lt < 2.2 ? 1.2 : 2.3, lt < 1.1 ? .7 : lt < 2.2 ? 1.8 : 2.8));
+      fx = lerp(lt < 1.1 ? 820 : lt < 2.2 ? r.share.x : (st.avatar ? st.avatar(0)[0] : 540), tgt[0], k); fy = lerp(lt < 1.1 ? 1700 : lt < 2.2 ? r.share.y : (st.avatar ? st.avatar(0)[1] : 1200), tgt[1], k);
+      for (const tt of [.85, 1.95, 2.95]) if (lt > tt && lt < tt + .3) tap = 1 - (lt - tt) / .3;
+      MT.dedo(c, fx, fy + 40, 1, tap);
+      MT.vineta(c, W, H, .5);
+      return {};
+    }
+
+    // montaje provisional para los fotogramas fijos
+    const SC = [{ a: 0, b: 4, f: (t, lt) => escenaCama(t, lt, { mosq: true, z: 1.0 + lt * .02 }) }, { a: 4, b: 8, f: escenaMosquito }, { a: 8, b: 99, f: escenaCelular }];
+    function badgeSet(html, k, tach = 0) { badge.innerHTML = html + (tach > 0 ? `<div class="tach" style="transform: rotate(-8deg) scaleX(${tach})"></div>` : ''); badge.style.opacity = k > 0 ? 1 : 0; badge.style.transform = `scale(${.5 + .5 * backOut(k)})`; }
+    function renderAt(t) {
+      const sc = SC.find(x => t >= x.a && t < x.b) || SC[SC.length - 1], lt = t - sc.a;
+      c.setTransform(1, 0, 0, 1, 0, 0); c.filter = 'none';
+      const g = sc.f(t, lt) || {};
+      // transición: desenfoque fuerte que se aclara
+      const bl = Math.max(0, 1 - lt / .45); cv.style.filter = sc.a > 0 && bl > 0 ? `blur(${18 * bl}px)` : 'none'; cv.style.transform = `scale(${1 + .06 * bl})`;
+      // UI provisional
+      badge.style.opacity = 0; comp.style.opacity = 0; ticket.style.opacity = 0; rl.innerHTML = ''; lines.innerHTML = '';
+      if (sc === SC[0]) badgeSet(`${gota}<div class="txt">sangre dulce<span class="src">lo que dicen</span></div>`, prog(t, .4, .7));
+      (g.label || []).forEach(([txt, x, y, tx, ty]) => { rl.insertAdjacentHTML('beforeend', `<div class="ring-lbl" style="left:${x}px;top:${y}px">${txt}</div>`); lines.insertAdjacentHTML('beforeend', `<line x1="${x}" y1="${y + 26}" x2="${tx}" y2="${ty}" stroke="rgba(255,255,255,.8)" stroke-width="3"/>`); });
+    }
+    window.addEventListener('hf-seek', e => renderAt(e.detail.time));
+    renderAt(0);
+    window.__timelines = window.__timelines || {};
+    window.__timelines['film'] = gsap.timeline({ paused: true });
+  })();
+  </script>
+</template>
