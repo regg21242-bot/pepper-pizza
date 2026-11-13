@@ -1,0 +1,83 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; background: #120E2A; overflow: hidden; font-family: Nunito, sans-serif; }
+    #gl { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 50% 50%; }
+  </style>
+  <div id="root" data-composition-id="film" data-start="0" data-duration="12" data-width="1080" data-height="1920">
+    <canvas id="gl" width="1080" height="1920" data-layout-ignore></canvas>
+  </div>
+  <script>
+  (function () {
+    /* ¿Tu celular sabe dónde estás sin GPS? — serie "Nunca te lo explicaron" (assets/lib/nunca.js) */
+    const N = window.N, THREE = N.THREE, { clamp, lerp, prog, ease, easeOut } = N;
+    const W = 1080, H = 1920;
+    const renderer = N.crearRender(document.getElementById('gl'), W, H);
+    const cam = (fov = 40) => new THREE.PerspectiveCamera(fov, W / H, .05, 1200);
+    function camPath(c, t, keys) { let i = 0; while (i < keys.length - 2 && t > keys[i + 1][0]) i++; const [t0, p0, l0] = keys[i], [t1, p1, l1] = keys[Math.min(i + 1, keys.length - 1)]; const k = t1 > t0 ? ease(prog(t, t0, t1)) : 0; c.position.set(lerp(p0[0], p1[0], k), lerp(p0[1], p1[1], k), lerp(p0[2], p1[2], k)); c.lookAt(lerp(l0[0], l1[0], k), lerp(l0[1], l1[1], k), lerp(l0[2], l1[2], k)); }
+    const V3 = (x, y, z) => new THREE.Vector3(x, y, z);
+    const bokeh = (s, seed = 3) => { const g = new THREE.Group(); const r = N.rng(seed); for (let i = 0; i < 40; i++) { const sp = N.glow(['#6A4AFF', '#3AB8FF', '#FF8A3A'][i % 3], .5 + r() * 2.2, .25 + r() * .3); sp.position.set((r() - .5) * 14, (r() - .5) * 22, -6 - r() * 8); g.add(sp); } s.add(g); return g; };
+
+    /* ======== 1: celular girando y despiezado ======== */
+    const PHONE = (() => {
+      const s = new THREE.Scene(); s.background = new THREE.Color('#120E2A');
+      s.add(new THREE.HemisphereLight('#B8A8FF', '#1A1030', .7)); const k1 = new THREE.DirectionalLight('#FFFFFF', 1.6); k1.position.set(3, 4, 5); s.add(k1); const k2 = new THREE.DirectionalLight('#5CE8FF', 1.2); k2.position.set(-4, 1, -2); s.add(k2);
+      bokeh(s, 3);
+      const ph = N.celular(); s.add(ph); const P = ph.userData;
+      const camera = cam(32);
+      function update(t, lt) {
+        const kd = ease(prog(lt, .6, 1.8)); P.armar(kd);
+        ph.rotation.set(.18, -.75 - .25 * kd + Math.sin(lt * 1.2) * .12 + (1 - kd) * lt * 1.4, .06);
+        const off = lt > 3.2; const blink = !off && lt > 1.9 ? (Math.sin(lt * 18) > 0 ? 1 : .35) : off ? .15 : 0;
+        P.ring.material.opacity = lt > 1.8 ? (off ? Math.max(.12, 1 - (lt - 3.2) * 2) : blink) : 0; P.gpsGlow.material.opacity = off ? 0 : blink * .9;
+        P.ring.material.color.set(off ? '#6A6A72' : '#FFFFFF');
+        camPath(camera, lt, [[-.3, [0, .1, 9.5], [0, .1, 0]], [5, [.3, .4, 8.0], [0, .15, 0]]]);
+        return {};
+      }
+      return { scene: s, camera, update };
+    })();
+
+    /* ======== 4: la calle con ondas WiFi y etiquetas ======== */
+    const CALLE = (() => {
+      const s = new THREE.Scene(); N.atardecer(s, { near: 30, far: 140 });
+      const st = N.calle(); s.add(st); st.userData.casas.forEach(b => { if (b.position.z > 0) b.scale.y = .12; }); const modems = st.userData.modems.filter(m => m.parent.position.z < 0);   // la fila de enfrente queda bajita para que se vea la calle
+      const ond = modems.map((m, i) => { const o = N.ondas(3); s.add(o); const r = N.rng(30 + i); const hx = () => '0123456789ABCDEF'[Math.floor(r() * 16)]; const lbl = N.etiqueta(`${hx()}${hx()}:${hx()}${hx()}:${hx()}${hx()}…`, { s: 2.0 }); s.add(lbl); return { m, o, lbl, ph: r() }; });
+      const chica = N.persona('#7A4FC0', { capucha: true, coleta: true, pelo: '#2A1A14' }); s.add(chica); const CP = chica.userData;
+      const people = ['#E8B84A', '#3A9A6A', '#C8403A', '#3A7AE0', '#F2EEE6'].map((c, i) => { const p = N.persona(c, { piel: ['#C68D68', '#E0B090', '#A87050'][i % 3] }); s.add(p); return p; });
+      const lines = new THREE.Group(); s.add(lines); const lineM = new THREE.LineBasicMaterial({ color: '#7FF0FF', transparent: true, opacity: .55, toneMapped: false });
+      const camera = cam(46);
+      function update(t, lt) {
+        chica.position.set(-2 + lt * .9, .25, 4.2); chica.rotation.y = Math.PI / 2; CP.camina(t * 6);
+        people.forEach((p, i) => { const dir = i % 2 ? 1 : -1; p.position.set(((i * 13 + t * 1.2 * dir) % 60 + 60) % 60 - 30, .25, dir > 0 ? 5.6 : -5.2); p.rotation.y = dir * Math.PI / 2; p.userData.camina(t * 6 + i); });
+        chica.updateMatrixWorld(true); const ph = CP.phone.getWorldPosition(V3());
+        while (lines.children.length) lines.remove(lines.children[0]);
+        ond.forEach(({ m, o, lbl, ph: p0 }) => { m.updateMatrixWorld(true); const w = m.getWorldPosition(V3()); o.position.copy(w).add(V3(0, .6, 0)); o.userData.update(t + p0 * 2, 1, 9); lbl.position.copy(w).add(V3(0, 3.6, 0));
+          const d = w.distanceTo(ph); const vis = d < 40; o.visible = lbl.visible = vis; m.userData.leds.forEach((l, j) => l.visible = Math.sin(t * 8 + j * 1.7 + p0 * 9) > -.3);
+          if (vis && d < 24) { const g = new THREE.BufferGeometry().setFromPoints([w.clone().add(V3(0, .4, 0)), ph]); lines.add(new THREE.Line(g, lineM)); } });
+        camPath(camera, lt, [[-.3, [lt * .9 + 6, 11, 18], [lt * .9 - 1, 2, 0]], [5, [lt * .9 + 6, 11, 18], [lt * .9 - 1, 2, 0]]]);
+        camera.position.set(chica.position.x - 14, 48, 34); camera.lookAt(chica.position.x + 3, 0, -6);
+        return {};
+      }
+      return { scene: s, camera, update };
+    })();
+
+    /* ======== 8: zoom out hasta el planeta ======== */
+    const GLOBO = (() => {
+      const s = new THREE.Scene(); s.background = new THREE.Color('#070818');
+      s.add(new THREE.HemisphereLight('#9AB0FF', '#100818', .9)); const sun = new THREE.DirectionalLight('#FFC090', 2.2); sun.position.set(-4, 3, 8); s.add(sun);
+      const r = N.rng(2); const stars = new THREE.BufferGeometry(); const sp = new Float32Array(1500 * 3); for (let i = 0; i < 1500; i++) { const v = V3(r() - .5, r() - .5, r() - .5).normalize().multiplyScalar(300); sp.set([v.x, v.y, v.z], i * 3); } stars.setAttribute('position', new THREE.BufferAttribute(sp, 3)); s.add(new THREE.Points(stars, new THREE.PointsMaterial({ color: '#FFFFFF', size: 1.2, sizeAttenuation: false })));
+      const pl = N.planeta(7000); s.add(pl);
+      const camera = cam(38);
+      function update(t, lt) { pl.rotation.y = -1.9 + lt * .05; pl.rotation.x = .25;
+        const d = lerp(18, 38, ease(prog(lt, 0, 4))); camera.position.set(0, 0, d); camera.lookAt(0, 0, 0); return {}; }
+      return { scene: s, camera, update };
+    })();
+
+    const SC = [{ a: 0, b: 4, s: PHONE }, { a: 4, b: 8, s: CALLE }, { a: 8, b: 99, s: GLOBO }];
+    function renderAt(t) { const sc = SC.find(x => t >= x.a && t < x.b) || SC[SC.length - 1]; sc.s.update(t, t - sc.a); renderer.render(sc.s.scene, sc.s.camera); }
+    window.addEventListener('hf-seek', e => renderAt(e.detail.time));
+    renderAt(0);
+    window.__timelines = window.__timelines || {};
+    window.__timelines['film'] = gsap.timeline({ paused: true });
+  })();
+  </script>
+</template>
