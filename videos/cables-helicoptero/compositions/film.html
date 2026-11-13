@@ -60,17 +60,21 @@
       const ring = new THREE.Mesh(new THREE.RingGeometry(.3, .345, 72), ringM); s.add(ring);
       const ring2 = new THREE.Mesh(new THREE.RingGeometry(.3, .32, 72), ringM.clone()); s.add(ring2);
       const pulse = A.glow(.7, 'rgba(255,255,255,1)', 'rgba(120,200,255,.8)'); s.add(pulse);
+      const asa = A.cyl(.03, .03, 1, A.std('#F2C230', { roughness: .4 }), 10); s.add(asa);   // asa del helicóptero de la que se agarra
       const camera = cam(35);
       function heliOnLine(t, near = 1) {
         heli.visible = man.visible = true;
         heli.position.set(-.9, lerp(-3.4, -2.75, near), lerp(-3.6, -2.4, near)); heli.rotation.set(0, .25, Math.sin(t * 1.3) * .015);
         heli.updateMatrixWorld(true); man.position.copy(HL.plat.localToWorld(V3(0, .05, .3))); man.rotation.set(0, .3, 0); man.scale.setScalar(.9);
         P.legL.rotation.set(-1.4, 0, 0); P.legR.rotation.set(-1.4, 0, 0); P.kneeL.rotation.set(1.3, 0, 0); P.kneeR.rotation.set(1.3, 0, 0);
+        P.armL.rotation.set(-.25, 0, -1.25); P.elbowL.rotation.set(0, 0, -1.0);   // se agarra del asa del helicóptero
+        man.updateMatrixWorld(true); const hp = P.handL.localToWorld(V3(0, -.05, 0)), base = HL.plat.localToWorld(V3(0, 0, 0));
+        asa.visible = true; const top = hp.y + .35; asa.position.set(hp.x, (base.y + top) / 2, hp.z); asa.scale.set(1, top - base.y, 1);
       }
       function update(t, mode, lt) {
         sky.userData.update(t); HL.spin(t); HL.rotor.visible = true; camera.up.set(0, 1, 0); cb.visible = true;
         brk.forEach(b => { b.piv.visible = b.tip.visible = false; }); ring.visible = ring2.visible = pulse.visible = false;
-        heli.visible = man.visible = bird.visible = rod.visible = false; star.visible = false; arc.userData.set(V3(), V3(0, .1, 0), t, 0); sp.userData.update(-9, -9, V3()); spC.userData.update(-9, -9, V3()); ground.visible = tower.visible = false;
+        heli.visible = man.visible = bird.visible = rod.visible = asa.visible = false; star.visible = false; arc.userData.set(V3(), V3(0, .1, 0), t, 0); sp.userData.update(-9, -9, V3()); spC.userData.update(-9, -9, V3()); ground.visible = tower.visible = false;
         CB.broken.visible = false; CB.sleeve.visible = false; P.brilla(.08); P.torso.rotation.set(0, 0, 0);
         ['legL', 'legR', 'kneeL', 'kneeR', 'armL', 'armR', 'elbowL', 'elbowR', 'head'].forEach(n => P[n].rotation.set(0, 0, 0));
         let labels = [], path = null, flash = 0, cnt = null;
@@ -87,8 +91,8 @@
           const z = br ? Math.max(0, 1 - a / .6) : 0; star.visible = z > 0; star.position.set(.3, 0, .1); star.scale.setScalar(.3 + 1.6 * z); star.material.opacity = z; star.material.rotation = t;
           [ring, ring2].forEach((r, j) => { const aa = a - j * .12; r.visible = br && aa > 0 && aa < .7; if (!r.visible) return; r.position.set(.3, 0, .05); r.lookAt(camera.position); r.scale.setScalar(1 + aa * 9); r.material.opacity = (1 - aa / .7) * (j ? .6 : 1); });
           spC.userData.update(T.rompe, t, V3(.3, 0, .05)); flash = z * .6;
-          const near = ease(prog(t, 1.9, 4.0)); heliOnLine(t, near); heli.position.x = lerp(7, -.9, near);
-          P.armR.rotation.set(-.6, 0, -.1); P.armL.rotation.set(-.6, 0, .1); P.head.rotation.set(-.2, 0, 0);
+          const near = ease(prog(t, 1.9, 4.0)); heliOnLine(t, near); heli.position.y = lerp(-10, -2.75, near);   // sube desde abajo
+          P.armR.rotation.set(-.6, 0, -.1); P.head.rotation.set(-.2, 0, 0);
           // cámara inclinada (cable en diagonal) que se endereza al alejarse
           const roll = .55 * (1 - ease(prog(t, 1.8, 3.6))); camera.up.set(Math.sin(roll), Math.cos(roll), 0);
           camPath(camera, t, [[0, [.7, .1, 4.6], [.3, 0, 0]], [1.7, [.75, .15, 3.8], [.3, 0, 0]], [4.0, [2.4, .2, 9.5], [-.7, -1.3, -1.6]]]);
@@ -116,7 +120,7 @@
           camPath(camera, lt, [[-.3, [.85, .55, 3.0], [.08, .42, .4]], [6.2, [.7, .62, 2.5], [.08, .47, .4]]]);
         } else if (mode === 'contacto') {
           CB.flow(t, 1); const near = ease(prog(lt, 0, 2.0)); heliOnLine(t, near);
-          const reach = ease(prog(t, T.varilla - .9, T.varilla)); P.armR.rotation.set(-1.2 - 1.0 * reach, 0, -.15); P.elbowR.rotation.set(-.2, 0, 0); P.armL.rotation.set(-.8, 0, .2); P.head.rotation.set(-.35 * reach, 0, 0);
+          const reach = ease(prog(t, T.varilla - .9, T.varilla)); P.armR.rotation.set(-1.2 - 1.0 * reach, 0, -.15); P.elbowR.rotation.set(-.2, 0, 0); P.head.rotation.set(-.35 * reach, 0, 0);
           man.updateMatrixWorld(true); const hand = P.elbowR.localToWorld(V3(0, -.32, 0)); rod.position.copy(hand);
           rod.lookAt(V3(lerp(hand.x, -.1, .9), 0, -.05)); rod.rotateX(Math.PI / 2); rod.visible = true;
           const tipW = rod.localToWorld(V3(0, 1.4, 0));
@@ -130,7 +134,7 @@
           if (t > T.cuenta2[0]) labels = [['400,000 V', man.localToWorld(V3(0, 2.1, 0)), T.cuenta2[0]]];
           if (t > T.cuenta2[0] - .1) cnt = { k: prog(t, T.cuenta2[0], T.cuenta2[1]), t0: T.cuenta2[0] };
         } else if (mode === 'repara') {
-          heliOnLine(t, 1); tower.visible = true; HL.rotor.visible = false; heli.position.set(-.1, -1.3, -1.55); heli.updateMatrixWorld(true); man.position.copy(HL.plat.localToWorld(V3(0, .05, .3)));
+          heliOnLine(t, 1); tower.visible = true; HL.rotor.visible = false; heli.position.set(-.1, -1.15, -1.55); heli.updateMatrixWorld(true); man.position.copy(HL.plat.localToWorld(V3(0, .05, .3)));
           P.legL.rotation.set(-1.4, 0, 0); P.legR.rotation.set(-1.4, 0, 0); P.kneeL.rotation.set(1.3, 0, 0); P.kneeR.rotation.set(1.3, 0, 0);
           const kS = ease(prog(t, T.manguito[0], T.manguito[1])), fixed = t > T.manguito[1];
           CB.broken.visible = !fixed && kS < .6; CB.sleeve.visible = t > T.manguito[0] - .2; CB.sleeve.position.x = lerp(-1.4, .3, kS);

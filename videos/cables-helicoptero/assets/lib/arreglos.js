@@ -218,7 +218,7 @@
     // estrellitas arriba
     ctx.fillStyle = 'rgba(255,255,255,.7)'; for (let i = 0; i < 40; i++) { const x = r() * W, y = r() * hz * .35, s = r() * 2 + .5; ctx.globalAlpha = .4 + .6 * Math.abs(Math.sin(t * 1.3 + i)); ctx.fillRect(x, y, s, s); } ctx.globalAlpha = 1;
     // ciudad pequeña a lo lejos
-    const cx0 = W * (o.cityX ?? .62); for (let i = 0; i < 26; i++) { const bw = 18 + r() * 26, bh = 20 + r() * 70, x = cx0 + i * 15 - 60 + r() * 8; ctx.fillStyle = '#3A2238'; ctx.fillRect(x, hz - bh, bw, bh + 6);
+    const cx0 = W * (o.cityX ?? .37); for (let i = 0; i < 26; i++) { const bw = 18 + r() * 26, bh = 20 + r() * 70, x = cx0 + i * 15 - 60 + r() * 8; ctx.fillStyle = '#3A2238'; ctx.fillRect(x, hz - bh, bw, bh + 6);
       for (let wy = hz - bh + 6; wy < hz - 4; wy += 9) for (let wx = x + 3; wx < x + bw - 4; wx += 7) if (r() < .55) { ctx.fillStyle = r() < .8 ? '#FFD27A' : '#FFF4D0'; ctx.fillRect(wx, wy, 3, 4); } }
     const city = ctx.createRadialGradient(cx0 + 120, hz, 0, cx0 + 120, hz, 260); city.addColorStop(0, 'rgba(255,200,120,.35)'); city.addColorStop(1, 'rgba(255,200,120,0)'); ctx.fillStyle = city; ctx.fillRect(0, hz - 260, W, 280);
     // cerros en capas cafés
@@ -227,7 +227,7 @@
     layers.forEach(l => hill(...l));
     const hy = (li, x) => { const [y0, amp, f, ph] = layers[li]; return y0 + Math.sin(x * f + ph) * amp + Math.sin(x * f * 2.3 + ph * 1.7) * amp * .4; };
     // torres en silueta sobre los cerros y cables con puntos de luz
-    const towers = (o.towers || [[.2, 3, 2.1], [.95, 3, 2.0], [.06, 2, 1.0], [.58, 2, .95], [.3, 1, .45], [.78, 1, .42]]).map(([fx, li, s]) => { const x = W * fx, base = hy(li, x) + 6, h = 420 * s; return { x, base, h, s, li }; });
+    const towers = (o.towers || [[.1, 3, 2.3], [.9, 3, 2.3]]).map(([fx, li, s]) => { const x = W * fx, base = hy(li, x) + 6, h = 420 * s; return { x, base, h, s, li }; });
     const drawTower = (T) => { const { x, base, h, s } = T; ctx.strokeStyle = '#140A10'; ctx.fillStyle = '#140A10'; ctx.lineWidth = Math.max(1.2, 3 * s);
       const w0 = 70 * s, w1 = 16 * s, top = base - h; ctx.beginPath(); ctx.moveTo(x - w0, base); ctx.lineTo(x - w1, top); ctx.lineTo(x + w1, top); ctx.lineTo(x + w0, base); ctx.stroke();
       for (let k = 0; k < 9; k++) { const y0 = base - h * k / 9, y1 = base - h * (k + 1) / 9, a0 = lerp(w0, w1, k / 9), a1 = lerp(w0, w1, (k + 1) / 9); ctx.beginPath(); ctx.moveTo(x - a0, y0); ctx.lineTo(x + a1, y1); ctx.moveTo(x + a0, y0); ctx.lineTo(x - a1, y1); ctx.moveTo(x - a1, y1); ctx.lineTo(x + a1, y1); ctx.stroke(); }
