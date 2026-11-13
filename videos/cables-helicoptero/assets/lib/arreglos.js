@@ -106,37 +106,62 @@
     return g;
   }
 
-  // ---------- liniero con traje conductor (tejido con hilos de metal) ----------
+  // ---------- liniero: persona con overol conductor (tela azul grisácea tejida con hilos de metal) ----------
   function liniero() {
     const g = new THREE.Group(), P = {};
-    const grid = canvasTex(256, 256, (x, w, h) => { x.fillStyle = '#B9BEC6'; x.fillRect(0, 0, w, h); x.strokeStyle = '#8A9098'; x.lineWidth = 3; for (let i = 0; i <= 256; i += 16) { x.beginPath(); x.moveTo(i, 0); x.lineTo(i, h); x.stroke(); x.beginPath(); x.moveTo(0, i); x.lineTo(w, i); x.stroke(); } });
-    grid.wrapS = grid.wrapT = THREE.RepeatWrapping; grid.repeat.set(6, 6);
-    const emi = canvasTex(256, 256, (x, w, h) => { x.fillStyle = '#000'; x.fillRect(0, 0, w, h); x.strokeStyle = '#9CD8FF'; x.lineWidth = 3; for (let i = 0; i <= 256; i += 16) { x.beginPath(); x.moveTo(i, 0); x.lineTo(i, h); x.stroke(); x.beginPath(); x.moveTo(0, i); x.lineTo(w, i); x.stroke(); } }, false);
-    emi.wrapS = emi.wrapT = THREE.RepeatWrapping; emi.repeat.set(6, 6);
-    const suit = new THREE.MeshStandardMaterial({ color: '#D6DAE0', map: grid, metalness: .85, roughness: .32, emissive: '#7CC8FF', emissiveMap: emi, emissiveIntensity: 0, envMapIntensity: 1.3 });
-    const visor = std('#141A24', { metalness: .6, roughness: .1 }), face = std('#C98E68', { roughness: .6 });
-    const cap = (r, h) => new THREE.CapsuleGeometry(r, h, 6, 14);
+    // tela: azul grisáceo con hilos plateados finos (diagonal), los hilos se encienden con brilla(k)
+    const fab = canvasTex(256, 256, (x, w, h) => { x.fillStyle = '#2E3A52'; x.fillRect(0, 0, w, h); const q = rng(4); for (let i = 0; i < 1800; i++) { x.fillStyle = q() < .5 ? 'rgba(30,38,52,.25)' : 'rgba(120,135,160,.2)'; x.fillRect(q() * w, q() * h, 2, 1); }
+      x.strokeStyle = 'rgba(190,200,215,.28)'; x.lineWidth = 1; for (let i = -256; i < 512; i += 10) { x.beginPath(); x.moveTo(i, 0); x.lineTo(i + 256, h); x.stroke(); x.beginPath(); x.moveTo(i + 256, 0); x.lineTo(i, h); x.stroke(); } });
+    fab.wrapS = fab.wrapT = THREE.RepeatWrapping; fab.repeat.set(2, 2);
+    const emi = canvasTex(256, 256, (x, w, h) => { x.fillStyle = '#000'; x.fillRect(0, 0, w, h); x.strokeStyle = '#8CD2FF'; x.lineWidth = 1.6; for (let i = -256; i < 512; i += 10) { x.beginPath(); x.moveTo(i, 0); x.lineTo(i + 256, h); x.stroke(); x.beginPath(); x.moveTo(i + 256, 0); x.lineTo(i, h); x.stroke(); } }, false);
+    emi.wrapS = emi.wrapT = THREE.RepeatWrapping; emi.repeat.set(2, 2);
+    const suit = new THREE.MeshStandardMaterial({ map: fab, roughness: .78, metalness: .25, emissive: '#7CC8FF', emissiveMap: emi, emissiveIntensity: 0 });
+    const skin = std('#C68D68', { roughness: .55 }), glove = std('#2E333C', { roughness: .7 }), boot = std('#2A2420', { roughness: .6 }), belt = std('#1E2128', { roughness: .5, metalness: .3 });
+    const cap = (r, h) => new THREE.CapsuleGeometry(r, h, 6, 16);
+    // piernas
     for (const s of [-1, 1]) {
-      const hip = new THREE.Group(); hip.position.set(s * .13, .95, 0); g.add(hip); hip.add(M(cap(.1, .32), suit, 0, -.22, 0));
-      const knee = new THREE.Group(); knee.position.y = -.46; hip.add(knee); knee.add(M(cap(.09, .3), suit, 0, -.2, 0)); knee.add(box(.17, .1, .3, suit, 0, -.42, .05));
+      const hip = new THREE.Group(); hip.position.set(s * .1, .92, 0); g.add(hip); hip.add(M(cap(.085, .32), suit, 0, -.21, 0));
+      const knee = new THREE.Group(); knee.position.y = -.44; hip.add(knee); knee.add(M(cap(.072, .3), suit, 0, -.2, 0));
+      const b = box(.13, .11, .26, boot, 0, -.42, .04); knee.add(b);
       P[s < 0 ? 'legL' : 'legR'] = hip; P[s < 0 ? 'kneeL' : 'kneeR'] = knee;
     }
-    const torso = new THREE.Group(); torso.position.y = .95; g.add(torso); P.torso = torso;
-    torso.add(M(cap(.2, .36), suit, 0, .32, 0)); torso.add(box(.36, .1, .18, std('#3A3F48', { metalness: .5 }), 0, .02, .12));   // cinturón
+    // torso con forma (más ancho en el pecho)
+    const torso = new THREE.Group(); torso.position.y = .92; g.add(torso); P.torso = torso;
+    const prof = [[0, 0], [.17, .02], [.18, .12], [.17, .28], [.2, .42], [.22, .52], [.2, .58], [.1, .64], [0, .65]].map(([r, y]) => new THREE.Vector2(r, y));
+    const chest = M(new THREE.LatheGeometry(prof, 24), suit); chest.scale.set(1, 1, .68); torso.add(chest);
+    torso.add(box(.36, .06, .25, belt, 0, .06, 0)); torso.add(box(.06, .05, .03, std('#C8CDD4', { metalness: .9, roughness: .2 }), 0, .06, .125));
+    torso.add(box(.012, .4, .012, std('#C8CDD4', { metalness: .9 }), 0, .32, .145));   // cierre
+    for (const s of [-1, 1]) torso.add(box(.1, .08, .02, std('#26304A'), s * .09, .44, .14));   // bolsas del pecho
+    const neck = cyl(.05, .055, .06, skin, 12, 0, .66, 0); torso.add(neck);
+    // brazos
     for (const s of [-1, 1]) {
-      const sh = new THREE.Group(); sh.position.set(s * .27, .6, 0); torso.add(sh); sh.add(M(cap(.075, .24), suit, 0, -.17, 0));
-      const el = new THREE.Group(); el.position.y = -.34; sh.add(el); el.add(M(cap(.065, .22), suit, 0, -.15, 0)); el.add(ball(.075, suit, 0, -.32, 0, 12));
-      P[s < 0 ? 'armL' : 'armR'] = sh; P[s < 0 ? 'elbowL' : 'elbowR'] = el;
+      const sh = new THREE.Group(); sh.position.set(s * .23, .56, 0); torso.add(sh); sh.add(ball(.07, suit, 0, 0, 0, 14)); sh.add(M(cap(.06, .24), suit, 0, -.16, 0));
+      const el = new THREE.Group(); el.position.y = -.31; sh.add(el); el.add(M(cap(.052, .22), suit, 0, -.14, 0));
+      const hand = new THREE.Group(); hand.position.y = -.3; el.add(hand); const palm = box(.07, .09, .04, glove, 0, -.03, 0); hand.add(palm);
+      for (let f = 0; f < 4; f++) hand.add(M(cap(.011, .04), glove, -.025 + f * .017, -.1, 0)); const th = M(cap(.012, .035), glove, s * -.045, -.05, .015); th.rotation.z = s * .6; hand.add(th);
+      P[s < 0 ? 'armL' : 'armR'] = sh; P[s < 0 ? 'elbowL' : 'elbowR'] = el; P[s < 0 ? 'handL' : 'handR'] = hand;
     }
-    const head = new THREE.Group(); head.position.y = .88; torso.add(head); P.head = head;
-    const hood = ball(.17, suit, 0, 0, 0, 22); hood.scale.set(1, 1.15, 1.05); head.add(hood);
-    const fc = ball(.11, face, 0, -.02, .1, 18); fc.scale.set(1, 1.1, .75); head.add(fc);
-    const gl = box(.17, .045, .03, visor, 0, .02, .185); head.add(gl);   // lentes de seguridad
-    const helmet = ball(.18, std('#F2C230', { roughness: .35 }), 0, .07, 0, 22); helmet.scale.set(1.05, .75, 1.1); head.add(helmet);
-    g.userData = Object.assign(P, { suit, brilla(k) { suit.emissiveIntensity = k; emi.offset.set(0, 0); } });
+    // cabeza con rasgos
+    const head = new THREE.Group(); head.position.y = .77; torso.add(head); P.head = head;
+    const skull = ball(.105, skin, 0, 0, 0, 28); skull.scale.set(.9, 1.12, 1); head.add(skull);
+    const jaw = ball(.085, skin, 0, -.05, .015, 22); jaw.scale.set(.95, .9, 1); head.add(jaw);
+    for (const s of [-1, 1]) { const ear = ball(.024, skin, s * .095, 0, -.005, 10); ear.scale.set(.5, 1, .8); head.add(ear); }
+    const nose = M(new THREE.ConeGeometry(.018, .05, 10), skin); nose.position.set(0, -.005, .1); nose.rotation.x = Math.PI / 2 - .25; head.add(nose);
+    for (const s of [-1, 1]) {
+      const w = ball(.016, std('#F4F0EA', { roughness: .3 }), s * .036, .028, .085, 12); w.scale.set(1.2, .8, .6); head.add(w);
+      head.add(ball(.008, std('#2A1C14', { roughness: .2 }), s * .036, .027, .095, 8));
+      const br = box(.038, .008, .01, std('#2A1C14'), s * .037, .055, .093); br.rotation.z = -s * .08; head.add(br);
+    }
+    head.add(box(.06, .012, .015, std('#2A1C14'), 0, -.042, .095));   // bigote
+    head.add(box(.035, .007, .01, std('#8A4A3A'), 0, -.062, .092));   // boca
+    // gafas de seguridad y casco
+    const lens = new THREE.MeshStandardMaterial({ color: '#BFD8F0', metalness: .2, roughness: .05, transparent: true, opacity: .22, depthWrite: false });
+    head.add(box(.15, .034, .01, lens, 0, .028, .112)); head.add(box(.16, .005, .005, belt, 0, .046, .112));
+    const helmet = ball(.125, std('#F2C230', { roughness: .35 }), 0, .085, -.01, 26); helmet.scale.set(1.0, .72, 1.08); head.add(helmet);
+    const brim = cyl(.14, .14, .012, std('#E8B828', { roughness: .4 }), 26, 0, .07, .005); brim.scale.set(.95, 1, 1.1); head.add(brim);
+    g.userData = Object.assign(P, { suit, brilla(k) { suit.emissiveIntensity = k; } });
     return g;
   }
-
   // ---------- pajarito ----------
   function pajaro() {
     const g = new THREE.Group(), P = {}, plum = std('#6A4A36', { roughness: .8 }), belly = std('#E8C9A0', { roughness: .8 }), dark = std('#1E1A18');
