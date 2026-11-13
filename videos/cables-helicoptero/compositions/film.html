@@ -162,7 +162,7 @@
       if (mode === 'vista') {
         const r = A.vista(ctxA, W, H, t, { horizon: .46 });
         const cb = r.cables[2], x = lerp(cb.a[0], cb.b[0], .5), y = lerp(cb.a[1], cb.b[1], .5) + cb.sag;
-        return { labels: t > 6.8 ? [['400,000 V', [x, y - 10], 6.8]] : [], cnt: t > T.cuenta1[0] - .1 ? { k: prog(t, T.cuenta1[0], T.cuenta1[1]), t0: T.cuenta1[0] } : null, zoom: lerp(2.6, 1, ease(prog(lt, 0, 2.6))) * (1 + Math.max(0, lt - 2.6) * .012), origin: '50% 27%' };
+        return { labels: t > 6.8 ? [['400,000 V', [x, y - 10], 6.8]] : [], cnt: t > T.cuenta1[0] - .1 ? { k: prog(t, T.cuenta1[0], T.cuenta1[1]), t0: T.cuenta1[0], top: 1380 } : null, zoom: lerp(2.6, 1, ease(prog(lt, 0, 2.6))) * (1 + Math.max(0, lt - 2.6) * .012), origin: '50% 40%' };
       }
       const k = prog(lt, 0, 5.8);
       A.vista(ctxA, W, H, t, { horizon: .46, heli: { x: lerp(560, 980, k), y: lerp(560, 430, k), s: lerp(1.1, .45, k), tt: t } });
@@ -198,7 +198,7 @@
       const g = inn.g;
       setLabels(k > .5 ? g.labels || [] : [], inn.cam, t);
       fl.style.opacity = g.flash || 0;
-      if (g.cnt) { const v = Math.round(400000 * ease(g.cnt.k) / 1000) * 1000; cnt.style.display = 'block'; cnt.innerHTML = v.toLocaleString('en-US') + '<small>V</small>'; const kk = clamp((t - g.cnt.t0 + .1) / .25); cnt.style.opacity = kk; cnt.style.transform = `scale(${.6 + .4 * kk + (g.cnt.k >= 1 ? .04 * Math.max(0, Math.sin((t - g.cnt.t0) * 10)) : 0)})`; } else cnt.style.display = 'none';
+      if (g.cnt) { const v = Math.round(400000 * ease(g.cnt.k) / 1000) * 1000; cnt.style.display = 'block'; cnt.style.top = (g.cnt.top || 880) + 'px'; cnt.innerHTML = v.toLocaleString('en-US') + '<small>V</small>'; const kk = clamp((t - g.cnt.t0 + .1) / .25); cnt.style.opacity = kk; cnt.style.transform = `scale(${.6 + .4 * kk + (g.cnt.k >= 1 ? .04 * Math.max(0, Math.sin((t - g.cnt.t0) * 10)) : 0)})`; } else cnt.style.display = 'none';
       if (g.path && inn.cam) { const pts = g.path.pts.map(p => project(p, inn.cam)); const segs = []; let L = 0; for (let j = 1; j < pts.length; j++) { const l = Math.hypot(pts[j][0] - pts[j - 1][0], pts[j][1] - pts[j - 1][1]); segs.push(l); L += l; }
         const shown = L * g.path.k; let d = `M${pts[0][0]},${pts[0][1]}`, acc = 0; for (let j = 1; j < pts.length; j++) { const l = segs[j - 1]; if (acc + l <= shown) { d += ` L${pts[j][0]},${pts[j][1]}`; acc += l; } else { const u = (shown - acc) / l; d += ` L${lerp(pts[j - 1][0], pts[j][0], u)},${lerp(pts[j - 1][1], pts[j][1], u)}`; break; } }
         const mid = pts[1], xs = 60 * g.path.x;
