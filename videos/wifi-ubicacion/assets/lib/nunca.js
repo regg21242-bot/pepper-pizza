@@ -157,7 +157,7 @@
   // ---------- render ----------
   function crearRender(canvas, W, H) {
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
-    renderer.setPixelRatio(1); renderer.setSize(W, H, false); renderer.outputEncoding = THREE.sRGBEncoding; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
+    renderer.setPixelRatio(1); renderer.setSize(W, H, false); renderer.outputEncoding = THREE.sRGBEncoding; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.25;
     renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; return renderer;
   }
   window.N = { THREE, rng, clamp, lerp, prog, ease, easeOut, std, glowM, M, box, cyl, canvasTex, glow, atardecer, celular, persona, modem, ondas, etiqueta, calle, centroComercial, planeta, crearRender };
