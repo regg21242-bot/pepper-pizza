@@ -1,0 +1,35 @@
+<template>
+  <style> #root { position: absolute; inset: 0; background: #05050C; overflow: hidden; } #gl { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; } </style>
+  <div id="root" data-composition-id="fijos" data-start="0" data-duration="3" data-width="1080" data-height="1920">
+    <canvas id="gl" width="1080" height="1920" data-layout-ignore></canvas>
+  </div>
+  <script>
+  (function () {
+    const N = window.N, THREE = N.THREE, V3 = (x, y, z) => new THREE.Vector3(x, y, z), W = 1080, H = 1920;
+    const renderer = N.crearRender(document.getElementById('gl'), W, H); renderer.toneMappingExposure = 1.15;
+    const scene = new THREE.Scene(); const C = window.COLONIA(renderer, scene); const PP = window.POST(renderer, W, H);
+    const cam = new THREE.PerspectiveCamera(40, W / H, .01, 1500);
+    function renderAt(t) {
+      const k = Math.floor(t);
+      C.farolas.forEach((f, i) => C.farola(i, 1)); C.luzVec.material.opacity = 0; C.luzVecL.intensity = 0; C.alarma(t, 0); C.cel.pantalla('negro', { brillo: 0 });
+      C.brillos.forEach(b => { b.pant.visible = b.halo.visible = k === 1; b.halo.material.opacity = .35; });
+      let o = {};
+      if (k === 0) {   // escena 2: la alerta en el buró
+        C.cel.pantalla('alerta', { brillo: 1 }); C.alarma(t, 1);
+        const p = C.cel.grp.getWorldPosition(V3()), q = C.cel.grp.getWorldQuaternion(new THREE.Quaternion()), top = V3(0, 1, 0).applyQuaternion(q), nrm = V3(0, 0, 1).applyQuaternion(q);
+        cam.position.copy(p).addScaledVector(nrm, .34).addScaledVector(top, -.2); cam.up.copy(top); cam.lookAt(p.clone().addScaledVector(top, .012)); cam.fov = 40; cam.updateProjectionMatrix();
+        o = { focus: cam.position.distanceTo(p), ap: .55, rojo: .4, oscuro: .3 };
+      } else if (k === 1) {   // escena 5: el edificio de enfrente
+        cam.position.set(6.6, 6.2, 1.2); cam.up.set(0, 1, 0); cam.lookAt(-7.2, 6.6, -.3); cam.fov = 52; cam.updateProjectionMatrix(); o = { focus: 14, ap: .08, oscuro: .1 };
+      } else {   // escena 7: las farolas se apagan hacia el vecino
+        C.luzVec.material.opacity = 1; C.luzVecL.intensity = 6;
+        C.farolas.forEach((f, i) => { if (f.z < -8) C.farola(i, 0); else if (f.z < 2) C.farola(i, 0, .3); });
+        cam.position.set(3, 27, 36); cam.up.set(0, 1, 0); cam.lookAt(-2.5, 0, -18); cam.fov = 46; cam.updateProjectionMatrix(); o = { focus: 30, ap: .05, oscuro: .05 };
+      }
+      PP.render(scene, cam, o);
+    }
+    window.addEventListener('hf-seek', e => renderAt(e.detail.time)); renderAt(0);
+    window.__timelines = window.__timelines || {}; window.__timelines['fijos'] = gsap.timeline({ paused: true });
+  })();
+  </script>
+</template>
