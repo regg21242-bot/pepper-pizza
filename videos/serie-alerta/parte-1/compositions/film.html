@@ -1,0 +1,173 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; background: #05050C; overflow: hidden; font-family: Nunito, sans-serif; }
+    #gl, #hud { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+  </style>
+  <div id="root" data-composition-id="film" data-start="0" data-duration="87.6" data-width="1080" data-height="1920">
+    <canvas id="gl" width="1080" height="1920" data-layout-ignore></canvas>
+    <canvas id="hud" width="1080" height="1920" data-layout-ignore></canvas>
+  </div>
+  <script>
+  (function () {
+    /* "A las 3 de la mañana te llega una alerta: NO ENCIENDAS NINGUNA LUZ" — serie Alerta, parte 1.
+       Escenario en assets/lib/colonia.js (reutilizable en la parte 2). La amenaza nunca se ve: solo luces que se apagan. */
+    const N = window.N, THREE = N.THREE, { clamp, lerp, prog, ease, easeOut } = N;
+    const W = 1080, H = 1920, V3 = (x, y, z) => new THREE.Vector3(x, y, z), HDR = (r, g, b) => new THREE.Color(r, g, b);
+    const backOut = (k, c = 1.6) => { k = clamp(k); return 1 + (c + 1) * Math.pow(k - 1, 3) + c * Math.pow(k - 1, 2); };
+
+    /* ---------- tiempos (s) — tools/mezcla.py los lee ---------- */
+    const T = { end: 87.6, bateria: 11.3, manotazo: 13.1, cortina: 15.2, sale: 16.2, luzVecino: 31.3, balcon: 32.4,
+      apagones: [35.6, 36.9, 38.15, 39.5], parpadeo: 40.25, apagaVecino: 40.85, silencio0: 40.9, silencio1: 41.9, vibra: 48.7, refri: 61.2,
+      farolaCuadra: 66.4, farolaPuerta: 69.1, cruje: 74.4, cartaA: 76.7, cartaB: 80.0, sigueme: 84.9, loop: 86.5,
+      cortes: [6.0, 11.3, 14.6, 21.4, 28.6, 34.0, 40.6, 48.4, 57.2, 65.2, 69.8, 75.0, 86.5] };
+
+    const renderer = N.crearRender(document.getElementById('gl'), W, H); renderer.toneMappingExposure = 1.15;
+    const scene = new THREE.Scene(); const C = window.COLONIA(renderer, scene); const PP = window.POST(renderer, W, H); const R = C.R;
+    const cam = new THREE.PerspectiveCamera(40, W / H, .01, 1500);
+
+    /* ---------- el vecino del tercero: puerta de balcón, él, su lámpara ---------- */
+    const bV = C.brillos.find(b => b.v === C.vVec), vW = V3(C.vVec.fx, C.vVec.y, C.vVec.z);
+    const ww = 1.05, hh = 2.1;
+    const bisagra = new THREE.Group(); bisagra.position.set(-ww / 2, 0, .3); bV.grp.add(bisagra);
+    const hoja = new THREE.Group(); hoja.position.x = ww / 2; bisagra.add(hoja);
+    hoja.add(N.M(new THREE.BoxGeometry(ww, hh, .04), N.std('#1A1C24', { flatShading: false })));
+    const hojaV = new THREE.Mesh(new THREE.PlaneGeometry(ww - .2, hh - .3), new THREE.MeshBasicMaterial({ color: '#2A3A60', transparent: true, opacity: .5 })); hojaV.position.z = .025; hoja.add(hojaV);
+    const vecino = N.persona('#5A6A8A', { piel: '#B88A6A', pelo: '#1E1A18', pantalon: '#2A2E3A' }); vecino.position.set(0, -1.06, .2); bV.grp.add(vecino); const VP = vecino.userData; VP.phone.visible = false;
+    const linterna = new THREE.Group(); VP.armR.add(linterna); linterna.position.set(0, -.62, .1);
+    linterna.add(N.cyl(.035, .03, .2, N.std('#2A2A30'), 10, 0, 0, 0)); linterna.children[0].rotation.x = Math.PI / 2;
+    const foco = new THREE.Mesh(new THREE.CircleGeometry(.032, 14), new THREE.MeshBasicMaterial({ color: HDR(6, 5.4, 4) })); foco.position.z = .101; linterna.add(foco);
+    const haz = new THREE.Mesh(new THREE.CylinderGeometry(.03, 1.2, 7, 18, 1, true), new THREE.MeshBasicMaterial({ color: HDR(.5, .45, .35), transparent: true, opacity: .0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false }));
+    haz.rotation.x = Math.PI / 2; haz.position.z = 3.6; linterna.add(haz);
+    const spot = new THREE.SpotLight('#FFF0D8', 0, 22, .35, .5, 1.2); linterna.add(spot); spot.target.position.set(0, 0, 4); linterna.add(spot.target);
+    // la lámpara tirada en el piso del balcón, todavía encendida
+    const tirada = new THREE.Group(); tirada.position.set(.25, -1.0, .62); tirada.rotation.set(0, 1.2, Math.PI / 2); bV.grp.add(tirada);
+    tirada.add(N.cyl(.035, .03, .2, N.std('#2A2A30'), 10, 0, 0, 0)); tirada.children[0].rotation.x = Math.PI / 2;
+    const foco2 = foco.clone(); tirada.add(foco2); const haz2 = new THREE.Mesh(new THREE.CylinderGeometry(.03, .7, 3, 16, 1, true), haz.material.clone()); haz2.rotation.x = Math.PI / 2; haz2.position.z = 1.6; tirada.add(haz2);
+    const spot2 = new THREE.SpotLight('#FFF0D8', 0, 8, .5, .5, 1.5); tirada.add(spot2); spot2.target.position.set(0, 0, 3); tirada.add(spot2.target);
+    // anillos de luz que salen de su ventana al prenderla
+    const anilloLuzM = () => new THREE.MeshBasicMaterial({ color: HDR(2.4, 1.7, .9), transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false });
+    const anillosLuz = [...Array(4)].map(() => { const m = new THREE.Mesh(new THREE.RingGeometry(.94, 1, 80), anilloLuzM()); m.position.copy(vW).add(V3(.4, 0, 0)); scene.add(m); return m; });
+
+    /* ---------- la mano que descarta la notificación ---------- */
+    const mano = new THREE.Group(); scene.add(mano); const piel = N.std('#C08A68', { flatShading: false });
+    mano.add(N.M(new THREE.BoxGeometry(.09, .025, .1), piel)); for (let i = 0; i < 4; i++) mano.add(N.M(new THREE.BoxGeometry(.018, .02, .075), piel, -.033 + i * .022, 0, .085));
+    mano.add(N.M(new THREE.BoxGeometry(.02, .02, .06), piel, .06, 0, .02)); mano.children[5].rotation.y = -.6; mano.add(N.M(new THREE.BoxGeometry(.07, .03, .12), N.std('#2A3A6A'), 0, .005, -.1));
+
+    /* ---------- luz del refri en el pasillo y crujido del piso ---------- */
+    const cunaT = N.canvasTex(64, 512, (x, w, h) => { const g = x.createLinearGradient(0, h, 0, 0); g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(.55, 'rgba(255,255,255,.35)'); g.addColorStop(1, 'rgba(255,255,255,.9)'); x.fillStyle = g; x.beginPath(); x.moveTo(w * .1, h); x.lineTo(w * .9, h); x.lineTo(w * .62, 0); x.lineTo(w * .38, 0); x.closePath(); x.fill(); }, false);
+    const cuna = new THREE.Mesh(new THREE.PlaneGeometry(1.0, R.KZ1 - .9 - (R.PZ0 - 1.2)), new THREE.MeshBasicMaterial({ map: cunaT, color: HDR(.9, 1.0, 1.15), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
+    cuna.rotation.x = -Math.PI / 2; cuna.position.set(R.PX, R.RY + .012, (R.KZ1 - .9 + R.PZ0 - 1.2) / 2); cuna.renderOrder = 3; scene.add(cuna);
+    const crujido = new THREE.Mesh(new THREE.RingGeometry(.9, 1, 64), new THREE.MeshBasicMaterial({ color: HDR(2.2, 2.2, 2.4), transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false }));
+    crujido.rotation.x = -Math.PI / 2; crujido.position.copy(C.tablon.position).setY(R.RY + .02); scene.add(crujido);
+    C.puertaR.rotation.y = -.32;   // el refri quedó mal cerrado
+
+    /* ---------- cámara: llaves CatmullRom por toma ---------- */
+    const P0 = C.cel.grp.getWorldPosition(V3()), Q0 = C.cel.grp.getWorldQuaternion(new THREE.Quaternion()), TOP = V3(0, 1, 0).applyQuaternion(Q0), NRM = V3(0, 0, 1).applyQuaternion(Q0);
+    const cerca = (d, b) => [P0.clone().addScaledVector(NRM, d).addScaledVector(TOP, -b).toArray(), P0.clone().addScaledVector(TOP, .012).toArray(), TOP.toArray()];
+    const Y = [0, 1, 0], X_ = [-1, 0, 0];
+    const cen = [[R.RX1 - .9, R.RY + 2.62, -.05], [R.RX1 - .95, R.RY, -.15], X_], cen2 = [[R.RX1 - .8, R.RY + 2.5, -.1], [R.RX1 - .85, R.RY, -.18], X_];
+    const TOMAS = [
+      { a: 0, b: 6.0, K: [[0, ...cerca(.26, .13)], [1.5, ...cen], [6.0, ...cen2]] },
+      { a: 6.0, b: 11.3, K: [[6.0, ...cen2], [8.3, P0.clone().addScaledVector(NRM, .75).addScaledVector(TOP, -.55).toArray(), P0.toArray(), TOP.toArray()], [11.3, ...cerca(.3, .15)]] },
+      { a: 11.3, b: 14.6, K: [[11.3, ...cerca(.3, .15)], [14.6, ...cerca(.255, .12)]] },
+      { a: 14.6, b: 21.4, K: [[14.6, [R.RX0 + 2.3, R.RY + 1.45, .95], [R.RX0, 4.95, 0], Y], [15.9, [R.RX0 + 1.1, 4.95, .15], [R.RX0 - 4, 4.8, -.2], Y], [16.9, [R.RX0 - .9, 4.9, 0], [-4, 3.6, -6], Y],
+        [18.6, [1.5, 5.8, -9], [-1, 3, -32], Y], [21.4, [-.5, 6.6, -24], [-2, 3, -50], Y]] },
+      { a: 21.4, b: 28.6, fov: 66, K: [[21.4, [6.8, 6.3, 2.0], [-7.2, 7.1, 1.0], Y], [28.6, [6.6, 6.7, -1.4], [-7.2, 7.4, -.7], Y]] },
+      { a: 28.6, b: 34.0, fov: 46, K: [[28.6, [4.2, 2.6, vW.z + 6], [vW.x, vW.y - .6, vW.z], Y], [34.0, [1.0, 6.2, vW.z + 3.8], [vW.x, vW.y - .3, vW.z], Y]] },
+      { a: 34.0, b: 40.6, fov: 46, K: [[34.0, [5, 30, 24], [-2, 0, -42], Y], [40.6, [2.5, 22, 10], [-3.5, 2, -22], Y]] },
+      { a: 40.6, b: 48.4, fov: 44, K: [[40.6, [1.0, 7.5, vW.z + 7], [vW.x, vW.y - .2, vW.z], Y], [44.0, [-2.0, vW.y + .8, vW.z + 4.2], [vW.x, vW.y - .5, vW.z], Y], [48.4, [-4.6, vW.y + .1, vW.z + 2.2], [vW.x + .5, vW.y - .9, vW.z], Y]] },
+      { a: 48.4, b: 57.2, K: [[48.4, ...cerca(.42, .26)], [57.2, ...cerca(.3, .16)]] },
+      { a: 57.2, b: 65.2, fov: 50, K: [[57.2, [R.RX1 - .45, R.RY + 1.35, R.bz - .2], [R.PX, R.RY + 1.0, R.PZ1], Y], [59.0, [R.RX1 - .42, R.RY + .84, R.bz - .05], [R.PX, R.RY + .9, R.PZ1], Y], [65.2, [R.RX1 - .55, R.RY + .82, R.bz + .25], [R.PX + .05, R.RY + .85, R.KZ1], Y]] },
+      { a: 65.2, b: 69.8, fov: 52, K: [[65.2, [10.0, 4.7, .5], [R.RX0 - 4, 4.4, -.5], Y], [67.6, [8.9, 4.8, .3], [0, 3.6, -1.5], Y], [69.8, [8.1, 4.9, .1], [2.0, 1.5, -4], Y]] },
+      { a: 69.8, b: 75.0, fov: 50, K: [[69.8, [R.PX + .1, R.RY + 1.35, R.PZ0 - .8], [R.PX, R.RY + .85, R.KZ1], Y], [75.0, [R.PX, R.RY + 1.2, R.PZ0 + 1.0], [R.PX, R.RY + .8, R.KZ1], Y]] },
+      { a: 75.0, b: 86.5, fov: 50, K: [[75.0, [R.PX, R.RY + 1.2, R.PZ0 + 1.0], [R.PX, R.RY + .8, R.KZ1], Y], [86.5, [R.PX, R.RY + 1.15, R.PZ0 + 2.2], [R.PX, R.RY + .8, R.KZ1], Y]] },
+      { a: 86.5, b: 99, K: [[86.5, ...cerca(1.0, .6)], [87.45, ...cerca(.26, .13)], [87.6, ...cerca(.26, .13)]] },
+    ];
+    TOMAS.forEach(s => { s.cp = new THREE.CatmullRomCurve3(s.K.map(k => V3(...k[1])), false, 'centripetal'); s.cl = new THREE.CatmullRomCurve3(s.K.map(k => V3(...k[2])), false, 'centripetal'); if (s.K.length < 2) s.K.push(s.K[0]); });
+    function pose(s, t) { const K = s.K; let i = 0; while (i < K.length - 2 && t > K[i + 1][0]) i++; const l = clamp((t - K[i][0]) / Math.max(1e-3, K[i + 1][0] - K[i][0])), w = l * l * (3 - 2 * l), u = clamp((i + lerp(l, w, .5)) / (K.length - 1));
+      const up = V3(...K[i][3]).lerp(V3(...K[Math.min(i + 1, K.length - 1)][3]), w).normalize(); return [s.cp.getPoint(u), s.cl.getPoint(u), up]; }
+
+    /* ---------- miniaturas de las tarjetas A/B (se toman una vez al cargar) ---------- */
+    const mini = {}; const glc = document.getElementById('gl');
+    const luzFoto = new THREE.PointLight('#E8F0FF', 0, 6, 1.5); scene.add(luzFoto);
+    function foto(nombre, p, l, prep) { prep(true); luzFoto.position.set(p[0], p[1] + .3, p[2]); luzFoto.intensity = 2.5; cam.fov = 50; cam.updateProjectionMatrix(); cam.position.set(...p); cam.up.set(0, 1, 0); cam.lookAt(...l); PP.render(scene, cam, { oscuro: .15, ap: .2, focus: 2 });
+      const c = document.createElement('canvas'); c.width = 540; c.height = 540; c.getContext('2d').drawImage(glc, 0, 480, 1080, 1080, 0, 0, 540, 540); mini[nombre] = c; prep(false); luzFoto.intensity = 0; }
+    foto('A', [R.PX - .7, R.RY + 1.4, R.KZ1 - 2.0], [R.PX + .2, R.RY + .9, R.KZ1 - .5], (on) => { mano.visible = on; mano.position.set(R.PX + .45, R.RY + .9, R.KZ1 - .82); mano.rotation.set(0, -.3, Math.PI / 2); mano.scale.setScalar(on ? 2.2 : 1); C.refriL.intensity = on ? 3 : 0; });
+    foto('B', [R.RX1 - .45, R.RY + 1.25, R.bz - .7], [R.PX, R.RY + .75, R.PZ1], (on) => { C.refriL.intensity = on ? 3 : 0; });
+    mano.scale.setScalar(1);
+
+    /* ---------- HUD: tarjetas A/B ---------- */
+    const X = document.getElementById('hud').getContext('2d');
+    function rr(x, y, w, h, r) { X.beginPath(); X.roundRect(x, y, w, h, r); }
+    function text(s, x, y, px, col, w = 900, al = 'center') { X.font = `${w} ${px}px Nunito, sans-serif`; X.fillStyle = col; X.textAlign = al; X.textBaseline = 'middle'; X.fillText(s, x, y); }
+    function carta(x, y, k, hl, letra, col, titulo, img) { if (k <= 0) return; X.save(); X.globalAlpha = Math.min(1, k); X.translate(x, y); const s = .9 + .1 * Math.min(1, k) + .06 * hl; X.scale(s, s);
+      X.shadowColor = col; X.shadowBlur = 20 + 50 * hl; rr(-210, -280, 420, 560, 34); X.fillStyle = 'rgba(10,10,22,.86)'; X.fill(); X.shadowBlur = 0; X.lineWidth = 9; X.strokeStyle = col; X.stroke();
+      X.save(); rr(-186, -256, 372, 372, 22); X.clip(); if (img) X.drawImage(img, -186, -256, 372, 372); X.restore();
+      X.beginPath(); X.arc(-150, -220, 46, 0, 7); X.fillStyle = col; X.fill(); text(letra, -150, -217, 58, '#0A0A16');
+      text(titulo[0], 0, 175, 50, '#FFFFFF'); text(titulo[1], 0, 232, 50, '#FFFFFF'); X.restore(); }
+    function drawHUD(t) { X.clearRect(0, 0, W, H);
+      if (t > T.cartaA - .1 && t < T.loop + .4) { const o = 1 - prog(t, T.loop - .1, T.loop + .3);
+        X.fillStyle = `rgba(4,4,12,${.45 * prog(t, 75.2, 76.2) * o})`; X.fillRect(0, 0, W, H);
+        const ka = backOut(prog(t, T.cartaA, T.cartaA + .5)) * o, kb = backOut(prog(t, T.cartaB, T.cartaB + .5)) * o;
+        const hA = prog(t, 77.1, 77.4) * (1 - prog(t, 79.9, 80.2)), hB = prog(t, 80.6, 80.9) * (1 - prog(t, 83.6, 83.9));
+        carta(300, 1020, ka, hA, 'A', '#3A8AFF', ['Cierras', 'el refri'], mini.A); carta(780, 1020, kb, hB, 'B', '#FFD23A', ['Te quedas', 'quieto'], mini.B);
+        const ks = prog(t, T.sigueme, T.sigueme + .4) * o; if (ks > 0) { X.globalAlpha = ks; rr(290, 1390, 500, 90, 45); X.fillStyle = 'rgba(255,255,255,.12)'; X.fill(); text('Parte 2 →', 540, 1437, 46, '#FFFFFF'); X.globalAlpha = 1; } } }
+
+    /* ---------- estado del mundo ---------- */
+    const FZ = C.farolas.map(f => f.z), idx = z => FZ.indexOf(z);
+    const APAG = [[-66, T.apagones[0]], [-51, T.apagones[1]], [-36, T.apagones[2]], [-21, T.apagones[3]], [9, T.farolaCuadra], [-6, T.farolaPuerta]];
+    function mundo(t) {
+      // farolas: parpadean, se apagan con "pop" y anillo oscuro
+      C.farolas.forEach((f, i) => C.farola(i, 1));
+      if (t < T.loop) APAG.forEach(([z, t0]) => { const i = idx(z); if (i < 0) return; if (t < t0 - .3) return; const fl = t < t0 ? (Math.sin(t * 70 + z) > 0 ? 1 : .15) : 0; C.farola(i, fl, t >= t0 ? prog(t, t0, t0 + 1.3) : 0); });
+      // pantallas de los vecinos
+      C.pantallasEnf(t > 21 && t < 75 ? 1 : .8, t);
+      // el vecino
+      const enc = t >= T.luzVecino && t < T.apagaVecino ? (t < T.parpadeo ? 1 : (Math.sin(t * 60) > -.2 ? .9 : .1)) : 0;
+      C.luzVec.material.opacity = enc; C.luzVecL.intensity = 3 * enc;
+      bV.persona.visible = t < T.balcon - .2 || t >= 999; vecino.visible = t >= T.balcon - .2 && t < T.apagaVecino;
+      const sal = easeOut(prog(t, T.balcon - .2, T.balcon + .9)); vecino.position.z = lerp(.0, .7, sal); VP.camina(t * 5, 1 - prog(t, T.balcon + .8, T.balcon + 1.1)); VP.armR.rotation.x = -1.25; VP.head.rotation.y = .3 * Math.sin(t * .8);
+      const abre = t < T.balcon - .3 ? 0 : t < T.apagaVecino ? easeOut(prog(t, T.balcon - .3, T.balcon + .3)) : 1; bisagra.rotation.y = -1.7 * abre + (t > T.apagaVecino ? .25 * Math.sin((t - T.apagaVecino) * 1.6) * Math.exp(-(t - 46) * .05) : 0);
+      const lin = vecino.visible ? 1 : 0; spot.intensity = 4 * lin; haz.material.opacity = .1 * lin; linterna.rotation.set(2.2 + .1 * Math.sin(t * 1.3), .35 * Math.sin(t * .9), 0);
+      const tir = t >= T.apagaVecino && t < 60; tirada.visible = tir; spot2.intensity = tir ? 3 : 0; haz2.material.opacity = tir ? .2 : 0;
+      anillosLuz.forEach((a, i) => { const u = (t - T.luzVecino - i * .28) * .9; a.visible = u > 0 && u < 1 && t < T.apagaVecino; if (!a.visible) return; a.scale.setScalar(.6 + u * 9); a.lookAt(cam.position); a.material.opacity = (1 - u) * .8; });
+      // tu celular
+      let est = 'alerta', bril = 1, bat = 0, alarm = 0;
+      if (t < 13.3) { alarm = 1; bat = prog(t, T.bateria, T.bateria + .35) * (1 - prog(t, T.manotazo, T.manotazo + .2)); }
+      if (t >= 13.25) bril = .12;
+      if (t >= T.vibra) { est = 'alerta2'; bril = .22; }
+      if (t >= T.loop) { est = 'alerta'; bril = 1; bat = 0; alarm = 1; }
+      C.cel.pantalla(est, { bril, bat, brillo: bril }); C.alarma(t, alarm * (t < 1 || t >= T.loop ? 1 : 1)); C.rojoL.intensity *= t < 13.3 || t >= T.loop ? 1 : 0;
+      if (t >= T.vibra && t < T.vibra + 1.6) { const v = Math.sin(t * 95) * .0025 * (Math.sin((t - T.vibra) * Math.PI * 2.2) > 0 ? 1 : 0); C.cel.grp.position.set(P0.x + v, P0.y, P0.z + v * .6); } else C.cel.grp.position.copy(P0);
+      // mano
+      const mk = prog(t, T.manotazo - .25, T.manotazo + .25); mano.visible = mk > 0 && mk < 1;
+      if (mano.visible) { const side = V3().crossVectors(TOP, NRM).normalize(); mano.position.copy(P0).addScaledVector(NRM, .045).addScaledVector(side, lerp(.16, -.18, ease(mk))).addScaledVector(TOP, -.02); mano.quaternion.copy(Q0); mano.rotateX(Math.PI / 2); mano.rotateZ(.5); }
+      // cortina que se abre al asomarte
+      const ck = ease(prog(t, T.cortina, T.cortina + .8)) * (t < 21.4 ? 1 : 0) + (t > 65 && t < 69.8 ? .5 : 0); C.cortIzq.position.z = -.62 - .5 * ck; C.cortDer.position.z = .62 + .5 * ck;
+      // refri, pasillo, crujido
+      const ref = t > 57 && t < T.loop ? 1 : 0; C.refriL.intensity = 3.2 * ref; cuna.visible = ref > 0; cuna.material.opacity = .9 * ref;
+      const cu = prog(t, T.cruje, T.cruje + 1.1); crujido.visible = cu > 0 && cu < 1; crujido.scale.setScalar(.1 + cu * 1.6); crujido.material.opacity = 1 - cu;
+      // tu cuarto se oscurece cuando se apaga la farola de tu puerta
+      C.cuarto.children.forEach(o => { if (o.isPointLight && o.color.getHexString() === 'ff8a3a') o.intensity = 1.8 * (t > T.farolaPuerta && t < T.loop ? 0 : 1); });
+    }
+
+    /* ---------- render ---------- */
+    function renderAt(t) {
+      const s = TOMAS.find(x => t >= x.a && t < x.b) || TOMAS[TOMAS.length - 1];
+      const [p, l, up] = pose(s, t); cam.fov = s.a === 0 ? lerp(40, 76, ease(prog(t, 0, 1.5))) : s.a === 6.0 ? lerp(76, 40, ease(prog(t, 6.0, 8.3))) : (s.fov || 40); cam.near = s.a >= 21.4 && s.a < 48 ? .1 : .01; cam.updateProjectionMatrix(); cam.position.copy(p); cam.up.copy(up); cam.lookAt(l); cam.updateMatrixWorld();
+      mundo(t);
+      const enCel = (t < 14.6 && t >= 6) || (t >= 48.4 && t < 57.2) || t >= T.loop || t < 1.5;
+      const rojo = t < 13.3 ? lerp(.45, .45, 1) * (t < 1.5 ? 1 : (t < 6 ? .8 : 1)) : t < 14.6 ? .18 : (t >= 48.4 && t < 57.2) ? .28 : t >= T.loop ? .45 : 0;
+      const dCel = cam.position.distanceTo(P0);
+      const o = { focus: enCel ? dCel : s.a === 0 ? 2.6 : s.a === 57.2 || s.a >= 69.8 ? 5 : s.a === 21.4 ? 14 : 20, ap: enCel ? .55 : s.a === 40.6 ? .25 : s.a === 28.6 ? .15 : s.a >= 57.2 && s.a < 86 ? .35 : 0.05,
+        rojo, oscuro: (t >= T.silencio0 && t < T.silencio1 ? .5 : 0) + (t >= 57.2 && t < T.loop ? .25 : .08) + (t > T.farolaPuerta && t < T.loop ? .15 : 0), grano: t };
+      PP.render(scene, cam, o);
+      drawHUD(t);
+    }
+    window.addEventListener('hf-seek', e => renderAt(e.detail.time));
+    renderAt(0);
+    window.__timelines = window.__timelines || {};
+    window.__timelines['film'] = gsap.timeline({ paused: true });
+  })();
+  </script>
+</template>

@@ -6,7 +6,7 @@ También acepta el JSON completo de transcribir.py (usa la clave "palabras").
 """
 import json, sys, re, html, argparse
 
-CLAVE = {"gps", "apagado", "wifi", "vecinos", "módem", "nombre", "contraseña", "mapa", "calle", "millones", "letrero", "mundo", "casa", "desconocido", "útil", "miedo"}
+CLAVE = {"tres", "volumen", "emergencia", "luz", "manotazo", "silencio", "pantalla", "tercero", "lámpara", "farolas", "él", "abierta", "está", "vibra", "muevas", "refri", "pasillo", "puerta", "cruje", "quieto"}
 MAX_PAL = 6          # palabras por grupo (2 líneas máximo con letra de 66 px)
 PAUSA = 0.15
 
@@ -47,11 +47,11 @@ tw = []
 for sel, ws, wnext, gid, key in js:
     g0 = next(float(re.search(r'data-start="([\d.]+)"', l).group(1)) for l in out if f'id="{gid}"' in l)
     t = g0 + ws
-    tw.append(f'tl.fromTo("{sel}", {{opacity:0, scale:1.12, color:"#FFFFFF"}}, {{opacity:1, scale:1, duration:0.12, ease:"power2.out"}}, {t:.3f});')
+    tw.append(f'tl.fromTo("{sel}", {{opacity:0, scale:1.12, color:"#FFFFFF", fontWeight:900}}, {{opacity:1, scale:1, duration:0.12, ease:"power2.out"}}, {t:.3f});')
     if key:
         tw.append(f'tl.fromTo("{sel}", {{"--box":0}}, {{"--box":1, duration:0.2, ease:"power2.out"}}, {t:.3f});')
     if wnext is not None:
-        tw.append(f'tl.to("{sel}", {{color:"rgba(185,190,200,0.75)", duration:0.12}}, {g0 + wnext:.3f});')
+        tw.append(f'tl.to("{sel}", {{color:"rgba(160,164,176,0.8)", duration:0.12}}, {g0 + wnext:.3f});')
 
 page = f'''<template>
   <style>
@@ -61,13 +61,14 @@ page = f'''<template>
       color: #fff; overflow: visible; text-shadow: 0 4px 18px rgba(0,0,0,0.65), 0 1px 3px rgba(0,0,0,0.6); }}
     .w {{ display: inline-block; opacity: 0; position: relative; }}
     .w.key {{ --box: 0; }}
-    .w.key::after {{ content: ""; position: absolute; left: -10px; right: -10px; top: 4px; bottom: 0;
-      border: 2px solid #4AA3FF; border-radius: 3px; opacity: var(--box); background: rgba(74,163,255,.14); }}
-    .w.key::before {{ content: ""; position: absolute; left: -16px; right: -16px; top: -2px; bottom: -6px; opacity: var(--box);
-      background: radial-gradient(circle, #fff 2.5px, #4AA3FF 3.5px, transparent 5px) 0 0/12px 12px no-repeat,
-                  radial-gradient(circle, #fff 2.5px, #4AA3FF 3.5px, transparent 5px) 100% 0/12px 12px no-repeat,
-                  radial-gradient(circle, #fff 2.5px, #4AA3FF 3.5px, transparent 5px) 0 100%/12px 12px no-repeat,
-                  radial-gradient(circle, #fff 2.5px, #4AA3FF 3.5px, transparent 5px) 100% 100%/12px 12px no-repeat; }}
+    .w.key::after {{ content: ""; position: absolute; left: -10px; right: -10px; top: 4px; bottom: 0; z-index: -1;
+      border-radius: 4px; opacity: var(--box); background: rgba(0,0,0,.88); border: 2px solid rgba(255,255,255,.55); }}
+    .w.key::before {{ content: ""; position: absolute; left: -16px; right: -16px; top: -2px; bottom: -6px; opacity: var(--box); z-index: 1;
+      background: radial-gradient(circle, #fff 3px, transparent 4.5px) 0 0/12px 12px no-repeat,
+                  radial-gradient(circle, #fff 3px, transparent 4.5px) 100% 0/12px 12px no-repeat,
+                  radial-gradient(circle, #fff 3px, transparent 4.5px) 0 100%/12px 12px no-repeat,
+                  radial-gradient(circle, #fff 3px, transparent 4.5px) 100% 100%/12px 12px no-repeat; }}
+    .w {{ z-index: 0; }}
   </style>
   <div id="root" data-composition-id="captions" data-width="1080" data-height="1920">
 {chr(10).join(out)}

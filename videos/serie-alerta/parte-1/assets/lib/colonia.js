@@ -204,10 +204,10 @@
         ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.moveTo(270, 130); ctx.lineTo(352, 270); ctx.lineTo(188, 270); ctx.closePath(); ctx.lineJoin = 'round'; ctx.lineWidth = 14; ctx.strokeStyle = '#fff'; ctx.stroke(); ctx.fill(); txt('!', 270, 222, 96, '#C8101C');
         txt('ALERTA DE EMERGENCIA', 270, 318, 36, '#FFFFFF'); txt('Alerta extrema · ahora', 270, 362, 27, '#FFD0D0', 700);
         ctx.fillStyle = 'rgba(255,255,255,.25)'; ctx.fillRect(60, 398, 420, 3);
-        cuerpo.forEach(([s, px], i, arr) => { const y0 = 470 + i * (px * 1.12); txt(s, 270, y0, px, '#FFFFFF'); });
+        let yy = 430; cuerpo.forEach(([s, px]) => { yy += px * .62; txt(s, 270, yy, px, '#FFFFFF'); yy += px * .62; });
         if (ok) { rr2(150, 1000, 240, 78, 39); ctx.fillStyle = '#FFFFFF'; ctx.fill(); txt('OK', 270, 1040, 40, '#B00E18'); }
         txt(titulo, 270, 400 - 20, 1, 'rgba(0,0,0,0)'); }
-      function bateria(k) { if (k <= 0) return; ctx.save(); ctx.globalAlpha = k; rr2(34, 560, 472, 330, 34); ctx.fillStyle = 'rgba(70,10,16,.72)'; ctx.fill(); ctx.strokeStyle = 'rgba(255,200,200,.55)'; ctx.lineWidth = 3; ctx.stroke();
+      function bateria(k) { if (k <= 0) return; ctx.save(); ctx.globalAlpha = k; rr2(34, 560, 472, 330, 34); ctx.fillStyle = 'rgba(60,8,14,.93)'; ctx.fill(); ctx.strokeStyle = 'rgba(255,200,200,.55)'; ctx.lineWidth = 3; ctx.stroke();
         rr2(66, 598, 74, 38, 8); ctx.strokeStyle = '#FFD0D0'; ctx.lineWidth = 4; ctx.stroke(); ctx.fillStyle = '#FF4A4A'; ctx.fillRect(72, 604, 14, 26);
         txt('Batería baja', 160, 617, 38, '#FFFFFF', 900, 'left'); txt('Batería restante: 20%', 270, 700, 32, '#FFE0E0', 700);
         rr2(60, 760, 200, 86, 22); ctx.fillStyle = 'rgba(255,255,255,.18)'; ctx.fill(); txt('Ahorrar', 160, 790, 30, '#FFFFFF', 800); txt('batería', 160, 824, 30, '#FFFFFF', 800);

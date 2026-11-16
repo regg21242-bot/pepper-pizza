@@ -19,3 +19,5 @@ renders/
 .tmp/
 snaps/
 assets/voz/*.mp3
+snaps/
+assets/voz/*.mp3
