@@ -17,8 +17,8 @@
     const sky = new THREE.Mesh(new THREE.SphereGeometry(700, 32, 24), new THREE.MeshBasicMaterial({ map: skyT, side: THREE.BackSide, fog: false, depthWrite: false })); sky.renderOrder = -10; scene.add(sky);
     const luna = N.glow('#C8D4FF', 60, .9); luna.material.fog = false; luna.material.color = HDR(1.4, 1.5, 2.0); luna.position.set(260, 300, -420); scene.add(luna);
     scene.fog = new THREE.Fog('#120E2C', 30, 170);
-    scene.add(new THREE.HemisphereLight('#3A3C8A', '#0E0816', .32));
-    const moon = new THREE.DirectionalLight('#7A8AF0', .28); moon.position.set(60, 90, -50); moon.castShadow = true; moon.shadow.mapSize.set(2048, 2048);
+    scene.add(new THREE.HemisphereLight('#5A5CC8', '#1A0E26', .62));
+    const moon = new THREE.DirectionalLight('#8A9AFF', .42); moon.position.set(60, 90, -50); moon.castShadow = true; moon.shadow.mapSize.set(2048, 2048);
     const msc = moon.shadow.camera; msc.left = msc.bottom = -60; msc.right = msc.top = 60; msc.far = 300; moon.shadow.bias = -.0008; moon.shadow.normalBias = .05; scene.add(moon, moon.target);
 
     // ---------- piso ----------
@@ -31,12 +31,12 @@
     const linea = new THREE.InstancedMesh(new THREE.BoxGeometry(.14, .02, 2.6), std('#C9A23A', { roughness: .6 }), 80); { const D = new THREE.Object3D(); let n = 0; for (let z = -170; z < 170; z += 5) { D.position.set(0, .015, z); D.updateMatrix(); linea.setMatrixAt(n++, D.matrix); } linea.count = n; } linea.frustumCulled = false; g.add(linea);
 
     // ---------- edificios ----------
-    const PAL = ['#C9A27E', '#D8C3A0', '#9FB8B0', '#C98C7A', '#E0D6C4', '#A9A4C8', '#D6B25E', '#B7C9A0'];
+    const PAL = ['#E8A06A', '#F2CF7A', '#6FC8B4', '#E87A6A', '#F0E2C8', '#9A8AE8', '#F2B84A', '#8CD07A', '#E890B0', '#6AA8E8'];
     const persT = N.canvasTex(128, 128, (x, w, h) => { x.fillStyle = '#1A1C2A'; x.fillRect(0, 0, w, h); for (let y = 0; y < h; y += 8) { x.fillStyle = '#3A3C52'; x.fillRect(4, y + 1, w - 8, 5); x.fillStyle = 'rgba(0,0,0,.4)'; x.fillRect(4, y + 6, w - 8, 1); } });
     const herrT = N.canvasTex(256, 128, (x, w, h) => { x.strokeStyle = '#fff'; x.lineWidth = 7; x.strokeRect(4, 6, w - 8, h - 10); x.lineWidth = 4; for (let i = 16; i < w - 8; i += 14) { x.beginPath(); x.moveTo(i, 8); x.lineTo(i, h - 6); x.stroke(); } x.lineWidth = 3.5; for (let i = 20; i < w; i += 56) { x.beginPath(); x.arc(i, 34, 13, 0, 7); x.stroke(); x.beginPath(); x.arc(i + 28, 34, 13, 0, 7); x.stroke(); } }, false);
     const cortT = N.canvasTex(256, 256, (x, w, h) => { x.fillStyle = '#5A5E66'; x.fillRect(0, 0, w, h); for (let y = 0; y < h; y += 10) { x.fillStyle = '#6E727A'; x.fillRect(0, y, w, 5); x.fillStyle = '#3E4248'; x.fillRect(0, y + 8, w, 2); } });
     const edif = [], ventanas = [], inst = { marco: [], persiana: [], puerta: [], cortina: [], losa: [], reja: [], repisa: [] };
-    const especiales = { TU: { side: 1, z0: -8, z1: 12, F: 4, col: '#D8C3A0' }, ENF: { side: -1, z0: -6.5, z1: 6.5, F: 4, col: '#6E6890' } };
+    const especiales = { TU: { side: 1, z0: -8, z1: 12, F: 4, col: '#F0C878' }, ENF: { side: -1, z0: -6.5, z1: 6.5, F: 4, col: '#7FB8D8' } };
     for (const side of [-1, 1]) {
       let z = -78; while (z < 78) { let e;
         const esp = Object.entries(especiales).find(([k, v]) => v.side === side && z < v.z1 && z + 4 > v.z0);
@@ -44,7 +44,7 @@
         else { const w = 8 + r() * 6; let z1 = z + w; const sig = Object.values(especiales).find(v => v.side === side && v.z0 > z && v.z0 < z1); if (sig) z1 = sig.z0 - .3; if (z1 - z < 5) { z = z1 + .3; continue; } e = { side, z0: z, z1, F: 3 + Math.floor(r() * 2), col: PAL[Math.floor(r() * PAL.length)] }; }
         const w = e.z1 - e.z0, d = 12, h = G + (e.F - 1) * U, x = side * (7.2 + d / 2), zc = (e.z0 + e.z1) / 2; Object.assign(e, { w, d, h, x, zc });
         const grp = new THREE.Group(); grp.position.set(x, 0, zc); g.add(grp); e.grp = grp;
-        grp.add(N.M(new THREE.BoxGeometry(d, h, w - .06), std(new THREE.Color(e.col).multiplyScalar(.62)), 0, h / 2, 0));
+        grp.add(N.M(new THREE.BoxGeometry(d, h, w - .06), std(new THREE.Color(e.col).multiplyScalar(1.0)), 0, h / 2, 0));
         const zc2 = new THREE.Color(e.col).multiplyScalar(.7); grp.add(N.M(new THREE.BoxGeometry(d + .05, .9, w), std(zc2), 0, .45, 0));
         grp.add(N.M(new THREE.BoxGeometry(d + .2, .22, w + .05), std('#E8E0D2'), 0, G, 0));
         grp.add(N.M(new THREE.BoxGeometry(d + .3, .45, w + .2), std('#E8E0D2'), 0, h + .1, 0)); grp.add(N.M(new THREE.BoxGeometry(d - .1, .06, w - .1), std('#3A3238', { roughness: 1 }), 0, h + .35, 0));
