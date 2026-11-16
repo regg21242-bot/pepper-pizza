@@ -133,7 +133,7 @@
       anillosLuz.forEach((a, i) => { const u = (t - T.luzVecino - i * .28) * .9; a.visible = u > 0 && u < 1 && t < T.apagaVecino; if (!a.visible) return; a.scale.setScalar(.6 + u * 9); a.lookAt(cam.position); a.material.opacity = (1 - u) * .8; });
       // tu celular
       let est = 'alerta', bril = 1, bat = 0, alarm = 0;
-      if (t < 13.3) { alarm = 1; bat = prog(t, T.bateria, T.bateria + .35) * (1 - prog(t, T.manotazo, T.manotazo + .2)); }
+      if (t < 13.3) { alarm = 1; }
       if (t >= 13.25) bril = .12;
       if (t >= T.vibra) { est = 'alerta2'; bril = .22; }
       if (t >= T.loop) { est = 'alerta'; bril = 1; bat = 0; alarm = 1; }

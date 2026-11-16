@@ -27,7 +27,6 @@ def alarma(t0, t1, db):
     place(fx, st(s), t0, db)
 alarma(0, T["manotazo"] + .15, -2); alarma(T["loop"], DUR, -2)
 # notificación de batería y manotazo
-x = tt(.25); place(fx, st(np.sin(2 * np.pi * 1320 * x) * np.exp(-x * 14) * .3), T["bateria"], -10)
 place(fx, S("whoosh_corto.wav"), T["manotazo"] - .1, -4); place(fx, S("tac.wav"), T["manotazo"] + .08, -8)
 # cortina y salida por la ventana
 nz = rs.standard_normal(int(.9 * SR)); place(fx, st(lp(nz, 30) * np.hanning(len(nz)) * .5), T["cortina"], -14)
