@@ -36,7 +36,7 @@
     const herrT = N.canvasTex(256, 128, (x, w, h) => { x.strokeStyle = '#fff'; x.lineWidth = 7; x.strokeRect(4, 6, w - 8, h - 10); x.lineWidth = 4; for (let i = 16; i < w - 8; i += 14) { x.beginPath(); x.moveTo(i, 8); x.lineTo(i, h - 6); x.stroke(); } x.lineWidth = 3.5; for (let i = 20; i < w; i += 56) { x.beginPath(); x.arc(i, 34, 13, 0, 7); x.stroke(); x.beginPath(); x.arc(i + 28, 34, 13, 0, 7); x.stroke(); } }, false);
     const cortT = N.canvasTex(256, 256, (x, w, h) => { x.fillStyle = '#5A5E66'; x.fillRect(0, 0, w, h); for (let y = 0; y < h; y += 10) { x.fillStyle = '#6E727A'; x.fillRect(0, y, w, 5); x.fillStyle = '#3E4248'; x.fillRect(0, y + 8, w, 2); } });
     const edif = [], ventanas = [], inst = { marco: [], persiana: [], puerta: [], cortina: [], losa: [], reja: [], repisa: [] };
-    const especiales = { TU: { side: 1, z0: -8, z1: 12, F: 4, col: '#D8C3A0' }, ENF: { side: -1, z0: -6.5, z1: 6.5, F: 4, col: '#A9A4C8' } };
+    const especiales = { TU: { side: 1, z0: -8, z1: 12, F: 4, col: '#D8C3A0' }, ENF: { side: -1, z0: -6.5, z1: 6.5, F: 4, col: '#6E6890' } };
     for (const side of [-1, 1]) {
       let z = -78; while (z < 78) { let e;
         const esp = Object.entries(especiales).find(([k, v]) => v.side === side && z < v.z1 && z + 4 > v.z0);
@@ -44,7 +44,7 @@
         else { const w = 8 + r() * 6; let z1 = z + w; const sig = Object.values(especiales).find(v => v.side === side && v.z0 > z && v.z0 < z1); if (sig) z1 = sig.z0 - .3; if (z1 - z < 5) { z = z1 + .3; continue; } e = { side, z0: z, z1, F: 3 + Math.floor(r() * 2), col: PAL[Math.floor(r() * PAL.length)] }; }
         const w = e.z1 - e.z0, d = 12, h = G + (e.F - 1) * U, x = side * (7.2 + d / 2), zc = (e.z0 + e.z1) / 2; Object.assign(e, { w, d, h, x, zc });
         const grp = new THREE.Group(); grp.position.set(x, 0, zc); g.add(grp); e.grp = grp;
-        grp.add(N.M(new THREE.BoxGeometry(d, h, w - .06), std(e.col), 0, h / 2, 0));
+        grp.add(N.M(new THREE.BoxGeometry(d, h, w - .06), std(new THREE.Color(e.col).multiplyScalar(.62)), 0, h / 2, 0));
         const zc2 = new THREE.Color(e.col).multiplyScalar(.7); grp.add(N.M(new THREE.BoxGeometry(d + .05, .9, w), std(zc2), 0, .45, 0));
         grp.add(N.M(new THREE.BoxGeometry(d + .2, .22, w + .05), std('#E8E0D2'), 0, G, 0));
         grp.add(N.M(new THREE.BoxGeometry(d + .3, .45, w + .2), std('#E8E0D2'), 0, h + .1, 0)); grp.add(N.M(new THREE.BoxGeometry(d - .1, .06, w - .1), std('#3A3238', { roughness: 1 }), 0, h + .35, 0));
@@ -59,7 +59,8 @@
           for (let f = 1; f < e.F; f++) { const yb = G + (f - 1) * U, balc = e.id === 'ENF' ? (f === 3 && c === Math.floor(n / 2)) || r() < .35 : r() < .4;
             const skip = e.id === 'TU' && f === 1 && Math.abs(zz) < 1.6;   // tu ventana: hueco real para ver hacia afuera
             const slot = { e, f, c, z: zz, y: yb + (balc ? 1.15 : 1.55), balc, fx, nx, skip };
-            if (!skip) { if (balc) { inst.marco.push([...at(zz, yb + 1.15, .03), 1.3, 2.3, .1, rot]); inst.persiana.push([...at(zz, yb + 1.15, .09), 1.05, 2.1, 1, rot]);
+            if (e.id === 'ENF') { if (balc) { inst.losa.push([...at(zz, yb + .02, .5), 2.0, .14, 1.0, rot]); inst.reja.push([...at(zz, yb + .55, .98), 2.0, .95, 1, rot]); } else inst.repisa.push([...at(zz, yb + .74, .38), 1.5, .1, .25, rot]); }
+            else if (!skip) { if (balc) { inst.marco.push([...at(zz, yb + 1.15, .03), 1.3, 2.3, .1, rot]); inst.persiana.push([...at(zz, yb + 1.15, .09), 1.05, 2.1, 1, rot]);
                 inst.losa.push([...at(zz, yb + .02, .5), 2.0, .14, 1.0, rot]); inst.reja.push([...at(zz, yb + .55, .98), 2.0, .95, 1, rot]); }
               else { inst.marco.push([...at(zz, yb + 1.55, .03), 1.4, 1.5, .1, rot]); inst.persiana.push([...at(zz, yb + 1.55, .09), 1.15, 1.25, 1, rot]); inst.repisa.push([...at(zz, yb + .74, .12), 1.5, .1, .25, rot]); } }
             ventanas.push(slot); } }
@@ -76,13 +77,32 @@
     // ---------- pantallas de celular en las ventanas de enfrente ----------
     const ENF = edif.find(e => e.id === 'ENF'), TU = edif.find(e => e.id === 'TU');
     const vEnf = ventanas.filter(v => v.e === ENF);
-    const brillos = vEnf.map((v, i) => { const rs = rng(90 + i); const p = V3(v.fx + v.nx * .12, v.y - .15 + (rs() - .5) * .4, v.z + (rs() - .5) * .5);
-      const pant = new THREE.Mesh(new THREE.PlaneGeometry(.09, .17), new THREE.MeshBasicMaterial({ color: HDR(1.6, 2.0, 2.6), transparent: true })); pant.position.copy(p); pant.rotation.y = v.nx > 0 ? Math.PI / 2 : -Math.PI / 2; g.add(pant);
-      const halo = N.glow('#9FC8FF', .8, 0); halo.material.color = HDR(.55, .8, 1.25); halo.material.fog = false; halo.position.copy(p).add(V3(v.nx * .05, 0, 0)); g.add(halo);
-      return { v, pant, halo, ph: rs() * 6 }; });
+    // ventanas de enfrente: vidrio con marco y cruceta; detrás, una persona con la carita gris iluminada por su celular
+    const marcoM = std('#1C1A1E', { roughness: .6 }), fondoM = new THREE.MeshBasicMaterial({ color: '#040509' }), vidrioM = new THREE.MeshBasicMaterial({ color: '#2A3A60', transparent: true, opacity: .22, depthWrite: false });
+    const DIR = V3(0, -.55, .85).normalize();
+    const cabezaGeo = (() => { const geo = new THREE.SphereGeometry(.12, 18, 14); const n = geo.attributes.normal, c = new Float32Array(n.count * 3);
+      for (let i = 0; i < n.count; i++) { const k = Math.max(0, n.getX(i) * DIR.x + n.getY(i) * DIR.y + n.getZ(i) * DIR.z); c.set([.04 + .2 * k, .045 + .23 * k, .06 + .29 * k], i * 3); } geo.setAttribute('color', new THREE.BufferAttribute(c, 3)); return geo; })();
+    const hombrosGeo = (() => { const geo = new THREE.BoxGeometry(.42, .24, .16, 4, 2, 1); const n = geo.attributes.normal, p2 = geo.attributes.position, c = new Float32Array(n.count * 3);
+      for (let i = 0; i < n.count; i++) { const k = Math.max(0, n.getZ(i)) * (.35 + .65 * Math.max(0, .5 - Math.abs(p2.getX(i)) * 2)); c.set([.025 + .1 * k, .03 + .12 * k, .045 + .17 * k], i * 3); } geo.setAttribute('color', new THREE.BufferAttribute(c, 3)); return geo; })();
+    const brillos = vEnf.map((v, i) => { const rs = rng(90 + i), ww = v.balc ? 1.05 : 1.15, hh = v.balc ? 2.1 : 1.25, yc = v.y;
+      const grp = new THREE.Group(); grp.position.set(v.fx, yc, v.z); grp.rotation.y = v.nx > 0 ? Math.PI / 2 : -Math.PI / 2; g.add(grp);
+      const fondo = new THREE.Mesh(new THREE.PlaneGeometry(ww, hh), fondoM); fondo.position.z = .012; grp.add(fondo);
+      for (const [x, y, w, h] of [[0, hh / 2 + .04, ww + .16, .08], [0, -hh / 2 - .04, ww + .16, .08], [-ww / 2 - .04, 0, .08, hh + .16], [ww / 2 + .04, 0, .08, hh + .16]]) grp.add(N.M(new THREE.BoxGeometry(w, h, .36), marcoM, x, y, .18));
+      grp.add(N.M(new THREE.BoxGeometry(.045, hh, .04), marcoM, 0, 0, .34)); grp.add(N.M(new THREE.BoxGeometry(ww, .045, .04), marcoM, 0, v.balc ? .25 : .08, .34));
+      const vid = new THREE.Mesh(new THREE.PlaneGeometry(ww, hh), vidrioM); vid.position.z = .33; vid.renderOrder = 4; grp.add(vid);
+      const dx = (rs() - .5) * .3 * ww, yh = (v.balc ? -.12 : -.02) + (rs() - .5) * .06;
+      const persona = new THREE.Group(); persona.position.set(dx, yh, 0); persona.scale.setScalar(1.35); grp.add(persona);
+      const cabeza = new THREE.Mesh(cabezaGeo, new THREE.MeshBasicMaterial({ vertexColors: true, color: '#FFFFFF' })); cabeza.position.set(0, 0, .15); cabeza.scale.set(1, 1.08, .75); persona.add(cabeza);
+      const hombros = new THREE.Mesh(hombrosGeo, new THREE.MeshBasicMaterial({ vertexColors: true, color: '#FFFFFF' })); hombros.position.set(0, -.27, .1); persona.add(hombros);
+      const pant = new THREE.Mesh(new THREE.PlaneGeometry(.05, .09), new THREE.MeshBasicMaterial({ color: HDR(2.2, 2.6, 3.2) })); pant.position.set(.03, -.2, .24); pant.rotation.x = -.6; persona.add(pant);
+      const halo = N.glow('#9FC8FF', .4, .5); halo.material.color = HDR(.55, .8, 1.25); halo.material.fog = false; halo.position.set(.03, -.16, .26); persona.add(halo);
+      const luz = N.glow('#7FA8FF', .9, .12); luz.material.fog = false; luz.position.set(0, -.05, .05); persona.add(luz);
+      return { v, grp, persona, cabeza, hombros, pant, halo, luz, ph: rs() * 6 }; });
+    // k: 0..1 brillo de cada pantalla (apagada = 0)
+    function pantallasEnf(k, t = 0) { brillos.forEach(b => { const kk = k * (.85 + .15 * Math.sin(t * 1.3 + b.ph)); b.persona.visible = kk > .01; b.cabeza.material.color.setScalar(kk); b.hombros.material.color.setScalar(kk); b.pant.material.color.setRGB(2.2 * kk, 2.6 * kk, 3.2 * kk); b.halo.material.opacity = .5 * kk; b.luz.material.opacity = .18 * kk; }); }
     // ventana del vecino del tercero (balcón central)
     const vVec = vEnf.find(v => v.f === 3 && v.balc && v.c === Math.floor(Math.max(1, Math.floor((ENF.w - 1) / 3)) / 2)) || vEnf.filter(v => v.f === 3)[0];
-    const luzVec = new THREE.Mesh(new THREE.PlaneGeometry(1.05, 2.1), new THREE.MeshBasicMaterial({ color: HDR(5, 3.4, 1.6), transparent: true, opacity: 0 })); luzVec.position.set(vVec.fx + vVec.nx * .1, vVec.y, vVec.z); luzVec.rotation.y = Math.PI / 2; g.add(luzVec);
+    const luzVec = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 2.05), new THREE.MeshBasicMaterial({ color: HDR(5, 3.4, 1.6), transparent: true, opacity: 0 })); luzVec.position.set(vVec.fx + vVec.nx * .03, vVec.y, vVec.z); luzVec.rotation.y = Math.PI / 2; g.add(luzVec);
     const luzVecL = new THREE.PointLight('#FFC27A', 0, 18, 1.5); luzVecL.position.set(vVec.fx + vVec.nx * 1.2, vVec.y + .3, vVec.z); g.add(luzVecL);
 
     // ---------- farolas de sodio ----------
@@ -210,7 +230,7 @@
     const anillosRojos = [...Array(6)].map(() => { const m = new THREE.Mesh(new THREE.RingGeometry(.96, 1, 96), anilloRojoM()); m.rotation.x = -Math.PI / 2; m.position.copy(cel.grp.position).add(V3(0, .01, 0)); m.renderOrder = 6; cuarto.add(m); return m; });
     function alarma(t, k, t0 = 0) { rojoL.intensity = 5 * k * (.75 + .25 * Math.sin(t * 18)); anillosRojos.forEach((a, i) => { const u = ((t - t0) * .55 + i / 6) % 1; a.visible = k > 0; a.scale.setScalar(.05 + u * 4.5); a.material.opacity = k * Math.min(1, u * 5) * (1 - u); }); }
 
-    return { group: g, edif, ventanas, TU, ENF, brillos, vVec, luzVec, luzVecL, farolas, farola, coches, cuarto, cel, rojoL, alarma, cortIzq, cortDer, refri, puertaR, luzRefri, refriL, tablon, cama, buro,
+    return { group: g, edif, ventanas, TU, ENF, brillos, pantallasEnf, vVec, luzVec, luzVecL, farolas, farola, coches, cuarto, cel, rojoL, alarma, cortIzq, cortDer, refri, puertaR, luzRefri, refriL, tablon, cama, buro,
       R: { RX0, RX1, RY, RW, RH, bz, PX, PZ0, PZ1, KZ0, KZ1, wy0, wy1 }, sky, moon, G, U };
   }
   window.COLONIA = COLONIA;
