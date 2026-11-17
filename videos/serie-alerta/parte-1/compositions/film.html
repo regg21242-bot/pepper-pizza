@@ -56,7 +56,7 @@
     mano.add(N.M(new THREE.BoxGeometry(.02, .02, .06), piel, .06, 0, .02)); mano.children[5].rotation.y = -.6; mano.add(N.M(new THREE.BoxGeometry(.07, .03, .12), N.std('#2A3A6A'), 0, .005, -.1));
 
     /* ---------- luz del refri en el pasillo y crujido del piso ---------- */
-    const cunaT = N.canvasTex(64, 512, (x, w, h) => { const g = x.createLinearGradient(0, h, 0, 0); g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(.55, 'rgba(255,255,255,.35)'); g.addColorStop(1, 'rgba(255,255,255,.9)'); x.fillStyle = g; x.beginPath(); x.moveTo(w * .1, h); x.lineTo(w * .9, h); x.lineTo(w * .62, 0); x.lineTo(w * .38, 0); x.closePath(); x.fill(); }, false);
+    const cunaT = N.canvasTex(64, 512, (x, w, h) => { const g = x.createLinearGradient(0, h, 0, 0); g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(.35, 'rgba(255,255,255,.4)'); g.addColorStop(.6, 'rgba(255,255,255,.25)'); g.addColorStop(.82, 'rgba(255,255,255,0)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.beginPath(); x.moveTo(w * .1, h); x.lineTo(w * .9, h); x.lineTo(w * .62, 0); x.lineTo(w * .38, 0); x.closePath(); x.fill(); }, false);
     const cuna = new THREE.Mesh(new THREE.PlaneGeometry(1.0, R.KZ1 - .9 - (R.PZ0 - 1.2)), new THREE.MeshBasicMaterial({ map: cunaT, color: HDR(.9, 1.0, 1.15), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
     cuna.rotation.x = -Math.PI / 2; cuna.position.set(R.PX, R.RY + .012, (R.KZ1 - .9 + R.PZ0 - 1.2) / 2); cuna.renderOrder = 3; scene.add(cuna);
     const crujido = new THREE.Mesh(new THREE.RingGeometry(.9, 1, 64), new THREE.MeshBasicMaterial({ color: HDR(2.2, 2.2, 2.4), transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false }));
@@ -149,7 +149,7 @@
       // cortina que se abre al asomarte
       const ck = ease(prog(t, T.cortina, T.cortina + .8)) * (t < 21.4 ? 1 : 0) + (t > 65 && t < 69.8 ? .5 : 0); C.cortIzq.position.z = -.62 - .5 * ck; C.cortDer.position.z = .62 + .5 * ck;
       // refri, pasillo, crujido
-      const ref = t > 57 && t < T.loop ? 1 : 0; C.refriL.intensity = 0; cuna.visible = false; C.luzRefri.visible = false;   // sin brillo en la puerta del fondo
+      const ref = t > 57 && t < T.loop ? 1 : 0; C.refriL.intensity = 0 * ref; cuna.visible = ref > 0; cuna.material.opacity = .5 * ref; C.luzRefri.visible = false;   // luz suave en el piso, sin brillo en la puerta del fondo
       const cu = prog(t, T.cruje, T.cruje + 1.1); crujido.visible = cu > 0 && cu < 1; crujido.scale.setScalar(.1 + cu * 1.6); crujido.material.opacity = 1 - cu;
       // tu cuarto se oscurece cuando se apaga la farola de tu puerta
       C.cuarto.children.forEach(o => { if (o.isPointLight && o.color.getHexString() === 'ff8a3a') o.intensity = 1.8 * (t > T.farolaPuerta && t < T.loop ? 0 : 1); });
