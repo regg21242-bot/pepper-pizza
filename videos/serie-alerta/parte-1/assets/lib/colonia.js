@@ -167,13 +167,16 @@
     // pasillo y cocina (para escenas 10-12): sale por la pared +z hacia la cocina
     const PZ0 = RW / 2, PZ1 = 9.5, PX = RX1 - .9, PW = 1.4;
     const pasT = madT.clone(); pasT.needsUpdate = true; pasT.repeat.set(.6, 3.4);
-    const pas = new THREE.Mesh(new THREE.BoxGeometry(PW, RH, PZ1 - PZ0), [paredM, paredM, new THREE.MeshStandardMaterial({ color: '#D8D4DC', side: THREE.BackSide }), new THREE.MeshStandardMaterial({ map: pasT, roughness: .55, side: THREE.BackSide }), nada, nada]);
+    // pasillo en penumbra azul (paredes con textura de aplanado, techo oscuro)
+    const aplT = N.canvasTex(512, 512, (x, w, h) => { x.fillStyle = '#4A5290'; x.fillRect(0, 0, w, h); const ra = rng(31); for (let i = 0; i < 900; i++) { x.fillStyle = `rgba(${ra() < .5 ? '20,24,60' : '120,130,200'},${.05 + ra() * .07})`; x.beginPath(); x.arc(ra() * w, ra() * h, 2 + ra() * 14, 0, 7); x.fill(); } }); aplT.wrapS = aplT.wrapT = THREE.RepeatWrapping; aplT.repeat.set(2, 2);
+    const pasM = new THREE.MeshStandardMaterial({ color: '#7A84C0', map: aplT, roughness: .95, side: THREE.BackSide }), techoP = new THREE.MeshStandardMaterial({ color: '#2A2E52', side: THREE.BackSide });
+    const pas = new THREE.Mesh(new THREE.BoxGeometry(PW, RH, PZ1 - PZ0), [pasM, pasM, techoP, new THREE.MeshStandardMaterial({ map: pasT, color: '#9A8A8A', roughness: .5, side: THREE.BackSide }), nada, nada]);
     pas.position.set(PX, RY + RH / 2, (PZ0 + PZ1) / 2); cuarto.add(pas);
     room.material[4] = nada; // la pared +z del cuarto se arma con hueco de puerta
     const pZ = (x0, x1, y0, y1) => cuarto.add(N.M(new THREE.BoxGeometry(x1 - x0, y1 - y0, .1), pV, (x0 + x1) / 2, (y0 + y1) / 2, PZ0));
     pZ(RX0, PX - PW / 2, RY, RY + RH); pZ(PX + PW / 2, RX1, RY, RY + RH); pZ(PX - PW / 2, PX + PW / 2, RY + 2.1, RY + RH);
     const KZ0 = PZ1, KZ1 = KZ0 + 3.2, KX0 = RX0 + .4, KX1 = RX1;
-    const coc = new THREE.Mesh(new THREE.BoxGeometry(KX1 - KX0, RH, KZ1 - KZ0), [paredM, paredM, new THREE.MeshStandardMaterial({ color: '#D8D4DC', side: THREE.BackSide }), new THREE.MeshStandardMaterial({ color: '#8A8A90', roughness: .5, side: THREE.BackSide }), paredM, nada]);
+    const coc = new THREE.Mesh(new THREE.BoxGeometry(KX1 - KX0, RH, KZ1 - KZ0), [pasM, pasM, techoP, new THREE.MeshStandardMaterial({ color: '#5A5A70', roughness: .5, side: THREE.BackSide }), pasM, nada]);
     coc.position.set((KX0 + KX1) / 2, RY + RH / 2, (KZ0 + KZ1) / 2); cuarto.add(coc);
     const pK = (x0, x1, y0, y1) => cuarto.add(N.M(new THREE.BoxGeometry(x1 - x0, y1 - y0, .1), pV, (x0 + x1) / 2, (y0 + y1) / 2, KZ0));
     pK(KX0, PX - PW / 2, RY, RY + RH); pK(PX + PW / 2, KX1, RY, RY + RH); pK(PX - PW / 2, PX + PW / 2, RY + 2.1, RY + RH);
@@ -183,6 +186,20 @@
     refri.add(N.M(new THREE.BoxGeometry(.8, .6, .06), std('#EEF0F4', { roughness: .35 }), 0, 1.55, -.36));
     const luzRefri = new THREE.Mesh(new THREE.PlaneGeometry(.7, 1.1), new THREE.MeshBasicMaterial({ color: HDR(3.5, 3.6, 3.8) })); luzRefri.position.set(0, .62, -.33); luzRefri.rotation.y = Math.PI; refri.add(luzRefri);
     const refriL = new THREE.SpotLight('#E8F0FF', 0, 12, .55, .7, 1.2); refriL.position.set(PX + .1, RY + .7, KZ1 - .9); refriL.target.position.set(PX, RY, PZ0 - 2); cuarto.add(refriL, refriL.target);
+    // puerta entreabierta en la pared +x del pasillo (izquierda vista desde la cama): sale una luz cálida suave
+    const pc = new THREE.Group(); pc.position.set(PX + PW / 2 - .01, RY, PZ0 + 2.6); cuarto.add(pc);
+    const marcoPC = std("#3A2618", { roughness: .7 }), DW = .82, DH = 2.02;
+    pc.add(N.M(new THREE.BoxGeometry(.04, DH + .06, .07), marcoPC, -.02, (DH + .06) / 2, -DW / 2 - .035)); pc.add(N.M(new THREE.BoxGeometry(.04, DH + .06, .07), marcoPC, -.02, (DH + .06) / 2, DW / 2 + .035)); pc.add(N.M(new THREE.BoxGeometry(.04, .07, DW + .14), marcoPC, -.02, DH + .035, 0));
+    const hueco = new THREE.Mesh(new THREE.PlaneGeometry(DW, DH), new THREE.MeshBasicMaterial({ map: N.canvasTex(64, 256, (x, w, h) => { const gg = x.createLinearGradient(0, 0, w, 0); gg.addColorStop(0, '#0E0A10'); gg.addColorStop(.55, '#2A1A14'); gg.addColorStop(1, '#C8783A'); x.fillStyle = gg; x.fillRect(0, 0, w, h); }), color: HDR(1.0, .85, .7) }));
+    hueco.rotation.y = -Math.PI / 2; hueco.position.set(-.002, DH / 2, 0); pc.add(hueco);
+    const hoja = new THREE.Group(); hoja.position.set(-.01, 0, -DW / 2); pc.add(hoja); hoja.rotation.y = .55;   // abierta hacia el pasillo, poquito
+    hoja.add(N.M(new THREE.BoxGeometry(.04, DH - .02, DW - .02), std('#5A3A24', { roughness: .6 }), -.02, DH / 2, DW / 2)); hoja.add(N.M(new THREE.SphereGeometry(.025, 10, 8), std('#C8A060', { metalness: .8, roughness: .3 }), -.06, 1.0, DW - .1));
+    const rendija = new THREE.Mesh(new THREE.PlaneGeometry(.05, DH - .05), new THREE.MeshBasicMaterial({ color: HDR(2.2, 1.3, .6), transparent: true, opacity: .9, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false })); rendija.rotation.y = -Math.PI / 2; rendija.position.set(-.004, DH / 2, DW / 2 - .03); pc.add(rendija);
+    const calT = N.canvasTex(128, 256, (x, w, h) => { const gg = x.createLinearGradient(0, 0, 0, h); gg.addColorStop(0, 'rgba(255,255,255,.9)'); gg.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = gg; x.beginPath(); x.moveTo(w * .3, 0); x.lineTo(w * .7, 0); x.lineTo(w, h); x.lineTo(0, h); x.closePath(); x.fill(); }, false);
+    const calPiso = new THREE.Mesh(new THREE.PlaneGeometry(.9, 1.1), new THREE.MeshBasicMaterial({ map: calT, color: HDR(.4, .21, .08), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
+    calPiso.geometry.translate(0, -.55, 0); calPiso.rotation.set(-Math.PI / 2, 0, -Math.PI / 2 + .15); calPiso.position.set(-.02, .006, .15); calPiso.renderOrder = 3; pc.add(calPiso);
+    const calL = new THREE.PointLight('#FF9A4A', 1.6, 4.2, 1.6); calL.position.set(-.35, 1.2, .3); pc.add(calL);
+    const calG = N.glow('#FFA050', 1, .45); calG.material.color = HDR(1.0, .55, .22); calG.scale.set(.7, 2.3, 1); calG.position.set(-.06, DH / 2, DW / 2 - .05); pc.add(calG);
     const tablon = N.M(new THREE.BoxGeometry(PW - .1, .012, .22), std('#6A4630', { roughness: .6 }), PX, RY + .005, (PZ0 + PZ1) / 2 + 1.0); cuarto.add(tablon);
     cuarto.traverse(o => { if (o.isMesh) { o.receiveShadow = true; } });
     const luzCalle = new THREE.PointLight('#FF8A3A', 1.8, 7, 2); luzCalle.position.set(RX0 + .6, G + 1.6, 0); cuarto.add(luzCalle);
@@ -230,7 +247,7 @@
     const anillosRojos = [...Array(6)].map(() => { const m = new THREE.Mesh(new THREE.RingGeometry(.96, 1, 96), anilloRojoM()); m.rotation.x = -Math.PI / 2; m.position.copy(cel.grp.position).add(V3(0, .01, 0)); m.renderOrder = 6; cuarto.add(m); return m; });
     function alarma(t, k, t0 = 0) { rojoL.intensity = 5 * k * (.75 + .25 * Math.sin(t * 18)); anillosRojos.forEach((a, i) => { const u = ((t - t0) * .55 + i / 6) % 1; a.visible = k > 0; a.scale.setScalar(.05 + u * 4.5); a.material.opacity = k * Math.min(1, u * 5) * (1 - u); }); }
 
-    return { group: g, edif, ventanas, TU, ENF, brillos, pantallasEnf, vVec, luzVec, luzVecL, farolas, farola, coches, cuarto, cel, rojoL, alarma, cortIzq, cortDer, refri, puertaR, luzRefri, refriL, tablon, cama, buro,
+    return { group: g, edif, ventanas, TU, ENF, brillos, pantallasEnf, vVec, luzVec, luzVecL, farolas, farola, coches, cuarto, cel, rojoL, alarma, cortIzq, cortDer, refri, puertaR, luzRefri, refriL, tablon, puertaCalida: pc, calL, cama, buro,
       R: { RX0, RX1, RY, RW, RH, bz, PX, PZ0, PZ1, KZ0, KZ1, wy0, wy1 }, sky, moon, G, U };
   }
   window.COLONIA = COLONIA;
