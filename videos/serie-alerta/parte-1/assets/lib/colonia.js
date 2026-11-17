@@ -173,12 +173,12 @@
     const pas = new THREE.Mesh(new THREE.BoxGeometry(PW, RH, PZ1 - PZ0), [pasM, pasM, techoP, new THREE.MeshStandardMaterial({ map: pasT, color: '#9A8A8A', roughness: .5, side: THREE.BackSide }), nada, nada]);
     pas.position.set(PX, RY + RH / 2, (PZ0 + PZ1) / 2); cuarto.add(pas);
     room.material[4] = nada; // la pared +z del cuarto se arma con hueco de puerta
-    const pZ = (x0, x1, y0, y1) => cuarto.add(N.M(new THREE.BoxGeometry(x1 - x0, y1 - y0, .1), pV, (x0 + x1) / 2, (y0 + y1) / 2, PZ0));
+    const pZM = std('#3C4680', { roughness: .95, map: aplT }); const pZ = (x0, x1, y0, y1) => cuarto.add(N.M(new THREE.BoxGeometry(x1 - x0, y1 - y0, .1), pZM, (x0 + x1) / 2, (y0 + y1) / 2, PZ0));
     pZ(RX0, PX - PW / 2, RY, RY + RH); pZ(PX + PW / 2, RX1, RY, RY + RH); pZ(PX - PW / 2, PX + PW / 2, RY + 2.1, RY + RH);
     const KZ0 = PZ1, KZ1 = KZ0 + 3.2, KX0 = RX0 + .4, KX1 = RX1;
     const coc = new THREE.Mesh(new THREE.BoxGeometry(KX1 - KX0, RH, KZ1 - KZ0), [pasM, pasM, techoP, new THREE.MeshStandardMaterial({ color: '#5A5A70', roughness: .5, side: THREE.BackSide }), pasM, nada]);
     coc.position.set((KX0 + KX1) / 2, RY + RH / 2, (KZ0 + KZ1) / 2); cuarto.add(coc);
-    const pK = (x0, x1, y0, y1) => cuarto.add(N.M(new THREE.BoxGeometry(x1 - x0, y1 - y0, .1), pV, (x0 + x1) / 2, (y0 + y1) / 2, KZ0));
+    const pasF = pasM.clone(); pasF.side = THREE.FrontSide; const pK = (x0, x1, y0, y1) => cuarto.add(N.M(new THREE.BoxGeometry(x1 - x0, y1 - y0, .1), pasF, (x0 + x1) / 2, (y0 + y1) / 2, KZ0));
     pK(KX0, PX - PW / 2, RY, RY + RH); pK(PX + PW / 2, KX1, RY, RY + RH); pK(PX - PW / 2, PX + PW / 2, RY + 2.1, RY + RH);
     const refri = new THREE.Group(); refri.position.set(PX + .1, RY, KZ1 - .45); cuarto.add(refri);
     refri.add(N.M(new THREE.BoxGeometry(.8, 1.85, .7), std('#E4E6EA', { roughness: .4 }), 0, .925, 0));
@@ -186,6 +186,17 @@
     refri.add(N.M(new THREE.BoxGeometry(.8, .6, .06), std('#EEF0F4', { roughness: .35 }), 0, 1.55, -.36));
     const luzRefri = new THREE.Mesh(new THREE.PlaneGeometry(.7, 1.1), new THREE.MeshBasicMaterial({ color: HDR(3.5, 3.6, 3.8) })); luzRefri.position.set(0, .62, -.33); luzRefri.rotation.y = Math.PI; refri.add(luzRefri);
     const refriL = new THREE.SpotLight('#E8F0FF', 0, 12, .55, .7, 1.2); refriL.position.set(PX + .1, RY + .7, KZ1 - .9); refriL.target.position.set(PX, RY, PZ0 - 2); cuarto.add(refriL, refriL.target);
+    // puerta de madera cerrada al fondo del pasillo (sin luz) y puerta del cuarto abierta
+    const madP = std('#7E5232', { roughness: .55, flatShading: false }), madP2 = std('#5E3C24', { roughness: .6 }), DWf = .86, DHf = 2.06;
+    cuarto.add(N.M(new THREE.BoxGeometry((PW - DWf) / 2, 2.1, .1), pasM.clone(), PX - PW / 2 + (PW - DWf) / 4, RY + 1.05, KZ0 - .06)); cuarto.add(N.M(new THREE.BoxGeometry((PW - DWf) / 2, 2.1, .1), pasM.clone(), PX + PW / 2 - (PW - DWf) / 4, RY + 1.05, KZ0 - .06));
+    cuarto.children.slice(-2).forEach(o => o.material.side = THREE.FrontSide);
+    cuarto.add(N.M(new THREE.BoxGeometry(DWf, DHf, .05), madP, PX, RY + DHf / 2, KZ0 - .08));
+    [[.62], [1.5]].forEach(([y]) => cuarto.add(N.M(new THREE.BoxGeometry(DWf - .24, y < 1 ? .72 : .7, .02), madP2, PX, RY + y, KZ0 - .11)));
+    const mF = std('#3A2416', { roughness: .7 }); cuarto.add(N.M(new THREE.BoxGeometry(.06, DHf + .06, .08), mF, PX - DWf / 2 - .03, RY + (DHf + .06) / 2, KZ0 - .09)); cuarto.add(N.M(new THREE.BoxGeometry(.06, DHf + .06, .08), mF, PX + DWf / 2 + .03, RY + (DHf + .06) / 2, KZ0 - .09)); cuarto.add(N.M(new THREE.BoxGeometry(DWf + .12, .06, .08), mF, PX, RY + DHf + .03, KZ0 - .09));
+    cuarto.add(N.M(new THREE.SphereGeometry(.028, 12, 10), std('#D8C8A0', { metalness: .8, roughness: .3 }), PX - DWf / 2 + .1, RY + 1.0, KZ0 - .14));
+    const hojaC = N.M(new THREE.BoxGeometry(.04, 2.05, .82), madP, PX - PW / 2 + .04, RY + 1.03, PZ0 - .45); cuarto.add(hojaC);
+    const azulP = new THREE.PointLight('#5A6AE0', .55, 6, 1.6); azulP.position.set(PX, RY + 2.3, (PZ0 + PZ1) / 2); cuarto.add(azulP);
+    const fondoL = new THREE.PointLight('#8A96E0', 2.2, 3.6, 1.4); fondoL.position.set(PX - .2, RY + 1.7, KZ0 - 1.3); cuarto.add(fondoL);
     // puerta entreabierta en la pared +x del pasillo (izquierda vista desde la cama): sale una luz cálida suave
     const pc = new THREE.Group(); pc.position.set(PX + PW / 2 - .01, RY, PZ0 + 2.6); cuarto.add(pc);
     const marcoPC = std("#3A2618", { roughness: .7 }), DW = .82, DH = 2.02;
