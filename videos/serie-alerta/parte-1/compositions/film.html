@@ -149,7 +149,7 @@
       // cortina que se abre al asomarte
       const ck = ease(prog(t, T.cortina, T.cortina + .8)) * (t < 21.4 ? 1 : 0) + (t > 65 && t < 69.8 ? .5 : 0); C.cortIzq.position.z = -.62 - .5 * ck; C.cortDer.position.z = .62 + .5 * ck;
       // refri, pasillo, crujido
-      const ref = t > 57 && t < T.loop ? 1 : 0; C.refriL.intensity = 1.0 * ref; cuna.visible = ref > 0; cuna.material.opacity = .2 * ref;
+      const ref = t > 57 && t < T.loop ? 1 : 0; C.refriL.intensity = 0; cuna.visible = false; C.luzRefri.visible = false;   // sin brillo en la puerta del fondo
       const cu = prog(t, T.cruje, T.cruje + 1.1); crujido.visible = cu > 0 && cu < 1; crujido.scale.setScalar(.1 + cu * 1.6); crujido.material.opacity = 1 - cu;
       // tu cuarto se oscurece cuando se apaga la farola de tu puerta
       C.cuarto.children.forEach(o => { if (o.isPointLight && o.color.getHexString() === 'ff8a3a') o.intensity = 1.8 * (t > T.farolaPuerta && t < T.loop ? 0 : 1); });
