@@ -19,10 +19,12 @@
     const T = { end: 87.6, bateria: 11.3, manotazo: 13.1, cortina: 15.2, sale: 16.2, luzVecino: 31.3, balcon: 32.4,
       apagones: [35.6, 36.9, 38.15, 39.5], parpadeo: 40.25, apagaVecino: 40.85, silencio0: 40.9, silencio1: 41.9, vibra: 48.7, refri: 61.2,
       farolaCuadra: 66.4, farolaPuerta: 69.1, cruje: 74.4, cartaA: 76.7, cartaB: 80.0, sigueme: 84.9, loop: 86.5,
-      cortes: [6.0, 11.3, 14.6, 21.4, 28.6, 34.0, 40.6, 48.4, 57.2, 65.2, 69.8, 75.0, 86.5] };
+      cortes: [6.0, 11.3, 14.6, 21.4, 28.6, 34.0, 40.6, 48.4, 57.2, 60.35, 63.4, 65.2, 69.8, 75.0, 86.5] };
 
     const renderer = N.crearRender(document.getElementById('gl'), W, H); renderer.toneMappingExposure = 1.15;
     const scene = new THREE.Scene(); const C = window.COLONIA(renderer, scene); const PP = window.POST(renderer, W, H); const R = C.R;
+    const RF = window.REFRI(renderer, scene), RO = RF.O, ro = (x, y, z) => [RO.x + x, RO.y + y, RO.z + z];
+    const luna = scene.children.find(o => o.isDirectionalLight), hemi = scene.children.find(o => o.isHemisphereLight), lunaI = luna.intensity, hemiI = hemi.intensity;
     const cam = new THREE.PerspectiveCamera(40, W / H, .01, 1500);
 
     /* ---------- el vecino del tercero: puerta de balcón, él, su lámpara ---------- */
@@ -77,7 +79,9 @@
       { a: 34.0, b: 40.6, fov: 46, K: [[34.0, [5, 30, 24], [-2, 0, -42], Y], [40.6, [2.5, 22, 10], [-3.5, 2, -22], Y]] },
       { a: 40.6, b: 48.4, fov: 44, K: [[40.6, [1.0, 7.5, vW.z + 7], [vW.x, vW.y - .2, vW.z], Y], [44.0, [-2.0, vW.y + .8, vW.z + 4.2], [vW.x, vW.y - .5, vW.z], Y], [48.4, [-4.6, vW.y + .1, vW.z + 2.2], [vW.x + .5, vW.y - .9, vW.z], Y]] },
       { a: 48.4, b: 57.2, K: [[48.4, ...cerca(.42, .26)], [57.2, ...cerca(.3, .16)]] },
-      { a: 57.2, b: 65.2, fov: 50, K: [[57.2, [R.RX1 - .45, R.RY + 1.35, R.bz - .2], [R.PX, R.RY + 1.0, R.PZ1], Y], [59.0, [R.RX1 - .42, R.RY + .84, R.bz - .05], [R.PX, R.RY + .9, R.PZ1], Y], [65.2, [R.RX1 - .55, R.RY + .82, R.bz + .25], [R.PX + .05, R.RY + .85, R.KZ1], Y]] },
+      { a: 57.2, b: 60.35, fov: 50, K: [[57.2, [R.RX1 - .45, R.RY + 1.35, R.bz - .2], [R.PX, R.RY + 1.0, R.PZ1], Y], [59.0, [R.RX1 - .42, R.RY + .84, R.bz - .05], [R.PX, R.RY + .9, R.PZ1], Y], [60.35, [R.RX1 - .44, R.RY + .83, R.bz + .02], [R.PX, R.RY + .88, R.PZ1 + .5], Y]] },
+      { a: 60.35, b: 63.4, fov: 42, refri: true, K: [[60.35, ro(2.1, .7, 3.7), ro(-.05, .95, .1), Y], [61.9, ro(1.85, .78, 3.3), ro(.0, .93, .15), Y], [63.4, ro(1.6, .85, 2.95), ro(.05, .9, .2), Y]] },
+      { a: 63.4, b: 65.2, fov: 50, K: [[63.4, [R.RX1 - .48, R.RY + .83, R.bz + .1], [R.PX + .02, R.RY + .87, R.PZ1 + 1.2], Y], [65.2, [R.RX1 - .55, R.RY + .82, R.bz + .25], [R.PX + .05, R.RY + .85, R.KZ1], Y]] },
       { a: 65.2, b: 69.8, fov: 52, K: [[65.2, [10.0, 4.7, .5], [R.RX0 - 4, 4.4, -.5], Y], [67.6, [8.9, 4.8, .3], [0, 3.6, -1.5], Y], [69.8, [8.1, 4.9, .1], [2.0, 1.5, -4], Y]] },
       { a: 69.8, b: 75.0, fov: 50, K: [[69.8, [R.PX + .1, R.RY + 1.35, R.PZ0 - .8], [R.PX, R.RY + .85, R.KZ1], Y], [75.0, [R.PX, R.RY + 1.2, R.PZ0 + 1.0], [R.PX, R.RY + .8, R.KZ1], Y]] },
       { a: 75.0, b: 86.5, fov: 50, K: [[75.0, [R.PX, R.RY + 1.2, R.PZ0 + 1.0], [R.PX, R.RY + .8, R.KZ1], Y], [86.5, [R.PX, R.RY + 1.15, R.PZ0 + 2.2], [R.PX, R.RY + .8, R.KZ1], Y]] },
@@ -156,11 +160,13 @@
       const s = TOMAS.find(x => t >= x.a && t < x.b) || TOMAS[TOMAS.length - 1];
       const [p, l, up] = pose(s, t); cam.fov = s.a === 0 ? lerp(40, 76, ease(prog(t, 0, 1.5))) : s.a === 6.0 ? lerp(76, 40, ease(prog(t, 6.0, 8.3))) : (s.fov || 40); cam.near = s.a >= 21.4 && s.a < 48 ? .1 : .01; cam.updateProjectionMatrix(); cam.position.copy(p); cam.up.copy(up); cam.lookAt(l); cam.updateMatrixWorld();
       mundo(t);
+      const enRefri = !!s.refri; RF.update(t, enRefri); luna.intensity = enRefri ? 0 : lunaI; hemi.intensity = enRefri ? .18 : hemiI;
       const enCel = (t < 14.6 && t >= 6) || (t >= 48.4 && t < 57.2) || t >= T.loop || t < 1.5;
       const rojo = t < 13.3 ? lerp(.45, .45, 1) * (t < 1.5 ? 1 : (t < 6 ? .8 : 1)) : t < 14.6 ? .18 : (t >= 48.4 && t < 57.2) ? .28 : t >= T.loop ? .45 : 0;
       const dCel = cam.position.distanceTo(P0);
       const o = { focus: enCel ? dCel : s.a === 0 ? 2.6 : s.a === 57.2 || s.a >= 69.8 ? 5 : s.a === 21.4 ? 14 : 20, ap: enCel ? .55 : s.a === 40.6 ? .25 : s.a === 28.6 ? .15 : s.a >= 57.2 && s.a < 86 ? .35 : 0.05,
         rojo, oscuro: (t >= T.silencio0 && t < T.silencio1 ? .5 : 0) + (t >= 57.2 && t < T.loop ? .25 : .08) + (t > T.farolaPuerta && t < T.loop ? .15 : 0), grano: t };
+      if (enRefri) Object.assign(o, { focus: cam.position.distanceTo(V3(RO.x + .3, .9, RO.z + .37)), ap: .18, oscuro: .06, umbral: 1.25, bloom: .8 });
       PP.render(scene, cam, o);
       drawHUD(t);
     }
