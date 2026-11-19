@@ -43,6 +43,9 @@
     if (estilo === 'mono') cabeza.add(M(new THREE.SphereGeometry(.075, 16, 12), pelM, 0, .14, -.13));
     if (estilo === 'rizado') { const rr = rng(5); for (let i = 0; i < 26; i++) { const a = rr() * Math.PI * 2, b = rr() * 1.1; cabeza.add(M(new THREE.SphereGeometry(.05 + rr() * .02, 10, 8), pelM, Math.cos(a) * Math.sin(b) * .17, Math.cos(b) * .17 + .02, Math.sin(a) * Math.sin(b) * .17 - .03)); } }
     if (estilo === 'barba') { const ca = M(new THREE.SphereGeometry(.178, 28, 18, 0, Math.PI * 2, 0, Math.PI * .5), pelM); ca.rotation.x = -.35; cabeza.add(ca); const ba = M(new THREE.SphereGeometry(.12, 16, 12), pelM, 0, -.1, .07); ba.scale.set(1.1, .7, .7); cabeza.add(ba); }
+    if (o.traje) { const tm = sm('#ECEEF2', { roughness: .55 }); const cap = M(new THREE.SphereGeometry(.215, 28, 20), tm, 0, .02, -.01); cap.scale.set(1, 1.05, 1); cabeza.add(cap);
+      const vis = M(new THREE.SphereGeometry(.17, 28, 16, -Math.PI * .35, Math.PI * .7, Math.PI * .28, Math.PI * .42), sm('#1A2430', { roughness: .08, metalness: .7 }), 0, .02, .07); vis.rotation.y = 0; cabeza.add(vis);
+      ojos.forEach(e => e.visible = false); boca.visible = false; }
     g.userData = { cabeza, craneo, pielM, ojos, brazos, piernas, torso, boca };
     // sentado: piernas hacia delante
     g.sentar = () => { piernas.forEach(p => { p.rotation.x = -Math.PI / 2; }); g.position.y = -.25; };
@@ -105,6 +108,17 @@
       // "+7 AÑOS" con pop
       if (o.mas7 > 0) { const k = o.mas7, s = k < .6 ? easeOut(k / .6) * 1.15 : 1.15 - .15 * ease((k - .6) / .4); x.save(); x.translate(W / 2, 590); x.scale(s, s);
         x.fillStyle = '#E8262E'; rr(x, -118, -38, 236, 76, 38); x.fill(); x.fillStyle = '#fff'; x.font = '900 46px Nunito, sans-serif'; x.fillText(o.textoRojo || '+7 AÑOS', 0, 16); x.restore(); }
+      if (estado === 'control') { x.fillStyle = 'rgba(14,14,24,.72)'; x.fillRect(0, 0, W, H);
+        const tile = (X0, Y0, w, h, on, col, dib) => { x.fillStyle = on ? col : 'rgba(60,60,72,.85)'; rr(x, X0, Y0, w, h, 34); x.fill(); x.save(); x.translate(X0 + w / 2, Y0 + h / 2); x.fillStyle = '#fff'; x.strokeStyle = '#fff'; x.lineWidth = 7; x.lineCap = 'round'; dib(); x.restore(); };
+        const k = o.toque || 0, pulso = k > 0 && k < 1 ? 1 + .08 * Math.sin(k * Math.PI) : 1;
+        tile(50, 230, 236, 236, true, '#F2A23A', () => { x.beginPath(); x.moveTo(-34, 30); x.lineTo(34, -30); x.stroke(); x.beginPath(); x.ellipse(0, 0, 16, 40, .8, 0, 7); x.stroke(); });
+        x.save(); x.translate(168 + 146, 348); x.scale(pulso, pulso); x.translate(-168 - 146, -348);
+        tile(314, 230, 236, 236, k >= .5, '#2EC85A', () => { for (let i = 0; i < 4; i++) x.fillRect(-46 + i * 26, 30 - i * 18, 18, 18 + i * 18); }); x.restore();
+        tile(50, 494, 236, 236, true, '#2A7AF2', () => { x.beginPath(); x.arc(0, 26, 6, 0, 7); x.fill(); for (let i = 1; i < 4; i++) { x.beginPath(); x.arc(0, 26, i * 20, -Math.PI * .78, -Math.PI * .22); x.stroke(); } });
+        tile(314, 494, 236, 236, true, '#2A7AF2', () => { x.beginPath(); x.moveTo(-16, -30); x.lineTo(18, 0); x.lineTo(-2, 16); x.lineTo(-2, -40); x.lineTo(18, -20); x.lineTo(-16, 10); x.stroke(); });
+        x.fillStyle = 'rgba(60,60,72,.85)'; rr(x, 50, 758, 500, 110, 34); x.fill(); x.fillStyle = '#fff'; x.font = '800 36px Nunito, sans-serif'; x.textAlign = 'left'; x.fillText(k >= .5 ? 'Datos móviles: activados' : 'Datos móviles', 90, 826);
+        x.fillStyle = 'rgba(60,60,72,.85)'; rr(x, 50, 896, 236, 300, 34); x.fill(); rr(x, 314, 896, 236, 300, 34); x.fill(); x.fillStyle = '#fff'; rr(x, 50, 1046, 236, 150, 34); x.fill(); rr(x, 314, 1086, 236, 110, 34); x.fill();
+        x.restore(); return; }
       // red: cápsula "Buscando red" con indicador
       if (o.red > 0) { x.save(); x.globalAlpha = Math.min(1, o.red); x.fillStyle = 'rgba(12,12,24,.82)'; rr(x, W / 2 - 170, 650, 340, 80, 40); x.fill(); x.fillStyle = '#fff'; x.font = '800 36px Nunito, sans-serif'; x.textAlign = 'left'; x.fillText('Buscando red', W / 2 - 92, 703);
         x.strokeStyle = '#fff'; x.lineWidth = 6; x.lineCap = 'round'; x.beginPath(); const a0 = (o.t || 0) * 7; x.arc(W / 2 - 128, 690, 18, a0, a0 + 4.2); x.stroke(); x.restore(); }
@@ -141,6 +155,35 @@
     return g;
   }
 
+  // ---------- mano con el índice estirado (para tocar la pantalla) ----------
+  function dedo(piel = PROTA.piel, manga = PROTA.ropa) {
+    const g = new THREE.Group(), pm = sm(piel, { roughness: .6 }), mm = sm(manga, { roughness: .85 });
+    const ind = M(rbox(.018, .075, .017, .008), pm, 0, .03, 0); g.add(ind);
+    const puno = M(rbox(.075, .07, .045, .02), pm, .018, -.035, -.012); g.add(puno);
+    const mg = M(new THREE.CylinderGeometry(.036, .04, .22, 16), mm, .03, -.18, -.02); mg.rotation.z = -.15; g.add(mg);
+    return g;
+  }
+
+  // ---------- el ferry: casco blanco con franja roja, cubiertas con ventanas encendidas ----------
+  function barco() {
+    const g = new THREE.Group(), L = 40, B = 7;
+    const casco = new THREE.Shape(); casco.moveTo(-L / 2, -B / 2); casco.lineTo(L / 2 - 7, -B / 2); casco.quadraticCurveTo(L / 2 - 1, -B / 2 + .6, L / 2, 0); casco.quadraticCurveTo(L / 2 - 1, B / 2 - .6, L / 2 - 7, B / 2); casco.lineTo(-L / 2, B / 2); casco.lineTo(-L / 2, -B / 2);
+    const ex = (h, mat, y, sc = 1) => { const geo = new THREE.ExtrudeGeometry(casco, { depth: h, bevelEnabled: false }); geo.rotateX(-Math.PI / 2); const m = M(geo, mat, 0, y, 0); m.scale.set(sc, 1, sc); g.add(m); return m; };
+    ex(1.2, sm('#1A1C24', { roughness: .6 }), -.8);      // obra viva (bajo el agua)
+    ex(.9, sm('#EEF0F2', { roughness: .5 }), .4); ex(.55, sm('#D8262E', { roughness: .45 }), 1.3); ex(1.6, sm('#F2F4F6', { roughness: .5 }), 1.85);
+    const ventM = new THREE.MeshBasicMaterial({ color: HDR(1.6, 1.4, 1.0), toneMapped: false }), ventO = sm('#1C2230', { roughness: .2, metalness: .5 });
+    for (let d = 0; d < 3; d++) { const w = L * (.78 - d * .12), b = B * (.92 - d * .06), y = 3.45 + d * 1.5, x0 = -L * .08 - d * 1.2;
+      g.add(M(new THREE.BoxGeometry(w, 1.5, b), sm('#F4F6F8', { roughness: .5 }), x0, y + .75, 0));
+      for (let i = 0; i < w / .9 - 1; i++) { const lit = ((i * 7 + d * 3) % 5) !== 0; for (const s of [-1, 1]) { const v = new THREE.Mesh(new THREE.PlaneGeometry(.55, .55), lit ? ventM : ventO); v.position.set(x0 - w / 2 + .7 + i * .9, y + .8, s * (b / 2 + .01)); v.rotation.y = s > 0 ? 0 : Math.PI; g.add(v); } }
+      for (let j = 0; j < 6; j++) { const fv = new THREE.Mesh(new THREE.PlaneGeometry(b * .11, .5), (j + d) % 3 ? ventM : ventO); fv.position.set(x0 + w / 2 + .01, y + .8, -b * .38 + j * b * .152); fv.rotation.y = Math.PI / 2; g.add(fv); } }
+    const puente = M(new THREE.BoxGeometry(3, 1.2, B * 1.05), sm('#F4F6F8'), 4.2, 8.6, 0); g.add(puente); const pv = new THREE.Mesh(new THREE.PlaneGeometry(B * .95, .6), new THREE.MeshBasicMaterial({ color: HDR(1.0, 1.4, 1.8), toneMapped: false })); pv.position.set(5.71, 8.7, 0); pv.rotation.y = Math.PI / 2; g.add(pv);
+    const chim = M(new THREE.CylinderGeometry(1.0, 1.25, 3, 16), sm('#F2F4F6'), -8, 10, 0); g.add(chim); g.add(M(new THREE.CylinderGeometry(1.02, 1.02, .7, 16), sm('#D8262E'), -8, 10.9, 0)); g.add(M(new THREE.CylinderGeometry(1.03, 1.03, .35, 16), sm('#1A1C24'), -8, 11.55, 0));
+    g.add(M(new THREE.CylinderGeometry(.06, .06, 4, 6), sm('#C8CCD4'), 3.5, 11, 0));
+    const luces = []; for (const [x, y, z, c] of [[19.5, 2.2, 0, '#FFFFFF'], [3.5, 13, 0, '#FFFFFF'], [4.2, 9.4, B * .55, '#3AFF5A'], [4.2, 9.4, -B * .55, '#FF3A3A'], [-19.8, 3, 0, '#FFFFFF']]) { const l = N.glow(c, 1.6, .95); l.material.fog = false; l.position.set(x, y, z); g.add(l); luces.push(l); }
+    for (let i = 0; i < 9; i++) for (const s of [-1, 1]) { const l = N.glow('#FFE2B0', .7, .7); l.position.set(-16 + i * 3.5, 3.2, s * (B / 2 + .2)); g.add(l); }
+    g.userData = { L, B, luces }; return g;
+  }
+
   // ---------- retratos tipo polaroid (atlas 8x8) en el mismo estilo ----------
   function atlasRetratos(seed = 3, prota = 27) {
     const n = 8, cs = 160, c = document.createElement('canvas'); c.width = c.height = n * cs; const x = c.getContext('2d'), r = rng(seed);
@@ -158,5 +201,5 @@
     return { canvas: c, n, prota };
   }
 
-  window.F = { HDR, sm, M, rbox, PIEL, ROPA, PELO, PROTA, personaje, multitud, movil, mano, atlasRetratos, SW, SH };
+  window.F = { HDR, sm, M, rbox, PIEL, ROPA, PELO, PROTA, personaje, multitud, movil, mano, dedo, barco, atlasRetratos, SW, SH };
 })();

@@ -64,8 +64,9 @@
       const pv = L[i - 1]; if (pv && t < e.a + TR * .6) o.zoom = (o.zoom || 0) + .05 * (1 - prog(t, e.a, e.a + TR * .6));
       PP.render(e.scene, e.cam, o);
       drawHUD(t);
+      if (window.DEPURA) { X.fillStyle = '#0f0'; X.font = '28px sans-serif'; X.fillText(`i=${i} a=${e.a} bg=${e.scene.background && e.scene.background.getHexString()} cam=${e.cam.position.toArray().map(v => v.toFixed(2))} fov=${e.cam.fov}`, 20, 1000); }
     }
-    window.addEventListener('hf-seek', ev => renderAt(ev.detail.time));
+    window.addEventListener('hf-seek', ev => { try { renderAt(ev.detail.time); } catch (err) { X.fillStyle = '#f00'; X.font = '30px sans-serif'; X.fillText(String(err && err.stack || err).slice(0, 200), 20, 900); } });
     renderAt(0);
     window.__timelines = window.__timelines || {};
     window.__timelines['film'] = gsap.timeline({ paused: true });

@@ -14,18 +14,19 @@
       fragmentShader: `uniform sampler2D tC, tZ; uniform float focus, ap, near, far; uniform vec2 res; varying vec2 vUv;
         float vz(vec2 uv){ float d = texture2D(tZ, uv).x * 2. - 1.; return 2. * near * far / (far + near - d * (far - near)); }
         float coc(float z){ return clamp(ap * abs(z - focus) / max(z, .01), 0., 1.) * 22.; }
-        void main(){ vec3 c0 = texture2D(tC, vUv).rgb; float z = vz(vUv), r = coc(z); if (r < .6) { gl_FragColor = vec4(c0, 1.); return; }
+        vec3 san(vec3 c){ if (!(c.r == c.r) || !(c.g == c.g) || !(c.b == c.b)) return vec3(0.); return clamp(c, 0., 64.); }
+        void main(){ vec3 c0 = san(texture2D(tC, vUv).rgb); float z = vz(vUv), r = coc(z); if (r < .6) { gl_FragColor = vec4(c0, 1.); return; }
           vec3 acc = c0; float ws = 1.;
           for (int i = 0; i < 40; i++) { float fi = float(i) + .5; float rr = sqrt(fi / 40.) * r; float th = fi * 2.39996; vec2 o = vec2(cos(th), sin(th)) * rr / res;
-            float zs = vz(vUv + o); float w = zs < z ? clamp(coc(zs) / max(rr, 1.), 0., 1.) : 1.; acc += texture2D(tC, vUv + o).rgb * w; ws += w; }
+            float zs = vz(vUv + o); float w = zs < z ? clamp(coc(zs) / max(rr, 1.), 0., 1.) : 1.; acc += san(texture2D(tC, vUv + o).rgb) * w; ws += w; }
           gl_FragColor = vec4(acc / ws, 1.); }` });
-    const brightM = new THREE.ShaderMaterial({ uniforms: { tC: { value: rtS.texture }, thr: { value: 1.0 } }, vertexShader: VS, fragmentShader: `uniform sampler2D tC; uniform float thr; varying vec2 vUv; void main(){ vec3 c = vec3(0.); for(int i=0;i<4;i++){ vec2 o = vec2(float(i/2)-.5, float(i-2*(i/2))-.5)/vec2(270.,480.); c += texture2D(tC, vUv+o).rgb; } c *= .25; gl_FragColor = vec4(max(c - thr, 0.), 1.); }` });
+    const brightM = new THREE.ShaderMaterial({ uniforms: { tC: { value: rtS.texture }, thr: { value: 1.0 } }, vertexShader: VS, fragmentShader: `uniform sampler2D tC; uniform float thr; varying vec2 vUv; void main(){ vec3 c = vec3(0.); for(int i=0;i<4;i++){ vec2 o = vec2(float(i/2)-.5, float(i-2*(i/2))-.5)/vec2(270.,480.); vec3 sm = texture2D(tC, vUv+o).rgb; if (sm.r == sm.r && sm.g == sm.g && sm.b == sm.b) c += clamp(sm, 0., 64.); } c *= .25; gl_FragColor = vec4(max(c - thr, 0.), 1.); }` });
     const blurM = new THREE.ShaderMaterial({ uniforms: { tC: { value: null }, dir: { value: new THREE.Vector2() } }, vertexShader: VS, fragmentShader: `uniform sampler2D tC; uniform vec2 dir; varying vec2 vUv; void main(){ vec3 c = texture2D(tC, vUv).rgb * .227; float w[4]; w[0]=.194; w[1]=.121; w[2]=.054; w[3]=.016; for(int i=1;i<5;i++){ c += (texture2D(tC, vUv + dir*float(i)).rgb + texture2D(tC, vUv - dir*float(i)).rgb) * w[i-1]; } gl_FragColor = vec4(c, 1.); }` });
     const finM = new THREE.ShaderMaterial({ uniforms: { tC: { value: rtD.texture }, tB: { value: rtB1.texture }, tA: { value: rtA.texture }, fade: { value: 0 }, zoom: { value: 0 }, mv: { value: new THREE.Vector2() }, bloom: { value: .9 }, rojo: { value: 0 }, oscuro: { value: 0 }, grano: { value: 0 } }, vertexShader: VS,
       fragmentShader: `uniform sampler2D tC, tB, tA; uniform float fade, zoom, bloom, rojo, oscuro, grano; uniform vec2 mv; varying vec2 vUv;
         float h(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
         void main(){ vec3 c = vec3(0.); for (int i = 0; i < 24; i++) { float s = float(i) / 23. - .5; c += texture2D(tC, vUv + mv * s - (vUv - .5) * zoom * (s + .5)).rgb; } c /= 24.;
-          c += texture2D(tB, vUv).rgb * bloom; c = mix(c, texture2D(tA, vUv).rgb, fade);
+          c += texture2D(tB, vUv).rgb * bloom; vec3 ca = texture2D(tA, vUv).rgb; if (!(ca.r == ca.r) || !(ca.g == ca.g) || !(ca.b == ca.b)) ca = vec3(0.); c = mix(c, clamp(ca, 0., 64.), fade);
           float L = dot(c, vec3(.3, .55, .15)); c = mix(c, vec3(L * 1.9 + .02, L * .28, L * .32), rojo * .85);
           vec2 q = vUv - .5; c *= 1. - (.45 + .4 * oscuro) * dot(q * vec2(1.25, .9), q * vec2(1.25, .9)) * 2.2;
           c *= 1. - oscuro * .55; c += (h(vUv * 1000. + grano) - .5) * .018;
