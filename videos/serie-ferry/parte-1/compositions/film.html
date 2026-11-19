@@ -1,0 +1,74 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; background: #05060C; overflow: hidden; font-family: Nunito, sans-serif; }
+    #gl, #hud { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+  </style>
+  <div id="root" data-composition-id="film" data-start="0" data-duration="95.8" data-width="1080" data-height="1920">
+    <canvas id="gl" width="1080" height="1920" data-layout-ignore></canvas>
+    <canvas id="hud" width="1080" height="1920" data-layout-ignore></canvas>
+  </div>
+  <script>
+  (function () {
+    /* "Tu ferry llega a puerto a su hora, pero el móvil dice que han pasado siete años" — serie Ferry, parte 1.
+       Piezas reutilizables en assets/lib/ferry.js (personajes, móvil, mano) y assets/lib/escenarios.js (escenarios). */
+    const MARCA = '@tuusuario';            // ← tu usuario (marca de agua)
+    const N = window.N, F = window.F, E = window.ESC, THREE = N.THREE, { clamp, lerp, prog, ease, easeOut } = N;
+    const W = 1080, H = 1920, V3 = (x, y, z) => new THREE.Vector3(x, y, z);
+
+    /* ---------- tiempos (s): cortes de escena y momentos clave (tools/mezcla.py los lee) ---------- */
+    const T = { end: 95.8,
+      cortes: [0, 2.2, 4.85, 7.0, 12.85, 15.0, 20.65, 27.95, 36.15, 37.45, 42.4, 46.85, 52.95, 55.85, 63.45, 73.3, 81.6, 85.4, 94.9],
+      bocina: .3, anioRueda: 3.35, mas7: 4.15, toqueRed: 13.85, saltos: [15.3, 16.2, 17.0], mensajes0: 16.0, palido: 20.9, dingdong: 28.0,
+      cortina: 36.3, sirenas: 37.6, pasarela: 42.6, pulsera: 47.2, tuya: 62.6, puertaCierra: 80.3, silencio0: 80.8, silencio1: 81.8, vibraFinal: 82.1, circulo: 84.3,
+      cartaA: 87.2, cartaB: 89.8, sigueme: 93.0, loop: 94.9 };
+
+    const renderer = N.crearRender(document.getElementById('gl'), W, H); renderer.toneMappingExposure = 1.15;
+    const PP = window.POST(renderer, W, H);
+    const S = E.crear(renderer, T);          // todas las escenas: { lista: [{a,b,scene,cam,upd,post}], miniaturas }
+
+    /* ---------- HUD: marca de agua y tarjetas A/B ---------- */
+    const X = document.getElementById('hud').getContext('2d');
+    function rr(x, y, w, h, r) { X.beginPath(); X.roundRect(x, y, w, h, r); }
+    function carta(y, k, hi, letra, col, txt, mini) {
+      if (k <= 0) return; const s = .9 + .1 * easeOut(k) + .04 * hi, w = 800, h = 210, x = 70;
+      X.save(); X.globalAlpha = Math.min(1, k * 1.6) * (1 - .35 * (hi < 0 ? -hi : 0)); X.translate(x + w / 2, y + h / 2); X.scale(s, s); X.translate(-w / 2, -h / 2);
+      X.shadowColor = col; X.shadowBlur = 26 + 34 * Math.max(0, hi); rr(0, 0, w, h, 26); X.fillStyle = 'rgba(12,16,28,.92)'; X.fill(); X.shadowBlur = 0;
+      X.lineWidth = 5 + 3 * Math.max(0, hi); X.strokeStyle = col; X.stroke();
+      X.save(); rr(14, 14, 260, h - 28, 18); X.clip(); X.drawImage(mini, 0, 0, mini.width, mini.height, 14, 14, 260, h - 28); X.restore();
+      X.beginPath(); X.arc(18, 18, 38, 0, 7); X.fillStyle = col; X.fill(); X.lineWidth = 5; X.strokeStyle = '#0C1020'; X.stroke();
+      X.fillStyle = '#0C1020'; X.font = '900 46px Nunito, sans-serif'; X.textAlign = 'center'; X.fillText(letra, 18, 34);
+      X.fillStyle = '#FFFFFF'; X.font = '900 52px Nunito, sans-serif'; X.textAlign = 'left'; txt.forEach((l, i) => X.fillText(l, 304, 92 + i * 62 - (txt.length - 1) * 31 + 20));
+      X.restore(); }
+    function drawHUD(t) {
+      X.clearRect(0, 0, W, H);
+      // marca de agua a media pantalla
+      X.save(); X.globalAlpha = .32; X.fillStyle = '#FFFFFF'; X.font = '900 46px Nunito, sans-serif'; X.textAlign = 'center'; X.shadowColor = 'rgba(0,0,0,.5)'; X.shadowBlur = 8; X.fillText(MARCA, W / 2, 1180); X.restore();
+      // tarjetas finales
+      if (t >= T.cartaA - .4 && t < T.loop) {
+        const ka = prog(t, T.cartaA - .4, T.cartaA + .1), kb = prog(t, T.cartaB - .5, T.cartaB);
+        const hA = t >= T.cartaA && t < T.cartaB ? 1 : t >= T.cartaB && t < T.sigueme ? -.6 : 0, hB = t >= T.cartaB && t < T.sigueme ? 1 : 0;
+        const sal = 1 - prog(t, T.loop - .45, T.loop);
+        carta(930, ka * sal, hA, 'A', '#FFD23A', ['Vuelves', 'a tu casa'], S.miniaturas.A);
+        carta(1180, kb * sal, hB, 'B', '#3ADCF0', ['Sigues a los', 'pasajeros'], S.miniaturas.B);
+      }
+    }
+
+    /* ---------- render: escena actual + transición (zoom continuo / desenfoque) ---------- */
+    const TR = .32;
+    function renderAt(t) {
+      const L = S.lista, i = Math.max(0, L.findIndex(e => t >= e.a && t < e.b)), e = L[i] || L[L.length - 1];
+      e.upd(t); const o = Object.assign({ focus: 3, ap: .04, grano: t }, e.post ? e.post(t) : {});
+      // entrada de la siguiente escena: zoom hacia dentro + fundido
+      const nx = L[i + 1]; let fade = 0;
+      if (nx && t > e.b - TR) { nx.upd(t); fade = ease(prog(t, e.b - TR, e.b)); o.sceneB = nx.scene; o.camB = nx.cam; o.fade = fade; o.zoom = .06 * Math.sin(fade * Math.PI); }
+      const pv = L[i - 1]; if (pv && t < e.a + TR * .6) o.zoom = (o.zoom || 0) + .05 * (1 - prog(t, e.a, e.a + TR * .6));
+      PP.render(e.scene, e.cam, o);
+      drawHUD(t);
+    }
+    window.addEventListener('hf-seek', ev => renderAt(ev.detail.time));
+    renderAt(0);
+    window.__timelines = window.__timelines || {};
+    window.__timelines['film'] = gsap.timeline({ paused: true });
+  })();
+  </script>
+</template>
