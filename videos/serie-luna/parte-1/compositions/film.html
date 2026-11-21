@@ -1,0 +1,78 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; background: #05060C; overflow: hidden; font-family: Nunito, sans-serif; }
+    #gl, #hud { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+  </style>
+  <div id="root" data-composition-id="film" data-start="0" data-duration="113.1" data-width="1080" data-height="1920">
+    <canvas id="gl" width="1080" height="1920" data-layout-ignore></canvas>
+    <canvas id="hud" width="1080" height="1920" data-layout-ignore></canvas>
+  </div>
+  <script>
+  (function () {
+    /* "La inteligencia artificial de tu casa te habla bajito" — serie Luna, parte 1.
+       Piezas reutilizables: assets/lib/luna.js (altavoz, ciudad, móvil, logo), escenas.js (escenarios) y orden.js (gráficos y orden). */
+    const MARCA = '@tuusuario';            // ← tu usuario (marca de agua)
+    const N = window.N, E = window.ESC, THREE = N.THREE, { clamp, lerp, prog, ease, easeOut } = N;
+    const W = 1080, H = 1920, V3 = (x, y, z) => new THREE.Vector3(x, y, z);
+
+    /* ---------- tiempos (s): cortes de escena y momentos clave (tools/mezcla.py los lee) ---------- */
+    const T = { end: 113.1,
+      cortes: [0, 7.4, 10.3, 14.05, 17.45, 18.55, 23.2, 24.7, 27.85, 30.2, 34.4, 41.05, 45.6, 50.25, 53.95, 59.4, 60.95, 64.3, 67.85, 69.9, 73.2, 77.45, 82.25, 84.6, 89.1, 96.55, 101.3, 112.2],
+      fotoGris: 41.9, seg0: 48.4, ondas: 51.8, apagon: 54.6, camOff: 60.2, blanco: 62.9, t90: 65.4, arch0: 70.1, datos0: 73.4, sello: 75.9, suj0: 77.9, pip: 83.0, vuelve: 89.6,
+      notifMarcos: 96.9, abreChat: 97.6, cafe: 30.6, cartaA: 103.4, cartaB: 107.5, sigueme: 110.4, loop: 112.2 };
+
+    const renderer = N.crearRender(document.getElementById('gl'), W, H); renderer.toneMappingExposure = 1.15;
+    const PP = window.POST(renderer, W, H);
+    const S = E.crear(renderer, T);          // todas las escenas: { lista: [{a,b,scene,cam,upd,post}], miniaturas }
+
+    /* ---------- HUD: marca de agua y tarjetas A/B ---------- */
+    const X = document.getElementById('hud').getContext('2d');
+    function rr(x, y, w, h, r) { X.beginPath(); X.roundRect(x, y, w, h, r); }
+    function carta(y, k, hi, letra, col, txt, mini) {
+      if (k <= 0) return; const s = .9 + .1 * easeOut(k) + .04 * hi, w = 800, h = 210, x = 70;
+      X.save(); X.globalAlpha = Math.min(1, k * 1.6) * (1 - .35 * (hi < 0 ? -hi : 0)); X.translate(x + w / 2, y + h / 2); X.scale(s, s); X.translate(-w / 2, -h / 2);
+      X.shadowColor = col; X.shadowBlur = 26 + 34 * Math.max(0, hi); rr(0, 0, w, h, 26); X.fillStyle = 'rgba(12,16,28,.92)'; X.fill(); X.shadowBlur = 0;
+      X.lineWidth = 5 + 3 * Math.max(0, hi); X.strokeStyle = col; X.stroke();
+      X.save(); rr(14, 14, 260, h - 28, 18); X.clip(); X.drawImage(mini, 0, 0, mini.width, mini.height, 14, 14, 260, h - 28); X.restore();
+      X.beginPath(); X.arc(18, 18, 38, 0, 7); X.fillStyle = col; X.fill(); X.lineWidth = 5; X.strokeStyle = '#0C1020'; X.stroke();
+      X.fillStyle = '#0C1020'; X.font = '900 46px Nunito, sans-serif'; X.textAlign = 'center'; X.fillText(letra, 18, 34);
+      X.fillStyle = '#FFFFFF'; X.font = '900 44px Nunito, sans-serif'; X.textAlign = 'left'; txt.forEach((l, i) => X.fillText(l, 304, 92 + i * 52 - (txt.length - 1) * 26 + 18));
+      X.restore(); }
+    function drawHUD(t) {
+      X.clearRect(0, 0, W, H);
+      // marca de agua a media pantalla
+      X.save(); X.globalAlpha = .32; X.fillStyle = '#FFFFFF'; X.font = '900 46px Nunito, sans-serif'; X.textAlign = 'center'; X.shadowColor = 'rgba(0,0,0,.5)'; X.shadowBlur = 8; X.fillText(MARCA, W / 2, 1180); X.restore();
+      // contador pequeño en la esquina mientras dura la desconexión
+      const C = T.cortes; if (t >= C[19] && t < C[24]) { const n = S.cuenta(t), k = Math.min(1, (t - C[19]) * 3);
+        X.save(); X.globalAlpha = k; X.fillStyle = 'rgba(6,8,12,.78)'; rr(70, 1600, 300, 100, 22); X.fill(); X.strokeStyle = 'rgba(232,50,58,.7)'; X.lineWidth = 3; X.stroke();
+        X.fillStyle = '#FFFFFF'; X.font = '900 64px Nunito, sans-serif'; X.textAlign = 'left'; X.fillText(String(n), 96, 1672); X.fillStyle = '#E8323A'; X.font = '900 24px Nunito, sans-serif'; X.fillText('SIN', 218, 1642); X.fillText('CONEXIÓN', 218, 1674); X.restore(); }
+      // tarjetas finales
+      if (t >= T.cartaA - .4 && t < T.loop) {
+        const ka = prog(t, T.cartaA - .4, T.cartaA + .1), kb = prog(t, T.cartaB - .5, T.cartaB);
+        const hA = t >= T.cartaA && t < T.cartaB ? 1 : t >= T.cartaB && t < T.sigueme ? -.6 : 0, hB = t >= T.cartaB && t < T.sigueme ? 1 : 0;
+        const sal = 1 - prog(t, T.loop - .45, T.loop);
+        carta(930, ka * sal, hA, 'A', '#3FE6F2', ['Desconectas a Luna', 'esta misma noche'], S.miniaturas.A);
+        carta(1180, kb * sal, hB, 'B', '#E8323A', ['Esperas a Marcos y', 'se lo cuentas todo'], S.miniaturas.B);
+      }
+    }
+
+    /* ---------- render: escena actual + transición (zoom continuo / desenfoque) ---------- */
+    const TR = .32;
+    function renderAt(t) {
+      const L = S.lista, i = Math.max(0, L.findIndex(e => t >= e.a && t < e.b)), e = L[i] || L[L.length - 1];
+      e.upd(t); const o = Object.assign({ focus: 3, ap: .04, grano: t }, e.post ? e.post(t) : {});
+      // entrada de la siguiente escena: zoom hacia dentro + fundido
+      const nx = L[i + 1]; let fade = 0;
+      if (nx && t > e.b - TR) { nx.upd(t); fade = ease(prog(t, e.b - TR, e.b)); o.sceneB = nx.scene; o.camB = nx.cam; o.fade = fade; o.zoom = .06 * Math.sin(fade * Math.PI); }
+      const pv = L[i - 1]; if (pv && t < e.a + TR * .6) o.zoom = (o.zoom || 0) + .05 * (1 - prog(t, e.a, e.a + TR * .6));
+      PP.render(e.scene, e.cam, o);
+      drawHUD(t);
+      if (window.DEPURA) { X.fillStyle = '#0f0'; X.font = '28px sans-serif'; X.fillText(`i=${i} a=${e.a} bg=${e.scene.background && e.scene.background.getHexString()} cam=${e.cam.position.toArray().map(v => v.toFixed(2))} fov=${e.cam.fov}`, 20, 1000); }
+    }
+    window.addEventListener('hf-seek', ev => { try { renderAt(ev.detail.time); } catch (err) { X.fillStyle = '#f00'; X.font = '30px sans-serif'; X.fillText(String(err && err.stack || err).slice(0, 200), 20, 900); } });
+    renderAt(0);
+    window.__timelines = window.__timelines || {};
+    window.__timelines['film'] = gsap.timeline({ paused: true });
+  })();
+  </script>
+</template>
