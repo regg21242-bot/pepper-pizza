@@ -23,39 +23,44 @@
     x.setLineDash([R * .03, R * .07]); x.lineWidth = R * .03; x.beginPath(); x.arc(cx, cy, R * .32, 0, 7); x.stroke(); x.setLineDash([]);
     x.shadowBlur = R * .5; x.fillStyle = '#E8FFFF'; x.beginPath(); x.arc(cx, cy, R * .11, 0, 7); x.fill(); x.restore(); }
 
-  // ---------- ciudad nocturna enorme (textura) ----------
+  // ---------- ciudad nocturna enorme (textura): llanura de luces, avenidas en X y un grupo de rascacielos finos ----------
   function texCiudad(seed = 4) {
     const W = 4096, H = 2048; return cv(W, H, (x) => { const r = rng(seed), hz = H * .34;
-      const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#050816'); g.addColorStop(.25, '#0C1230'); g.addColorStop(.34, '#2A2048'); g.addColorStop(.36, '#140E22'); g.addColorStop(1, '#07060C'); x.fillStyle = g; x.fillRect(0, 0, W, H);
-      // rascacielos lejanos con ventanitas azules
-      for (let i = 0; i < 140; i++) { const w = 30 + r() * 90, h = 60 + Math.pow(r(), 2.2) * 420, X = r() * W, Y = hz - h + 10; x.fillStyle = '#0A0E1E'; x.fillRect(X, Y, w, h);
-        for (let yy = Y + 8; yy < hz - 6; yy += 12) for (let xx = X + 6; xx < X + w - 6; xx += 10) if (r() < .45) { x.fillStyle = r() < .8 ? `rgba(110,170,255,${.35 + r() * .5})` : `rgba(255,210,140,${.4 + r() * .4})`; x.fillRect(xx, yy, 4, 5); }
-        if (r() < .25) { x.fillStyle = '#FF3A3A'; x.fillRect(X + w / 2 - 3, Y - 6, 6, 6); } }
-      // llanura de luces: millones de puntitos cálidos (más pequeños hacia el horizonte)
-      for (let i = 0; i < 160000; i++) { const v = Math.pow(r(), 1.6), Y = hz + v * (H - hz), X = r() * W, s = .6 + v * 3.2; const c = r(); x.fillStyle = c < .7 ? `rgba(255,${180 + r() * 50 | 0},${100 + r() * 60 | 0},${.35 + r() * .55})` : c < .9 ? `rgba(255,240,210,${.4 + r() * .5})` : `rgba(140,190,255,${.3 + r() * .5})`; x.fillRect(X, Y, s, s); }
-      // avenidas que brillan en diagonal hacia el punto de fuga
-      x.globalCompositeOperation = 'lighter'; const vp = [W * .55, hz];
-      for (let k = 0; k < 14; k++) { const bx = (k / 13) * W * 1.6 - W * .3; x.strokeStyle = k % 3 ? 'rgba(255,170,60,.55)' : 'rgba(255,215,120,.7)'; x.lineWidth = 3 + r() * 6; x.shadowColor = '#FFB040'; x.shadowBlur = 24; x.beginPath(); x.moveTo(bx, H); x.lineTo(vp[0] + (bx - vp[0]) * .02, vp[1] + 4); x.stroke(); }
-      for (let k = 0; k < 10; k++) { const yy = hz + Math.pow((k + 1) / 10, 1.8) * (H - hz); x.strokeStyle = 'rgba(255,160,60,.35)'; x.lineWidth = 1 + k * .6; x.beginPath(); x.moveTo(0, yy + r() * 30); x.lineTo(W, yy - r() * 30); x.stroke(); }
-      x.shadowBlur = 0; x.globalCompositeOperation = 'source-over';
-      const nb = x.createLinearGradient(0, hz - 40, 0, hz + 80); nb.addColorStop(0, 'rgba(80,60,120,0)'); nb.addColorStop(.5, 'rgba(120,80,140,.25)'); nb.addColorStop(1, 'rgba(80,60,120,0)'); x.fillStyle = nb; x.fillRect(0, hz - 40, W, 120);
+      const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#04060F'); g.addColorStop(.2, '#0A0E22'); g.addColorStop(.3, '#2A1E34'); g.addColorStop(.34, '#4A2E2E'); g.addColorStop(.345, '#140E14'); g.addColorStop(1, '#060508'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+      // perfil bajo de la ciudad lejana en el horizonte
+      for (let i = 0; i < 90; i++) { const w = 30 + r() * 90, h = 4 + Math.pow(r(), 3) * 30, X = r() * W; x.fillStyle = '#1A1218'; x.fillRect(X, hz - h, w, h + 2); }
+      // grupo de 4 rascacielos finos a la derecha (ventanitas azules, remates rojo/verde agua)
+      const tor = [[.507, 150, '#FF4A4A'], [.514, 135, '#E8F0FF'], [.521, 165, '#6AE8D8'], [.529, 120, '#E8F0FF']];
+      tor.forEach(([fx, h, col], k) => { const X = W * fx, w = 20, Y = hz - h; x.fillStyle = '#0C1022'; if (k === 1) { x.beginPath(); x.moveTo(X, hz); x.lineTo(X, Y + 18); x.quadraticCurveTo(X + w / 2, Y - 6, X + w, Y + 18); x.lineTo(X + w, hz); x.fill(); } else x.fillRect(X, Y, w, h);
+        for (let yy = Y + 16; yy < hz - 4; yy += 7) for (let xx = X + 6; xx < X + w - 6; xx += 6) if (r() < .55) { x.fillStyle = `rgba(150,190,255,${.35 + r() * .55})`; x.fillRect(xx, yy, 3, 3); }
+        x.fillStyle = col; x.shadowColor = col; x.shadowBlur = 14; x.fillRect(X + (k === 2 ? 0 : w / 2 - 4), Y - (k === 2 ? 8 : 4), k === 2 ? w : 8, k === 2 ? 10 : 6); x.shadowBlur = 0; });
+      // resplandor anaranjado sobre el horizonte
+      const gl = x.createLinearGradient(0, hz - 160, 0, hz + 40); gl.addColorStop(0, 'rgba(255,140,80,0)'); gl.addColorStop(.75, 'rgba(255,150,90,.18)'); gl.addColorStop(1, 'rgba(255,150,90,0)'); x.fillStyle = gl; x.fillRect(0, hz - 160, W, 200);
+      // llanura de luces: millones de puntitos cálidos, más pequeños hacia el horizonte
+      for (let i = 0; i < 220000; i++) { const v = Math.pow(r(), 1.5), Y = hz + v * (H - hz), X = r() * W, sz = .5 + v * 3.4; const c = r(); x.fillStyle = c < .72 ? `rgba(255,${190 + r() * 50 | 0},${120 + r() * 60 | 0},${.3 + r() * .6})` : c < .93 ? `rgba(255,246,226,${.35 + r() * .55})` : `rgba(150,190,255,${.3 + r() * .5})`; x.fillRect(X, Y, sz, sz); }
+      // avenidas que brillan: dos grandes diagonales en X y varias secundarias
+      x.globalCompositeOperation = 'lighter';
+      const av = (x0, y0, x1, y1, wd, a) => { x.strokeStyle = `rgba(255,200,110,${a})`; x.lineWidth = wd; x.shadowColor = '#FFB050'; x.shadowBlur = 18; x.beginPath(); x.moveTo(x0, y0); x.lineTo(x1, y1); x.stroke(); x.shadowBlur = 0; x.strokeStyle = `rgba(255,240,200,${a})`; x.lineWidth = wd * .35; x.beginPath(); x.moveTo(x0, y0); x.lineTo(x1, y1); x.stroke(); };
+      const vx = W * .46; [[-.15, 7, .42], [1.1, 7, .4]].forEach(([fx, wd, al]) => av(W * fx, H * .95, vx + (W * fx - vx) * .03, hz + 3, wd, al)); av(0, hz + 160, W, hz + 120, 3, .22); av(W * .3, H, W * .52, hz + 3, 3, .2);
+      x.globalCompositeOperation = 'source-over';
     }); }
 
-  // ---------- altavoz: cilindro negro mate con anillo de luz arriba ----------
-  function altavoz(esc = 1) {
-    const g = new THREE.Group(), negro = sm('#0C0D10', { roughness: .85 }), h = .52 * esc, r = .085 * esc;
-    const cuerpo = M(new THREE.CylinderGeometry(r, r, h, 64), negro, 0, h / 2, 0); g.add(cuerpo);
-    const tela = cv(256, 512, (x, w, hh) => { x.fillStyle = '#0E0F12'; x.fillRect(0, 0, w, hh); x.fillStyle = 'rgba(255,255,255,.05)'; for (let j = 0; j < hh; j += 6) for (let i = (j / 6 % 2) * 3; i < w; i += 6) x.fillRect(i, j, 2, 2); });
-    tela.wrapS = THREE.RepeatWrapping; tela.repeat.set(3, 1); cuerpo.material = sm('#FFFFFF', { map: tela, roughness: .9 });
-    const tapa = M(new THREE.CylinderGeometry(r * .98, r * .98, .012 * esc, 64), sm('#141518', { roughness: .4, metalness: .3 }), 0, h + .006 * esc, 0); g.add(tapa);
+  // ---------- altavoz: cilindro azul muy oscuro, con anillo de luz abierto arriba y haz tenue ----------
+  function altavoz(esc = 1, hMul = 1) {
+    const g = new THREE.Group(), h = .52 * esc * hMul, r = .085 * esc;
+    const tela = cv(256, 512, (x, w, hh) => { const gg = x.createLinearGradient(0, 0, w, 0); gg.addColorStop(0, '#141A28'); gg.addColorStop(.45, '#36415A'); gg.addColorStop(1, '#141A28'); x.fillStyle = gg; x.fillRect(0, 0, w, hh); x.fillStyle = 'rgba(255,255,255,.035)'; for (let j = 0; j < hh; j += 5) for (let i = (j / 5 % 2) * 2.5; i < w; i += 5) x.fillRect(i, j, 1.5, 1.5); });
+    const cuerpo = M(new THREE.CylinderGeometry(r, r, h, 72, 1, true), sm('#FFFFFF', { map: tela, roughness: .7, metalness: .2 }), 0, h / 2, 0); g.add(cuerpo);
+    const hueco = M(new THREE.CylinderGeometry(r * .93, r * .93, .02 * esc, 64), sm('#05070C', { roughness: .9 }), 0, h - .012 * esc, 0); g.add(hueco);
+    const borde = M(new THREE.TorusGeometry(r * .985, .006 * esc, 10, 96), sm('#2A3040', { metalness: .7, roughness: .3 }), 0, h, 0); borde.rotation.x = Math.PI / 2; g.add(borde);
     const anM = new THREE.MeshBasicMaterial({ color: HDR(.5, 2.6, 3.0), toneMapped: false });
-    const anillo = M(new THREE.TorusGeometry(r * .86, .007 * esc, 12, 96), anM, 0, h + .013 * esc, 0); anillo.rotation.x = Math.PI / 2; anillo.castShadow = false; g.add(anillo);
-    const halo = glow(CIAN, .55 * esc, .55); halo.position.set(0, h + .02 * esc, 0); halo.scale.set(.32 * esc, .12 * esc, 1); g.add(halo);
+    const anillo = M(new THREE.TorusGeometry(r * .86, .0075 * esc, 12, 96), anM, 0, h - .004 * esc, 0); anillo.rotation.x = Math.PI / 2; anillo.castShadow = false; g.add(anillo);
+    const halo = glow(CIAN, .55 * esc, .45); halo.position.set(0, h + .01 * esc, 0); halo.scale.set(.3 * esc, .09 * esc, 1); g.add(halo);
+    const hazT = cv(64, 256, (x, w, hh) => { const gg = x.createLinearGradient(0, hh, 0, 0); gg.addColorStop(0, 'rgba(255,255,255,.7)'); gg.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = gg; x.fillRect(0, 0, w, hh); const gx = x.createLinearGradient(0, 0, w, 0); gx.addColorStop(0, 'rgba(0,0,0,1)'); gx.addColorStop(.5, 'rgba(0,0,0,0)'); gx.addColorStop(1, 'rgba(0,0,0,1)'); x.globalCompositeOperation = 'destination-out'; x.fillStyle = gx; x.fillRect(0, 0, w, hh); }, false);
+    const haz = new THREE.Mesh(new THREE.PlaneGeometry(r * .9, h * 1.1), new THREE.MeshBasicMaterial({ map: hazT, color: HDR(.1, .35, .45), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false })); haz.position.set(0, h + h * .55, 0); haz.visible = false; g.add(haz);
     const luz = new THREE.PointLight(CIAN, 1.4, 2.5 * esc, 1.5); luz.position.set(0, h + .1 * esc, .05); g.add(luz);
-    for (let i = 0; i < 4; i++) { const b = M(new THREE.CylinderGeometry(.006 * esc, .006 * esc, .004, 12), sm('#2A2C30'), (i - 1.5) * .018 * esc, h + .013 * esc, .04 * esc); g.add(b); }
     const C = new THREE.Color(), cC = new THREE.Color(CIAN), cB = new THREE.Color('#FFFFFF');
-    g.setColor = (k, I = 1) => { C.copy(cC).lerp(cB, k); anM.color.setRGB(C.r * 2.6 * I, C.g * 2.6 * I, C.b * 2.6 * I); halo.material.color.copy(C); halo.material.opacity = .55 * I; luz.color.copy(C); luz.intensity = 1.4 * I; };
-    g.userData = { h, r, anillo, halo, luz }; return g;
+    g.setColor = (k, I = 1) => { C.copy(cC).lerp(cB, k); anM.color.setRGB(C.r * 2.6 * I, C.g * 2.6 * I, C.b * 2.6 * I); halo.material.color.copy(C); halo.material.opacity = .45 * I; haz.material.color.setRGB(C.r * .2 * I, C.g * .25 * I + .1 * (1 - k), C.b * .3 * I); luz.color.copy(C); luz.intensity = 1.4 * I; };
+    g.userData = { h, r, anillo, halo, luz, haz }; return g;
   }
 
   // ---------- cámara domo del techo con lucecita roja ----------
@@ -63,8 +68,8 @@
     const cup = M(new THREE.SphereGeometry(.075, 40, 20, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), sm('#20232A', { roughness: .15, metalness: .4 }), 0, -.01, 0); g.add(cup);
     g.add(M(new THREE.SphereGeometry(.028, 20, 14), sm('#1A1C22', { roughness: .2, metalness: .5 }), 0, -.045, .02));
     const led = new THREE.Mesh(new THREE.SphereGeometry(.006, 10, 8), new THREE.MeshBasicMaterial({ color: HDR(3, .3, .3), toneMapped: false })); led.position.set(.02, -.06, .05); g.add(led);
-    const lg = glow('#FF3030', .16, .9); lg.position.copy(led.position); g.add(lg);
-    g.setLed = (k) => { led.material.color.setRGB(3 * k + .05, .3 * k + .02, .3 * k + .02); lg.material.opacity = .9 * k; }; return g; }
+    const lg = glow('#FF3030', .12, .8); lg.position.copy(led.position); g.add(lg);
+    g.setLed = (k, s = 1) => { led.material.color.setRGB(3 * k + .05, .3 * k + .02, .3 * k + .02); lg.material.opacity = .9 * k; lg.scale.setScalar(.06 * s); }; return g; }
 
   // ---------- móvil genérico con pantalla en canvas (sin marca) ----------
   function movil() { const g = new THREE.Group(), w = .075, h = .162;

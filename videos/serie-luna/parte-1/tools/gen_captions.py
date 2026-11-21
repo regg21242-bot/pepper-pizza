@@ -47,27 +47,25 @@ tw = []
 for sel, ws, wnext, gid, key in js:
     g0 = next(float(re.search(r'data-start="([\d.]+)"', l).group(1)) for l in out if f'id="{gid}"' in l)
     t = g0 + ws
-    tw.append(f'tl.fromTo("{sel}", {{opacity:0, scale:1.12, color:"#FFFFFF", fontWeight:900}}, {{opacity:1, scale:1, duration:0.12, ease:"power2.out"}}, {t:.3f});')
+    tw.append(f'tl.fromTo("{sel}", {{opacity:0, scale:1.08, color:"#FFFFFF", fontWeight:800}}, {{opacity:1, scale:1, duration:0.12, ease:"power2.out"}}, {t:.3f});')
     if key:
         tw.append(f'tl.fromTo("{sel}", {{"--box":0}}, {{"--box":1, duration:0.2, ease:"power2.out"}}, {t:.3f});')
     if wnext is not None:
-        tw.append(f'tl.to("{sel}", {{color:"rgba(160,164,176,0.8)", duration:0.12}}, {g0 + wnext:.3f});')
+        tw.append(f'tl.to("{sel}", {{color:"rgba(178,182,190,0.92)", fontWeight:600, duration:0.12}}, {g0 + wnext:.3f});')
 
 page = f'''<template>
   <style>
     #root {{ position: absolute; inset: 0; pointer-events: none; }}
-    .cgroup {{ position: absolute; left: 0; top: 200px; width: 1080px; padding: 0 130px;
-      text-align: center; font-family: Nunito, sans-serif; font-weight: 900; font-size: 64px; line-height: 1.22;
-      color: #fff; overflow: visible; text-shadow: 0 4px 18px rgba(0,0,0,0.65), 0 1px 3px rgba(0,0,0,0.6); }}
+    .cgroup {{ position: absolute; left: 0; top: 250px; width: 1080px; padding: 0 120px;
+      text-align: center; font-family: Nunito, sans-serif; font-weight: 600; font-size: 66px; line-height: 1.25;
+      color: #fff; overflow: visible; text-shadow: 0 3px 14px rgba(0,0,0,0.7); letter-spacing: .5px; }}
     .w {{ display: inline-block; opacity: 0; position: relative; }}
     .w.key {{ --box: 0; }}
-    .w.key::after {{ content: ""; position: absolute; left: -10px; right: -10px; top: 4px; bottom: 0; z-index: -1;
-      border-radius: 4px; opacity: var(--box); background: rgba(0,0,0,.88); border: 2px solid rgba(255,255,255,.55); }}
-    .w.key::before {{ content: ""; position: absolute; left: -16px; right: -16px; top: -2px; bottom: -6px; opacity: var(--box); z-index: 1;
-      background: radial-gradient(circle, #fff 3px, transparent 4.5px) 0 0/12px 12px no-repeat,
-                  radial-gradient(circle, #fff 3px, transparent 4.5px) 100% 0/12px 12px no-repeat,
-                  radial-gradient(circle, #fff 3px, transparent 4.5px) 0 100%/12px 12px no-repeat,
-                  radial-gradient(circle, #fff 3px, transparent 4.5px) 100% 100%/12px 12px no-repeat; }}
+    .w.key::after {{ content: ""; position: absolute; left: -12px; right: -12px; top: 2px; bottom: -2px; z-index: -1;
+      opacity: var(--box); background: rgba(0,0,0,.92); }}
+    .w.key::before {{ content: ""; position: absolute; left: -22px; right: -22px; top: -12px; bottom: -12px; opacity: var(--box); z-index: 1;
+      background: radial-gradient(circle, transparent 4px, #fff 4.5px, #fff 6.5px, transparent 7px) 0 0/20px 20px no-repeat,
+                  radial-gradient(circle, transparent 4px, #fff 4.5px, #fff 6.5px, transparent 7px) 100% 100%/20px 20px no-repeat; }}
     .w {{ z-index: 0; }}
   </style>
   <div id="root" data-composition-id="captions" data-width="1080" data-height="1920">

@@ -25,7 +25,7 @@
     const scene = nueva('#06070C'), cam = camara(o.fov || 36);
     scene.add(new THREE.HemisphereLight('#4A5A9A', '#120C0A', .35));
     // ventanal (pared z = -2) con la ciudad enorme detrás
-    const ciudad = new THREE.Mesh(new THREE.PlaneGeometry(260, 130), new THREE.MeshBasicMaterial({ map: L.texCiudad(), color: HDR(1.25, 1.2, 1.25), toneMapped: false })); ciudad.position.set(0, -19.5, -70); scene.add(ciudad);
+    const ciudad = new THREE.Mesh(new THREE.PlaneGeometry(260, 130), new THREE.MeshBasicMaterial({ map: L.texCiudad(), color: HDR(1.25, 1.2, 1.25), toneMapped: false })); ciudad.position.set(0, -24, -70); scene.add(ciudad);
     const marcoM = sm('#101114', { roughness: .5, metalness: .4 });
     for (let i = -3; i <= 3; i++) scene.add(M(new THREE.BoxGeometry(.05, 3.2, .08), marcoM, i * 1.1, 1.6, -2));
     scene.add(M(new THREE.BoxGeometry(8, .08, .1), marcoM, 0, .02, -2)); scene.add(M(new THREE.BoxGeometry(8, .1, .1), marcoM, 0, 3.15, -2));
@@ -42,7 +42,7 @@
     scene.add(M(new THREE.BoxGeometry(.04, .96, 1.66), sm('#08080A', { roughness: .3 }), -3.6, 1.75, 1.2));
     const pantL = new THREE.PointLight(CIAN, .0, 3, 1.5); pantL.position.set(-3.1, 1.75, 1.2); scene.add(pantL);
     // lámpara de arco con cono de luz cálida
-    const lamp = new THREE.Group(); lamp.position.set(-2.2, 0, -.6); scene.add(lamp); const metal = sm('#2A2620', { metalness: .7, roughness: .35 });
+    const lamp = new THREE.Group(); lamp.position.set(-3.1, 0, .2); scene.add(lamp); const metal = sm('#2A2620', { metalness: .7, roughness: .35 });
     lamp.add(M(new THREE.CylinderGeometry(.22, .24, .05, 32), sm('#1A1A1E', { metalness: .4 }), 0, .025, 0));
     const curva = new THREE.CatmullRomCurve3([V3(0, 0, 0), V3(.05, 1.4, 0), V3(.5, 2.3, 0), V3(1.2, 2.45, 0), V3(1.7, 2.15, 0)]); lamp.add(M(new THREE.TubeGeometry(curva, 40, .018, 8), metal));
     const pant2 = M(new THREE.ConeGeometry(.2, .22, 32, 1, true), sm('#C8A060', { side: THREE.DoubleSide, metalness: .6, roughness: .3, emissive: '#3A2410' }), 1.7, 2.05, 0); lamp.add(pant2);
@@ -50,17 +50,16 @@
     const bombi = glow('#FFC880', .35, .9); bombi.position.set(1.7, 1.95, 0); lamp.add(bombi);
     const conoV = new THREE.Mesh(new THREE.ConeGeometry(1.0, 2.0, 32, 1, true), new THREE.MeshBasicMaterial({ color: '#FFB060', transparent: true, opacity: .05, side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending })); conoV.position.set(1.7, 1.0, 0); lamp.add(conoV);
     // sofá oscuro
-    const sofa = new THREE.Group(); sofa.position.set(-1.0, 0, .9); sofa.rotation.y = .35; scene.add(sofa); const tela = sm('#1C1A1E', { roughness: .95 });
+    const sofa = new THREE.Group(); sofa.position.set(-2.2, 0, 1.4); sofa.rotation.y = .35; scene.add(sofa); const tela = sm('#1C1A1E', { roughness: .95 });
     sofa.add(M(rbox(2.2, .4, .9, .1), tela, 0, .3, 0)); sofa.add(M(rbox(2.2, .55, .22, .1), tela, 0, .7, -.36)); for (const s of [-1, 1]) sofa.add(M(rbox(.22, .5, .9, .08), tela, s * 1.1, .45, 0));
     for (const s of [-1, 1]) sofa.add(M(rbox(.9, .14, .7, .06), sm('#26222A', { roughness: .95 }), s * .48, .56, .05));
     // mesa baja junto al ventanal con el altavoz
-    const mesa = M(rbox(.7, .45, .45, .04), sm('#0A0A0C', { roughness: .35, metalness: .3 }), .6, .225, -1.35); scene.add(mesa);
-    const alt = L.altavoz(1); alt.position.set(.6, .45, -1.35); scene.add(alt);
+    const alt = L.altavoz(2.5, 1.3); alt.position.set(.1, 0, -.5); scene.add(alt);
     // cámaras domo en el techo
-    const domos = [[.6, 3.18, -1.0], [-2.4, 3.18, .4], [2.4, 3.18, .2]].map(p => { const d = L.domo(); d.position.set(...p); scene.add(d); return d; });
+    const domos = [[-.9, 3.1, -1.82], [.6, 3.1, -1.82], [2.2, 3.1, -1.82]].map(p => { const d = L.domo(); d.scale.setScalar(1.8); d.position.set(...p); scene.add(d); return d; });
     // luz ambiente fría de la ciudad
-    const cityL = new THREE.DirectionalLight('#6A7AC8', .55); cityL.position.set(1, 2, -6); scene.add(cityL);
-    const techoL = new THREE.PointLight('#AAB4E8', 2.6, 3.2, 1.3); techoL.position.set(.9, 2.45, -.2); scene.add(techoL);
+    const cityL = new THREE.DirectionalLight('#8A7AC8', .9); cityL.position.set(2, 2, -6); scene.add(cityL);
+    const techoL = new THREE.PointLight('#AAB4E8', 2.6, 3.2, 1.3); techoL.position.set(.4, 2.5, -.6); scene.add(techoL);
     const relleno = new THREE.PointLight('#FFB070', .0, 8, 1.4); relleno.position.set(0, 2.5, 2); scene.add(relleno);
     function pintaPantalla(modo, t, k) { px.fillStyle = '#05070C'; px.fillRect(0, 0, 1280, 720); pantL.intensity = modo ? .8 : 0;
       if (modo === 'logo') { logo(px, 640, 300, 170 * (.9 + .1 * easeOut(k * 3))); px.fillStyle = CIAN; px.font = FONT(900, 92); px.textAlign = 'center'; px.shadowColor = CIAN; px.shadowBlur = 30; px.globalAlpha = clamp(k * 3 - .3); px.fillText('LUNA', 640, 600); px.globalAlpha = 1; px.shadowBlur = 0; }
@@ -103,15 +102,22 @@
     return e; }
 
   // ================= multitud gris con una silueta bajo un foco cian =================
-  function escFoco(T, o = {}) { const scene = nueva('#06070C'), cam = camara(38);
-    scene.add(new THREE.HemisphereLight('#5A6080', '#0A0A10', .8)); scene.add(M(new THREE.PlaneGeometry(40, 40).rotateX(-Math.PI / 2), sm('#101218', { roughness: .8 })));
-    const gris = sm('#5A5E68', { roughness: .8 }), r = rng(3); let elegido = null;
-    for (let i = 0; i < 70; i++) { const g = new THREE.Group(), a = r() * Math.PI * 2, d = 1 + r() * 9; g.position.set(Math.cos(a) * d, 0, Math.sin(a) * d - 2); if (i === 0) g.position.set(0, 0, 0); scene.add(g);
-      g.add(M(new THREE.CapsuleGeometry(.22, .8, 6, 16), i === 0 ? sm('#7A8090') : gris, 0, .65, 0)); g.add(M(new THREE.SphereGeometry(.18, 24, 16), i === 0 ? sm('#7A8090') : gris, 0, 1.45, 0)); if (i === 0) elegido = g; }
-    const sp = new THREE.SpotLight(CIAN, 12, 12, .22, .4, 1.2); sp.position.set(0, 7, 0); sp.target = elegido; sp.castShadow = true; scene.add(sp);
-    const cono = new THREE.Mesh(new THREE.ConeGeometry(1.3, 7, 40, 1, true), new THREE.MeshBasicMaterial({ color: CIAN, transparent: true, opacity: .07, side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending })); cono.position.set(0, 3.5, 0); scene.add(cono);
-    const aro = new THREE.Mesh(new THREE.RingGeometry(.6, .66, 64).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: HDR(.6, 2.5, 2.8), transparent: true, opacity: .8, toneMapped: false })); aro.position.y = .01; scene.add(aro);
-    const e = { scene, cam, upd: t => { const k = ease(prog(t, e.a, e.b)); mira(cam, V3(lerp(7, 5, k), lerp(5.2, 4.2, k), lerp(10.5, 7.5, k)), V3(0, .9, 0)); sp.intensity = 12 * clamp((t - e.a) * 2); }, post: () => ({ focus: 6, ap: .15, bloom: 1.1, umbral: .9 }) };
+  function figura(mat) { const g = new THREE.Group();
+    g.add(M(new THREE.CapsuleGeometry(.2, .55, 6, 16), mat, 0, 1.05, 0)); g.add(M(new THREE.SphereGeometry(.15, 24, 16), mat, 0, 1.62, 0)); g.add(M(new THREE.CylinderGeometry(.06, .07, .1, 12), mat, 0, 1.45, 0));
+    for (const sx of [-1, 1]) { const b = M(new THREE.CapsuleGeometry(.06, .55, 4, 10), mat, sx * .27, 1.02, 0); b.rotation.z = sx * .08; g.add(b); g.add(M(new THREE.CapsuleGeometry(.08, .6, 4, 10), mat, sx * .1, .38, 0)); }
+    return g; }
+  function escFoco(T, o = {}) { const scene = nueva('#0C111C'), cam = camara(38); scene.fog = new THREE.Fog('#161A24', 8, 26);
+    scene.add(new THREE.HemisphereLight('#C0C4CC', '#14161C', .75)); const fr = new THREE.DirectionalLight('#9AA4C8', .6); fr.position.set(0, 4, 6); scene.add(fr);
+    scene.add(M(new THREE.PlaneGeometry(60, 60).rotateX(-Math.PI / 2), sm('#141A28', { roughness: .9 })));
+    const gris = sm('#8E9098', { roughness: .85 }), r = rng(3);
+    for (let fila = 0; fila < 14; fila++) for (let c = -12; c <= 12; c++) { const x = c * .62 + (fila % 2) * .31 + (r() - .5) * .15, z = -1.2 - fila * .75 + (r() - .5) * .2; if (Math.abs(x) < .6 && fila < 2) continue; const f = figura(gris); f.position.set(x, 0, z); f.rotation.y = (r() - .5) * .3; f.scale.setScalar(.95 + r() * .1); scene.add(f); }
+    for (const sx of [-1, 1]) for (let i = 0; i < 6; i++) { const f = figura(gris); f.position.set(sx * (1.7 + (i % 3) * .62), 0, 1.2 + Math.floor(i / 3) * .8); scene.add(f); }
+    const luzM = new THREE.MeshStandardMaterial({ color: '#E8FAFF', emissive: '#9EE4FF', emissiveIntensity: 1.6, roughness: .5 }); const elegido = figura(luzM); scene.add(elegido);
+    const sp = new THREE.SpotLight('#AEE6FF', 6, 12, .2, .5, 1.2); sp.position.set(0, 7, .5); sp.target = elegido; scene.add(sp);
+    const cono = new THREE.Mesh(new THREE.CylinderGeometry(.35, 1.05, 7, 40, 1, true), new THREE.MeshBasicMaterial({ color: '#7ACCFF', transparent: true, opacity: .07, side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending })); cono.position.set(0, 3.5, 0); scene.add(cono);
+    const disco = new THREE.Mesh(new THREE.CircleGeometry(1.0, 64).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: HDR(.35, .75, 1.1), transparent: true, opacity: .85, toneMapped: false })); disco.position.y = .01; scene.add(disco);
+    const halo = glow('#BFEFFF', 2.2, .35); halo.position.set(0, 1.1, .1); scene.add(halo);
+    const e = { scene, cam, upd: t => { const k = ease(prog(t, e.a, e.b)); mira(cam, V3(0, lerp(2.0, 1.85, k), lerp(10.5, 9.0, k)), V3(0, 1.1, 0)); const on = clamp((t - e.a) * 2); sp.intensity = 6 * on; cono.material.opacity = .07 * on; luzM.emissiveIntensity = .3 + 1.3 * on; disco.material.opacity = .85 * on; }, post: () => ({ focus: 6.5, ap: .12, bloom: 1.1, umbral: .85 }) };
     return e; }
 
   // ================= bodegón: objeto sobre superficie con luz suave (tarjeta, enchufe, cafetera, mesita, puerta) =================
@@ -166,60 +172,73 @@
       mira(cam, V3(lerp(.5, .35, ease(k)), lerp(.45, .38, ease(k)), lerp(1.05, .82, ease(k))), V3(0, .22, .05)); }, post: () => ({ focus: .95, ap: .3, bloom: .8, umbral: 1.0, grano: 1 }) };
     return e; }
 
-  function escMesita(T, o = {}) { const B = bodegon({ bg: '#07060A', keyP: [-.7, 1.2, .8], kI: 5.5, luz: '#FFC890', rimI: .25 }), { scene, cam } = B;
-    scene.add(M(new THREE.PlaneGeometry(4, 3), sm('#1E1A22', { roughness: .95 }), 0, .8, -.35));
-    const mes = M(rbox(.55, .5, .4, .02), sm('#4A2E1C', { roughness: .55 }), 0, .25, 0); scene.add(mes); scene.add(M(rbox(.5, .015, .03, .005), sm('#C8A060', { metalness: .8 }), 0, .3, .2));
-    // foto enmarcada (sepia; se vuelve gris)
+  function escMesita(T, o = {}) { const scene = nueva('#070A14'), cam = camara(36);
+    scene.add(new THREE.HemisphereLight('#5A6AA0', '#0A0A10', .55)); const luna = new THREE.DirectionalLight('#9AAAE8', 1.3); luna.position.set(.5, 2, 3); scene.add(luna);
+    const calida = new THREE.PointLight('#FFB070', 1.6, 3, 1.5); calida.position.set(-.8, 1.1, .8); scene.add(calida);
+    const ciu = new THREE.Mesh(new THREE.PlaneGeometry(90, 45), new THREE.MeshBasicMaterial({ map: L.texCiudad(9), color: HDR(1.1, 1.05, 1.1), toneMapped: false })); ciu.position.set(4, -5.8, -40); scene.add(ciu);
+    const mm = sm('#0E1016', { roughness: .5, metalness: .3 }); for (const x of [-1.3, .1, 1.5]) scene.add(M(new THREE.BoxGeometry(.04, 3, .06), mm, x, 1.5, -.9)); scene.add(M(new THREE.PlaneGeometry(6, 1.0), sm('#10131C', { roughness: .9 }), 0, .5, -.92));
+    scene.add(M(new THREE.PlaneGeometry(8, 8).rotateX(-Math.PI / 2), sm('#120E0C', { roughness: .8 })));
+    // cama a la derecha (edredón azul, almohadas)
+    const cama = new THREE.Group(); cama.position.set(1.0, 0, -.5); scene.add(cama); cama.add(M(rbox(1.6, .45, 2.0, .08), sm('#1E2640', { roughness: .95 }), 0, .3, .4)); cama.add(M(rbox(1.7, .9, .08, .03), sm('#141A2C'), 0, .55, -.6));
+    for (const x of [-.4, .4]) cama.add(M(rbox(.62, .18, .36, .08), sm('#5A6EA8', { roughness: .9 }), x, .6, -.38));
+    // mesita
+    const mes = new THREE.Group(); scene.add(mes); mes.add(M(rbox(.62, .52, .42, .02), sm('#1A1512', { roughness: .55 }), 0, .26, 0)); mes.add(M(new THREE.BoxGeometry(.56, .005, .01), sm('#0A0806'), 0, .3, .211)); mes.add(M(new THREE.BoxGeometry(.08, .008, .01), sm('#8A8A90', { metalness: .8 }), 0, .22, .215));
+    // jarrón plateado
+    const pts = []; for (let i = 0; i <= 12; i++) { const y = i / 12 * .22; pts.push(new THREE.Vector2(.02 + .045 * Math.sin(Math.PI * (y / .22) * .9 + .2), y)); } const jar = M(new THREE.LatheGeometry(pts, 32), sm('#C8C4BE', { metalness: .6, roughness: .3 }), -.23, .52, .02); scene.add(jar);
+    // foto enmarcada en sepia (se vuelve gris)
     const fc = document.createElement('canvas'); fc.width = 400; fc.height = 500; const fx = fc.getContext('2d'); const ftex = new THREE.CanvasTexture(fc); ftex.encoding = THREE.sRGBEncoding;
     const pintaFoto = (gris) => { const sep = (r, g, b) => gris ? `rgb(${(r + g + b) / 3 | 0},${(r + g + b) / 3 | 0},${(r + g + b) / 3 | 0})` : `rgb(${r},${g},${b})`;
-      const g = fx.createLinearGradient(0, 0, 0, 500); g.addColorStop(0, sep(200, 170, 130)); g.addColorStop(1, sep(150, 110, 70)); fx.fillStyle = g; fx.fillRect(0, 0, 400, 500);
-      L.retrato(fx, 200, 230, 1.35, { piel: sep(205, 160, 115), pelo: sep(80, 55, 35), ropa: sep(110, 80, 55), gorra: sep(120, 70, 40), bigote: true }); fx.save(); fx.globalCompositeOperation = 'color'; fx.fillStyle = gris ? '#808080' : '#8A5A2A'; fx.fillRect(0, 0, 400, 500); fx.restore();
-      fx.fillStyle = 'rgba(80,50,20,.18)'; for (let i = 0; i < 600; i++) fx.fillRect(i * 37 % 400, i * 91 % 500, 2, 2); ftex.needsUpdate = true; };
+      const g = fx.createLinearGradient(0, 0, 0, 500); g.addColorStop(0, sep(170, 140, 100)); g.addColorStop(1, sep(110, 80, 50)); fx.fillStyle = g; fx.fillRect(0, 0, 400, 500);
+      L.retrato(fx, 200, 250, 1.3, { piel: sep(205, 160, 115), pelo: sep(80, 55, 35), ropa: sep(90, 70, 50), gorra: sep(110, 70, 40), bigote: true });
+      fx.save(); fx.globalCompositeOperation = 'color'; fx.fillStyle = gris ? '#808080' : '#7A5A30'; fx.fillRect(0, 0, 400, 500); fx.restore(); fx.fillStyle = 'rgba(0,0,0,.25)'; fx.fillRect(0, 0, 400, 500); ftex.needsUpdate = true; };
     pintaFoto(false);
-    const marco = new THREE.Group(); marco.position.set(-.1, .5, -.05); marco.rotation.set(-.12, .3, 0); scene.add(marco);
-    marco.add(M(rbox(.17, .21, .015, .006), sm('#2A1A10', { roughness: .4 }), 0, .105, 0)); const fp = new THREE.Mesh(new THREE.PlaneGeometry(.13, .165), new THREE.MeshStandardMaterial({ map: ftex, roughness: .6 })); fp.position.set(0, .105, .0085); marco.add(fp);
-    const pata = M(new THREE.BoxGeometry(.02, .15, .005), sm('#2A1A10'), 0, .07, -.04); pata.rotation.x = -.4; marco.add(pata);
+    const marco = new THREE.Group(); marco.position.set(-.06, .52, -.06); marco.rotation.set(-.08, .12, 0); scene.add(marco);
+    marco.add(M(rbox(.17, .21, .015, .006), sm('#3A2414', { roughness: .4 }), 0, .105, 0)); const fp = new THREE.Mesh(new THREE.PlaneGeometry(.13, .165), new THREE.MeshStandardMaterial({ map: ftex, roughness: .6 })); fp.position.set(0, .105, .0085); marco.add(fp);
     // llavero de coche viejo
-    const ll = new THREE.Group(); ll.position.set(.1, .501, .08); ll.rotation.y = .6; scene.add(ll);
+    const ll = new THREE.Group(); ll.position.set(.1, .521, .1); ll.rotation.y = .6; scene.add(ll);
     ll.add(M(new THREE.TorusGeometry(.014, .0025, 8, 24).rotateX(Math.PI / 2), sm('#C8C8CC', { metalness: .9, roughness: .3 }), 0, .002, 0));
-    ll.add(M(rbox(.032, .045, .01, .008).rotateX(Math.PI / 2), sm('#1A1A1E', { roughness: .5 }), .028, .005, .02)); ll.add(M(new THREE.BoxGeometry(.006, .003, .04), sm('#B8A070', { metalness: .9, roughness: .3 }), -.02, .003, .025));
-    // altavoz pequeño redondo
-    const mini = new THREE.Group(); mini.position.set(.16, .5, -.08); scene.add(mini); mini.add(M(new THREE.SphereGeometry(.045, 40, 20, 0, Math.PI * 2, 0, Math.PI / 2), sm('#121316', { roughness: .8 }), 0, 0, 0));
-    const an = M(new THREE.TorusGeometry(.03, .003, 10, 48).rotateX(Math.PI / 2), new THREE.MeshBasicMaterial({ color: HDR(.5, 2.6, 3), toneMapped: false }), 0, .04, 0); mini.add(an); const mh = glow(CIAN, .12, .6); mh.position.y = .045; mini.add(mh);
-    const ml = new THREE.PointLight(CIAN, .6, 1, 1.5); ml.position.set(0, .1, .05); mini.add(ml);
+    ll.add(M(rbox(.032, .045, .01, .008).rotateX(Math.PI / 2), sm('#24201C', { roughness: .5 }), .028, .005, .02)); ll.add(M(new THREE.BoxGeometry(.006, .003, .04), sm('#B8A070', { metalness: .9, roughness: .3 }), -.02, .003, .025));
+    // altavoz pequeño redondo (negro, anillo cian tenue)
+    const mini = new THREE.Group(); mini.position.set(.2, .52, -.02); scene.add(mini); mini.add(M(new THREE.CylinderGeometry(.075, .078, .05, 48), sm('#0C0D10', { roughness: .6 }), 0, .025, 0));
+    const an = M(new THREE.TorusGeometry(.06, .0025, 10, 48).rotateX(Math.PI / 2), new THREE.MeshBasicMaterial({ color: HDR(.4, 2.0, 2.4), toneMapped: false }), 0, .051, 0); mini.add(an);
+    const ml = new THREE.PointLight(CIAN, .4, .8, 1.5); ml.position.set(0, .12, .05); mini.add(ml);
     let gris = false;
     const e = { scene, cam, upd: t => { const k = ease(prog(t, e.a, e.b));
-      if (o.foto) { const g = t > T.fotoGris; if (g !== gris) { gris = g; pintaFoto(g); } const kk = ease(prog(t, e.a, e.b)); mira(cam, V3(lerp(-.02, -.07, kk), lerp(.64, .61, kk), lerp(.42, .22, kk)), V3(-.1, .6, -.05)); }
-      else mira(cam, V3(lerp(.45, .3, k), lerp(.88, .76, k), lerp(1.0, .72, k)), V3(.03, .55, -.02));
-      const pul = .8 + .2 * Math.sin(t * 2.2); an.material.color.setRGB(.5 * pul, 2.6 * pul, 3 * pul); }, post: () => ({ focus: o.foto ? .2 : .7, ap: .35, bloom: .9, umbral: .95, grano: 1 }) };
+      if (o.foto) { const g = t > T.fotoGris; if (g !== gris) { gris = g; pintaFoto(g); } mira(cam, V3(lerp(-.04, -.07, k), lerp(.66, .63, k), lerp(.5, .26, k)), V3(-.06, .62, -.06)); }
+      else mira(cam, V3(lerp(.08, .04, k), lerp(1.0, .92, k), lerp(1.75, 1.45, k)), V3(.05, .64, -.2));
+      const pul = .7 + .3 * Math.sin(t * 2.2); an.material.color.setRGB(.4 * pul, 2.0 * pul, 2.4 * pul); }, post: () => ({ focus: o.foto ? .3 : 1.4, ap: .25, bloom: .9, umbral: .95, grano: 1 }) };
     return e; }
 
-  function escPuerta(T, o = {}) { const B = bodegon({ bg: '#09080A', keyP: [.9, 2.0, 1.4], kI: 3.2, luz: '#FFE2C8' }), { scene, cam } = B;
-    scene.add(M(new THREE.PlaneGeometry(4, 3.2), sm('#2A2420', { roughness: .95 }), 0, 1.6, -.03));
-    const madT = cv(512, 1024, (x, w, h) => { const r = rng(3); x.fillStyle = '#3E2818'; x.fillRect(0, 0, w, h); x.strokeStyle = 'rgba(0,0,0,.45)'; x.lineWidth = 10; x.strokeRect(60, 80, w - 120, 380); x.strokeRect(60, 540, w - 120, 400); for (let i = 0; i < 200; i++) { x.strokeStyle = `rgba(0,0,0,${.03 + r() * .04})`; x.lineWidth = 1 + r() * 3; const xx = r() * w; x.beginPath(); x.moveTo(xx, 0); x.bezierCurveTo(xx + (r() - .5) * 30, h * .3, xx + (r() - .5) * 30, h * .6, xx, h); x.stroke(); } });
-    scene.add(M(rbox(.95, 2.1, .06, .01), sm('#FFFFFF', { map: madT, roughness: .5 }), 0, 1.05, 0));
-    const tir = M(new THREE.CylinderGeometry(.012, .012, .5, 16), sm('#C8CCD4', { metalness: .9, roughness: .2 }), .36, 1.05, .07); scene.add(tir); for (const y of [.85, 1.25]) { const s = M(new THREE.CylinderGeometry(.008, .008, .05, 10).rotateX(Math.PI / 2), sm('#C8CCD4', { metalness: .9 }), .36, y, .05); scene.add(s); }
-    const cc = document.createElement('canvas'); cc.width = 256; cc.height = 384; const cx = cc.getContext('2d'); const ct = new THREE.CanvasTexture(cc); ct.encoding = THREE.sRGBEncoding;
-    const pintaCerr = (k) => { cx.fillStyle = '#0A0A0C'; cx.fillRect(0, 0, 256, 384); cx.fillStyle = `rgba(232,50,58,${.6 + .4 * k})`; cx.font = FONT(900, 34); cx.textAlign = 'center'; cx.fillText('BLOQUEADA', 128, 90); cx.beginPath(); cx.arc(128, 200, 46, Math.PI, 0); cx.strokeStyle = cx.fillStyle; cx.lineWidth = 12; cx.stroke(); rr(cx, 72, 200, 112, 90, 12); cx.fill(); for (let i = 0; i < 9; i++) { cx.fillStyle = 'rgba(232,50,58,.25)'; cx.beginPath(); cx.arc(70 + (i % 3) * 58, 320 + Math.floor(i / 3) * 0, 0, 0, 7); cx.fill(); } ct.needsUpdate = true; };
-    const cer = M(rbox(.12, .18, .025, .015), sm('#16171A', { metalness: .5, roughness: .3 }), .36, 1.45, .045); scene.add(cer); const disp = new THREE.Mesh(new THREE.PlaneGeometry(.09, .135), new THREE.MeshBasicMaterial({ map: ct, toneMapped: false })); disp.position.set(.36, 1.45, .059); scene.add(disp);
-    const rl = new THREE.PointLight('#FF3030', .5, 1.2, 1.5); rl.position.set(.36, 1.45, .25); scene.add(rl);
-    const e = { scene, cam, upd: t => { const k = ease(prog(t, e.a, e.b)); const bl = Math.sin(t * 9) > 0 ? 1 : .35; pintaCerr(bl); rl.intensity = .4 + .4 * bl;
-      mira(cam, V3(lerp(1.3, .9, k), lerp(1.4, 1.35, k), lerp(2.4, 1.6, k)), V3(.15, 1.2, 0)); }, post: () => ({ focus: 1.8, ap: .2, bloom: 1.0, umbral: .9, grano: 1 }) };
+  function escPuerta(T, o = {}) { const B = bodegon({ bg: '#08070A', keyP: [-.6, 2.3, 1.6], kI: 2.6, luz: '#FFE2C8', rimI: .3 }), { scene, cam } = B;
+    const madT = cv(1024, 1024, (x, w, h) => { const r = rng(3); x.fillStyle = '#1C1510'; x.fillRect(0, 0, w, h); for (let i = 0; i < w; i += 22) { x.fillStyle = `rgba(${r() < .5 ? '0,0,0' : '90,60,40'},${.15 + r() * .15})`; x.fillRect(i, 0, 18, h); x.fillStyle = 'rgba(0,0,0,.55)'; x.fillRect(i + 18, 0, 4, h); } });
+    scene.add(M(new THREE.PlaneGeometry(1.4, 2.4), sm('#FFFFFF', { map: madT, roughness: .6 }), 0, 1.2, 0));
+    scene.add(M(new THREE.PlaneGeometry(4, 3), sm('#0A0A0C'), 1.5, 1.5, -.02));
+    const tir = M(new THREE.CylinderGeometry(.028, .028, 1.0, 24), sm('#D8DCE2', { metalness: .95, roughness: .15 }), .16, 1.05, .09); scene.add(tir);
+    for (const y of [.62, 1.48]) scene.add(M(new THREE.BoxGeometry(.05, .04, .09), sm('#141416', { metalness: .4 }), .16, y, .045));
+    const cc = document.createElement('canvas'); cc.width = 256; cc.height = 440; const cx = cc.getContext('2d'); const ct = new THREE.CanvasTexture(cc); ct.encoding = THREE.sRGBEncoding;
+    const pintaCerr = (k) => { cx.fillStyle = '#121216'; cx.fillRect(0, 0, 256, 440); cx.fillStyle = `rgba(232,40,40,${.7 + .3 * k})`; rr(cx, 28, 30, 200, 120, 10); cx.fill(); cx.fillStyle = '#FFD8D8'; cx.font = FONT(900, 30); cx.textAlign = 'center'; cx.fillText('BLOQUEADA', 128, 102);
+      for (let i = 0; i < 9; i++) { cx.fillStyle = '#3A3A44'; cx.beginPath(); cx.arc(68 + (i % 3) * 60, 200 + Math.floor(i / 3) * 62, 20, 0, 7); cx.fill(); } cx.fillStyle = `rgba(255,50,50,${k})`; cx.beginPath(); cx.arc(128, 400, 11, 0, 7); cx.fill(); ct.needsUpdate = true; };
+    const cer = M(rbox(.15, .26, .03, .02), sm('#1A1A1E', { metalness: .5, roughness: .3 }), -.02, 1.12, .015); scene.add(cer); const disp = new THREE.Mesh(new THREE.PlaneGeometry(.13, .224), new THREE.MeshBasicMaterial({ map: ct, toneMapped: false })); disp.position.set(-.02, 1.12, .031); scene.add(disp);
+    const rl = new THREE.PointLight('#FF3030', .8, 1.2, 1.5); rl.position.set(-.02, 1.2, .3); scene.add(rl);
+    const e = { scene, cam, upd: t => { const k = ease(prog(t, e.a, e.b)); const bl = Math.sin(t * 9) > 0 ? 1 : .35; pintaCerr(bl); rl.intensity = .5 + .5 * bl;
+      mira(cam, V3(lerp(.1, .08, k), lerp(1.12, 1.1, k), lerp(1.9, 1.6, k)), V3(.07, 1.06, 0)); }, post: () => ({ focus: 1.7, ap: .15, bloom: 1.0, umbral: .9, grano: 1 }) };
     return e; }
 
   // ================= dormitorio en visión nocturna =================
-  function escNocturna(T, o = {}) { const scene = nueva('#020302'), cam = camara(52);
-    scene.add(new THREE.HemisphereLight('#FFFFFF', '#202020', .9)); const ir = new THREE.SpotLight('#FFFFFF', 3, 12, .9, .6, 1.2); ir.position.set(1.2, 2.8, 2.5); scene.add(ir); scene.add(ir.target);
-    scene.add(M(new THREE.PlaneGeometry(8, 8).rotateX(-Math.PI / 2), sm('#6A6A6A', { roughness: .9 })));
-    scene.add(M(new THREE.PlaneGeometry(8, 3), sm('#5A5A5A', { roughness: .95 }), 0, 1.5, -1.6));
-    const cama = new THREE.Group(); scene.add(cama); cama.add(M(rbox(1.6, .35, 2.1, .06), sm('#7A7A7A'), 0, .2, 0)); cama.add(M(rbox(1.7, .8, .1, .04), sm('#5A5A5A'), 0, .5, -1.05));
-    const cob = M(rbox(1.62, .16, 1.5, .08), sm('#9A9A9A', { roughness: 1 }), 0, .45, .28); scene.add(cob); scene.add(M(rbox(.6, .14, .35, .07), sm('#B0B0B0'), -.35, .44, -.75));
-    const cuerpo = M(new THREE.CapsuleGeometry(.2, .9, 6, 16), sm('#9A9A9A', { roughness: 1 }), .2, .55, .15); cuerpo.rotation.x = Math.PI / 2; scene.add(cuerpo); scene.add(M(new THREE.SphereGeometry(.13, 24, 16), sm('#8A8A8A'), .22, .58, -.62));
-    scene.add(M(rbox(.45, .45, .4, .02), sm('#6A6A6A'), 1.15, .22, -1.1)); const alt = L.altavoz(.5); alt.position.set(1.15, .45, -1.1); scene.add(alt);
-    const ondas = []; for (let i = 0; i < 5; i++) { const a = new THREE.Mesh(new THREE.RingGeometry(.9, .96, 64), new THREE.MeshBasicMaterial({ color: '#FFFFFF', transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false })); a.position.set(1.15, .72, -1.1); scene.add(a); ondas.push(a); }
-    const e = { scene, cam, upd: t => { const k = ease(prog(t, e.a, e.b)); mira(cam, V3(lerp(-1.4, -1.0, k), lerp(2.7, 2.5, k), lerp(2.6, 2.2, k)), V3(.4, .4, -.5)); alt.setColor(1, 1);
-      ondas.forEach((a, i) => { const u = ((t - e.a) * .7 - i * .22); const f = u - Math.floor(u); a.visible = t > T.ondas; a.scale.setScalar(.05 + f * .6); a.material.opacity = (1 - f) * .8; a.lookAt(cam.position); }); },
-      post: () => ({ focus: 3, ap: .05, bloom: .9, umbral: .8, verde: 1, grano: 1 }) };
+  function escNocturna(T, o = {}) { const scene = nueva('#020302'), cam = camara(50);
+    scene.add(new THREE.HemisphereLight('#FFFFFF', '#202020', .45)); const ir = new THREE.SpotLight('#FFFFFF', 3.2, 10, .5, .9, 1.4); ir.position.set(.6, 4, 1.5); scene.add(ir); scene.add(ir.target);
+    scene.add(M(new THREE.PlaneGeometry(8, 8).rotateX(-Math.PI / 2), sm('#5A5A5A', { roughness: .9 })));
+    const cama = new THREE.Group(); scene.add(cama); cama.add(M(rbox(1.7, .35, 2.2, .06), sm('#8A8A8A'), 0, .2, 0)); cama.add(M(rbox(1.8, .9, .12, .04), sm('#6A6A6A'), 0, .45, -1.15));
+    const cob = M(rbox(1.72, .12, 1.45, .06), sm('#9A9A9A', { roughness: 1 }), 0, .43, .35); scene.add(cob); cob.rotation.x = -.02;
+    for (const x of [-.42, .42]) scene.add(M(rbox(.66, .14, .4, .08), sm('#B4B4B4'), x, .45, -.78));
+    const cab = M(new THREE.SphereGeometry(.13, 24, 16), sm('#7A7A7A'), -.42, .55, -.72); scene.add(cab); scene.add(M(new THREE.SphereGeometry(.135, 24, 16, 0, Math.PI * 2, 0, Math.PI * .55), sm('#3A3A3A'), -.42, .56, -.76));
+    const cuerpo = M(new THREE.CapsuleGeometry(.22, .8, 6, 16), sm('#A6A6A6', { roughness: 1 }), -.35, .5, .1); cuerpo.rotation.x = Math.PI / 2; scene.add(cuerpo);
+    const alt = new THREE.Group(); alt.position.set(1.15, .45, -1.0); scene.add(alt); alt.add(M(rbox(.45, .45, .4, .02), sm('#6A6A6A'), 0, -.22, 0)); alt.add(M(new THREE.CylinderGeometry(.09, .09, .06, 32), sm('#2A2A2A'), 0, .03, 0));
+    const ring = M(new THREE.TorusGeometry(.07, .008, 8, 40).rotateX(Math.PI / 2), new THREE.MeshBasicMaterial({ color: '#FFFFFF' }), 0, .062, 0); alt.add(ring);
+    const ondas = []; for (let i = 0; i < 4; i++) { const a = new THREE.Mesh(new THREE.RingGeometry(.95, 1, 64, 1, Math.PI * .55, Math.PI * .9).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: '#FFFFFF', transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false })); a.position.set(1.15, .52, -1.0); scene.add(a); ondas.push(a); }
+    const e = { scene, cam, upd: t => { const k = ease(prog(t, e.a, e.b)); mira(cam, V3(lerp(.2, .15, k), lerp(4.2, 3.9, k), lerp(1.0, .8, k)), V3(.1, 0, -.25));
+      ondas.forEach((a, i) => { const u = ((t - e.a) * .7 - i * .25); const f = u - Math.floor(u); a.visible = t > T.ondas; a.scale.setScalar(.12 + f * .7); a.material.opacity = (1 - f) * .85; }); },
+      post: () => ({ focus: 4, ap: .03, bloom: .7, umbral: .85, verde: 1, grano: 1 }) };
     return e; }
 
   // ================= móvil inclinado: bloqueo con notificación y chat =================
