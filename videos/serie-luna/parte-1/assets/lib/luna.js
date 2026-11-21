@@ -59,11 +59,11 @@
   }
 
   // ---------- cámara domo del techo con lucecita roja ----------
-  function domo() { const g = new THREE.Group(); g.add(M(new THREE.CylinderGeometry(.09, .09, .02, 40), sm('#121316', { roughness: .5 }), 0, 0, 0));
-    const cup = M(new THREE.SphereGeometry(.075, 40, 20, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), sm('#06070A', { roughness: .05, metalness: .6, transparent: true, opacity: .92 }), 0, -.01, 0); g.add(cup);
+  function domo() { const g = new THREE.Group(); g.add(M(new THREE.CylinderGeometry(.09, .09, .02, 40), sm('#3A3C44', { roughness: .5 }), 0, 0, 0));
+    const cup = M(new THREE.SphereGeometry(.075, 40, 20, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), sm('#20232A', { roughness: .15, metalness: .4 }), 0, -.01, 0); g.add(cup);
     g.add(M(new THREE.SphereGeometry(.028, 20, 14), sm('#1A1C22', { roughness: .2, metalness: .5 }), 0, -.045, .02));
-    const led = new THREE.Mesh(new THREE.SphereGeometry(.006, 10, 8), new THREE.MeshBasicMaterial({ color: HDR(3, .3, .3), toneMapped: false })); led.position.set(.035, -.035, .045); g.add(led);
-    const lg = glow('#FF3030', .08, .9); lg.position.copy(led.position); g.add(lg);
+    const led = new THREE.Mesh(new THREE.SphereGeometry(.006, 10, 8), new THREE.MeshBasicMaterial({ color: HDR(3, .3, .3), toneMapped: false })); led.position.set(.02, -.06, .05); g.add(led);
+    const lg = glow('#FF3030', .16, .9); lg.position.copy(led.position); g.add(lg);
     g.setLed = (k) => { led.material.color.setRGB(3 * k + .05, .3 * k + .02, .3 * k + .02); lg.material.opacity = .9 * k; }; return g; }
 
   // ---------- móvil genérico con pantalla en canvas (sin marca) ----------

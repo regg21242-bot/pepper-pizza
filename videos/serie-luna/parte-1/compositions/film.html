@@ -43,9 +43,14 @@
       // marca de agua a media pantalla
       X.save(); X.globalAlpha = .32; X.fillStyle = '#FFFFFF'; X.font = '900 46px Nunito, sans-serif'; X.textAlign = 'center'; X.shadowColor = 'rgba(0,0,0,.5)'; X.shadowBlur = 8; X.fillText(MARCA, W / 2, 1180); X.restore();
       // contador pequeño en la esquina mientras dura la desconexión
-      const C = T.cortes; if (t >= C[19] && t < C[24]) { const n = S.cuenta(t), k = Math.min(1, (t - C[19]) * 3);
+      const C = T.cortes; if (t >= C[19] && t < C[24] && !(t >= C[21] && t < C[22])) { const n = S.cuenta(t), k = Math.min(1, (t - C[19]) * 3);
         X.save(); X.globalAlpha = k; X.fillStyle = 'rgba(6,8,12,.78)'; rr(70, 1600, 300, 100, 22); X.fill(); X.strokeStyle = 'rgba(232,50,58,.7)'; X.lineWidth = 3; X.stroke();
         X.fillStyle = '#FFFFFF'; X.font = '900 64px Nunito, sans-serif'; X.textAlign = 'left'; X.fillText(String(n), 96, 1672); X.fillStyle = '#E8323A'; X.font = '900 24px Nunito, sans-serif'; X.fillText('SIN', 218, 1642); X.fillText('CONEXIÓN', 218, 1674); X.restore(); }
+      // visión nocturna: rótulos de la cámara
+      if (t >= C[13] && t < C[14]) { X.save(); X.fillStyle = 'rgba(200,255,200,.9)'; X.font = '900 44px Nunito, sans-serif'; X.textAlign = 'left'; X.fillText('CAM 03 · DORMITORIO', 80, 420);
+        const sg = 48 + Math.floor(t - C[13]); X.font = '800 46px Nunito, sans-serif'; X.fillText(`03:12:${String(sg % 60).padStart(2, '0')}`, 80, 1560);
+        if (Math.floor(t * 1.6) % 2 === 0) { X.fillStyle = '#FF3A3A'; X.beginPath(); X.arc(790, 1545, 16, 0, 7); X.fill(); } X.fillStyle = '#FF3A3A'; X.fillText('REC', 818, 1560);
+        X.strokeStyle = 'rgba(200,255,200,.7)'; X.lineWidth = 5; for (const [cx, cy, sx, sy] of [[60, 360, 1, 1], [1020, 360, -1, 1], [60, 1600, 1, -1], [1020, 1600, -1, -1]]) { X.beginPath(); X.moveTo(cx, cy + sy * 70); X.lineTo(cx, cy); X.lineTo(cx + sx * 70, cy); X.stroke(); } X.restore(); }
       // tarjetas finales
       if (t >= T.cartaA - .4 && t < T.loop) {
         const ka = prog(t, T.cartaA - .4, T.cartaA + .1), kb = prog(t, T.cartaB - .5, T.cartaB);
