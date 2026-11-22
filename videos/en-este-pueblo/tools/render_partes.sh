@@ -1,6 +1,7 @@
 #!/bin/bash
 # Renderiza la película en 4 partes (sin depender de un solo proceso largo) y las une en renders/video_mudo.mp4
 cd "$(dirname "$0")/.."
+sleep 8
 P=(0 25 50 75 "")
 for i in 0 1 2 3; do
   out=renders/parte_$i.mp4; [ -s "$out" ] && continue
