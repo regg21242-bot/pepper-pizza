@@ -1,53 +1,54 @@
 <!doctype html>
 <html><head><meta charset="utf-8">
-<style>html,body{margin:0;background:#1B1F2E} canvas{display:block;position:absolute;left:0;top:0}</style>
+<style>html,body{margin:0;background:#1C2340}</style>
 <script src="../assets/lib/three.min.js"></script>
 <script src="../assets/lib/personajes.js"></script>
 </head><body>
-<canvas id="gl"></canvas><canvas id="ui"></canvas>
+<canvas id="gl"></canvas>
 <script>
-const P = window.PUEBLO_P, THREE = window.THREE;
-const CW = 800, CH = 1000, COLS = 3, ROWS = 3, W = CW * COLS, H = CH * ROWS;
-const gl = document.getElementById('gl'), ui = document.getElementById('ui'); gl.width = ui.width = W; gl.height = ui.height = H;
-const R = new THREE.WebGLRenderer({ canvas: gl, antialias: true, preserveDrawingBuffer: true }); R.setSize(W, H, false); R.outputEncoding = THREE.sRGBEncoding; R.toneMapping = THREE.ACESFilmicToneMapping; R.toneMappingExposure = 1.0; R.shadowMap.enabled = true; R.shadowMap.type = THREE.PCFSoftShadowMap; R.setScissorTest(true);
-const X = ui.getContext('2d');
+const P = window.PUEBLO_P, THREE = window.THREE, E = P.ESC;
+const CW = 1000, CH = 1080, COLS = 3, W = CW * COLS, H = CH * 3;
+const gl = document.getElementById('gl'); gl.width = W; gl.height = H;
+const R = new THREE.WebGLRenderer({ canvas: gl, antialias: true, preserveDrawingBuffer: true }); R.setSize(W, H, false); R.setPixelRatio(1);
+R.outputEncoding = THREE.sRGBEncoding; R.toneMapping = THREE.LinearToneMapping; R.toneMappingExposure = .85; R.shadowMap.enabled = true; R.shadowMap.type = THREE.PCFSoftShadowMap; R.setScissorTest(true); R.autoClear = true;
+const out = document.createElement('canvas'); out.width = W; out.height = H; const X = out.getContext('2d'); X.fillStyle = '#1C2340'; X.fillRect(0, 0, W, H);
+function escena() { const s = new THREE.Scene(); s.background = new THREE.Color('#1C2340');
+  s.add(new THREE.HemisphereLight('#AFC0FF', '#2A2030', .28));
+  const key = new THREE.DirectionalLight('#FFE6C8', 2.3); key.position.set(3, 4.2, 3.2); key.castShadow = true; key.shadow.mapSize.set(2048, 2048); key.shadow.bias = -.0005; const c = key.shadow.camera; c.left = c.bottom = -3; c.right = c.top = 3; s.add(key);
+  const fill = new THREE.DirectionalLight('#BFD0FF', .55); fill.position.set(-3.5, 2, 2.5); s.add(fill);
+  const rim = new THREE.DirectionalLight('#FFFFFF', 1.4); rim.position.set(-1.5, 3.5, -4); s.add(rim);
+  const piso = new THREE.Mesh(new THREE.CircleGeometry(2.2, 48).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ color: '#2A3458', roughness: .9 })); piso.receiveShadow = true; s.add(piso); return s; }
+function vista(obj, ang, cam, vx, vy, vw, vh) { const s = escena(); s.add(obj); obj.rotation.y = ang; const y = H - (vy + vh); R.setViewport(vx, y, vw, vh); R.setScissor(vx, y, vw, vh); R.render(s, cam); X.drawImage(gl, vx, vy, vw, vh, vx, vy, vw, vh); s.remove(obj); }
 const L = [
-  ['prota', '1 · Protagonista', ['lado', 'feliz', 'guino', 'sorpresa', 'recta', 'triste'], {}],
-  ['linda', '2 · Linda (la vecina)', ['feliz', 'lado', 'preocupado'], { lentes: true }],
-  ['abuela', '3 · La abuela', ['feliz', 'lado'], { lentes: true }],
-  ['nino_gorro', '4 · El niño del gorro', ['feliz', 'seria'], { bocaGrande: true }],
-  ['kevin', '5 · Kevin', ['lado', 'seria'], {}],
-  ['rubio', '6 · El niño rubio', ['sorpresa', 'feliz'], {}],
-  ['invitados', '7 · Invitados', ['feliz', 'preocupado'], {}],
-  ['alcalde', '8 · El alcalde', ['lado'], {}],
-  ['pecera', '9 · El pez del alcalde', [], {}],
+  ['prota', '1 · Protagonista', ['lado', 'feliz', 'guino', 'sorpresa', 'recta', 'triste']],
+  ['linda', '2 · Linda (la vecina)', ['feliz', 'sonrisa', 'preocupado']],
+  ['abuela', '3 · La abuela', ['feliz', 'sonrisa']],
+  ['nino_gorro', '4 · El niño del gorro', ['feliz', 'seria']],
+  ['kevin', '5 · Kevin', ['lado', 'seria']],
+  ['rubio', '6 · El niño rubio', ['sorpresa', 'feliz']],
+  ['invitados', '7 · Invitados', ['feliz', 'preocupado']],
+  ['alcalde', '8 · El alcalde', ['lado', 'feliz']],
+  ['pecera', '9 · El pez del alcalde', []],
 ];
-const PIEL = { prota: '#F2C6A0', linda: '#F2C6A0', abuela: '#F0C8A8', nino_gorro: '#F2C6A0', kevin: '#C89270', rubio: '#F2C6A0', invitados: '#E0B08A', alcalde: '#F4F6FA' };
-function escena() { const s = new THREE.Scene(); s.background = new THREE.Color('#2B3150');
-  s.add(new THREE.HemisphereLight('#E8EEFF', '#3A3A44', .75)); const d = new THREE.DirectionalLight('#FFF4E4', 1.35); d.position.set(2.5, 4.5, 3.5); d.castShadow = true; d.shadow.mapSize.set(1024, 1024); const c = d.shadow.camera; c.left = c.bottom = -3; c.right = c.top = 3; s.add(d);
-  const piso = new THREE.Mesh(new THREE.CircleGeometry(1.6, 40).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ color: '#3A4166', roughness: .9 })); piso.receiveShadow = true; s.add(piso); return s; }
+const crear = (k) => { if (k === 'invitados') { const g = new THREE.Group(); ['invitado_verde', 'invitado_blanco', 'invitada_amarilla'].forEach((n, j) => { const a = P.crear(n); a.position.set((j - 1) * .78, 0, -Math.abs(j - 1) * .2); g.add(a); }); g.cara = e => g.children.forEach(a => a.cara(e)); return g; }
+  const g = P.crear(k); if (k === 'prota') { const b = P.balon(.17); b.position.set(.62, .62, .22); g.add(b); } return g; };
 L.forEach(([k, nom, exprs], i) => {
   const cx = (i % COLS) * CW, cy = Math.floor(i / COLS) * CH;
-  // fondo de la celda y título
-  X.fillStyle = i % 2 ? '#20253A' : '#1B1F31'; X.fillRect(cx, cy, CW, CH); X.fillStyle = '#FFFFFF'; X.font = 'bold 40px "DejaVu Sans", sans-serif'; X.fillText(nom, cx + 30, cy + 58);
-  X.fillStyle = '#9AA0B8'; X.font = '24px "DejaVu Sans", sans-serif'; X.fillText(k === 'pecera' ? 'frente · perfil' : 'frente · perfil · expresiones', cx + 30, cy + 92);
-  for (const [vista, ox] of [['frente', 0], ['perfil', 1]]) {
-    const s = escena(); let obj, tgtY = 1.0, dist = 4.2;
-    if (k === 'invitados') { obj = new THREE.Group(); ['invitado_verde', 'invitado_blanco', 'invitada_amarilla'].forEach((n, j) => { const g = P.crear(n); g.position.x = (j - 1) * .62; g.position.z = -Math.abs(j - 1) * .3; g.scale.setScalar(.7); obj.add(g); }); dist = 5.2; }
-    else if (k === 'pecera') { obj = P.crear('pecera'); obj.anima(1.3, 0); tgtY = .9; dist = 3.0; }
-    else { obj = P.crear(k); if (k === 'prota') { const b = P.balon(); b.position.set(.38, .55, .22); obj.add(b); } if (k === 'nino_gorro' || k === 'linda' || k === 'abuela') obj.cara('feliz'); }
-    s.add(obj); obj.rotation.y = vista === 'perfil' ? Math.PI / 2 : 0;
-    const cam = new THREE.PerspectiveCamera(32, 400 / 760, .05, 50); cam.position.set(0, tgtY + .3, dist); cam.lookAt(0, tgtY, 0);
-    const vx = cx + ox * 400, vy = H - (cy + 110 + 760); R.setViewport(vx, vy, 400, 760); R.setScissor(vx, vy, 400, 760); R.render(s, cam);
-    X.fillStyle = '#C8CCE0'; X.font = '22px "DejaVu Sans", sans-serif'; X.fillText(vista, cx + ox * 400 + 16, cy + 110 + 750);
-  }
-  // expresiones
-  exprs.forEach((e, j) => { const c = document.createElement('canvas'); c.width = c.height = 256; P.dibujaCara(c.getContext('2d'), e, L[i][3]); const sx = cx + 24 + j * 128, sy = cy + 880;
-    X.fillStyle = PIEL[k]; X.fillRect(sx, sy, 112, 112); X.drawImage(c, sx, sy, 112, 112); X.fillStyle = '#C8CCE0'; X.font = '16px "DejaVu Sans", sans-serif'; X.fillText(e, sx + 4, sy + 108 - 96); });
+  X.fillStyle = '#FFFFFF'; X.font = 'bold 42px "DejaVu Sans", sans-serif'; X.fillText(nom, cx + 30, cy + 56);
+  const alto = k === 'pecera' ? 1.6 : k === 'alcalde' ? 2.4 : 2.05, ty = alto * .5, dist = k === 'invitados' ? 6.2 : k === 'pecera' ? 3.6 : 5.0;
+  [['frente', 0], ['perfil', Math.PI / 2], ['3/4', Math.PI / 4]].forEach(([nv, ang], j) => {
+    const cam = new THREE.PerspectiveCamera(28, 320 / 600, .05, 60); cam.position.set(0, ty + .2, dist); cam.lookAt(0, ty, 0);
+    vista(crear(k), ang, cam, cx + 15 + j * 325, cy + 80, 320, 600); X.fillStyle = '#AEB6D8'; X.font = '22px "DejaVu Sans", sans-serif'; X.fillText(nv, cx + 25 + j * 325, cy + 670);
+  });
+  // cabezas con cada expresión (3D)
+  const cabY = k === 'alcalde' ? 3.3 * E : (3.1 + .475) * E, n = Math.max(1, exprs.length), hw = Math.min(160, 960 / n);
+  if (k === 'pecera') { const cam = new THREE.PerspectiveCamera(30, 960 / 300, .05, 20); cam.position.set(.15, 1.18, .95); cam.lookAt(0, 1.13, 0); vista(crear(k), .3, cam, cx + 20, cy + 690, 960, 300); X.fillStyle = '#AEB6D8'; X.font = '22px "DejaVu Sans", sans-serif'; X.fillText('acercamiento', cx + 28, cy + 980); }
+  exprs.forEach((e, j) => { const o = crear(k); o.cara(e); const tgt = k === 'invitados' ? new THREE.Vector3(0, cabY, 0) : new THREE.Vector3(0, cabY + .03, 0);
+    const cam = new THREE.PerspectiveCamera(30, hw / 230, .05, 20); cam.position.set(tgt.x, tgt.y + .05, tgt.z + (k === 'invitados' ? 1.25 : 1.15)); cam.lookAt(tgt);
+    if (k === 'invitados') o.children.forEach((a, q) => { if (q !== 1) a.visible = false; });
+    vista(o, 0, cam, cx + 20 + j * (hw + 4), cy + 690, hw, 230); X.fillStyle = '#AEB6D8'; X.font = '20px "DejaVu Sans", sans-serif'; X.fillText(e, cx + 26 + j * (hw + 4), cy + 944); });
+  // tirita de colores
+  (P.PALETAS[k] || []).forEach((col, j) => { const x0 = cx + 20 + j * 136, y0 = cy + 1000; X.fillStyle = col; X.fillRect(x0, y0, 40, 40); X.strokeStyle = '#000'; X.strokeRect(x0, y0, 40, 40); X.fillStyle = '#DDE2F4'; X.font = '20px "DejaVu Sans Mono", monospace'; X.fillText(col.toUpperCase(), x0 + 46, y0 + 28); });
 });
-// juntar las dos capas en una sola imagen
-const out = document.createElement('canvas'); out.width = W; out.height = H; const o = out.getContext('2d');
-o.drawImage(ui, 0, 0); o.drawImage(gl, 0, 0);
-for (let i = 0; i < L.length; i++) { const cx = (i % COLS) * CW, cy = Math.floor(i / COLS) * CH; o.drawImage(ui, cx, cy, CW, 110, cx, cy, CW, 110); o.drawImage(ui, cx, cy + 840, CW, 160, cx, cy + 840, CW, 160); }
 window.__png = out.toDataURL('image/png'); window.__listo = true;
 </script></body></html>
