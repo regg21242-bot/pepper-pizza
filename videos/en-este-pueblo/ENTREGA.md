@@ -6,7 +6,11 @@
 - `en-este-pueblo.srt`: 54 subtítulos.
 
 ## Audio del MP4 final
-__AUDIO__
+- Volumen integrado: **−13.6 LUFS** (−13.7 en la versión ligera).
+- Rango de volumen (LRA): 2.6 LU.
+- Pico real: −1.3 dBTP.
+- La música se corta en seco en "paró" (41.36 s): en la pista de música el pico queda en 0 desde ese momento.
+- Tamaños: 31 MB la versión normal y 10.5 MB la ligera.
 
 ## Revisión contra la lista de correcciones
 **A. Balón en cada "¡HUSS!"**
