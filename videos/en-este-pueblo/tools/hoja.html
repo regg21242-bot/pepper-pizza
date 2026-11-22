@@ -1,0 +1,53 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>html,body{margin:0;background:#1B1F2E} canvas{display:block;position:absolute;left:0;top:0}</style>
+<script src="../assets/lib/three.min.js"></script>
+<script src="../assets/lib/personajes.js"></script>
+</head><body>
+<canvas id="gl"></canvas><canvas id="ui"></canvas>
+<script>
+const P = window.PUEBLO_P, THREE = window.THREE;
+const CW = 800, CH = 1000, COLS = 3, ROWS = 3, W = CW * COLS, H = CH * ROWS;
+const gl = document.getElementById('gl'), ui = document.getElementById('ui'); gl.width = ui.width = W; gl.height = ui.height = H;
+const R = new THREE.WebGLRenderer({ canvas: gl, antialias: true, preserveDrawingBuffer: true }); R.setSize(W, H, false); R.outputEncoding = THREE.sRGBEncoding; R.toneMapping = THREE.ACESFilmicToneMapping; R.toneMappingExposure = 1.0; R.shadowMap.enabled = true; R.shadowMap.type = THREE.PCFSoftShadowMap; R.setScissorTest(true);
+const X = ui.getContext('2d');
+const L = [
+  ['prota', '1 · Protagonista', ['lado', 'feliz', 'guino', 'sorpresa', 'recta', 'triste'], {}],
+  ['linda', '2 · Linda (la vecina)', ['feliz', 'lado', 'preocupado'], { lentes: true }],
+  ['abuela', '3 · La abuela', ['feliz', 'lado'], { lentes: true }],
+  ['nino_gorro', '4 · El niño del gorro', ['feliz', 'seria'], { bocaGrande: true }],
+  ['kevin', '5 · Kevin', ['lado', 'seria'], {}],
+  ['rubio', '6 · El niño rubio', ['sorpresa', 'feliz'], {}],
+  ['invitados', '7 · Invitados', ['feliz', 'preocupado'], {}],
+  ['alcalde', '8 · El alcalde', ['lado'], {}],
+  ['pecera', '9 · El pez del alcalde', [], {}],
+];
+const PIEL = { prota: '#F2C6A0', linda: '#F2C6A0', abuela: '#F0C8A8', nino_gorro: '#F2C6A0', kevin: '#C89270', rubio: '#F2C6A0', invitados: '#E0B08A', alcalde: '#F4F6FA' };
+function escena() { const s = new THREE.Scene(); s.background = new THREE.Color('#2B3150');
+  s.add(new THREE.HemisphereLight('#E8EEFF', '#3A3A44', .75)); const d = new THREE.DirectionalLight('#FFF4E4', 1.35); d.position.set(2.5, 4.5, 3.5); d.castShadow = true; d.shadow.mapSize.set(1024, 1024); const c = d.shadow.camera; c.left = c.bottom = -3; c.right = c.top = 3; s.add(d);
+  const piso = new THREE.Mesh(new THREE.CircleGeometry(1.6, 40).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ color: '#3A4166', roughness: .9 })); piso.receiveShadow = true; s.add(piso); return s; }
+L.forEach(([k, nom, exprs], i) => {
+  const cx = (i % COLS) * CW, cy = Math.floor(i / COLS) * CH;
+  // fondo de la celda y título
+  X.fillStyle = i % 2 ? '#20253A' : '#1B1F31'; X.fillRect(cx, cy, CW, CH); X.fillStyle = '#FFFFFF'; X.font = 'bold 40px "DejaVu Sans", sans-serif'; X.fillText(nom, cx + 30, cy + 58);
+  X.fillStyle = '#9AA0B8'; X.font = '24px "DejaVu Sans", sans-serif'; X.fillText(k === 'pecera' ? 'frente · perfil' : 'frente · perfil · expresiones', cx + 30, cy + 92);
+  for (const [vista, ox] of [['frente', 0], ['perfil', 1]]) {
+    const s = escena(); let obj, tgtY = 1.0, dist = 4.2;
+    if (k === 'invitados') { obj = new THREE.Group(); ['invitado_verde', 'invitado_blanco', 'invitada_amarilla'].forEach((n, j) => { const g = P.crear(n); g.position.x = (j - 1) * .62; g.position.z = -Math.abs(j - 1) * .3; g.scale.setScalar(.7); obj.add(g); }); dist = 5.2; }
+    else if (k === 'pecera') { obj = P.crear('pecera'); obj.anima(1.3, 0); tgtY = .9; dist = 3.0; }
+    else { obj = P.crear(k); if (k === 'prota') { const b = P.balon(); b.position.set(.38, .55, .22); obj.add(b); } if (k === 'nino_gorro' || k === 'linda' || k === 'abuela') obj.cara('feliz'); }
+    s.add(obj); obj.rotation.y = vista === 'perfil' ? Math.PI / 2 : 0;
+    const cam = new THREE.PerspectiveCamera(32, 400 / 760, .05, 50); cam.position.set(0, tgtY + .3, dist); cam.lookAt(0, tgtY, 0);
+    const vx = cx + ox * 400, vy = H - (cy + 110 + 760); R.setViewport(vx, vy, 400, 760); R.setScissor(vx, vy, 400, 760); R.render(s, cam);
+    X.fillStyle = '#C8CCE0'; X.font = '22px "DejaVu Sans", sans-serif'; X.fillText(vista, cx + ox * 400 + 16, cy + 110 + 750);
+  }
+  // expresiones
+  exprs.forEach((e, j) => { const c = document.createElement('canvas'); c.width = c.height = 256; P.dibujaCara(c.getContext('2d'), e, L[i][3]); const sx = cx + 24 + j * 128, sy = cy + 880;
+    X.fillStyle = PIEL[k]; X.fillRect(sx, sy, 112, 112); X.drawImage(c, sx, sy, 112, 112); X.fillStyle = '#C8CCE0'; X.font = '16px "DejaVu Sans", sans-serif'; X.fillText(e, sx + 4, sy + 108 - 96); });
+});
+// juntar las dos capas en una sola imagen
+const out = document.createElement('canvas'); out.width = W; out.height = H; const o = out.getContext('2d');
+o.drawImage(ui, 0, 0); o.drawImage(gl, 0, 0);
+for (let i = 0; i < L.length; i++) { const cx = (i % COLS) * CW, cy = Math.floor(i / COLS) * CH; o.drawImage(ui, cx, cy, CW, 110, cx, cy, CW, 110); o.drawImage(ui, cx, cy + 840, CW, 160, cx, cy + 840, CW, 160); }
+window.__png = out.toDataURL('image/png'); window.__listo = true;
+</script></body></html>
