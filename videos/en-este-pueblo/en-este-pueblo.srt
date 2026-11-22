@@ -1,203 +1,215 @@
 1
-00:00:00,160 --> 00:00:01,222
+00:00:00,150 --> 00:00:00,860
 En este pueblo...
 
 2
-00:00:01,232 --> 00:00:01,682
+00:00:00,870 --> 00:00:01,320
 ¡HUSS!
 
 3
-00:00:01,880 --> 00:00:03,596
+00:00:01,705 --> 00:00:03,185
 ...todo el mundo se va de fiesta...
 
 4
-00:00:03,790 --> 00:00:04,739
+00:00:03,195 --> 00:00:03,905
 ...menos yo.
 
 5
-00:00:04,749 --> 00:00:05,199
+00:00:03,915 --> 00:00:04,365
 ¡HUSS!
 
 6
-00:00:05,719 --> 00:00:06,169
+00:00:04,515 --> 00:00:04,965
 ¡HUSS!
 
 7
-00:00:06,430 --> 00:00:08,941
+00:00:05,350 --> 00:00:07,560
 Veo que cada noche hay una fiesta en algún lado.
 
 8
-00:00:10,690 --> 00:00:12,849
+00:00:08,385 --> 00:00:10,405
 Hasta el pez del alcalde tiene fiesta.
 
 9
-00:00:13,100 --> 00:00:14,759
+00:00:10,415 --> 00:00:11,795
 Aquí nadie practica nada.
 
 10
-00:00:15,010 --> 00:00:15,805
+00:00:11,805 --> 00:00:12,465
 ¿Para qué?
 
 11
-00:00:16,050 --> 00:00:17,584
+00:00:12,475 --> 00:00:13,755
 Siempre hay otra fiesta.
 
 12
-00:00:17,830 --> 00:00:20,194
+00:00:13,765 --> 00:00:15,825
 Mi mejor amigo va a todas las fiestas.
 
 13
-00:00:20,440 --> 00:00:22,826
+00:00:15,835 --> 00:00:17,935
 Mi vecina Linda va a todas las fiestas.
 
 14
-00:00:23,080 --> 00:00:25,466
+00:00:17,945 --> 00:00:20,035
 Hasta la abuela se va a bailar los martes.
 
 15
-00:00:26,200 --> 00:00:27,132
+00:00:20,285 --> 00:00:21,065
 Pero yo no.
 
 16
-00:00:27,470 --> 00:00:27,920
-¡HUSS!
+00:00:21,075 --> 00:00:21,925
+Día tras día.
 
 17
-00:00:28,440 --> 00:00:28,890
+00:00:21,935 --> 00:00:22,385
 ¡HUSS!
 
 18
-00:00:29,670 --> 00:00:30,120
+00:00:22,535 --> 00:00:22,985
 ¡HUSS!
 
 19
-00:00:31,270 --> 00:00:31,720
+00:00:23,445 --> 00:00:23,895
 ¡HUSS!
 
 20
-00:00:32,780 --> 00:00:35,212
-Entonces llegó la fiesta más grande del año...
-
-21
-00:00:35,400 --> 00:00:36,843
-...el partido de fiesta.
-
-22
-00:00:37,090 --> 00:00:39,090
-Todos llegaron con gorros de fiesta.
-
-23
-00:00:39,340 --> 00:00:40,783
-Yo entré a la cancha.
-
-24
-00:00:41,030 --> 00:00:42,950
-Todos se rieron del niño del gorro.
-
-25
-00:00:43,200 --> 00:00:45,132
-Luego, me pasaron el balón.
-
-26
-00:00:45,470 --> 00:00:45,920
+00:00:24,855 --> 00:00:25,305
 ¡HUSS!
 
+21
+00:00:25,940 --> 00:00:28,100
+Entonces llegó la fiesta más grande del año...
+
+22
+00:00:28,110 --> 00:00:29,310
+...el partido de fiesta.
+
+23
+00:00:29,320 --> 00:00:31,020
+Todos llegaron con gorros de fiesta.
+
+24
+00:00:31,030 --> 00:00:32,250
+Yo entré a la cancha.
+
+25
+00:00:32,260 --> 00:00:33,960
+Todos se rieron del niño del gorro.
+
+26
+00:00:33,970 --> 00:00:35,680
+Luego, me pasaron el balón.
+
 27
-00:00:46,440 --> 00:00:46,890
+00:00:35,755 --> 00:00:36,205
 ¡HUSS!
 
 28
-00:00:47,410 --> 00:00:47,860
+00:00:36,355 --> 00:00:36,805
 ¡HUSS!
 
 29
-00:00:48,260 --> 00:00:49,646
-Cincuenta puntos.
+00:00:36,955 --> 00:00:37,405
+¡HUSS!
 
 30
-00:00:50,180 --> 00:00:51,237
-Yo solito.
+00:00:38,740 --> 00:00:39,740
+Cincuenta puntos.
 
 31
-00:00:51,490 --> 00:00:52,854
-La música se paró.
+00:00:39,750 --> 00:00:40,610
+Yo solito.
 
 32
-00:00:53,100 --> 00:00:54,964
-Todo el público se quedó callado.
+00:00:40,620 --> 00:00:41,820
+La música se paró.
 
 33
-00:00:55,210 --> 00:00:58,130
-Kevin se acercó y me preguntó: '¿cómo eres tan bueno?'
+00:00:41,830 --> 00:00:43,470
+Todo el público se quedó callado.
 
 34
-00:00:58,380 --> 00:01:02,323
-Le dije la verdad: mientras ustedes se iban de fiesta, yo practicaba.
+00:00:43,480 --> 00:00:46,060
+Kevin se acercó y me preguntó: '¿cómo eres tan bueno?'
 
 35
-00:01:03,170 --> 00:01:06,386
-La noche siguiente caminé por el pueblo... y algo estaba raro.
+00:00:46,070 --> 00:00:47,120
+Le dije la verdad: mientras ustedes se iban de fiesta, yo practicaba.
 
 36
-00:01:06,640 --> 00:01:08,788
-Ni música, ni luces de fiesta.
+00:00:47,130 --> 00:00:49,620
+
 
 37
-00:01:09,520 --> 00:01:10,259
-Nada.
+00:00:50,045 --> 00:00:51,655
+La noche siguiente caminé por el pueblo... y algo estaba raro.
 
 38
-00:01:10,510 --> 00:01:12,209
-Y en cada ventana se oía...
+00:00:51,665 --> 00:00:52,945
+
 
 39
-00:01:12,219 --> 00:01:12,669
-¡HUSS!
+00:00:52,955 --> 00:00:54,825
+Ni música, ni luces de fiesta.
 
 40
-00:01:13,189 --> 00:01:13,639
-¡HUSS!
+00:00:55,075 --> 00:00:55,655
+Nada.
 
 41
-00:01:13,900 --> 00:01:15,548
-Kevin practicaba guitarra.
+00:00:55,665 --> 00:00:57,075
+Y en cada ventana se oía...
 
 42
-00:01:15,800 --> 00:01:17,425
-Linda practicaba karate.
+00:00:57,085 --> 00:00:57,535
+¡HUSS!
 
 43
-00:01:17,670 --> 00:01:19,465
-Mi abuela hacía lagartijas.
+00:00:57,685 --> 00:00:58,135
+¡HUSS!
 
 44
-00:01:19,720 --> 00:01:21,425
-Ya nadie va a las fiestas.
+00:00:58,520 --> 00:01:00,063
+Kevin practicaba guitarra.
 
 45
-00:01:21,670 --> 00:01:23,409
-Todo el pueblo está entrenando.
+00:01:00,073 --> 00:01:01,493
+Linda practicaba karate.
 
 46
-00:01:23,660 --> 00:01:25,058
-Y eso está genial.
+00:01:01,503 --> 00:01:03,043
+Mi abuela hacía lagartijas.
 
 47
-00:01:25,310 --> 00:01:27,776
-Ahora soy el único libre el viernes en la noche.
+00:01:03,053 --> 00:01:04,513
+Ya nadie va a las fiestas.
 
 48
-00:01:28,030 --> 00:01:29,825
-Así que hice mi propia fiesta.
+00:01:04,523 --> 00:01:06,003
+Todo el pueblo está entrenando.
 
 49
-00:01:30,080 --> 00:01:32,376
-El único invitado fue el pez del alcalde.
+00:01:06,013 --> 00:01:07,033
+Y eso está genial.
 
 50
-00:01:33,110 --> 00:01:35,042
-La verdad, baila muy bien.
+00:01:07,043 --> 00:01:09,163
+Ahora soy el único libre el viernes en la noche.
 
 51
-00:01:36,680 --> 00:01:37,130
+00:01:09,173 --> 00:01:10,693
+Así que hice mi propia fiesta.
+
+52
+00:01:10,703 --> 00:01:12,793
+El único invitado fue el pez del alcalde.
+
+53
+00:01:13,043 --> 00:01:14,733
+La verdad, baila muy bien.
+
+54
+00:01:15,683 --> 00:01:16,133
 ¡HUSS!

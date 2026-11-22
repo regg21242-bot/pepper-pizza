@@ -17,9 +17,8 @@
          extra: (e) => { const a = pers('prota', -1.0, 6.2, Math.PI + .2, 'recta', 'quieto'); e.scene.add(a); } },
     8: { esc: 'cancha', t: .5, cam: [[.02, 1.6, 3.48], [.3, 1.55, 1.6], 40], foco: 1.9, ap: .3, sub: 'qué?', extra: (e) => e.actores.prota.cara('recta') },
     9: { esc: 'pueblo', o: { sinProta: true }, t: 1.05, cam: [[-.4, .35, 0], [-1.7, .7, -12], 55], foco: 6, sub: 'otra' },
-    10: { esc: 'fiesta_final', t: .6, cam: [[5.5, 8.5, 7.5], [0, 0, -1.2], 50], foco: 11, ap: .04, sub: 'amigo',
-          extra: (e) => { ocultar(e, 'prota', 'pecera'); const m = E().caja(1.6, .9, 1.2, E().mat('#2F57D8'), .2, .45, -1.4, .05); e.scene.add(m);
-            [['kevin', -.9, .2, .4], ['invitado_verde', 1.6, .3, -.5], ['invitada_amarilla', -2.2, -2.2, .8], ['invitado_blanco', 2.4, -2.6, -.8], ['rubio', -.4, -3.6, .2], ['nino_gorro', 1.2, 1.6, -.3]].forEach(([k, x, z, r], i) => { const a = pers(k, x, z, r, 'feliz', 'bailar', i * .3); e.scene.add(a); }); } },
+    // casa de fiesta con la alberca: Kevin (el mejor amigo) bailando junto al agua, los demás bailando alrededor
+    10: { esc: 'fiesta', t: .6, cam: [[.95, 2.3, 2.9], [-1.7, 1.0, -.75], 50], cam2: [[.75, 2.2, 2.6], [-1.7, 1.0, -.75], 50], foco: 4.0, ap: .18, sub: 'amigo' },
     11: { esc: 'fiesta', t: .9, cam: [[-2.7, 1.5, 4.5], [-4.6, 1.8, .4], 46], foco: 4.5, ap: .25, sub: 'Linda' },
     12: { esc: 'jardin', t: .5, sub: 'abuela' },
     13: { esc: 'cancha', t: .5, cam: [[.09, 1.6, 2.98], [.3, 1.56, 1.6], 40], foco: 1.4, ap: .35, sub: 'no' },
@@ -48,8 +47,12 @@
     26: { esc: 'partido', o: { marcador: [0, 50] }, t: .5, cam: [[-2.4, 1.45, -5.6], [-2.5, 2.4, -16], 50], foco: 3.6, ap: .2, sub: 'Kevin',
           extra: (e) => { ocultar(e, 'prota', 'balon', 'rubio'); const k = e.actores.kevin; k.position.set(-2.5, 0, -9.2); k.rotation.y = 0; k.pose(.4, 'caminar'); k.cara('seria');
             [['invitado_verde', -4.4, -10.6, .3], ['invitada_amarilla', -.6, -10.9, -.3], ['invitado_blanco', -4.0, -12.4, .2], ['linda', -1.0, -12.6, -.2]].forEach(([n, x, z, r]) => { const a = pers(n, x, z, r, 'preocupado', 'quieto'); e.scene.add(a); }); } },
-    27: { esc: 'partido', o: { marcador: [0, 50] }, t: .5, cam: [[2.02, 1.6, 2.4], [1.2, 1.55, 4], 40], foco: 1.8, ap: .35, sub: 'practicaba', extra: (e) => { e.actores.prota.pose(.2, 'reir'); e.actores.prota.cara('feliz'); ocultar(e, 'balon'); } },
-    29: { esc: 'pueblo', t: .5, cam: [[4.1, .25, 17.6], [4.4, .55, 10], 50], foco: 4.8, ap: .25, sub: 'raro',
+    27: { esc: 'partido', o: { marcador: [0, 50] }, t: .5, cam: [[2.02, 1.6, 2.4], [1.2, 1.55, 4], 40], foco: 1.8, ap: .35, sub: 'verdad', extra: (e) => { e.actores.prota.pose(0, 'quieto'); e.actores.prota.cara('lado'); ocultar(e, 'balon'); } },
+    '27b': { esc: 'partido', o: { marcador: [0, 50] }, t: .5, cam: [[2.25, 1.45, 2.15], [1.2, 1.5, 4], 46], cam2: [[2.1, 1.5, 2.3], [1.2, 1.52, 4], 42], foco: 2.0, ap: .3, sub: 'practicaba', extra: (e) => { e.actores.prota.pose(.2, 'reir'); e.actores.prota.cara('feliz'); ocultar(e, 'balon'); } },
+    // caminando de noche: cámara a la altura del pecho siguiéndolo de 3/4 (29) y de lado (29b)
+    29: { esc: 'pueblo', t: .5, cam: [[5.9, 1.0, 11.1], [4.4, .85, 12.8], 50], sigue: { off: [1.55, 1.05, -1.75], mira: [0, .82, 0] }, foco: 2.4, ap: .25, sub: 'raro',
+          extra: (e) => { const a = e.actores.prota; a.position.set(4.4, 0, 12.8); a.rotation.y = Math.PI; a.pose(.5, 'caminar'); a.cara('recta'); } },
+    '29b': { esc: 'pueblo', t: .5, cam: [[6.6, .95, 11], [4.4, .7, 11], 50], sigue: { off: [3.1, 1.0, -.35], mira: [0, .78, -.1] }, foco: 3.1, ap: .25, sub: 'raro',
           extra: (e) => { const a = e.actores.prota; a.position.set(4.4, 0, 12.8); a.rotation.y = Math.PI; a.pose(.5, 'caminar'); a.cara('recta'); } },
     30: { esc: 'fiesta_vacia', t: 1, sub: 'música' },
     31: { esc: 'pueblo', t: .5, cam: [[1.43, 1.6, 14.38], [1.7, 1.55, 12.6], 40], foco: 1.8, ap: .35, sub: 'Nada', extra: (e) => { e.actores.prota.cara('recta'); e.actores.prota.pose(0, 'quieto'); } },

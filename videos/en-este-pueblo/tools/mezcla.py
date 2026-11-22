@@ -171,7 +171,7 @@ def main():
     # ---------- voz (sola a -14 LUFS) ----------
     voz = np.zeros(N)
     for p in L['planos']:
-        if p['voz_ini'] is not None: x = leer(os.path.join(RAIZ, 'assets', 'voz', 'lineas', f"p{p['id']}.wav")); i = int(p['voz_ini'] * SR); voz[i:i + len(x)] += x[:N - i]
+        if p['voz_ini'] is not None: x = leer(os.path.join(RAIZ, 'assets', 'voz', 'lineas', f"p{p['voz_id']}.wav")); i = int(p['voz_ini'] * SR); voz[i:i + len(x)] += x[:N - i]
     voz *= db(-14 - mide(voz)); V = st(voz)
     # ducking: envolvente de la voz (ataque 10 ms, release 250 ms) → hasta -5 dB
     e = np.abs(voz); a1, r1 = np.exp(-1 / (.01 * SR)), np.exp(-1 / (.25 * SR)); ev = np.zeros(N); y = 0.0
@@ -191,7 +191,7 @@ def main():
     mus = mus * duck
     # ---------- efectos ----------
     fx = np.zeros((N, 2))
-    noche = ['1', '2', '3', '4', '5', '7', '9', '10', '11', '12', '13', '14a', '14c', '29', '30', '31', '32', '36', '37', '39', '40', '41', '42', '43', '44']
+    noche = ['1', '2', '3', '4', '5', '7', '9', '10', '11', '12', '13', '14a', '14c', '29', '29b', '30', '31', '32', '36', '37', '39', '40', '41', '42', '43', '44']
     for i in noche: d = PL[i]['dur']; pon(fx, grillos(d) * db(-30), ini(i)); pon(fx, viento(d) * db(-36), ini(i))
     for i in ['1', '3', '9', '13', '29', '31', '39']: pon(fx, st(zumbido(PL[i]['dur'])) * db(-44), ini(i))
     for i in ['2', '4', '5', '7', '10', '11', '12']:
@@ -209,10 +209,10 @@ def main():
             if p['id'] == '32':
                 for j, (g, pan, dt) in enumerate([(-15, -.6, 0), (-21, .7, .05), (-26, -.2, .11), (-24, .4, .17)]): pon(fx, st(sfx(f'huss_noche_{(k + j) % 4 + 1}.wav'), pan) * db(g), h + dt)
             else: pon(fx, st(x) * db(-14), h)
-    pon(fx, st(swish()) * db(-15), ini('14c') + PL['14c']['dur'] * .78); pon(fx, st(swish()) * db(-15), ini('21') + 2.35)
+    pon(fx, st(swish()) * db(-15), PL['14c']['huss'][-1] + .39 + .14 + .45); pon(fx, st(swish()) * db(-15), PL['21']['huss'][-1] + .39 + .14 + .45)   # cuando el balón entra al aro
     # partido: público, silbato, pasos, risas, bip del marcador
     for i in ['15', '16', '17', '18', '19', '20', '21', '22', '23']: pon(fx, publico(PL[i]['dur']) * db(-24), ini(i))
-    pon(fx, publico(1.2, 1.8) * db(-20), ini('21') + 2.4)
+    pon(fx, publico(1.2, 1.8) * db(-20), PL['21']['huss'][-1] + 1.0)
     pon(fx, st(silbato()) * db(-18), ini('17') + .1)
     for k2 in range(4): pon(fx, st(rechinido(), rng.uniform(-.4, .4)) * db(-24), ini('18') + .2 + k2 * .45)
     risa = np.concatenate([bp(ruido(.11), 500, 2500) * env(int(.11 * SR), .01, .05) for _ in range(10)]); pon(fx, st(np.tile(risa, 2)[:int(2 * SR)] * .8) * db(-16), ini('19') + .1)
@@ -221,7 +221,7 @@ def main():
     # después del corte: un grillo y viento; luego murmullo muy bajo
     pon(fx, viento(t29 - tP) * db(-30), tP); pon(fx, grillos(t29 - tP, .3) * db(-30), tP); pon(fx, murmullo(t29 - tP - 1.2) * db(-40), tP + 1.2)
     # noche siguiente
-    pon(fx, st(pasos(int(PL['29']['dur'] / .42))) * db(-24), ini('29') + .1)
+    pon(fx, st(pasos(int((PL['29']['dur'] + PL['29b']['dur']) / .42))) * db(-24), ini('29') + .1)
     pon(fx, viento(PL['30']['dur']) * db(-30), ini('30'))
     for k2, ch in enumerate([[43, 47, 50, 55, 59, 67], [48, 52, 55, 60, 64], [50, 54, 57, 62, 66], [50, 53, 58, 61, 66]]): pon(fx, st(rasgueo(ch), .1) * db(-18), ini('33') + .1 + k2 * .45)
     for k2 in range(2): pon(fx, st(golpe_costal()) * db(-16), ini('34') + .35 + k2 * .6)

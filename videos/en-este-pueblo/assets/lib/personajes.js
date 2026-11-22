@@ -37,7 +37,8 @@
     const sonrisa = (lado = 0) => { x.lineWidth = W * .03; x.beginPath(); const y = H * .68; x.moveTo(W * .35, y - lado * H * .02); x.quadraticCurveTo(W * .5, y + H * .1, W * .65, y - H * .02 - lado * H * .07); x.stroke(); };
     const bocaD = (esc = 1) => { const bw = W * .38 * esc, bh = H * .22 * esc, y0 = H * .62; x.lineWidth = W * .04;
       x.beginPath(); x.moveTo(W / 2 - bw / 2, y0); x.lineTo(W / 2 + bw / 2, y0); x.quadraticCurveTo(W / 2 + bw / 2, y0 + bh * 1.25, W / 2, y0 + bh); x.quadraticCurveTo(W / 2 - bw / 2, y0 + bh * 1.25, W / 2 - bw / 2, y0); x.closePath();
-      x.fillStyle = C.rojo; x.fill(); x.save(); x.clip(); x.fillStyle = '#F7A0B0'; x.beginPath(); x.ellipse(W / 2, y0 + bh * .95, bw * .26, bh * .34, 0, 0, 7); x.fill(); x.restore(); x.strokeStyle = C.negro; x.stroke(); };
+      x.fillStyle = C.rojo; x.fill(); const D = new Path2D(); D.moveTo(W / 2 - bw / 2, y0); D.lineTo(W / 2 + bw / 2, y0); D.quadraticCurveTo(W / 2 + bw / 2, y0 + bh * 1.25, W / 2, y0 + bh); D.quadraticCurveTo(W / 2 - bw / 2, y0 + bh * 1.25, W / 2 - bw / 2, y0); D.closePath();
+      x.save(); x.clip(D); x.fillStyle = '#F7A0B0'; x.beginPath(); x.ellipse(W / 2, y0 + bh * 1.02, bw * .24, bh * .3, 0, 0, 7); x.fill(); x.restore(); x.strokeStyle = C.negro; x.stroke(D); };
     switch (expr) {
       case 'feliz': feliz(ex[0]); feliz(ex[1]); bocaD(o.bocaGrande ? 1.25 : 1); break;
       case 'guino': ojo(ex[0]); feliz(ex[1]); sonrisa(1); break;
@@ -111,6 +112,7 @@
   const tirantes = (par, col, z) => { for (const s of [-1, 1]) par.add(M(rbox(.18, .62, .05, .04), sm(col), s * .42, .42, z)); par.add(M(rbox(.9, .45, .05, .05), sm(col), 0, .08, z)); par.add(M(rbox(.32, .2, .03, .03), sm(col), 0, .1, z + .03)); };
   const capucha = (par, col) => par.add(M(rbox(1.2, .42, .4, .18), sm(col, { roughness: .9 }), 0, .7, -.32));
 
+  const clampP = (x, a, b) => Math.max(a, Math.min(b, x));
   // ---------- avatar ----------
   function avatar(o) {
     o = Object.assign({ piel: C.piel, torso: C.azul, pierna: '#2A2E3A', zapato: '#F2F2F2', suela: '#9A9EA6' }, o); const RD = o.redondo ? 3.2 : 1;
@@ -140,13 +142,24 @@
     let actual = null; raiz.cara = (e) => { if (e === actual) return; actual = e; dibujaCara(cx, e, Object.assign({ piel: o.piel }, o.caraOpts || {})); ct.needsUpdate = true; };
     raiz.cara(o.expr || 'lado');
     // poses deterministas por tiempo
-    raiz.pose = (t, tipo, k = 1) => { const [bi, bd] = U.brazos, [pi, pd] = U.piernas; [bi, bd, pi, pd].forEach(q => q.rotation.set(0, 0, 0)); cab.rotation.set(0, 0, 0); g.position.y = 0;
+    raiz.pose = (t, tipo, k = 1) => { const [bi, bd] = U.brazos, [pi, pd] = U.piernas; [bi, bd, pi, pd].forEach(q => { q.rotation.set(0, 0, 0); q.scale.set(1, 1, 1); }); cab.rotation.set(0, 0, 0); g.position.set(0, 0, 0); g.rotation.set(0, 0, 0);
       if (tipo === 'caminar') { const a = Math.sin(t * 7) * .6 * k; pi.rotation.x = a; pd.rotation.x = -a; bi.rotation.x = -a; bd.rotation.x = a; }
       else if (tipo === 'bailar') { const a = Math.sin(t * 8); bi.rotation.z = -2.7 + .3 * a; bd.rotation.z = 2.7 + .3 * a; g.position.y = Math.abs(Math.sin(t * 8)) * .15; cab.rotation.z = .1 * a; pi.rotation.x = .12 * a; pd.rotation.x = -.12 * a; }
       else if (tipo === 'botar') { const f = (t * 2.2) % 1, e = Math.pow(2 * f - 1, 2); bd.rotation.x = -.42 + .22 * e; bd.rotation.z = .16; bi.rotation.x = .08 * Math.sin(t * 4.4); bi.rotation.z = -.07; pi.rotation.x = -.12; pd.rotation.x = .1; }
       else if (tipo === 'quieto') { bi.rotation.z = -.06; bd.rotation.z = .06; bi.rotation.x = .03 * Math.sin(t * 1.3); bd.rotation.x = -.03 * Math.sin(t * 1.3); }
       else if (tipo === 'guitarra') { const r = Math.sin(t * 11); bd.rotation.x = -1.05; bd.rotation.z = .55; bd.rotation.y = -.35; bi.rotation.x = -.62 + .1 * r; bi.rotation.z = .62; cab.rotation.z = .06 * Math.sin(t * 2.2); cab.rotation.x = .08; }
-      else if (tipo === 'karate') { const a = Math.max(0, Math.sin(t * 6)); bi.rotation.x = -1.5 * (.35 + .65 * a); bi.rotation.z = .12; bd.rotation.x = -.95; bd.rotation.z = -.2; pi.rotation.z = -.32; pd.rotation.z = .32; g.position.y = -.045; }
+      else if (tipo === 'karate') { // k = golpe (0 guardia, 1 brazo derecho extendido al frente); piernas abiertas
+        bd.rotation.x = -1.0 - .62 * k; bd.rotation.z = -.1 * (1 - k); bi.rotation.x = -.55 + .25 * k; bi.rotation.z = -.32; pi.rotation.z = -.36; pd.rotation.z = .36; g.position.y = -.05; g.rotation.y = .22 * k; cab.rotation.y = -.12 * k; }
+      else if (tipo === 'cruce') { // k = dónde va el balón (-1 mano derecha · 0 piso entre los pies · 1 mano izquierda)
+        const l = clampP(k, -1, 1), bajo = 1 - Math.abs(l); [bi, bd].forEach((b, j) => { const s = j ? 1 : -1, cerca = clampP(s * l, 0, 1); b.rotation.x = -.42 - .25 * cerca + .15 * bajo; b.rotation.z = s * (.28 - .16 * cerca) + .1 * l; });
+        g.rotation.z = -.1 * l; g.rotation.y = .08 * l; g.position.y = -.06 - .03 * bajo; pi.rotation.z = -.14; pd.rotation.z = .14; pi.rotation.x = -.16 + .05 * l; pd.rotation.x = .12 + .05 * l; cab.rotation.x = .3 + .08 * bajo; cab.rotation.y = .32 * l; }
+      else if (tipo === 'baile1') { const a = Math.sin(t * 6); bi.rotation.z = -2.75 + .45 * a; bd.rotation.z = 2.75 + .45 * a; g.rotation.z = .07 * a; cab.rotation.z = .12 * a; g.position.y = Math.abs(Math.sin(t * 6)) * .05; }   // brazos arriba de lado a lado
+      else if (tipo === 'baile2') { const a = Math.sin(t * 7), sb = Math.abs(Math.sin(t * 7)); bi.rotation.z = -1.5 - 1.15 * a; bd.rotation.z = 1.5 - 1.15 * a; g.position.y = sb * .22; pi.rotation.x = .2 * a; pd.rotation.x = -.2 * a; cab.rotation.x = -.1 * sb; }   // saltitos con brazos alternando
+      else if (tipo === 'baile3') { g.rotation.y = t * 4.2; bi.rotation.z = -1.25; bd.rotation.z = 1.25; bi.rotation.x = bd.rotation.x = -.2; g.position.y = Math.abs(Math.sin(t * 8.4)) * .06; cab.rotation.z = .1 * Math.sin(t * 8.4); }   // girar sobre sí mismo
+      else if (tipo === 'baile4') { const a = Math.sin(t * 5); g.rotation.z = .11 * a; g.position.x = .06 * a; bi.rotation.x = -1.15 + .2 * a; bd.rotation.x = -1.15 - .2 * a; bi.rotation.z = .35; bd.rotation.z = -.35; pi.rotation.z = -.08 + .08 * a; pd.rotation.z = .08 + .08 * a; cab.rotation.z = -.1 * a; }   // cadera con brazos doblados
+      else if (tipo === 'baile5') { const a = Math.abs(Math.sin(t * 6.5)); bi.rotation.z = -2.95 + .4 * a; bd.rotation.z = 2.95 - .4 * a; g.position.y = (1 - a) * .05; cab.rotation.x = -.15; }   // aplaudir arriba de la cabeza
+      else if (tipo === 'flotar') { const a = Math.sin(t * 3); bi.rotation.z = -1.2 - .5 * a; bd.rotation.z = 1.2 - .5 * a; bi.rotation.x = -.3; bd.rotation.x = -.3; cab.rotation.z = .08 * a; }   // en el agua, moviendo los brazos
+      else if (tipo === 'ola') { const u = clampP(k, 0, 1); pi.rotation.x = pd.rotation.x = -Math.PI / 2 * (1 - u); g.position.y = -.75 * (1 - u); bi.rotation.z = -2.75 * u; bd.rotation.z = 2.75 * u; bi.rotation.x = bd.rotation.x = -.3 * (1 - u); cab.rotation.x = -.15 * u; }   // gradas: sentado → parado con brazos arriba
       else if (tipo === 'lagartija') { const u = .5 - .5 * Math.cos(t * 3.2); bi.rotation.x = bd.rotation.x = -(1.21 - .1 * u); cab.rotation.x = 0; }
       else if (tipo === 'tirar') { bi.rotation.x = bd.rotation.x = -2.9 * k; g.position.y = .25 * Math.sin(Math.min(1, k) * Math.PI); }
       else if (tipo === 'sentado') { pi.rotation.x = pd.rotation.x = -Math.PI / 2; g.position.y = -.75; bi.rotation.x = bd.rotation.x = -.3; }
@@ -160,7 +173,7 @@
 
   // ---------- balón ----------
   function balon(r = .16) { const t = tex(512, 256, (x, w, h) => { x.fillStyle = '#E07A28'; x.fillRect(0, 0, w, h); x.fillStyle = 'rgba(0,0,0,.08)'; for (let i = 0; i < 1200; i++) x.fillRect((i * 97) % w, (i * 61) % h, 2, 2); x.strokeStyle = '#1A1A1A'; x.lineWidth = 11; x.beginPath(); x.moveTo(0, h / 2); x.lineTo(w, h / 2); x.moveTo(w / 4, 0); x.lineTo(w / 4, h); x.moveTo(3 * w / 4, 0); x.lineTo(3 * w / 4, h); x.stroke(); x.beginPath(); x.ellipse(w / 2, h / 2, 90, h / 2, 0, 0, 7); x.stroke(); });
-    return M(new THREE.SphereGeometry(r, 32, 24), sm('#FFFFFF', { map: t, roughness: .6 })); }
+    const b = M(new THREE.SphereGeometry(r, 32, 24), sm('#FFFFFF', { map: t, roughness: .6, emissive: '#FFFFFF', emissiveMap: t, emissiveIntensity: .3 })); b.userData.esBalon = 1; return b; }
 
   // ---------- pez y pecera ----------
   let ENV = null; function entorno() { if (ENV) return ENV; ENV = tex(512, 256, (x, w, h) => { const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#9AA4C8'); g.addColorStop(.5, '#4A4E66'); g.addColorStop(1, '#2A2630'); x.fillStyle = g; x.fillRect(0, 0, w, h);
@@ -195,7 +208,7 @@
   const lisa = (col) => sm(col);
   const CAT = {
     prota: () => { const tT = tela(C.azul, (x, w, h) => tronquito(x, w * .74, h * .3, w * .17));
-      return avatar({ matTorso: sm('#FFFFFF', { map: tT }), torso: C.azul, manga: C.azul, pierna: '#1B2F9A', zapato: '#F4F4F4',
+      return avatar({ matTorso: sm('#FFFFFF', { map: tT }), torso: C.azul, manga: C.azul, pierna: '#1B2F9A', matPiernaD: sm('#1B2F9A', { roughness: 1 }), matPiernaI: sm('#1B2F9A', { roughness: 1 }), zapato: '#F4F4F4',
         ropa: (t, z) => { capucha(t, C.azul); cordones(t, C.amarillo, z + .02); bolsilloCanguro(t, '#1C38B0', z); t.add(M(rbox(1.63, .16, .83, .06), sm(C.amarillo), 0, -.69, 0)); },   // orilla amarilla
         extra: (g, U) => U.brazos.forEach(b => b.add(M(rbox(.77, .15, .77, .05), sm(C.amarillo), 0, -1.1, 0))),          // puños amarillos
         gorro: gorroTejido, gorroY: 0, expr: 'lado' }); },
@@ -210,13 +223,7 @@
     invitado_verde: () => avatar({ piel: C.kevin, torso: '#5DB36A', pierna: '#6A7A6A', pelo: 'corto', colPelo: '#5A3A22', gorro: () => gorroFiesta(C.celeste), gorroY: .7, gorroRot: .1, expr: 'feliz' }),
     invitado_blanco: () => avatar({ torso: '#F4F4F4', matTorso: sm('#FFFFFF', { map: tela('#F4F4F4', (x, w, h) => estrellita(x, w / 2, h * .42, 120, C.rosa)) }), manga: '#F4F4F4', pierna: '#7A5A3A', pelo: 'corto', colPelo: '#6A4028', gorro: () => gorroFiesta(C.amarillo), gorroY: .7, gorroRot: -.1, expr: 'feliz' }),
     invitada_amarilla: () => avatar({ piel: '#8A5A3C', torso: '#F2D35B', pierna: '#6A7A6A', pelo: 'rizos', colPelo: '#F2E2B8', gorro: () => gorroFiesta('#F28DB2'), gorroY: 1.0, gorroRot: .1, expr: 'feliz' }),
-    alcalde: () => { const g = new THREE.Group(), s = new THREE.Group(); s.scale.setScalar(ESC); g.add(s); const b = sm('#F4F6FA', { roughness: .55 });
-      s.add(M(rbox(2.0, 1.6, 1.8, .7, .08), b, 0, .8, 0)); s.add(M(rbox(1.5, 1.3, 1.4, .55, .06), b, 0, 2.15, 0));
-      for (const sx of [-1, 1]) { const br = M(rbox(.5, 1.0, .5, .2), b, sx * 1.0, 2.2, 0); br.rotation.z = sx * .5; s.add(br); }
-      botones(s, '#14141A', 0, [2.4, 2.05], .72);
-      const cab = new THREE.Group(); cab.position.y = 3.3; s.add(cab); const cc = document.createElement('canvas'); cc.width = FW; cc.height = FH; const ct = new THREE.CanvasTexture(cc); ct.encoding = THREE.sRGBEncoding;
-      cab.add(M(rbox(1.1, 1.0, 1.0, .32, .05, 8), sm('#FFFFFF', { map: ct, roughness: .55 }))); const h = sombreroCopa(); h.position.y = .46; cab.add(h);
-      let ac = null; g.cara = (e) => { if (e === ac) return; ac = e; dibujaCara(cc.getContext('2d'), e, { piel: '#F4F6FA' }); ct.needsUpdate = true; }; g.cara('lado'); g.pose = () => {}; g.userData = { cabeza: cab }; return g; },
+    alcalde: () => avatar({ piel: '#F4F6FA', torso: '#F4F6FA', manga: '#F4F6FA', pierna: '#F4F6FA', zapato: '#E6E9EF', suela: '#D0D4DC', redondo: true, gorro: sombreroCopa, gorroY: .47, expr: 'lado', ropa: (t, z) => botones(t, '#14141A', 0, [.3, -.1], z + .01) }),
     pecera,
   };
   const PALETAS = {

@@ -3,7 +3,7 @@ Salidas: assets/voz/lineas/p<N>.wav (procesada) y assets/voz/palabras.json {plan
 import asyncio, json, os, subprocess
 import edge_tts
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__))); OUT = os.path.join(RAIZ, 'assets', 'voz', 'lineas')
-VOZ, RATE, PITCH = 'es-ES-AlvaroNeural', '+10%', '+8Hz'
+VOZ, RATE, PITCH = 'es-ES-AlvaroNeural', '+18%', '+8Hz'   # +8 % más rápido que la v1, mismo tono
 G = json.load(open(os.path.join(RAIZ, 'guion.json')))
 async def tts(texto, mp3):
     for a in range(6):

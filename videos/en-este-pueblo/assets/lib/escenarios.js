@@ -111,7 +111,7 @@
     g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: '#202020' }))); const fm = luz('#FFF6E0', 3.2);
     for (let i = 1; i < n; i++) { const u = i / n; const p = A.clone().lerp(B, u); p.y -= caida * 4 * u * (1 - u) + .12; g.add(esf(.085, fm, p.x, p.y, p.z, 10)); const h = halo(.45, '#FFE8C0', .3); h.position.copy(p); g.add(h); } return g; }
   function globo(col, alto = 2.2) { const g = G(); const b = esf(.32, mat(col, { roughness: .25, emissive: col, emissiveIntensity: .12 }), 0, alto, 0, 16); b.scale.set(1, 1.18, 1); g.add(b); g.add(cil(.04, .02, .08, mat(col), 0, alto - .4, 0, 8));
-    g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, alto - .44, 0), new THREE.Vector3(.05, alto * .5, .02), new THREE.Vector3(0, 0, 0)]), new THREE.LineBasicMaterial({ color: '#FFFFFF' }))); return g; }
+    g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, alto - .44, 0), new THREE.Vector3(.05, alto * .5, .02), new THREE.Vector3(0, 0, 0)]), new THREE.LineBasicMaterial({ color: '#FFFFFF' }))); g.userData.globo = 1 + alto * 3.7 + (col.charCodeAt(2) % 7); return g; }
   function silla(col) { const g = G(), m = mat(col, { roughness: .5 }); g.add(caja(.5, .08, .5, m, 0, .48, 0, .02)); g.add(caja(.5, .55, .08, m, 0, .78, -.21, .02)); for (const sx of [-1, 1]) for (const sz of [-1, 1]) g.add(caja(.06, .46, .06, m, sx * .2, .23, sz * .2, .01)); return g; }
   function pizza(r = .26) { const g = G(); g.add(cil(r, r, .04, mat('#E3B26A', { roughness: .8 }), 0, .02, 0, 24)); g.add(cil(r * .88, r * .88, .045, mat('#F2C94C', { roughness: .7 }), 0, .03, 0, 24)); sembrar(31);
     for (let i = 0; i < 7; i++) { const a = i * 2.4, rr = r * (.2 + rnd() * .55); g.add(cil(.045, .045, .05, mat('#C8352B', { roughness: .6 }), Math.cos(a) * rr, .045, Math.sin(a) * rr, 10)); } return g; }
@@ -185,6 +185,8 @@
       mt.onBeforeCompile = (sh) => { sh.uniforms.uRell = RELL; sh.fragmentShader = 'uniform vec3 uRell;\n' + sh.fragmentShader.replace('#include <output_fragment>', 'outgoingLight += diffuseColor.rgb * uRell * (.3 + .7 * max(dot(normal, normalize(vViewPosition)), 0.));\n#include <output_fragment>'); };
       mt.customProgramCacheKey = () => 'rell'; mt.needsUpdate = true; }); return o; }
   function prepara(a) { a.traverse(o => { if (o.isMesh) o.castShadow = o.receiveShadow = true; }); const U = a.userData || {}; if (U.gorro) U.gorro.traverse(o => { if (o.isMesh) o.castShadow = false; }); if (U.cabeza && U.cabeza.traverse) U.cabeza.traverse(o => { if (o.isMesh && o !== U.cabeza.children[0]) o.castShadow = false; }); return rellenar(a); }
+  const BAILES = ['baile1', 'baile2', 'baile3', 'baile4', 'baile5'];
+  function bailar(a, t, i) { const v = .82 + ((i * 37) % 31) / 100, f = i * 1.37 + (i % 3) * .41; a.pose(t * v + f, BAILES[(i * 3 + (i >> 2)) % 5]); }
   function personaje(k, x, z, ry = 0, expr, pose, t = .3, opc) { const a = P.crear(k, opc); a.position.set(x, 0, z); a.rotation.y = ry; if (expr && a.cara) a.cara(expr); if (pose && a.pose) a.pose(t, pose); return prepara(a); }
   // balón en la mano derecha del protagonista (pose 'botar'): sube y baja al ritmo del brazo
   const _v = new THREE.Vector3();
@@ -193,13 +195,33 @@
     const y = piso + r + alto * e; b.position.set(_v.x, y, _v.z); b.rotation.x = t * 6; const ap = Math.max(0, 1 - (y - piso - r) / .12); b.scale.set(1 + .08 * ap, 1 - .12 * ap, 1 + .08 * ap); b.position.y -= r * .12 * ap;
     if (!b.userData.sombra) { const m = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: TSOM, transparent: true, depthWrite: false })); m.rotation.x = -Math.PI / 2; b.userData.sombra = m; b.parent.add(m); }
     const k = 1 - Math.min(1, (y - piso - r) / Math.max(.2, alto)), so = b.userData.sombra; so.position.set(_v.x, piso + .004, _v.z); so.scale.setScalar(.22 + .26 * k); so.material.opacity = .25 + .6 * k; }
+  /* Crossover: cada golpe (bote en el piso) va de una mano a la otra, empezando con la derecha. c = tiempos de bote (ordenados).
+     Devuelve { l: -1 mano derecha … 0 piso … 1 mano izquierda, h: 0 piso … 1 mano, de, a, u, baja } */
+  function cruceTL(t, c) { const S = (k) => (k % 2 ? 1 : -1), D = .12;
+    if (!c.length) return { l: -1, h: 1, de: -1, a: -1, u: 1, baja: false };
+    if (t < c[0]) { const u = Math.max(0, Math.min(1, (t - (c[0] - D)) / D)); return { l: -1 * (1 - u), h: 1 - u, de: -1, a: 0, u, baja: true }; }
+    for (let k = 0; k < c.length; k++) { const ns = -S(k), fin = k + 1 < c.length ? c[k + 1] : 1e9; if (t >= fin) continue; const gap = fin - c[k];
+      if (gap <= .45) { const m = c[k] + gap / 2; if (t < m) { const u = (t - c[k]) / (gap / 2); return { l: ns * u, h: u, de: 0, a: ns, u, baja: false }; } const u = (t - m) / (gap / 2); return { l: ns * (1 - u), h: 1 - u, de: ns, a: 0, u, baja: true }; }
+      if (t < c[k] + D) { const u = (t - c[k]) / D; return { l: ns * u, h: u, de: 0, a: ns, u, baja: false }; }
+      if (t > fin - D) { const u = (t - (fin - D)) / D; return { l: ns * (1 - u), h: 1 - u, de: ns, a: 0, u, baja: true }; }
+      return { l: ns, h: 1, de: ns, a: ns, u: 1, baja: false }; } return { l: -1, h: 1, de: -1, a: -1, u: 1, baja: false }; }
+  const _h = new THREE.Vector3(), _f = new THREE.Vector3(), _q = new THREE.Vector3();
+  function cruceBalon(a, b, t, c, piso = .01) { const e = cruceTL(t, c); a.pose(t, 'cruce', e.l); a.updateMatrixWorld(true); const r = .17;
+    const mano = (s) => { a.userData.brazos[s < 0 ? 0 : 1].localToWorld(_q.set(0, -1.62, .12)); _q.y -= r; return _q.clone(); };
+    a.localToWorld(_f.set(0, 0, .24)); _f.y = piso + r; const P0 = e.de === 0 ? _f.clone() : mano(e.de), P1 = e.a === 0 ? _f.clone() : mano(e.a);
+    const u = Math.max(0, Math.min(1, e.u)); b.position.lerpVectors(P0, P1, u); const yv = e.baja ? P0.y + (P1.y - P0.y) * Math.pow(u, 1.6) : P0.y + (P1.y - P0.y) * (1 - Math.pow(1 - u, 1.6)); b.position.y = yv;
+    b.rotation.set(t * 9, 0, e.l * .8); let ap = 0; for (const ci of c) ap = Math.max(ap, 1 - Math.abs(t - ci) / .035); b.scale.set(1 + .1 * ap, 1 - .14 * ap, 1 + .1 * ap); b.position.y -= r * .14 * ap;
+    if (!b.userData.sombra) { const m = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: TSOM, transparent: true, depthWrite: false })); m.rotation.x = -Math.PI / 2; b.userData.sombra = m; b.parent.add(m); }
+    const k = 1 - Math.min(1, (b.position.y - piso - r) / .9), so = b.userData.sombra; so.visible = true; so.position.set(b.position.x, piso + .004, b.position.z); so.scale.setScalar(.22 + .26 * k); so.material.opacity = .25 + .6 * k; return e; }
+  const SILG = { golpes: null };   // botes de las siluetas 'botar' (tiempo de la escena); null = ritmo propio
   const SIL = {}; // siluetas negras practicando algo, animadas en bucle (para ventanas)
   function silueta(clave) { if (SIL[clave]) return SIL[clave].t; const [tipo, fase] = clave.split(':'); const c = document.createElement('canvas'); c.width = 128; c.height = 160; const x = c.getContext('2d'); const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding;
     const R = (a, b, w, d, r = 0) => { x.save(); x.translate(a, b); x.rotate(r); x.fillRect(-w / 2, 0, w, d); x.restore(); };
     const dibuja = (tt) => { tt += (+fase || 0) * .37; x.clearRect(0, 0, 128, 160); x.fillStyle = '#08080C'; const s1 = Math.sin(tt * 7);
       if (tipo === 'sentadillas') { const b = (s1 * .5 + .5) * 26; x.fillRect(46, 20 + b, 36, 34); x.fillRect(40, 56 + b, 48, 46 - b * .3); R(51, 100 + b * .7, 18, 60 - b * .7, b * .02); R(77, 100 + b * .7, 18, 60 - b * .7, -b * .02); R(40, 60 + b, 12, 40, -1.4); R(88, 60 + b, 12, 40, 1.4); }
       else { x.fillRect(46, 20, 36, 34); x.fillRect(40, 56, 48, 52); x.fillRect(42, 108, 18, 52); x.fillRect(68, 108, 18, 52);
-        if (tipo === 'botar') { const u = Math.abs(Math.sin(tt * 4.4)); R(40, 60, 12, 44, .15); R(88, 60, 12, 40, -.35 - .2 * u); x.beginPath(); x.arc(104, 108 + 44 * (1 - u), 9, 0, 7); x.fill(); }
+        if (tipo === 'botar') { const t0 = tt - (+fase || 0) * .37 - (+fase || 0) * .05, cs = SILG.golpes || Array.from({ length: 400 }, (_, i) => i * .42 + (+fase || 0) * .13); const e = cruceTL(t0, cs);
+          const bx = 64 + e.l * 30, by = 148 - e.h * 40; R(40, 60, 12, 44, e.l < 0 ? .35 + .25 * (-e.l) : .2); R(88, 60, 12, 44, e.l > 0 ? -.35 - .25 * e.l : -.2); x.beginPath(); x.arc(bx, by, 9, 0, 7); x.fill(); }
         else if (tipo === 'guitarra') { R(40, 60, 12, 40, .9 + .25 * Math.sin(tt * 14)); R(88, 60, 12, 40, -1.2); x.beginPath(); x.ellipse(58, 92, 20, 14, -.5, 0, 7); x.fill(); R(70, 80, 6, 50, -1.0); }
         else { const a = s1 > 0; R(88, 62, 12, a ? 46 : 26, a ? -1.57 : -2.4); R(40, 62, 12, a ? 26 : 46, a ? 2.4 : 1.57); } } t.needsUpdate = true; };
     dibuja(0); SIL[clave] = { t, dibuja }; return t; }
@@ -257,10 +279,13 @@
       if (!o.vacia) {
         const flota = personaje('rubio', -1.6, PZ - .4, .5, 'feliz', 'sentado'); flota.position.y = .12; flota.userData.brazos.forEach(b => b.rotation.x = -.3); s.add(flota); nadan.push(flota);
         const nada = personaje('invitado_verde', 1.1, PZ + .2, -.4, 'feliz', 'quieto'); nada.position.y = -1.05; s.add(nada); nadan.push(nada);
-        [['linda', -4.6, .4, .7], ['nino_gorro', -4.4, 3.2, .9], ['invitada_amarilla', 4.6, .2, -.7], ['invitado_blanco', 4.5, 3.4, -.9]].forEach(([k, x, z, r], i) => { const a = personaje(k, x, z, r, 'feliz', 'bailar', .2 + i * .25); s.add(a); bailan.push(a); });
+        [['linda', -4.6, .4, .7], ['nino_gorro', -4.4, 3.2, .9], ['invitada_amarilla', 4.6, .2, -.7], ['invitado_blanco', 4.5, 3.4, -.9], ['kevin', -2.4, -1.0, .35], ['invitado_verde', 2.3, -1.3, -.3], ['abuela', 5.3, 1.8, -1.3], ['invitada_amarilla', -5.4, 1.9, 1.3]].forEach(([k, x, z, r], i) => { const a = personaje(k, x, z, r, 'feliz', 'bailar', .2 + i * .25); a.userData.nombre = k; s.add(a); bailan.push(a); });
         const warm = new THREE.PointLight('#FFD8A0', 2.0, 16, 1.6); warm.position.set(0, 4.5, -3); s.add(warm); }
       const cam = o.cam ? camara(...o.cam) : camara([5.4, 4.3, 13.5], [0, 1.0, -1.6], 50);
-      return { scene: s, cam, post: { focus: o.foco || 12, ap: .1, bloom: .8 }, actores: { bailan, nadan }, anima: (t) => { relleno(.3); est.anima(t); bailan.forEach((a, i) => a.pose(t + i * .3, 'bailar')); if (!o.vacia) { d1.position.y = .14 + .03 * Math.sin(t * 2); if (nadan[0]) nadan[0].position.y = .12 + .03 * Math.sin(t * 2); d2.position.y = .14 + .03 * Math.sin(t * 2.3 + 1); } } }; },
+      const nombres = {}; bailan.forEach(a => { nombres[a.userData.nombre] = nombres[a.userData.nombre] || a; });
+      return { scene: s, cam, post: { focus: o.foco || 12, ap: .1, bloom: .8 }, actores: Object.assign({ bailan, nadan }, nombres), anima: (t) => { relleno(.3); est.anima(t); bailan.forEach((a, i) => bailar(a, t, i)); if (!o.vacia) { d1.position.y = .14 + .03 * Math.sin(t * 2); d2.position.y = .14 + .03 * Math.sin(t * 2.3 + 1);
+          if (nadan[0]) { nadan[0].position.y = .12 + .05 * Math.sin(t * 2); nadan[0].pose(t, 'sentado'); nadan[0].userData.brazos.forEach((b, j) => { b.rotation.z = (j ? 1 : -1) * (2.2 + .5 * Math.sin(t * 3 + j * 1.6)); b.rotation.x = -.1; }); }
+          if (nadan[1]) { nadan[1].position.y = -1.05 + .07 * Math.sin(t * 1.7 + 1); nadan[1].pose(t * 1.1 + .7, 'flotar'); } } else { d1.position.y = .14; d2.position.y = .14; } } }; },
     alberca() { return CREA.fiesta({ vacia: true, cam: [[-2.6, 2.3, 7.6], [.6, 0, 1.6], 50], foco: 6.5 }); },
     fiesta_vacia() { return CREA.fiesta({ vacia: true, cam: [[2.2, 2.0, 3.2], [-.4, .9, -4.2], 50], foco: 7 }); },
 
@@ -348,7 +373,7 @@
       for (const [x, z] of [[-30, -12], [24, -14]]) { const a = arbol(1.1, '#5E9A3E'); a.position.set(x, 0, z); s.add(a); }
       s.add(colinas(['#78A456', '#9DB487', '#C6C3B4'], -120, 620, .45));
       const cam = camara([3, 10.5, 28], [0, 2.2, -8], 60);
-      return { scene: s, cam, post: { focus: 22, ap: .04, bloom: .45, umbral: 1.5 }, actores: { prota, kevin, rubio: rub, balon: bal, marcador: marc, gradas }, anima: (tt) => { relleno(.07); gradas.forEach((a, i) => a.pose(tt + i * .21, a.userData.pie ? 'bailar' : 'sentado')); prota.pose(tt, 'botar'); botaBalon(prota, bal, tt); } }; },
+      return { scene: s, cam, post: { focus: 22, ap: .04, bloom: .45, umbral: 1.5 }, actores: { prota, kevin, rubio: rub, balon: bal, marcador: marc, gradas }, anima: (tt) => { relleno(.07); gradas.forEach((a, i) => { if (a.userData.pie) return bailar(a, tt, i); const j = i % 10, w = ((tt * .42 - j * .085 - Math.floor(i / 10) * .02) % 1 + 1) % 1, k = Math.max(0, Math.sin(Math.min(1, w / .32) * Math.PI)); a.pose(tt + i * .21, 'ola', k); }); prota.pose(tt, 'botar'); botaBalon(prota, bal, tt); } }; },
 
     // F · Interiores de noche
     cuarto_kevin() { return interior({ pared: '#1F2C66', piso: mat('#FFFFFF', { map: TEX.pisoMadera, roughness: .7 }), tapete: '#D6A72E', poster: true,
@@ -356,12 +381,13 @@
         const cama = camaB('#3D6BD8'); cama.position.set(-2.4, 0, -1.8); s.add(cama); return { kevin: k }; }, anima: (a, t) => a.kevin.pose(t, 'guitarra'), lampX: 2.6, cam: [[.6, 1.4, 4.0], [.15, 1.0, -.6], 50] }); },
     cuarto_linda() { return interior({ pared: '#8E86A8', piso: mat('#8A8698', { roughness: .8 }), poster: true,
       extras: (s) => { for (let i = 0; i < 4; i++) for (let j = 0; j < 3; j++) s.add(caja(1.2, .1, 1.2, mat((i + j) % 2 ? '#9E2A2A' : '#2B3F8F', { roughness: .85 }), -2.0 + i * 1.22, .05, -2.0 + j * 1.22, .03));
-        const saco = G(); saco.add(cil(.3, .3, 1.1, mat('#C8302B', { roughness: .5 }), 0, 0, 0, 18)); saco.add(cil(.31, .31, .08, mat('#1A1A1A'), 0, .5, 0, 18)); saco.add(cil(.015, .015, 1.3, mat('#2A2A2A'), 0, 1.2, 0, 6)); saco.position.set(-.2, 1.3, -.4); s.add(saco);
-        const l = personaje('linda', .45, -1.15, -.75, 'seria', 'karate', .26, { sinGorro: true }); l.position.y = .1; s.add(l); return { linda: l, saco }; }, anima: (a, t) => a.linda.pose(t, 'karate'), lampX: -2.7, cam: [[2.0, 1.35, 3.4], [.1, .95, -1.0], 50] }); },
+        const saco = G(); saco.add(cil(.3, .3, 1.1, mat('#C8302B', { roughness: .5 }), 0, 0, 0, 18)); saco.add(cil(.31, .31, .08, mat('#1A1A1A'), 0, .5, 0, 18)); saco.add(cil(.015, .015, 1.3, mat('#2A2A2A'), 0, 1.2, 0, 6)); saco.position.set(0, -1.25, 0); const piv = G(); piv.position.set(-.16, 2.55, -.74); piv.add(saco); s.add(piv);
+        const l = personaje('linda', .36, -1.12, -.95, 'seria', 'karate', .26, { sinGorro: true }); l.position.y = .1; s.add(l); return { linda: l, saco: piv }; }, anima: (a, t) => a.linda.pose(t, 'karate', 0), lampX: -2.7, cam: [[1.0, 1.3, 2.55], [.0, .95, -.95], 50] }); },
     cuarto_abuela() { return interior({ pared: '#4A2A5E', piso: mat('#FFFFFF', { map: TEX.pisoMadera, roughness: .7 }), tapete: '#C2447A', lampCerca: [1.5, -1.5], azul: 1.2,
       extras: (s) => { const cama = camaB('#F4F4F4'); cama.position.set(-2.4, 0, -2.0); s.add(cama);
-        const a = P.crear('abuela', { sinGorro: true }); a.cara('seria'); a.pose(0, 'lagartija'); const th = 1.21; a.rotation.x = th; a.position.y = .24; const piv = G(); piv.add(a); piv.position.set(-.55, .03, -.25); piv.rotation.y = Math.PI / 2; s.add(piv); prepara(a); return { abuela: a }; },
-      anima: (q, t) => q.abuela.pose(t, 'lagartija'), lampX: 2.7, cam: [[.3, 1.35, 4.6], [.3, .4, -.3], 48] }); },
+        const a = P.crear('abuela', { sinGorro: true }); a.cara('sonrisa'); const piv = G(); piv.add(a); piv.position.set(-.75, .03, -.25); piv.rotation.y = Math.PI / 2; s.add(piv); prepara(a);
+        const tibia = new THREE.PointLight('#FFC27A', 2.6, 6, 1.6); tibia.position.set(1.7, 1.1, .7); s.add(tibia); return { abuela: a }; },
+      anima: (q, t) => lagartija(q.abuela, t), lampX: 2.7, cam: [[2.6, 1.15, 2.4], [.3, .4, -.25], 52] }); },
 
     // G · La fiesta final: solo el protagonista, la mesa con la pecera y los foquitos
     fiesta_final() { const base = CREA.cancha({ siluetas: .8, vacia: true, luna: [-.4, .45, -.85] }); const s = base.scene; relleno(.3);
@@ -375,6 +401,10 @@
       return { scene: s, cam, post: { focus: 5.1, ap: .14, bloom: .85 }, actores: { pecera: pc, prota }, anima: (t) => { base.anima(t); relleno(.3); pc.anima(t, 1); prota.pose(t, 'bailar'); const u = t % 4, i = Math.floor(u), f = u - i, e = f < .7 ? 0 : (f - .7) / .3; tmp.copy(CL[i]).lerp(CL[(i + 1) % 4], e * e * (3 - 2 * e)); col.color.copy(tmp); } }; },
   };
 
+  // lagartija con el cuerpo recto: gira desde los pies (θ de 66° a 77°) y los brazos llegan al piso (se acortan como codos)
+  function lagartija(a, t) { const u = .5 - .5 * Math.cos(t * 4.4), th = 1.15 + .2 * u; a.pose(t, 'quieto'); a.rotation.x = th; a.position.y = .03; const U = a.userData, XH = 3.72;
+    const ys = 3.0 * Math.cos(th), zs = 3.0 * Math.sin(th), dy = -ys, dz = XH - zs, L = Math.hypot(dy, dz), y2 = dy * Math.cos(th) + dz * Math.sin(th), z2 = -dy * Math.sin(th) + dz * Math.cos(th), phi = Math.atan2(-z2, -y2);
+    U.brazos.forEach(b => { b.rotation.set(phi, 0, 0); b.scale.set(1, L / 1.5, 1); }); U.cabeza.rotation.x = -(th - .45); }
   // cuarto genérico (caja abierta hacia la cámara)
   function cuarto(s, o) { const g = G(); const { w, d, h } = o; g.add(plano(w, d, o.piso, 0, 0, 0)); const pm = mat(o.pared, { roughness: .85 });
     g.add(caja(w, h, .2, pm, 0, h / 2, -d / 2, .02)); for (const sx of [-1, 1]) g.add(caja(.2, h, d, pm, sx * w / 2, h / 2, 0, .02)); g.add(caja(w, .2, d, mat(o.techo || o.pared), 0, h + .1, 0, .02));
@@ -395,5 +425,6 @@
     const cam = o.cam ? camara(...o.cam) : camara([.9, 1.55, 4.7], [0, 1.0, -1.2], 54);
     const foco = cam.position.distanceTo(new THREE.Vector3(o.cam ? o.cam[1][0] : 0, o.cam ? o.cam[1][1] : 1, o.cam ? o.cam[1][2] : -1.2)); return { scene: s, cam, post: { focus: foco, ap: .12, bloom: .8 }, actores: act, anima: (t) => { relleno(.26); if (o.anima) o.anima(act, t); } }; }
 
-  window.PUEBLO_E = { crear: (k, o) => { texturas(); const r = CREA[k](o); const an = r.anima; r.anima = (t) => { an(t); animaSiluetas(t); }; return r; }, animaSiluetas, CREA, personaje, prepara, botaBalon, relleno, camara, casa, casaEstilo, pueblo, coche, farol, arbol, banderines, foquitos, globo, canasta, mediaCancha, cielo, luna, estrellas, colinas, charco, halo, caja, mat, luz, TEX, texturas };
+  window.PUEBLO_E = { crear: (k, o) => { texturas(); const r = CREA[k](o); const an = r.anima, gl = []; r.scene.traverse(q => { if (q.userData.globo) gl.push(q); });
+      r.anima = (t) => { an(t); animaSiluetas(t); gl.forEach(q => { const f = q.userData.globo; q.rotation.z = .06 * Math.sin(t * 1.3 + f); q.rotation.x = .045 * Math.sin(t * 1.1 + f * 1.7); }); }; return r; }, animaSiluetas, SILG, cruceBalon, cruceTL, bailar, CREA, personaje, prepara, botaBalon, relleno, camara, casa, casaEstilo, pueblo, coche, farol, arbol, banderines, foquitos, globo, canasta, mediaCancha, cielo, luna, estrellas, colinas, charco, halo, caja, mat, luz, TEX, texturas };
 })();

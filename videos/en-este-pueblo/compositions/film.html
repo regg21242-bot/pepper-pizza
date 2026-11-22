@@ -3,7 +3,7 @@
     #root { position: absolute; inset: 0; background: #000; overflow: hidden; }
     #gl, #hud { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
   </style>
-  <div id="root" data-composition-id="film" data-start="0" data-duration="98.33" data-width="1080" data-height="1920">
+  <div id="root" data-composition-id="film" data-start="0" data-duration="77.42" data-width="1080" data-height="1920">
     <canvas id="gl" width="1080" height="1920" data-layout-ignore></canvas>
     <canvas id="hud" width="1080" height="1920" data-layout-ignore></canvas>
   </div>
@@ -25,41 +25,53 @@
     function armar(id) { if (actual && actual.id === id) return actual; liberar(actual && actual.e); const D = PL[id]; if (!D) { actual = { id, e: null }; return actual; }
       const e = E.crear(D.esc, D.o); e.anima(0); if (D.extra) D.extra(e);
       const c = D.cam || [e.cam.position.toArray(), new THREE.Vector3(0, 0, -1).applyQuaternion(e.cam.quaternion).multiplyScalar(5).add(e.cam.position).toArray(), e.cam.fov];
-      const cam = new THREE.PerspectiveCamera(c[2], W / H, .05, 1500);
+      const cam = new THREE.PerspectiveCamera(c[2], W / H, .05, 1500); const dia = D.esc === 'partido' || D.esc === 'cancha_dia';
+      e.scene.traverse(q => { if (q.userData.esBalon) q.material.emissiveIntensity = dia ? .1 : .32; });
       actual = { id, e, D, c1: c, c2: D.cam2 || null, cam, extra: {} }; return actual; }
 
     // ---------- acciones por plano (después de la animación base del escenario) ----------
-    const P_BOTE = .97;
-    const fase = (tl, golpes) => { const h0 = golpes.length ? golpes[0] : .4; return (((.5 + (tl - h0) / P_BOTE) % 1) + 1) % 1; };
-    function bota(e, tl, golpes) { const a = e.actores.prota, b = e.actores.balon; if (!a || !b) return; const f = fase(tl, golpes); a.pose(f / 2.2, 'botar'); E.botaBalon(a, b, f / 2.2); }
+    // cada ¡HUSS! = 3 botes cruzados (mano derecha → izquierda → derecha) que tocan el piso justo cuando suena cada "hus"
+    const contactos = (g) => g.flatMap(h => L.golpes.map(d => h + d));
+    function bota(e, tl, golpes) { const a = e.actores.prota, b = e.actores.balon; if (!a || !b) return; E.cruceBalon(a, b, tl, contactos(golpes)); }
+    // lanzamiento desde la mano: p0 → p1 con arco; devuelve u (0…1)
+    function lanza(b, p0, p1, v, arco) { const u = clamp(v); b.position.lerpVectors(p0, p1, u); b.position.y += Math.sin(u * Math.PI) * arco; b.scale.setScalar(1); if (b.userData.sombra) b.userData.sombra.visible = false; return u; }
     const manos = (a) => { a.updateMatrixWorld(true); a.userData.brazos[0].localToWorld(_v.set(0, -1.45, .2)); a.userData.brazos[1].localToWorld(_w.set(0, -1.45, .2)); return _v.add(_w).multiplyScalar(.5); };
     const ACC = {
       '1': (e, tl, u, g) => bota(e, tl, g), '3': (e, tl, u, g) => bota(e, tl, g), '14a': (e, tl, u, g) => bota(e, tl, g),
       '14b': (e, tl, u, g) => bota(e, tl, g),
       '4': (e, tl) => { const c = e.scene.children.find(o => o.userData.furgo); if (c) c.position.z = 6 - tl * 5; },
       '9': (e, tl) => { e.actores.rojo.position.z = -12 + tl * 7; },
-      '32': (e) => { if (e.actores.rojo) e.actores.rojo.position.z = -60; }, '31': (e) => { e.actores.prota.pose(0, 'quieto'); if (e.actores.rojo) e.actores.rojo.position.z = -60; },
-      '14c': (e, tl, u, g) => { const a = e.actores.prota; a.pose(.5, 'tirar', clamp(u * 3)); const b = e.scene.children.find(o => o.userData.tiro); if (!b) return;
-        const k = clamp((u - .15) / .55), p0 = new THREE.Vector3(.2, 2.3, -2.4), p1 = new THREE.Vector3(0, 3.25, -6.25); b.position.lerpVectors(p0, p1, k); b.position.y += Math.sin(k * Math.PI) * 1.4;
-        if (k >= 1) b.position.y = 3.25 - (u - .7) / .3 * 1.6; const red = e.actores.aro && e.actores.aro.userData.red; if (red) red.scale.y = 1 + .25 * Math.sin(clamp((u - .7) / .25) * Math.PI); },
+      '31': (e) => { e.actores.prota.pose(0, 'quieto'); if (e.actores.rojo) e.actores.rojo.position.z = -60; },
+      '14c': (e, tl, u, g, x) => { const a = e.actores.prota, b = e.scene.children.find(o => o.userData.tiro); if (!b) return; const c = contactos(g), tT = c[c.length - 1] + .14;
+        if (tl < tT) { E.cruceBalon(a, b, tl, c); x.A.p0 = b.position.clone(); return; }
+        const v = (tl - tT) / .45; a.pose(.5, 'tirar', clamp(v * 2.5)); const p1 = new THREE.Vector3(0, 3.25, -6.25); lanza(b, x.A.p0 || p1, p1, v, 1.2);
+        if (v >= 1) b.position.set(0, 3.25 - (tl - tT - .45) * 3.2, -6.25); const red = e.actores.aro && e.actores.aro.userData.red; if (red) red.scale.y = 1 + .25 * Math.sin(clamp((v - 1) / .55) * Math.PI); },
       '17': (e, tl) => e.scene.children.forEach(o => { if (o.userData.camina) { o.pose(tl + o.userData.camina, 'caminar'); o.position.z += 0; } }),
       '18': (e, tl) => { const a = e.actores.prota; a.position.z = -.8 + tl * 1.1; a.pose(tl, 'caminar'); },
       '19': (e, tl) => e.scene.children.forEach(o => { if (o.userData.rie) o.pose(tl, 'reir'); }),
       '20': (e) => { const a = e.actores.prota; a.pose(0, 'sostener'); e.actores.balon.scale.setScalar(1); e.actores.balon.position.copy(manos(a)); if (e.actores.balon.userData.sombra) e.actores.balon.userData.sombra.visible = false; },
-      '21': (e, tl, u, g) => { const a = e.actores.prota, b = e.actores.balon; const k = clamp(tl / 1.95);
-        if (tl < 1.95) { a.position.set(.6, 0, lerp(-7.6, -11.0, k)); a.rotation.y = Math.PI; const f = fase(tl, g); a.pose(f / 2.2, 'botar'); E.botaBalon(a, b, f / 2.2); }
-        else { const v = clamp((tl - 1.95) / .5); a.pose(.5, 'tirar', clamp(v * 2)); if (b.userData.sombra) b.userData.sombra.visible = false; b.scale.setScalar(1);
-          const p0 = new THREE.Vector3(.5, 2.4, -11.2), p1 = new THREE.Vector3(0, 3.25, -13.25); b.position.lerpVectors(p0, p1, clamp(v * 1.4)); b.position.y += Math.sin(clamp(v * 1.4) * Math.PI) * .9; if (v > .72) b.position.y = 3.25 - (v - .72) * 4; } },
+      '21': (e, tl, u, g, x) => { const a = e.actores.prota, b = e.actores.balon; const c = contactos(g), tT = c[c.length - 1] + .14, k = clamp(tl / tT);
+        if (tl < tT) { a.position.set(.6, 0, lerp(-7.6, -10.9, k)); a.rotation.y = Math.PI; E.cruceBalon(a, b, tl, c); x.A.p0 = b.position.clone(); return; }
+        const v = (tl - tT) / .45; a.pose(.5, 'tirar', clamp(v * 2.5)); const p1 = new THREE.Vector3(0, 3.25, -13.25); lanza(b, x.A.p0 || p1, p1, v, .9); if (v >= 1) b.position.set(0, 3.25 - (tl - tT - .45) * 3.2, -13.25); },
       '23': (e) => { e.actores.prota.pose(0, 'quieto'); },
-      '24': (e, tl, u, g, x) => { const r = e.scene.children.find(o => o.userData.rubio); if (!r) return; if (tl < x.paro) { r.pose(tl, 'bailar'); r.cara('feliz'); } else { r.pose(0, 'quieto'); r.cara('sorpresa'); } },
+      '24': (e, tl, u, g, x) => { const r = e.scene.children.find(o => o.userData.rubio); if (!r) return; E.bailar(r, Math.min(tl, x.paro), 3); r.cara(tl < x.paro ? 'feliz' : 'sorpresa'); },   // todos se congelan en el cuadro de "paró"
+      '10': (e, tl) => { const k = e.actores.kevin; if (k) { k.position.set(-1.7, 0, -.75); k.rotation.y = .55; k.cara('feliz'); } const n = e.actores.nadan && e.actores.nadan[0]; if (n) n.position.x = 1.6; },
+      '11': (e) => { e.actores.bailan.forEach((a, i) => { if (a !== e.actores.linda && a.position.x < -3 && a.position.z > .6) a.position.set(-7.2 - i * .3, 0, -2.6); }); },   // nadie tapa a Linda
+      '29b': (e, tl, u, g, x) => { const a = e.actores.prota; a.position.z = 12.8 - (tl + x.prev) * 1.1; a.pose(tl + x.prev, 'caminar'); },
+      '27b': (e, tl) => { e.actores.prota.pose(tl + 1, 'reir'); },
+      '32': (e) => { if (e.actores.rojo) e.actores.rojo.position.z = -60; },
+      '34': (e, tl) => { const a = e.actores.linda, sc = e.actores.saco; let k = 0, sw = 0; for (const h of [.35, .95]) { const d = tl - h; k = Math.max(k, d < 0 ? clamp(1 + d / .16) : clamp(1 - d / .22)); if (d > 0) sw += .2 * Math.exp(-d * 3.2) * Math.sin(d * 9); }
+        a.pose(tl, 'karate', ease(k)); sc.rotation.x = -sw * .75; sc.rotation.z = sw * .55; },
       '26': (e, tl) => { const k = e.actores.kevin; k.position.z = -11.2 + tl * .65; k.pose(tl, 'caminar'); },
-      '27': (e, tl) => { e.actores.prota.pose(tl, 'reir'); },
+      '27': (e) => { e.actores.prota.pose(0, 'quieto'); },
       '29': (e, tl) => { const a = e.actores.prota; a.position.z = 12.8 - tl * 1.1; a.pose(tl, 'caminar'); },
       '40': (e, tl) => { const a = e.actores.prota; a.pose(0, 'colgar'); a.userData.brazos[0].rotation.x += .12 * Math.sin(tl * 5); },
       '43': (e, tl) => { const a = e.actores.prota; a.pose(tl, 'bailar'); const b = e.scene.children.find(o => o.userData.balonBaile); if (b) { a.updateMatrixWorld(true); a.userData.brazos[1].localToWorld(_v.set(0, -1.7, 0)); b.position.copy(_v); } },
-      '44': (e, tl, u) => { const a = e.actores.prota; a.pose(.5, 'tirar', clamp(tl * 4)); const b = e.scene.children.find(o => o.userData.lanzado); if (b) { b.position.set(-.55 - tl * .5, 2.2 + tl * 5.5, -.8 - tl * 1.6); b.rotation.x = tl * 9; } },
+      '44': (e, tl, u, g, x) => { const a = e.actores.prota, b = e.scene.children.find(o => o.userData.lanzado); if (!b) return; const c = contactos(g), tT = c[c.length - 1] + .14;
+        if (tl < tT) { E.cruceBalon(a, b, tl, c); x.A.p0 = b.position.clone(); return; } const v = tl - tT; a.pose(.5, 'tirar', clamp(v * 5)); if (b.userData.sombra) b.userData.sombra.visible = false;
+        const p0 = x.A.p0 || new THREE.Vector3(-.55, 2.2, -.8); b.scale.setScalar(1); b.position.set(p0.x - v * .5, p0.y + v * 6.5, p0.z - v * 1.8); b.rotation.x = v * 9; },
     };
-    const MANO = new Set(['5', '10', '11', '12', '40', '41', '43']);   // cámara en mano (fiestas)
+    const MANO = new Set(['5', '10', '11', '12', '40', '41', '43']);   // (29/29b siguen al protagonista)   // cámara en mano (fiestas)
 
     // ---------- subtítulos ----------
     const PAL = []; L.planos.forEach(p => p.palabras.forEach(w => PAL.push({ a: w[0], b: w[1], t: w[2].toLowerCase() === w[2] && PAL.length && /[.?!…]$/.test(PAL[PAL.length - 1].t) ? w[2] : w[2] })));
@@ -79,17 +91,20 @@
       const i = indice(t), p = L.planos[i], tl = t - p.ini, u = clamp(tl / p.dur), A = armar(p.id); X.clearRect(0, 0, W, H);
       if (!A.e) { R.setRenderTarget(null); R.setClearColor('#000'); R.clear(); subtitulo(t); return; }
       const e = A.e, D = A.D, golpes = p.huss.map(h => h - p.ini);
-      e.anima(tl + (D.t || 0)); const paro = L.paro - p.ini; if (ACC[p.id]) ACC[p.id](e, tl, u, golpes, { paro });
+      const paro = L.paro - p.ini; E.SILG.golpes = p.id === '32' ? contactos(golpes).map(c => c + (D.t || 0)) : null;
+      e.anima((p.id === '24' ? Math.min(tl, paro) : tl) + (D.t || 0));
+      const prev = p.id === '29b' ? L.planos[i - 1].dur : 0; if (ACC[p.id]) ACC[p.id](e, tl, u, golpes, { paro, A, prev });
       // cámara: de cam a cam2 (o empuje suave de 4 %), con balanceo en fiestas
       const c1 = A.c1, c2 = A.c2; let k = ease(u); if (p.id === '22') k = ease(clamp((u - .5) / .4));
       const pos = new THREE.Vector3(...c1[0]), mira = new THREE.Vector3(...c1[1]);
       if (c2) { pos.lerp(new THREE.Vector3(...c2[0]), k); mira.lerp(new THREE.Vector3(...c2[1]), k); A.cam.fov = lerp(c1[2], c2[2], k); }
       else { pos.lerp(mira, .045 * k); A.cam.fov = c1[2]; }
+      if (D.sigue) { const q = e.actores[D.sigue.actor || 'prota'].position; pos.set(q.x + D.sigue.off[0], D.sigue.off[1], q.z + D.sigue.off[2]); mira.set(q.x + D.sigue.mira[0], D.sigue.mira[1], q.z + D.sigue.mira[2]); A.cam.fov = c1[2]; }
       A.cam.position.copy(pos); A.cam.lookAt(mira); if (MANO.has(p.id)) { A.cam.rotateZ(.017 * Math.sin(t * 1.7)); A.cam.rotateX(.006 * Math.sin(t * 1.1 + 1)); } A.cam.updateProjectionMatrix();
       PP.render(e.scene, A.cam, Object.assign({ grano: t }, e.post, { focus: D.foco || e.post.focus, ap: D.ap != null ? D.ap : e.post.ap }));
       // fundidos a negro: cambio de noche (plano 28) y final
       let negro = 0; const n27 = L.planos.find(q => q.id === '27'), n29 = L.planos.find(q => q.id === '29'), ult = L.planos[L.planos.length - 1];
-      if (p.id === '27') negro = clamp((tl - (p.dur - .3)) / .3); if (p.id === '29') negro = 1 - clamp(tl / .3); if (p.id === '44') negro = clamp((tl - (p.dur - .35)) / .35); if (t >= ult.ini + ult.dur) negro = 1;
+      if (p.id === '27b') negro = clamp((tl - (p.dur - .3)) / .3); if (p.id === '29') negro = 1 - clamp(tl / .3); if (p.id === '44') negro = clamp((tl - (p.dur - .35)) / .35); if (t >= ult.ini + ult.dur) negro = 1;
       if (negro > 0) { X.fillStyle = `rgba(0,0,0,${negro})`; X.fillRect(0, 0, W, H); }
       subtitulo(t);
     }
