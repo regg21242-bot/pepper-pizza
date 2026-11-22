@@ -285,7 +285,7 @@
       return { scene: s, cam, post: { focus: 4.1, ap: .25, bloom: .8 }, actores: { prota }, anima: (t) => { relleno(.34); est.anima(t); } }; },
 
     // E · El partido de fiesta de verano (atardecer)
-    partido() { const s = new THREE.Scene(); relleno(.07); s.add(cielo('#B8BDEB', '#F6CBA4', 1.22)); s.fog = new THREE.Fog('#F4CDB0', 70, 420);
+    partido(o = {}) { const s = new THREE.Scene(); const MK = o.marcador || [0, 0]; relleno(.07); s.add(cielo('#B8BDEB', '#F6CBA4', 1.22)); s.fog = new THREE.Fog('#F4CDB0', 70, 420);
       s.add(new THREE.HemisphereLight('#C8C8F0', '#8A6A50', .75)); const sol = new THREE.DirectionalLight('#FFD8B0', 3.0); sol.position.set(44, 10, 4); sol.castShadow = true; sol.shadow.mapSize.set(4096, 4096); sol.shadow.bias = -.0004; sol.shadow.normalBias = .03; sol.shadow.radius = 5; { const c = sol.shadow.camera; c.left = c.bottom = -26; c.right = c.top = 26; c.far = 160; } s.add(sol);
       const rel = new THREE.DirectionalLight('#B8BDEB', .5); rel.position.set(-20, 10, -10); s.add(rel);
       s.add(plano(500, 500, mat('#6FA24E', { map: rep(TEX.pasto.clone(), 70, 70), roughness: 1 }), 0, -.01, -60));
@@ -303,7 +303,7 @@
       const lt = tex(1600, 260, (c, w, h) => { c.fillStyle = '#E7B53C'; c.fillRect(0, 0, w, h); c.fillStyle = '#5B4A9E'; c.font = 'bold 118px "DejaVu Sans", sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; const tw = c.measureText('PARTIDO DE FIESTA DE VERANO').width; c.save(); c.translate(w / 2, h * .42); c.scale(Math.min(1, (w - 80) / tw), 1); c.fillText('PARTIDO DE FIESTA DE VERANO', 0, 0); c.restore(); for (let i = 0; i < 26; i++) { c.fillStyle = COLB[i % 6]; c.fillRect(40 + i * 60, h - 52, 40, 30); } });
       const letrero = G(); letrero.add(caja(14, 2.3, .2, mat('#FFFFFF', { map: lt, roughness: .6 }), 0, 6.4, 0, .05)); for (const x of [-6, 6]) letrero.add(caja(.3, 6.4, .3, mat('#15161A'), x, 3.2, -.2, .04)); letrero.position.set(-2.5, 0, -D / 2 - 4); s.add(letrero);
       // marcador negro sobre dos postes
-      const mt = tex(800, 420, (c, w, h) => { c.fillStyle = '#121214'; c.fillRect(0, 0, w, h); c.textAlign = 'center'; c.fillStyle = '#F0A040'; c.font = 'bold 70px "DejaVu Sans", sans-serif'; c.fillText('VISITA', w * .27, 100); c.fillText('LOCAL', w * .73, 100); c.fillStyle = '#F6E06A'; c.font = 'bold 230px "DejaVu Sans Mono", monospace'; c.fillText('0', w * .27, 350); c.fillText('0', w * .73, 350); });
+      const mt = tex(800, 420, (c, w, h) => { c.fillStyle = '#121214'; c.fillRect(0, 0, w, h); c.textAlign = 'center'; c.fillStyle = '#F0A040'; c.font = 'bold 70px "DejaVu Sans", sans-serif'; c.fillText('VISITA', w * .27, 100); c.fillText('LOCAL', w * .73, 100); c.fillStyle = '#F6E06A'; c.font = 'bold 230px "DejaVu Sans Mono", monospace'; c.fillText(String(MK[0]), w * .27, 350); c.fillText(String(MK[1]), w * .73, 350); });
       const marc = G(); marc.add(caja(4.4, 2.3, .3, mat('#FFFFFF', { map: mt, roughness: .5, emissive: '#FFFFFF', emissiveMap: mt, emissiveIntensity: .3 }), 0, 4.3, 0, .05)); for (const x of [-1.5, 1.5]) marc.add(caja(.22, 3.4, .22, mat('#15161A'), x, 1.7, -.2, .03)); marc.position.set(7.2, 0, -D / 2 - 3); marc.rotation.y = -.2; s.add(marc);
       // solo 2 tiras de banderines, altas
       for (const z of [2, 11]) { s.add(banderines([-W / 2 - 1.5, 8.4, z], [W / 2 + 1.5, 8.4, z - .5], .7, 26, false, 1.1)); for (const x of [-W / 2 - 1.5, W / 2 + 1.5]) s.add(caja(.14, 8.5, .14, mat('#9EA2AA'), x, 4.25, z - (x > 0 ? .5 : 0), .02)); }
@@ -366,5 +366,5 @@
     const cam = o.cam ? camara(...o.cam) : camara([.9, 1.55, 4.7], [0, 1.0, -1.2], 54);
     const foco = cam.position.distanceTo(new THREE.Vector3(o.cam ? o.cam[1][0] : 0, o.cam ? o.cam[1][1] : 1, o.cam ? o.cam[1][2] : -1.2)); return { scene: s, cam, post: { focus: foco, ap: .12, bloom: .8 }, actores: act, anima: (t) => { relleno(.26); if (o.anima) o.anima(act, t); } }; }
 
-  window.PUEBLO_E = { crear: (k, o) => { texturas(); return CREA[k](o); }, CREA, casa, casaEstilo, pueblo, coche, farol, arbol, banderines, foquitos, globo, canasta, mediaCancha, cielo, luna, estrellas, colinas, charco, halo, caja, mat, luz, TEX, texturas };
+  window.PUEBLO_E = { crear: (k, o) => { texturas(); return CREA[k](o); }, CREA, personaje, prepara, botaBalon, relleno, camara, casa, casaEstilo, pueblo, coche, farol, arbol, banderines, foquitos, globo, canasta, mediaCancha, cielo, luna, estrellas, colinas, charco, halo, caja, mat, luz, TEX, texturas };
 })();
