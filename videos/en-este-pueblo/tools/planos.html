@@ -5,33 +5,25 @@
 <script src="../assets/lib/personajes.js"></script>
 <script src="../assets/lib/post.js"></script>
 <script src="../assets/lib/escenarios.js"></script>
+<script src="../assets/lib/planos.js"></script>
 </head><body>
 <canvas id="gl"></canvas>
 <script>
 // Fotograma de un plano del guion con su subtítulo: tools/planos.html#1
 const E = window.PUEBLO_E, P = window.PUEBLO_P, V3 = (...a) => new THREE.Vector3(...a);
-const PLANOS = {
-  1: { esc: 'cancha', o: { luna: [-.42, .5, -.78] }, t: .227, cam: [[.9, .35, 4.6], [-.1, 2.0, -1.2], 58], foco: 3.6, sub: '¡HUSS!' },
-  6: { esc: 'alcalde', t: 2.1, cam: [[.6, 1.32, 2.25], [-.45, 1.12, -.1], 42], foco: 1.75, ap: .35, sub: 'pez' },
-  15: { esc: 'partido', t: .6, cam: [[21, 11, .5], [-3, 3.2, -9.5], 54], foco: 18, sub: 'fiesta' },
-  '22b': { esc: 'partido', o: { marcador: [0, 50] }, t: .6, cam: [[6.6, 4.3, -11.8], [6.35, 4.25, -17.1], 44], foco: 5.6, ap: .5, sub: 'puntos' },
-  41: { esc: 'fiesta_final', t: 1.4, cam: [[1.05, 1.3, .55], [.55, 1.0, -1.4], 44], foco: 2.0, ap: .5, sub: 'invitado' },
-  22: { esc: 'partido', o: { marcador: [0, 50] }, t: .6, cam: [[8.75, 4.3, -11.6], [7.95, 4.25, -17.1], 44], foco: 5.6, ap: .5, sub: 'Cincuenta' },
-  32: { esc: 'calle_siluetas', t: 1, cam: [[-.4, 1.45, 10.4], [-6.5, 2.4, -1], 50], foco: 4, sub: 'ventana',
-        extra: (e) => { const a = E.personaje('prota', -1.95, 7.15, -.05, 'sorpresa', 'quieto'); e.scene.add(a); } },
-  42: { esc: 'fiesta_final', t: .4, cam: [[1.2, 1.26, -.25], [.55, 1.1, -1.4], 46], foco: 1.3, ap: .9, sub: 'baila' },
-};
+const PLANOS = window.PLANOS;
 const n = location.hash.slice(1), D = PLANOS[n];
 const W = 1080, H = 1920, gl = document.getElementById('gl'); gl.width = W; gl.height = H;
 const R = new THREE.WebGLRenderer({ canvas: gl, antialias: false, preserveDrawingBuffer: true }); R.setPixelRatio(1); R.setSize(W, H, false);
 R.outputEncoding = THREE.sRGBEncoding; R.toneMapping = THREE.LinearToneMapping; R.toneMappingExposure = .85; R.shadowMap.enabled = true; R.shadowMap.type = THREE.PCFSoftShadowMap;
 (async () => { try { await document.fonts.load('700 90px Fredoka'); await document.fonts.load('100px "Bebas Neue"');
-  const e = E.crear(D.esc, D.o); if (D.extra) D.extra(e); e.anima(D.t); const cam = D.cam ? E.camara(...D.cam) : e.cam;
+  const e = E.crear(D.esc, D.o); e.anima(D.t); if (D.extra) D.extra(e); const cam = D.cam ? E.camara(...D.cam) : e.cam;
   window.POST(R, W, H).render(e.scene, cam, Object.assign({ grano: 1 }, e.post, { focus: D.foco || e.post.focus, ap: D.ap != null ? D.ap : e.post.ap }));
   const c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d'); x.drawImage(gl, 0, 0);
   // subtítulo: una palabra, centrada, Fredoka Bold 90 px, blanco, contorno negro 4 px, sombra suave
+  if (D.sub) {
   x.font = '700 90px Fredoka'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.lineJoin = 'round';
   x.save(); x.shadowColor = 'rgba(0,0,0,.7)'; x.shadowOffsetY = 4; x.shadowBlur = 6; x.lineWidth = 8; x.strokeStyle = '#000'; x.strokeText(D.sub, W / 2, H / 2); x.restore();
-  x.lineWidth = 8; x.strokeStyle = '#000'; x.strokeText(D.sub, W / 2, H / 2); x.fillStyle = '#FFF'; x.fillText(D.sub, W / 2, H / 2);
+  x.lineWidth = 8; x.strokeStyle = '#000'; x.strokeText(D.sub, W / 2, H / 2); x.fillStyle = '#FFF'; x.fillText(D.sub, W / 2, H / 2); }
   window.__png = c.toDataURL('image/png'); } catch (err) { console.error(err.stack); window.__png = ''; } window.__listo = true; })();
 </script></body></html>

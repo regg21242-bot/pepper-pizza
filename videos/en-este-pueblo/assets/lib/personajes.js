@@ -41,7 +41,7 @@
     switch (expr) {
       case 'feliz': feliz(ex[0]); feliz(ex[1]); bocaD(o.bocaGrande ? 1.25 : 1); break;
       case 'guino': ojo(ex[0]); feliz(ex[1]); sonrisa(1); break;
-      case 'sorpresa': for (const cx of ex) { x.lineWidth = W * .022; x.fillStyle = '#FFFFFF'; x.beginPath(); x.arc(cx, ey, W * .085, 0, 7); x.fill(); x.stroke(); x.fillStyle = C.negro; x.beginPath(); x.arc(cx, ey, W * .03, 0, 7); x.fill(); }
+      case 'sorpresa': case 'sorpresa_lagrima': for (const cx of ex) { x.lineWidth = W * .022; x.fillStyle = '#FFFFFF'; x.beginPath(); x.arc(cx, ey, W * .085, 0, 7); x.fill(); x.stroke(); x.fillStyle = C.negro; x.beginPath(); x.arc(cx, ey, W * .03, 0, 7); x.fill(); }
         ceja(ex[0], -4, -H * .04); ceja(ex[1], 4, -H * .04); x.lineWidth = W * .025; x.fillStyle = C.rojo; x.beginPath(); x.ellipse(W / 2, H * .74, W * .045, H * .06, 0, 0, 7); x.fill(); x.stroke(); break;
       case 'preocupado': ojo(ex[0]); ojo(ex[1]); ceja(ex[0], 10); ceja(ex[1], -10); x.lineWidth = W * .03; x.beginPath(); for (let i = 0; i <= 8; i++) x.lineTo(W * .36 + i * W * .035, H * .72 + (i % 2 ? -H * .025 : H * .025)); x.stroke(); break;
       case 'triste': ojo(ex[0]); ojo(ex[1]); ceja(ex[0], 10); ceja(ex[1], -10); x.lineWidth = W * .03; x.beginPath(); x.moveTo(W * .4, H * .74); x.quadraticCurveTo(W * .5, H * .69, W * .6, H * .74); x.stroke();
@@ -51,6 +51,7 @@
       case 'sonrisa': ojo(ex[0]); ojo(ex[1]); sonrisa(0); break;
       default: ojo(ex[0]); ojo(ex[1]); sonrisa(1);   // 'lado'
     }
+    if (expr === 'sorpresa_lagrima') { x.fillStyle = '#4AA8FF'; const tx = ex[1] + W * .07, ty = ey + W * .09; x.beginPath(); x.moveTo(tx, ty); x.quadraticCurveTo(tx + W * .04, ty + H * .09, tx, ty + H * .11); x.quadraticCurveTo(tx - W * .04, ty + H * .09, tx, ty); x.fill(); }
     if (o.lentes) { const lw = W * .35, lh = H * .3; x.strokeStyle = C.negro; x.lineWidth = W * .032; for (const cx of ex) { x.beginPath(); x.roundRect(cx - lw / 2, ey - lh / 2, lw, lh, W * .02); x.stroke(); } x.beginPath(); x.moveTo(ex[0] + lw / 2, ey - lh * .15); x.lineTo(ex[1] - lw / 2, ey - lh * .15); x.stroke(); }
   }
 
@@ -141,6 +142,8 @@
       else if (tipo === 'tirar') { bi.rotation.x = bd.rotation.x = -2.9 * k; g.position.y = .25 * Math.sin(Math.min(1, k) * Math.PI); }
       else if (tipo === 'sentado') { pi.rotation.x = pd.rotation.x = -Math.PI / 2; g.position.y = -.75; bi.rotation.x = bd.rotation.x = -.3; }
       else if (tipo === 'reir') { const a = Math.sin(t * 14); bi.rotation.x = bd.rotation.x = -.5 + .1 * a; cab.rotation.x = -.15 + .06 * a; g.position.y = Math.abs(a) * .06; }
+      else if (tipo === 'sostener') { bi.rotation.x = bd.rotation.x = -1.05; bi.rotation.z = .42; bd.rotation.z = -.42; }
+      else if (tipo === 'colgar') { bi.rotation.x = -2.6; bd.rotation.x = -2.75; bi.rotation.z = .2; bd.rotation.z = -.15; cab.rotation.x = -.25; }
       else if (tipo === 'brazos') { bi.rotation.x = bd.rotation.x = -.8; } };
     raiz.pose(0, 'quieto');
     return raiz;

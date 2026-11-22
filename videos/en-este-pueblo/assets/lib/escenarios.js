@@ -220,7 +220,11 @@
   const CREA = {
     // A · El pueblo de noche (vista a lo largo de la calle, casas de ambos lados)
     pueblo(o = {}) { const s = new THREE.Scene(); relleno(.3); const est = cieloNoche(s, [-.2, .3, -1]); luzNoche(s, { dir: [-35, 40, -10], sombra: 30, centro: [0, 0, 0] });
-      const pb = pueblo({ lucesReales: true, zLuz: 6, siluetas: o.siluetas || 0, z0: 30 }); s.add(pb); s.add(colinas(['#21402B', '#2E5040', '#40625C']));
+      const pb = pueblo({ lucesReales: true, zLuz: 6, siluetas: o.siluetas || 0, z0: 30, hueco: (sd, z) => (sd < 0 && Math.abs(z + 22) < 1) || (sd > 0 && (Math.abs(z + 12.8) < 1 || Math.abs(z + 22) < 1)) }); s.add(pb);
+      // casa de fiesta sobre la calle (lado izquierdo) y la cancha de entrenamiento (lado derecho)
+      const cf = casa({ col: '#B98BB8', pisos: 2, w: 10, d: 7, semilla: 3, cruz: true, apagadas: o.siluetas ? .7 : 0, silueta: o.siluetas || 0 }); cf.position.set(-14.5, 0, -22); cf.rotation.y = Math.PI / 2; s.add(cf);
+      if (!o.siluetas) { s.add(banderines([-10.6, 5.2, -27], [-10.6, 5.2, -17], .6, 14, true)); const colG = ['#8A4FC8', '#4CB050', '#F28A2E', '#F28DB2']; [[-9.4, -26], [-9.2, -18.5], [-8.8, -22.4]].forEach(([x, z], i) => { for (let j = 0; j < 3; j++) { const gb = globo(colG[(i + j) % 4], 2.4 + j * .35); gb.position.set(x + (j % 2) * .3, 0, z + (j - 1) * .3); s.add(gb); } }); }
+      const cc = mediaCancha(); cc.position.set(16, 0, -17.4); cc.rotation.y = -Math.PI / 2; s.add(cc); s.add(colinas(['#21402B', '#2E5040', '#40625C']));
       for (const [col, tipo, x, z, ry] of [['#3F9A4E', 'camioneta', -2.9, 2, 0], ['#E8E8EA', 'camioneta', 2.9, -22, Math.PI], ['#3F9A4E', 'coche', 2.9, -44, Math.PI]]) { const c = coche(col, tipo, false); c.position.set(x, 0, z); c.rotation.y = ry; s.add(c); }
       const rojo = coche('#D9423A', 'coche', true); rojo.position.set(-1.7, 0, -14); s.add(rojo);
       let prota = null, b = null; if (!o.sinProta) { prota = personaje('prota', 1.7, 12.6, -.15, 'lado', 'caminar', .25); s.add(prota); }
@@ -294,9 +298,19 @@
       const h2 = casaEstilo(1); h2.position.set(-9.5, 0, -8.5); s.add(h2); const a = arbol(1); a.position.set(5.2, 0, -3); s.add(a);
       const f = farol(-1, true); f.position.set(2.2, 0, .2); s.add(f);
       const bc = banca(); bc.position.set(0, .16, .5); s.add(bc);
-      const prota = personaje('prota', 0, .55, 0, 'sorpresa', 'sentado'); prota.position.y = .16 + .5; prota.userData.brazos.forEach(b => { b.rotation.x = -.15; }); s.add(prota);
+      const prota = personaje('prota', 0, .55, 0, 'sorpresa_lagrima', 'sentado'); prota.position.y = .16 + .5; prota.userData.brazos.forEach(b => { b.rotation.x = -.15; }); s.add(prota);
       const cam = camara([.5, 1.25, 4.4], [0, 1.0, -.5], 46);
       return { scene: s, cam, post: { focus: 4.1, ap: .25, bloom: .8 }, actores: { prota }, anima: (t) => { relleno(.34); est.anima(t); } }; },
+
+    // jardín con porche blanco (la abuela bailando, plano 12)
+    jardin() { const s = new THREE.Scene(); relleno(.32); const est = cieloNoche(s, [-.1, .3, -.95]); luzNoche(s, { dir: [-20, 30, 10], sombra: 10, centro: [0, 0, -2], luna: .85 });
+      s.add(plano(200, 200, mat('#365E30', { map: rep(TEX.pasto.clone(), 40, 40), roughness: 1 }), 0, -.01, 0));
+      const h = casa({ col: '#F2F0EA', pisos: 2, w: 9, d: 7, semilla: 12, columnas: true, cruz: true, apagadas: .3 }); h.position.set(.5, 0, -8); s.add(h);
+      for (const [x, z] of [[-3.6, -2.5], [4.2, -3], [-5.5, -5]]) { const b = arbusto(1.1); b.position.set(x, 0, z); s.add(b); } const a = arbol(1); a.position.set(-7, 0, -6); s.add(a);
+      const bd = barda(16, 1.2, '#FFFFFF', true); bd.position.set(0, 0, -3.2); s.add(bd); const f = farol(1, true); f.position.set(-4, 0, 1); s.add(f);
+      const ab = personaje('abuela', .2, -.8, .15, 'feliz', 'bailar', .25); s.add(ab);
+      const cam = camara([.8, 1.1, 4.0], [0, 1.6, -2], 50);
+      return { scene: s, cam, post: { focus: 4.8, ap: .2, bloom: .8 }, actores: { abuela: ab }, anima: (t) => { relleno(.32); est.anima(t); ab.pose(t, 'bailar'); } }; },
 
     // E · El partido de fiesta de verano (atardecer)
     partido(o = {}) { const s = new THREE.Scene(); const MK = o.marcador || [0, 0]; relleno(.07); s.add(cielo('#B8BDEB', '#F6CBA4', 1.22)); s.fog = new THREE.Fog('#F4CDB0', 70, 420);
@@ -311,7 +325,7 @@
       // gradas de 6 escalones llenas de invitados con gorritos
       for (let i = 0; i < 6; i++) s.add(caja(.75, (i + 1) * .45, 22, mat(i % 2 ? '#6E6965' : '#8F8A86', { roughness: .95 }), -W / 2 - 1.6 - i * .75, (i + 1) * .225, 0, .02));
       const gradas = []; const KS = ['invitado_verde', 'invitado_blanco', 'invitada_amarilla', 'nino_gorro', 'rubio', 'linda', 'abuela'];
-      for (let fila = 0; fila < 6; fila++) for (let j = 0; j < 10; j++) { const k = KS[(fila * 4 + j * 3) % KS.length]; const pie = (fila * 3 + j * 7) % 5 === 0; const pose = pie ? 'bailar' : 'sentado';
+      if (!o.vacias) for (let fila = 0; fila < 6; fila++) for (let j = 0; j < 10; j++) { const k = KS[(fila * 4 + j * 3) % KS.length]; const pie = (fila * 3 + j * 7) % 5 === 0; const pose = pie ? 'bailar' : 'sentado';
         const a = personaje(k, -W / 2 - 1.6 - fila * .75 - (pie ? 0 : .12), -9.9 + j * 2.2, Math.PI / 2, 'feliz', pose, fila * .4 + j * .7); a.position.y = .45 * (fila + 1) + (pie ? 0 : .08); a.userData.pie = pie; s.add(a); gradas.push(a); }
       // letrero
       const lt = tex(1600, 260, (c, w, h) => { c.fillStyle = '#E7B53C'; c.fillRect(0, 0, w, h); c.fillStyle = '#5B4A9E'; c.font = 'bold 118px "DejaVu Sans", sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; const tw = c.measureText('PARTIDO DE FIESTA DE VERANO').width; c.save(); c.translate(w / 2, h * .42); c.scale(Math.min(1, (w - 80) / tw), 1); c.fillText('PARTIDO DE FIESTA DE VERANO', 0, 0); c.restore(); for (let i = 0; i < 26; i++) { c.fillStyle = COLB[i % 6]; c.fillRect(40 + i * 60, h - 52, 40, 30); } });
