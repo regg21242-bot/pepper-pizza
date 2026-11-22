@@ -323,7 +323,7 @@
       const h2 = casaEstilo(1); h2.position.set(-9.5, 0, -8.5); s.add(h2); const a = arbol(1); a.position.set(5.2, 0, -3); s.add(a);
       const f = farol(-1, true); f.position.set(2.2, 0, .2); s.add(f);
       const bc = banca(); bc.position.set(0, .16, .5); s.add(bc);
-      const prota = personaje('prota', 0, .55, 0, 'sorpresa_lagrima', 'sentado'); prota.position.y = .16 + .5; prota.userData.brazos.forEach(b => { b.rotation.x = -.15; }); s.add(prota);
+      const prota = personaje('prota', 0, .55, 0, 'sorpresa_lagrima'); prota.rodillas = true; prota.pose(0, 'sentado'); prota.position.y = .16 + .5; prota.userData.brazos.forEach(b => { b.rotation.x = -.15; }); s.add(prota);
       const cam = camara([.5, 1.25, 4.4], [0, 1.0, -.5], 46);
       return { scene: s, cam, post: { focus: 4.1, ap: .25, bloom: .8 }, actores: { prota }, anima: (t) => { relleno(.34); est.anima(t); } }; },
 
@@ -382,12 +382,16 @@
     cuarto_linda() { return interior({ pared: '#8E86A8', piso: mat('#8A8698', { roughness: .8 }), poster: true,
       extras: (s) => { for (let i = 0; i < 4; i++) for (let j = 0; j < 3; j++) s.add(caja(1.2, .1, 1.2, mat((i + j) % 2 ? '#9E2A2A' : '#2B3F8F', { roughness: .85 }), -2.0 + i * 1.22, .05, -2.0 + j * 1.22, .03));
         const saco = G(); saco.add(cil(.3, .3, 1.1, mat('#C8302B', { roughness: .5 }), 0, 0, 0, 18)); saco.add(cil(.31, .31, .08, mat('#1A1A1A'), 0, .5, 0, 18)); saco.add(cil(.015, .015, 1.3, mat('#2A2A2A'), 0, 1.2, 0, 6)); saco.position.set(0, -1.25, 0); const piv = G(); piv.position.set(-.16, 2.55, -.74); piv.add(saco); s.add(piv);
-        const l = personaje('linda', .36, -1.12, -.95, 'seria', 'karate', .26, { sinGorro: true }); l.position.y = .1; s.add(l); return { linda: l, saco: piv }; }, anima: (a, t) => a.linda.pose(t, 'karate', 0), lampX: -2.7, cam: [[1.0, 1.3, 2.55], [.0, .95, -.95], 50] }); },
+        const l = personaje('linda', .36, -1.12, -.95, 'seria', 'karate', .26, { sinGorro: true }); l.position.y = .1; s.add(l);
+        // el saco va justo donde llega el golpe (puño extendido + radio del saco)
+        l.pose(0, 'karate', 1); l.updateMatrixWorld(true); const br = l.userData.brazos[1], h0 = br.localToWorld(new THREE.Vector3(0, 0, 0)), h1 = br.localToWorld(new THREE.Vector3(0, -1.5, 0)), dx = h1.x - h0.x, dz = h1.z - h0.z, dn = Math.hypot(dx, dz) || 1;
+        piv.position.set(h1.x + dx / dn * .27, 2.55, h1.z + dz / dn * .27); l.pose(0, 'karate', 0);
+        return { linda: l, saco: piv }; }, anima: (a, t) => a.linda.pose(t, 'karate', 0), lampX: -2.7, cam: [[2.0, 1.45, 2.0], [.2, .95, -.62], 56] }); },
     cuarto_abuela() { return interior({ pared: '#4A2A5E', piso: mat('#FFFFFF', { map: TEX.pisoMadera, roughness: .7 }), tapete: '#C2447A', lampCerca: [1.5, -1.5], azul: 1.2,
       extras: (s) => { const cama = camaB('#F4F4F4'); cama.position.set(-2.4, 0, -2.0); s.add(cama);
         const a = P.crear('abuela', { sinGorro: true }); a.cara('sonrisa'); const piv = G(); piv.add(a); piv.position.set(-.75, .03, -.25); piv.rotation.y = Math.PI / 2; s.add(piv); prepara(a);
         const tibia = new THREE.PointLight('#FFC27A', 2.6, 6, 1.6); tibia.position.set(1.7, 1.1, .7); s.add(tibia); return { abuela: a }; },
-      anima: (q, t) => lagartija(q.abuela, t), lampX: 2.7, cam: [[2.6, 1.15, 2.4], [.3, .4, -.25], 52] }); },
+      anima: (q, t) => lagartija(q.abuela, t), lampX: 2.7, cam: [[1.5, .55, 3.2], [.25, .4, -.25], 55] }); },
 
     // G · La fiesta final: solo el protagonista, la mesa con la pecera y los foquitos
     fiesta_final() { const base = CREA.cancha({ siluetas: .8, vacia: true, luna: [-.4, .45, -.85] }); const s = base.scene; relleno(.3);
@@ -404,7 +408,7 @@
   // lagartija con el cuerpo recto: gira desde los pies (θ de 66° a 77°) y los brazos llegan al piso (se acortan como codos)
   function lagartija(a, t) { const u = .5 - .5 * Math.cos(t * 4.4), th = 1.15 + .2 * u; a.pose(t, 'quieto'); a.rotation.x = th; a.position.y = .03; const U = a.userData, XH = 3.72;
     const ys = 3.0 * Math.cos(th), zs = 3.0 * Math.sin(th), dy = -ys, dz = XH - zs, L = Math.hypot(dy, dz), y2 = dy * Math.cos(th) + dz * Math.sin(th), z2 = -dy * Math.sin(th) + dz * Math.cos(th), phi = Math.atan2(-z2, -y2);
-    U.brazos.forEach(b => { b.rotation.set(phi, 0, 0); b.scale.set(1, L / 1.5, 1); }); U.cabeza.rotation.x = -(th - .45); }
+    U.brazos.forEach(b => { b.rotation.set(phi, 0, 0); b.scale.set(1, L / 1.5, 1); }); U.cabeza.rotation.x = -(th - .45); U.cabeza.rotation.y = -.5; }
   // cuarto genérico (caja abierta hacia la cámara)
   function cuarto(s, o) { const g = G(); const { w, d, h } = o; g.add(plano(w, d, o.piso, 0, 0, 0)); const pm = mat(o.pared, { roughness: .85 });
     g.add(caja(w, h, .2, pm, 0, h / 2, -d / 2, .02)); for (const sx of [-1, 1]) g.add(caja(.2, h, d, pm, sx * w / 2, h / 2, 0, .02)); g.add(caja(w, .2, d, mat(o.techo || o.pared), 0, h + .1, 0, .02));

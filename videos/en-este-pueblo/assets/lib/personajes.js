@@ -142,14 +142,14 @@
     let actual = null; raiz.cara = (e) => { if (e === actual) return; actual = e; dibujaCara(cx, e, Object.assign({ piel: o.piel }, o.caraOpts || {})); ct.needsUpdate = true; };
     raiz.cara(o.expr || 'lado');
     // poses deterministas por tiempo
-    raiz.pose = (t, tipo, k = 1) => { const [bi, bd] = U.brazos, [pi, pd] = U.piernas; [bi, bd, pi, pd].forEach(q => { q.rotation.set(0, 0, 0); q.scale.set(1, 1, 1); }); cab.rotation.set(0, 0, 0); g.position.set(0, 0, 0); g.rotation.set(0, 0, 0);
+    raiz.pose = (t, tipo, k = 1) => { const [bi, bd] = U.brazos, [pi, pd] = U.piernas; [bi, bd, pi, pd].forEach(q => { q.rotation.set(0, 0, 0); q.scale.set(1, 1, 1); }); if (U.sentadas) { U.sentadas.forEach(q => q.visible = false); pi.visible = pd.visible = true; } cab.rotation.set(0, 0, 0); g.position.set(0, 0, 0); g.rotation.set(0, 0, 0);
       if (tipo === 'caminar') { const a = Math.sin(t * 7) * .6 * k; pi.rotation.x = a; pd.rotation.x = -a; bi.rotation.x = -a; bd.rotation.x = a; }
       else if (tipo === 'bailar') { const a = Math.sin(t * 8); bi.rotation.z = -2.7 + .3 * a; bd.rotation.z = 2.7 + .3 * a; g.position.y = Math.abs(Math.sin(t * 8)) * .15; cab.rotation.z = .1 * a; pi.rotation.x = .12 * a; pd.rotation.x = -.12 * a; }
       else if (tipo === 'botar') { const f = (t * 2.2) % 1, e = Math.pow(2 * f - 1, 2); bd.rotation.x = -.42 + .22 * e; bd.rotation.z = .16; bi.rotation.x = .08 * Math.sin(t * 4.4); bi.rotation.z = -.07; pi.rotation.x = -.12; pd.rotation.x = .1; }
       else if (tipo === 'quieto') { bi.rotation.z = -.06; bd.rotation.z = .06; bi.rotation.x = .03 * Math.sin(t * 1.3); bd.rotation.x = -.03 * Math.sin(t * 1.3); }
       else if (tipo === 'guitarra') { const r = Math.sin(t * 11); bd.rotation.x = -1.05; bd.rotation.z = .55; bd.rotation.y = -.35; bi.rotation.x = -.62 + .1 * r; bi.rotation.z = .62; cab.rotation.z = .06 * Math.sin(t * 2.2); cab.rotation.x = .08; }
       else if (tipo === 'karate') { // k = golpe (0 guardia, 1 brazo derecho extendido al frente); piernas abiertas
-        bd.rotation.x = -1.0 - .62 * k; bd.rotation.z = -.1 * (1 - k); bi.rotation.x = -.55 + .25 * k; bi.rotation.z = -.32; pi.rotation.z = -.36; pd.rotation.z = .36; g.position.y = -.05; g.rotation.y = .22 * k; cab.rotation.y = -.12 * k; }
+        bd.rotation.x = -1.0 - .62 * k; bd.rotation.z = -.1 * (1 - k); bi.rotation.x = -.55 + .25 * k; bi.rotation.z = -.32; pi.rotation.z = -.36; pd.rotation.z = .36; g.position.y = -.05; g.rotation.y = .22 * k; cab.rotation.y = .3 - .1 * k; }
       else if (tipo === 'cruce') { // k = dónde va el balón (-1 mano derecha · 0 piso entre los pies · 1 mano izquierda)
         const l = clampP(k, -1, 1), bajo = 1 - Math.abs(l); [bi, bd].forEach((b, j) => { const s = j ? 1 : -1, cerca = clampP(s * l, 0, 1); b.rotation.x = -.42 - .25 * cerca + .15 * bajo; b.rotation.z = s * (.28 - .16 * cerca) + .1 * l; });
         g.rotation.z = -.1 * l; g.rotation.y = .08 * l; g.position.y = -.06 - .03 * bajo; pi.rotation.z = -.14; pd.rotation.z = .14; pi.rotation.x = -.16 + .05 * l; pd.rotation.x = .12 + .05 * l; cab.rotation.x = .3 + .08 * bajo; cab.rotation.y = .32 * l; }
@@ -162,7 +162,13 @@
       else if (tipo === 'ola') { const u = clampP(k, 0, 1); pi.rotation.x = pd.rotation.x = -Math.PI / 2 * (1 - u); g.position.y = -.75 * (1 - u); bi.rotation.z = -2.75 * u; bd.rotation.z = 2.75 * u; bi.rotation.x = bd.rotation.x = -.3 * (1 - u); cab.rotation.x = -.15 * u; }   // gradas: sentado → parado con brazos arriba
       else if (tipo === 'lagartija') { const u = .5 - .5 * Math.cos(t * 3.2); bi.rotation.x = bd.rotation.x = -(1.21 - .1 * u); cab.rotation.x = 0; }
       else if (tipo === 'tirar') { bi.rotation.x = bd.rotation.x = -2.9 * k; g.position.y = .25 * Math.sin(Math.min(1, k) * Math.PI); }
-      else if (tipo === 'sentado') { pi.rotation.x = pd.rotation.x = -Math.PI / 2; g.position.y = -.75; bi.rotation.x = bd.rotation.x = -.3; }
+      else if (tipo === 'sentado') { pi.rotation.x = pd.rotation.x = -Math.PI / 2; g.position.y = -.75; bi.rotation.x = bd.rotation.x = -.3;
+        if (raiz.rodillas) { // piernas con rodilla: muslo al frente y espinilla colgando (se ve el pantalón azul, no las suelas)
+          if (!U.sentadas) { U.sentadas = U.piernas.map((p, j) => { const s = j ? 1 : -1, mat = p.children[0].material, q = new THREE.Group(); q.position.copy(p.position);
+            q.add(M(rbox(.77, .9, .78, .065 * RD), mat, 0, -.45, 0)); const r = new THREE.Group(); r.position.y = -.82; r.rotation.x = Math.PI / 2; q.add(r);
+            r.add(M(rbox(.77, .95, .78, .065 * RD), mat, 0, -.44, 0)); r.add(M(rbox(.79, .2, .98, .08), p.children[1].material, 0, -.88, .1)); r.add(M(rbox(.8, .06, 1.0, .03), p.children[2].material, 0, -.98, .1)); q.traverse(m => { if (m.isMesh) { m.castShadow = m.receiveShadow = true; } }); g.add(q); return q; }); }
+          U.sentadas.forEach(q => { q.visible = true; q.rotation.x = -Math.PI / 2; }); pi.visible = pd.visible = false; }
+      }
       else if (tipo === 'reir') { const a = Math.sin(t * 14); bi.rotation.x = bd.rotation.x = -.5 + .1 * a; cab.rotation.x = -.15 + .06 * a; g.position.y = Math.abs(a) * .06; }
       else if (tipo === 'sostener') { bi.rotation.x = bd.rotation.x = -1.05; bi.rotation.z = .42; bd.rotation.z = -.42; }
       else if (tipo === 'colgar') { bi.rotation.x = -2.6; bd.rotation.x = -2.75; bi.rotation.z = .2; bd.rotation.z = -.15; cab.rotation.x = -.25; }
