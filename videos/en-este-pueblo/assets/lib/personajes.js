@@ -15,12 +15,12 @@
     const g = new THREE.BoxGeometry(w, h, d, seg * 2, seg * 2, seg * 2), p = g.attributes.position, n = g.attributes.normal, uv = g.attributes.uv;
     const hx = w / 2 - r, hy = h / 2 - r, hz = d / 2 - r, v = new THREE.Vector3(), c = new THREE.Vector3();
     for (let i = 0; i < p.count; i++) {
-      v.set(p.getX(i), p.getY(i), p.getZ(i)); c.set(Math.max(-hx, Math.min(hx, v.x)), Math.max(-hy, Math.min(hy, v.y)), Math.max(-hz, Math.min(hz, v.z)));
+      const frente = p.getZ(i) > d / 2 - 1e-6; v.set(p.getX(i), p.getY(i), p.getZ(i)); c.set(Math.max(-hx, Math.min(hx, v.x)), Math.max(-hy, Math.min(hy, v.y)), Math.max(-hz, Math.min(hz, v.z)));
       const dir = v.clone().sub(c); if (dir.lengthSq() < 1e-12) dir.set(0, 0, 1); dir.normalize(); v.copy(c).addScaledVector(dir, r);
       if (inflado) { const ex = 1 - Math.pow(Math.abs(v.y) / (h / 2), 2), ey = 1 - Math.pow(Math.abs(v.x) / (w / 2), 2), ez = 1 - Math.pow(Math.abs(v.z) / (d / 2), 2); v.x += Math.sign(v.x) * inflado * Math.max(0, ex * ez); v.z += Math.sign(v.z) * inflado * Math.max(0, ex * ey); }
       p.setXYZ(i, v.x, v.y, v.z);
       // UV frontal plana; las caras de atrás van a una esquina "lisa" de la textura (0.02, 0.02)
-      if (v.z > -d * .15) uv.setXY(i, (v.x + w / 2) / w, (v.y + h / 2) / h); else uv.setXY(i, .015, .015);
+      if (frente) uv.setXY(i, (v.x + w / 2) / w, (v.y + h / 2) / h); else uv.setXY(i, .01, .01);
     }
     g.computeVertexNormals(); return g;
   }
@@ -87,7 +87,7 @@
     const cup = M(new THREE.SphereGeometry(.6, 40, 24, 0, Math.PI * 2, 0, Math.PI / 2), m, 0, .36, -.01); cup.scale.set(.98, .82, .96); g.add(cup);
     const band = M(rbox(1.16, .26, 1.1, .12, .02), m, 0, .3, 0); g.add(band);   // doblez grueso
     const st = new THREE.Mesh(new THREE.PlaneGeometry(.2, .2), new THREE.MeshStandardMaterial({ map: tex(128, 128, (x, w) => estrellita(x, w / 2, w / 2 + 6, 58, C.amarillo)), transparent: true, roughness: .6, polygonOffset: true, polygonOffsetFactor: -3 }));
-    st.position.set(0, .3, .556); g.add(st); return g; }
+    st.position.set(0, .3, .59); g.add(st); return g; }
   function gorra(col) { const g = new THREE.Group(), m = sm(col); const cup = M(new THREE.SphereGeometry(.57, 36, 20, 0, Math.PI * 2, 0, Math.PI / 2), m, 0, .3, 0); cup.scale.set(1, .6, 1); g.add(cup);
     g.add(M(rbox(1.12, .08, 1.08, .04), m, 0, .3, 0)); const vis = M(rbox(.86, .06, .55, .1), m, 0, .3, .72); vis.rotation.x = .12; g.add(vis); g.add(bola(.07, m, 0, .65, 0)); return g; }
   function sombreroCopa() { const g = new THREE.Group(), n = sm('#14141A', { roughness: .25 }); g.add(M(new THREE.CylinderGeometry(.75, .75, .06, 32), n, 0, 0, 0)); g.add(M(new THREE.CylinderGeometry(.46, .46, .82, 32), n, 0, .44, 0)); g.add(M(new THREE.CylinderGeometry(.465, .465, .16, 32), sm(C.rosa), 0, .12, 0)); return g; }
@@ -103,26 +103,26 @@
 
   // ---------- avatar ----------
   function avatar(o) {
-    o = Object.assign({ piel: C.piel, torso: C.azul, pierna: '#2A2E3A', zapato: '#F2F2F2', suela: '#9A9EA6' }, o);
+    o = Object.assign({ piel: C.piel, torso: C.azul, pierna: '#2A2E3A', zapato: '#F2F2F2', suela: '#9A9EA6' }, o); const RD = o.redondo ? 3.2 : 1;
     const raiz = new THREE.Group(), g = new THREE.Group(); g.scale.setScalar(ESC); raiz.add(g); const U = {};
     const piel = sm(o.piel);
     // piernas (pivote en la cadera, sin espacio entre ellas)
     U.piernas = [];
-    for (const s of [-1, 1]) { const p = new THREE.Group(); p.position.set(s * .39, 1.6, 0); g.add(p);
+    for (const s of [-1, 1]) { const p = new THREE.Group(); p.position.set(s * .395, 1.6, 0); g.add(p);
       const mat = (s > 0 ? o.matPiernaD : o.matPiernaI) || sm(o.pierna);
-      p.add(M(rbox(.78, 1.4, .78, .065), mat, 0, -.7, 0));
-      p.add(M(rbox(.8, .2, .98, .08), sm(o.zapato), 0, -1.5, .1)); p.add(M(rbox(.82, .06, 1.0, .03), sm(o.suela), 0, -1.6, .1)); U.piernas.push(p); }
+      p.add(M(rbox(.77, 1.4, .78, .065 * RD), mat, 0, -.7, 0));
+      p.add(M(rbox(.79, .2, .98, .08), sm(o.zapato), 0, -1.5, .1)); p.add(M(rbox(.8, .06, 1.0, .03), sm(o.suela), 0, -1.6, .1)); U.piernas.push(p); }
     // torso 1.6 x 1.5 x 0.8
-    const torso = M(rbox(1.6, 1.5, .8, .12), o.matTorso || sm(o.torso), 0, 2.35, 0); g.add(torso); U.torso = torso;
+    const torso = M(rbox(1.6, 1.5, .8, .12 * RD), o.matTorso || sm(o.torso), 0, 2.35, 0); g.add(torso); U.torso = torso;
     if (o.ropa) o.ropa(torso, .405);
     // brazos 0.75 x 1.5 x 0.75 (pivote en el hombro, pegados al torso) con mano = último 22 %
     U.brazos = [];
     for (const s of [-1, 1]) { const b = new THREE.Group(); b.position.set(s * 1.175, 3.0, 0); g.add(b);
-      b.add(M(rbox(.75, 1.17, .75, .06), o.matManga || sm(o.manga || o.torso), 0, -.585, 0)); b.add(M(rbox(.72, .33, .72, .08), piel, 0, -1.335, 0)); U.brazos.push(b); }
+      b.add(M(rbox(.75, 1.17, .75, .06 * RD), o.matManga || sm(o.manga || o.torso), 0, -.585, 0)); b.add(M(rbox(.72, .33, .72, .08 * RD), piel, 0, -1.335, 0)); U.brazos.push(b); }
     // cabeza "malvavisco" 1.0 x 0.95 x 0.95, bisel 19 %, caras infladas; la cara va en la misma textura
-    const cab = new THREE.Group(); cab.position.set(0, 3.1 + .475, 0); g.add(cab); U.cabeza = cab;
+    const HS = 1.25; const cab = new THREE.Group(); cab.position.set(0, 3.1 + .475 * HS, 0); cab.scale.setScalar(HS); g.add(cab); U.cabeza = cab;
     const cc = document.createElement('canvas'); cc.width = FW; cc.height = FH; const cx = cc.getContext('2d'); const ct = new THREE.CanvasTexture(cc); ct.encoding = THREE.sRGBEncoding; ct.anisotropy = 8;
-    cab.add(M(rbox(1.0, .95, .95, .19, .035, 8), sm('#FFFFFF', { map: ct })));
+    cab.add(M(rbox(1.0, .95, .95, o.redondo ? .3 : .19, .035, 8), sm('#FFFFFF', { map: ct, roughness: o.redondo ? .55 : .6 })));
     if (o.pelo) cab.add(pelo(o.pelo, o.colPelo));
     if (o.gorro) { const h = o.gorro(); h.position.y = o.gorroY != null ? o.gorroY : 0; if (o.gorroRot) h.rotation.z = o.gorroRot; if (o.gorroX) h.position.x = o.gorroX; cab.add(h); U.gorro = h; }
     if (o.extra) o.extra(g, U);
@@ -185,13 +185,7 @@
     invitado_verde: () => avatar({ piel: C.kevin, torso: '#5DB36A', pierna: '#6A7A6A', pelo: 'corto', colPelo: '#5A3A22', gorro: () => gorroFiesta(C.celeste), gorroY: .7, gorroRot: .1, expr: 'feliz' }),
     invitado_blanco: () => avatar({ torso: '#F4F4F4', matTorso: sm('#FFFFFF', { map: tela('#F4F4F4', (x, w, h) => estrellita(x, w / 2, h * .42, 120, C.rosa)) }), manga: '#F4F4F4', pierna: '#7A5A3A', pelo: 'corto', colPelo: '#6A4028', gorro: () => gorroFiesta(C.amarillo), gorroY: .7, gorroRot: -.1, expr: 'feliz' }),
     invitada_amarilla: () => avatar({ piel: '#8A5A3C', torso: '#F2D35B', pierna: '#6A7A6A', pelo: 'rizos', colPelo: '#F2E2B8', gorro: () => gorroFiesta('#F28DB2'), gorroY: 1.0, gorroRot: .1, expr: 'feliz' }),
-    alcalde: () => { const g = new THREE.Group(), s = new THREE.Group(); s.scale.setScalar(ESC); g.add(s); const b = sm('#F4F6FA', { roughness: .55 });
-      s.add(M(rbox(2.0, 1.6, 1.8, .7, .08), b, 0, .8, 0)); s.add(M(rbox(1.5, 1.3, 1.4, .55, .06), b, 0, 2.15, 0));
-      for (const sx of [-1, 1]) { const br = M(rbox(.5, 1.0, .5, .2), b, sx * 1.0, 2.2, 0); br.rotation.z = sx * .5; s.add(br); }
-      botones(s, '#14141A', 0, [2.4, 2.05], .72);
-      const cab = new THREE.Group(); cab.position.y = 3.3; s.add(cab); const cc = document.createElement('canvas'); cc.width = FW; cc.height = FH; const ct = new THREE.CanvasTexture(cc); ct.encoding = THREE.sRGBEncoding;
-      cab.add(M(rbox(1.1, 1.0, 1.0, .32, .05, 8), sm('#FFFFFF', { map: ct, roughness: .55 }))); const h = sombreroCopa(); h.position.y = .46; cab.add(h);
-      g.cara = (e) => { dibujaCara(cc.getContext('2d'), e, { piel: '#F4F6FA' }); ct.needsUpdate = true; }; g.cara('lado'); g.pose = () => {}; g.userData = { cabeza: cab }; return g; },
+    alcalde: () => avatar({ piel: '#F4F6FA', torso: '#F4F6FA', manga: '#F4F6FA', pierna: '#F4F6FA', zapato: '#E6E9EF', suela: '#D0D4DC', redondo: true, gorro: sombreroCopa, gorroY: .47, expr: 'lado', ropa: (t, z) => botones(t, '#14141A', 0, [.3, -.1], z + .01) }),
     pecera,
   };
   const PALETAS = {
