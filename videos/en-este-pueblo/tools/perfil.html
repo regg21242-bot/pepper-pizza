@@ -1,0 +1,40 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>@font-face{font-family:'Fredoka';font-weight:700;src:url(../assets/fonts/fredoka-700.woff2) format('woff2')} html,body{margin:0;background:#000}</style>
+<script src="../assets/lib/three.min.js"></script>
+<script src="../assets/lib/personajes.js"></script>
+</head><body>
+<canvas id="gl"></canvas><canvas id="out"></canvas>
+<script>
+// Foto de perfil del protagonista. tools/perfil.html#nombre=BETO%20HUSS&cara=guino
+const Q = new URLSearchParams(location.hash.slice(1)), NOMBRE = Q.get('nombre') || '', CARA = Q.get('cara') || 'guino';
+const W = 1080, gl = document.getElementById('gl'); gl.width = gl.height = W;
+const R = new THREE.WebGLRenderer({ canvas: gl, antialias: true, alpha: true, preserveDrawingBuffer: true }); R.setPixelRatio(1); R.setSize(W, W, false);
+R.outputEncoding = THREE.sRGBEncoding; R.toneMapping = THREE.LinearToneMapping; R.toneMappingExposure = .95; R.shadowMap.enabled = true;
+(async () => { try {
+  await document.fonts.load('700 100px Fredoka');
+  const P = window.PUEBLO_P, s = new THREE.Scene();
+  s.add(new THREE.HemisphereLight('#FFF4DC', '#3A4A8A', .75));
+  const sol = new THREE.DirectionalLight('#FFF2D8', 1.25); sol.position.set(-2.2, 3.2, 4); s.add(sol);
+  const borde = new THREE.DirectionalLight('#FFD24A', 1.1); borde.position.set(3, 2.5, -2.5); s.add(borde);
+  const a = P.crear('prota'); a.cara(CARA); a.pose(0, 'quieto'); s.add(a);
+  const U = a.userData, bd = U.brazos[1], bi = U.brazos[0];
+  bd.rotation.set(-2.35, 0, .42); bi.rotation.set(0, 0, -.1); U.cabeza.rotation.set(.06, -.16, .07); a.rotation.y = .22;
+  a.updateMatrixWorld(true); const b = P.balon(.2); b.position.copy(bd.localToWorld(new THREE.Vector3(0, -1.75, .1))); b.rotation.set(.4, .6, .2); s.add(b);
+  b.traverse(m => { if (m.material && m.material.emissiveIntensity != null) m.material.emissiveIntensity = .18; });
+  const cam = new THREE.PerspectiveCamera(30, 1, .1, 50); cam.position.set(.2, 1.7, 3.95); cam.lookAt(.3, 1.5, 0);
+  R.render(s, cam);
+  // composición: fondo + 3D + nombre
+  const o = document.getElementById('out'); o.width = o.height = W; const x = o.getContext('2d');
+  const gr = x.createRadialGradient(W / 2, W * .42, 60, W / 2, W / 2, W * .75); gr.addColorStop(0, '#FFD84A'); gr.addColorStop(.45, '#F2A93B'); gr.addColorStop(1, '#2A3FB0');
+  x.fillStyle = gr; x.fillRect(0, 0, W, W);
+  x.save(); x.globalAlpha = .16; x.strokeStyle = '#FFFFFF'; x.lineWidth = 14; for (let i = 0; i < 16; i++) { const t = i / 16 * Math.PI * 2; x.beginPath(); x.moveTo(W / 2, W * .42); x.lineTo(W / 2 + Math.cos(t) * W, W * .42 + Math.sin(t) * W); x.stroke(); } x.restore();
+  const est = (cx, cy, r, c) => { x.beginPath(); for (let i = 0; i < 10; i++) { const rr = i % 2 ? r * .45 : r, t = -Math.PI / 2 + i * Math.PI / 5; x.lineTo(cx + Math.cos(t) * rr, cy + Math.sin(t) * rr); } x.closePath(); x.fillStyle = c; x.fill(); };
+  est(190, 230, 38, 'rgba(255,255,255,.85)'); est(880, 300, 28, 'rgba(255,255,255,.75)'); est(905, 140, 16, 'rgba(255,255,255,.6)');
+  x.drawImage(gl, 0, 0);
+  if (NOMBRE) { const fs = NOMBRE.length > 9 ? 100 : 112; x.font = `700 ${fs}px Fredoka`; x.textAlign = 'center'; x.textBaseline = 'alphabetic'; x.lineJoin = 'round';
+    const y = W - 118; x.lineWidth = 22; x.strokeStyle = '#14141A'; x.strokeText(NOMBRE, W / 2, y); x.fillStyle = '#FFD23A'; x.fillText(NOMBRE, W / 2, y);
+    x.lineWidth = 0; }
+  window.__png = o.toDataURL('image/png'); } catch (e) { console.error(e.stack); window.__png = ''; }
+window.__listo = true; })();
+</script></body></html>
