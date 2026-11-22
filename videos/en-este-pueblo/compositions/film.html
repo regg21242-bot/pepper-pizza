@@ -1,0 +1,103 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; background: #000; overflow: hidden; }
+    #gl, #hud { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+  </style>
+  <div id="root" data-composition-id="film" data-start="0" data-duration="98.33" data-width="1080" data-height="1920">
+    <canvas id="gl" width="1080" height="1920" data-layout-ignore></canvas>
+    <canvas id="hud" width="1080" height="1920" data-layout-ignore></canvas>
+  </div>
+  <script>
+  (function () {
+    /* "En este pueblo" · película completa: un escenario por plano (assets/lib/planos.js), tiempos de assets/linea.js,
+       subtítulos de una palabra (Fredoka) y ¡HUSS! en cada bote. */
+    const THREE = window.THREE, E = window.PUEBLO_E, P = window.PUEBLO_P, PL = window.PLANOS, L = window.LINEA;
+    const W = 1080, H = 1920, clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x)), ease = (u) => u * u * (3 - 2 * u), lerp = (a, b, u) => a + (b - a) * u;
+    const R = new THREE.WebGLRenderer({ canvas: document.getElementById('gl'), antialias: false, preserveDrawingBuffer: true }); R.setPixelRatio(1); R.setSize(W, H, false);
+    R.outputEncoding = THREE.sRGBEncoding; R.toneMapping = THREE.LinearToneMapping; R.toneMappingExposure = .85; R.shadowMap.enabled = true; R.shadowMap.type = THREE.PCFSoftShadowMap;
+    const PP = window.POST(R, W, H), X = document.getElementById('hud').getContext('2d');
+    const _v = new THREE.Vector3(), _w = new THREE.Vector3();
+
+    // ---------- escenarios por plano (se arman al llegar y se liberan al salir) ----------
+    let actual = null;
+    function liberar(e) { if (!e) return; e.scene.traverse(o => { if (o.isLight && o.shadow && o.shadow.map) { o.shadow.map.dispose(); o.shadow.map = null; }
+      if (o.geometry) o.geometry.dispose(); const ms = o.material ? (Array.isArray(o.material) ? o.material : [o.material]) : []; ms.forEach(m => { for (const k in m) if (m[k] && m[k].isTexture) m[k].dispose(); m.dispose(); }); }); R.renderLists.dispose(); }
+    function armar(id) { if (actual && actual.id === id) return actual; liberar(actual && actual.e); const D = PL[id]; if (!D) { actual = { id, e: null }; return actual; }
+      const e = E.crear(D.esc, D.o); e.anima(0); if (D.extra) D.extra(e);
+      const c = D.cam || [e.cam.position.toArray(), new THREE.Vector3(0, 0, -1).applyQuaternion(e.cam.quaternion).multiplyScalar(5).add(e.cam.position).toArray(), e.cam.fov];
+      const cam = new THREE.PerspectiveCamera(c[2], W / H, .05, 1500);
+      actual = { id, e, D, c1: c, c2: D.cam2 || null, cam, extra: {} }; return actual; }
+
+    // ---------- acciones por plano (después de la animación base del escenario) ----------
+    const P_BOTE = .97;
+    const fase = (tl, golpes) => { const h0 = golpes.length ? golpes[0] : .4; return (((.5 + (tl - h0) / P_BOTE) % 1) + 1) % 1; };
+    function bota(e, tl, golpes) { const a = e.actores.prota, b = e.actores.balon; if (!a || !b) return; const f = fase(tl, golpes); a.pose(f / 2.2, 'botar'); E.botaBalon(a, b, f / 2.2); }
+    const manos = (a) => { a.updateMatrixWorld(true); a.userData.brazos[0].localToWorld(_v.set(0, -1.45, .2)); a.userData.brazos[1].localToWorld(_w.set(0, -1.45, .2)); return _v.add(_w).multiplyScalar(.5); };
+    const ACC = {
+      '1': (e, tl, u, g) => bota(e, tl, g), '3': (e, tl, u, g) => bota(e, tl, g), '14a': (e, tl, u, g) => bota(e, tl, g),
+      '14b': (e, tl, u, g) => bota(e, tl, g),
+      '4': (e, tl) => { const c = e.scene.children.find(o => o.userData.furgo); if (c) c.position.z = 6 - tl * 5; },
+      '9': (e, tl) => { e.actores.rojo.position.z = -12 + tl * 7; },
+      '32': (e) => { if (e.actores.rojo) e.actores.rojo.position.z = -60; }, '31': (e) => { e.actores.prota.pose(0, 'quieto'); if (e.actores.rojo) e.actores.rojo.position.z = -60; },
+      '14c': (e, tl, u, g) => { const a = e.actores.prota; a.pose(.5, 'tirar', clamp(u * 3)); const b = e.scene.children.find(o => o.userData.tiro); if (!b) return;
+        const k = clamp((u - .15) / .55), p0 = new THREE.Vector3(.2, 2.3, -2.4), p1 = new THREE.Vector3(0, 3.25, -6.25); b.position.lerpVectors(p0, p1, k); b.position.y += Math.sin(k * Math.PI) * 1.4;
+        if (k >= 1) b.position.y = 3.25 - (u - .7) / .3 * 1.6; const red = e.actores.aro && e.actores.aro.userData.red; if (red) red.scale.y = 1 + .25 * Math.sin(clamp((u - .7) / .25) * Math.PI); },
+      '17': (e, tl) => e.scene.children.forEach(o => { if (o.userData.camina) { o.pose(tl + o.userData.camina, 'caminar'); o.position.z += 0; } }),
+      '18': (e, tl) => { const a = e.actores.prota; a.position.z = -.8 + tl * 1.1; a.pose(tl, 'caminar'); },
+      '19': (e, tl) => e.scene.children.forEach(o => { if (o.userData.rie) o.pose(tl, 'reir'); }),
+      '20': (e) => { const a = e.actores.prota; a.pose(0, 'sostener'); e.actores.balon.scale.setScalar(1); e.actores.balon.position.copy(manos(a)); if (e.actores.balon.userData.sombra) e.actores.balon.userData.sombra.visible = false; },
+      '21': (e, tl, u, g) => { const a = e.actores.prota, b = e.actores.balon; const k = clamp(tl / 1.95);
+        if (tl < 1.95) { a.position.set(.6, 0, lerp(-7.6, -11.0, k)); a.rotation.y = Math.PI; const f = fase(tl, g); a.pose(f / 2.2, 'botar'); E.botaBalon(a, b, f / 2.2); }
+        else { const v = clamp((tl - 1.95) / .5); a.pose(.5, 'tirar', clamp(v * 2)); if (b.userData.sombra) b.userData.sombra.visible = false; b.scale.setScalar(1);
+          const p0 = new THREE.Vector3(.5, 2.4, -11.2), p1 = new THREE.Vector3(0, 3.25, -13.25); b.position.lerpVectors(p0, p1, clamp(v * 1.4)); b.position.y += Math.sin(clamp(v * 1.4) * Math.PI) * .9; if (v > .72) b.position.y = 3.25 - (v - .72) * 4; } },
+      '23': (e) => { e.actores.prota.pose(0, 'quieto'); },
+      '24': (e, tl, u, g, x) => { const r = e.scene.children.find(o => o.userData.rubio); if (!r) return; if (tl < x.paro) { r.pose(tl, 'bailar'); r.cara('feliz'); } else { r.pose(0, 'quieto'); r.cara('sorpresa'); } },
+      '26': (e, tl) => { const k = e.actores.kevin; k.position.z = -11.2 + tl * .65; k.pose(tl, 'caminar'); },
+      '27': (e, tl) => { e.actores.prota.pose(tl, 'reir'); },
+      '29': (e, tl) => { const a = e.actores.prota; a.position.z = 12.8 - tl * 1.1; a.pose(tl, 'caminar'); },
+      '40': (e, tl) => { const a = e.actores.prota; a.pose(0, 'colgar'); a.userData.brazos[0].rotation.x += .12 * Math.sin(tl * 5); },
+      '43': (e, tl) => { const a = e.actores.prota; a.pose(tl, 'bailar'); const b = e.scene.children.find(o => o.userData.balonBaile); if (b) { a.updateMatrixWorld(true); a.userData.brazos[1].localToWorld(_v.set(0, -1.7, 0)); b.position.copy(_v); } },
+      '44': (e, tl, u) => { const a = e.actores.prota; a.pose(.5, 'tirar', clamp(tl * 4)); const b = e.scene.children.find(o => o.userData.lanzado); if (b) { b.position.set(-.55 - tl * .5, 2.2 + tl * 5.5, -.8 - tl * 1.6); b.rotation.x = tl * 9; } },
+    };
+    const MANO = new Set(['5', '10', '11', '12', '40', '41', '43']);   // cámara en mano (fiestas)
+
+    // ---------- subtítulos ----------
+    const PAL = []; L.planos.forEach(p => p.palabras.forEach(w => PAL.push({ a: w[0], b: w[1], t: w[2].toLowerCase() === w[2] && PAL.length && /[.?!…]$/.test(PAL[PAL.length - 1].t) ? w[2] : w[2] })));
+    L.planos.forEach(p => p.huss.forEach(h => PAL.push({ a: h, b: h + .42, t: '¡HUSS!', huss: true })));
+    PAL.sort((x, y) => x.a - y.a);
+    function palabra(t) { let c = null; for (let i = 0; i < PAL.length; i++) { const w = PAL[i]; if (w.a > t) break; const sig = PAL[i + 1]; const fin = Math.min(sig ? sig.a : 1e9, w.huss ? w.b : w.b + .3); if (t < fin) c = w; } return c; }
+    function limpio(s) { return s.replace(/^[¿¡'"]+|[.,:;…'"]+$/g, '').replace(/^[¿'"]+/, ''); }
+    function subtitulo(t) { const w = palabra(t); if (!w) return; let tx = w.huss ? '¡HUSS!' : limpio(w.t); if (!w.huss && /\?$/.test(w.t)) tx = tx.replace(/\?$/, '') + '?';
+      if (!w.huss && /^¿/.test(w.t)) tx = '¿' + tx; const s = .9 + .1 * clamp((t - w.a) / .1);
+      X.save(); X.translate(W / 2, H / 2); X.scale(s, s); X.font = '700 90px Fredoka'; X.textAlign = 'center'; X.textBaseline = 'middle'; X.lineJoin = 'round';
+      X.save(); X.shadowColor = 'rgba(0,0,0,.7)'; X.shadowOffsetY = 4; X.shadowBlur = 6; X.lineWidth = 8; X.strokeStyle = '#000'; X.strokeText(tx, 0, 0); X.restore();
+      X.lineWidth = 8; X.strokeStyle = '#000'; X.strokeText(tx, 0, 0); X.fillStyle = '#FFF'; X.fillText(tx, 0, 0); X.restore(); }
+
+    // ---------- cuadro ----------
+    function indice(t) { const ps = L.planos; for (let i = ps.length - 1; i >= 0; i--) if (t >= ps[i].ini) return i; return 0; }
+    function renderAt(t) {
+      const i = indice(t), p = L.planos[i], tl = t - p.ini, u = clamp(tl / p.dur), A = armar(p.id); X.clearRect(0, 0, W, H);
+      if (!A.e) { R.setRenderTarget(null); R.setClearColor('#000'); R.clear(); subtitulo(t); return; }
+      const e = A.e, D = A.D, golpes = p.huss.map(h => h - p.ini);
+      e.anima(tl + (D.t || 0)); const paro = L.paro - p.ini; if (ACC[p.id]) ACC[p.id](e, tl, u, golpes, { paro });
+      // cámara: de cam a cam2 (o empuje suave de 4 %), con balanceo en fiestas
+      const c1 = A.c1, c2 = A.c2; let k = ease(u); if (p.id === '22') k = ease(clamp((u - .5) / .4));
+      const pos = new THREE.Vector3(...c1[0]), mira = new THREE.Vector3(...c1[1]);
+      if (c2) { pos.lerp(new THREE.Vector3(...c2[0]), k); mira.lerp(new THREE.Vector3(...c2[1]), k); A.cam.fov = lerp(c1[2], c2[2], k); }
+      else { pos.lerp(mira, .045 * k); A.cam.fov = c1[2]; }
+      A.cam.position.copy(pos); A.cam.lookAt(mira); if (MANO.has(p.id)) { A.cam.rotateZ(.017 * Math.sin(t * 1.7)); A.cam.rotateX(.006 * Math.sin(t * 1.1 + 1)); } A.cam.updateProjectionMatrix();
+      PP.render(e.scene, A.cam, Object.assign({ grano: t }, e.post, { focus: D.foco || e.post.focus, ap: D.ap != null ? D.ap : e.post.ap }));
+      // fundidos a negro: cambio de noche (plano 28) y final
+      let negro = 0; const n27 = L.planos.find(q => q.id === '27'), n29 = L.planos.find(q => q.id === '29'), ult = L.planos[L.planos.length - 1];
+      if (p.id === '27') negro = clamp((tl - (p.dur - .3)) / .3); if (p.id === '29') negro = 1 - clamp(tl / .3); if (p.id === '44') negro = clamp((tl - (p.dur - .35)) / .35); if (t >= ult.ini + ult.dur) negro = 1;
+      if (negro > 0) { X.fillStyle = `rgba(0,0,0,${negro})`; X.fillRect(0, 0, W, H); }
+      subtitulo(t);
+    }
+    window.__film = renderAt;
+    window.addEventListener('hf-seek', ev => { try { renderAt(ev.detail.time); } catch (err) { X.fillStyle = '#f00'; X.font = '30px sans-serif'; X.fillText(String(err && err.stack || err).slice(0, 200), 20, 900); } });
+    try { renderAt(0); } catch (err) { console.error(err); }
+    window.__timelines = window.__timelines || {};
+    window.__timelines['film'] = gsap.timeline({ paused: true });
+  })();
+  </script>
+</template>
