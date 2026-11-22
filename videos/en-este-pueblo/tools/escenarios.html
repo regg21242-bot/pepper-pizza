@@ -1,6 +1,6 @@
 <!doctype html>
 <html><head><meta charset="utf-8">
-<style>html,body{margin:0;background:#000}</style>
+<style>@font-face{font-family:'Bebas Neue';src:url(../assets/fonts/bebas-neue.woff2) format('woff2')} html,body{margin:0;background:#000}</style>
 <script src="../assets/lib/three.min.js"></script>
 <script src="../assets/lib/personajes.js"></script>
 <script src="../assets/lib/post.js"></script>
@@ -13,7 +13,7 @@ const [k, tt] = location.hash.slice(1).split('@'), t = +(tt || 1.2);
 const W = 1080, H = 1920, gl = document.getElementById('gl'); gl.width = W; gl.height = H;
 const R = new THREE.WebGLRenderer({ canvas: gl, antialias: false, preserveDrawingBuffer: true }); R.setPixelRatio(1); R.setSize(W, H, false);
 R.outputEncoding = THREE.sRGBEncoding; R.toneMapping = THREE.LinearToneMapping; R.toneMappingExposure = .85; R.shadowMap.enabled = true; R.shadowMap.type = THREE.PCFSoftShadowMap;
-try { const E = window.PUEBLO_E.crear(k); E.anima(t); const PP = window.POST(R, W, H); PP.render(E.scene, E.cam, Object.assign({ grano: 1 }, E.post));
+(async () => { await document.fonts.load('100px "Bebas Neue"'); try { const E = window.PUEBLO_E.crear(k); E.anima(t); const PP = window.POST(R, W, H); PP.render(E.scene, E.cam, Object.assign({ grano: 1 }, E.post));
   window.__png = gl.toDataURL('image/png'); } catch (e) { console.error(e.stack); window.__png = ''; }
-window.__listo = true;
+window.__listo = true; })();
 </script></body></html>
