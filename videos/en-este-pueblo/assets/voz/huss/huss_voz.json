@@ -1,0 +1,56 @@
+{
+ "texto": "Pero se va a partir excepto mi",
+ "idioma": "es",
+ "duracion": 5.548,
+ "segmentos": [
+  {
+   "inicio": 0.53,
+   "fin": 2.09,
+   "texto": "Pero se va a partir excepto mi"
+  }
+ ],
+ "palabras": [
+  {
+   "palabra": "Pero",
+   "inicio": 0.53,
+   "fin": 0.99,
+   "prob": 0.235
+  },
+  {
+   "palabra": "se",
+   "inicio": 0.99,
+   "fin": 1.09,
+   "prob": 0.048
+  },
+  {
+   "palabra": "va",
+   "inicio": 1.09,
+   "fin": 1.15,
+   "prob": 0.228
+  },
+  {
+   "palabra": "a",
+   "inicio": 1.15,
+   "fin": 1.31,
+   "prob": 0.255
+  },
+  {
+   "palabra": "partir",
+   "inicio": 1.31,
+   "fin": 1.51,
+   "prob": 0.042
+  },
+  {
+   "palabra": "excepto",
+   "inicio": 1.51,
+   "fin": 1.99,
+   "prob": 0.774
+  },
+  {
+   "palabra": "mi",
+   "inicio": 1.99,
+   "fin": 2.09,
+   "prob": 0.333
+  }
+ ]
+}
