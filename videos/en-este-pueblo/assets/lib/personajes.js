@@ -133,11 +133,14 @@
     raiz.pose = (t, tipo, k = 1) => { const [bi, bd] = U.brazos, [pi, pd] = U.piernas; [bi, bd, pi, pd].forEach(q => q.rotation.set(0, 0, 0)); cab.rotation.set(0, 0, 0); g.position.y = 0;
       if (tipo === 'caminar') { const a = Math.sin(t * 7) * .6 * k; pi.rotation.x = a; pd.rotation.x = -a; bi.rotation.x = -a; bd.rotation.x = a; }
       else if (tipo === 'bailar') { const a = Math.sin(t * 8); bi.rotation.z = -2.7 + .3 * a; bd.rotation.z = 2.7 + .3 * a; g.position.y = Math.abs(Math.sin(t * 8)) * .15; cab.rotation.z = .1 * a; pi.rotation.x = .12 * a; pd.rotation.x = -.12 * a; }
-      else if (tipo === 'botar') { const f = (t * 2.2) % 1; bd.rotation.x = -.9 + .5 * Math.sin(f * Math.PI * 2); bi.rotation.x = -.2; }
+      else if (tipo === 'botar') { const f = (t * 2.2) % 1, e = Math.pow(2 * f - 1, 2); bd.rotation.x = -.42 + .22 * e; bd.rotation.z = .16; bi.rotation.x = .08 * Math.sin(t * 4.4); bi.rotation.z = -.07; pi.rotation.x = -.12; pd.rotation.x = .1; }
+      else if (tipo === 'quieto') { bi.rotation.z = -.06; bd.rotation.z = .06; bi.rotation.x = .03 * Math.sin(t * 1.3); bd.rotation.x = -.03 * Math.sin(t * 1.3); }
+      else if (tipo === 'guitarra') { const r = Math.sin(t * 11); bd.rotation.x = -1.05; bd.rotation.z = .55; bd.rotation.y = -.35; bi.rotation.x = -.62 + .1 * r; bi.rotation.z = .62; cab.rotation.z = .06 * Math.sin(t * 2.2); cab.rotation.x = .08; }
+      else if (tipo === 'karate') { const a = Math.max(0, Math.sin(t * 6)); bi.rotation.x = -1.5 * (.35 + .65 * a); bi.rotation.z = .12; bd.rotation.x = -.95; bd.rotation.z = -.2; pi.rotation.z = -.32; pd.rotation.z = .32; g.position.y = -.045; }
+      else if (tipo === 'lagartija') { const u = .5 - .5 * Math.cos(t * 3.2); bi.rotation.x = bd.rotation.x = -(1.21 - .1 * u); cab.rotation.x = 0; }
       else if (tipo === 'tirar') { bi.rotation.x = bd.rotation.x = -2.9 * k; g.position.y = .25 * Math.sin(Math.min(1, k) * Math.PI); }
       else if (tipo === 'sentado') { pi.rotation.x = pd.rotation.x = -Math.PI / 2; g.position.y = -.75; bi.rotation.x = bd.rotation.x = -.3; }
       else if (tipo === 'reir') { const a = Math.sin(t * 14); bi.rotation.x = bd.rotation.x = -.5 + .1 * a; cab.rotation.x = -.15 + .06 * a; g.position.y = Math.abs(a) * .06; }
-      else if (tipo === 'karate') { const a = Math.sin(t * 6); bd.rotation.x = -1.57; bd.rotation.z = .2 * a; bi.rotation.x = -1.0; pd.rotation.x = -.4 * Math.max(0, a); }
       else if (tipo === 'brazos') { bi.rotation.x = bd.rotation.x = -.8; } };
     raiz.pose(0, 'quieto');
     return raiz;

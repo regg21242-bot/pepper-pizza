@@ -1,0 +1,357 @@
+{
+ "voz": "es-ES-AlvaroNeural (más rápida, tono un poco más alto)",
+ "planos": [
+  {
+   "plano": 1,
+   "ini": 0.0,
+   "fin": 2.0,
+   "escena": "Contrapicado frontal del protagonista en la cancha de noche, luna llena a la izquierda, botando el balón. Sonrisa de lado. Cámara con leve empuje hacia adelante.",
+   "texto": "En este pueblo…",
+   "huss": 1
+  },
+  {
+   "plano": 2,
+   "ini": 0.5,
+   "fin": 2.5,
+   "escena": "Corte a gran plano general del pueblo de noche desde lo alto: la casa de fiesta con globos y banderines junto a la calle, coches estacionados. Dron bajando lento.",
+   "texto": "…todo el mundo se va de fiesta…",
+   "huss": 0
+  },
+  {
+   "plano": 3,
+   "ini": 2.5,
+   "fin": 5.0,
+   "escena": "Primer plano bajo del protagonista (cara y sudadera) sonriendo; Luego plano medio de cuerpo completo botando con la luna detrás.",
+   "texto": "…menos yo.",
+   "huss": 2
+  },
+  {
+   "plano": 4,
+   "ini": 5.0,
+   "fin": 8.0,
+   "escena": "Picado aéreo de la calle con la camioneta blanca pasando y la fiesta al fondo, dron avanzando sobre los techos.",
+   "texto": "Veo que cada noche hay una fiesta en algún lado.",
+   "huss": 0
+  },
+  {
+   "plano": 5,
+   "ini": 8.0,
+   "fin": 9.5,
+   "escena": "Plano de la alberca de fiesta: invitados con gorritos bailando y flotando, luces dentro del agua, globos arriba. Cámara en mano con balanceo.",
+   "texto": "",
+   "huss": 0
+  },
+  {
+   "plano": 6,
+   "ini": 9.5,
+   "fin": 11.0,
+   "escena": "Casa del alcalde en luz rosa: el alcalde con sombrero de copa al fondo, el pez con gorrito nadando en su pecera.",
+   "texto": "Hasta el pez del alcalde tiene fiesta.",
+   "huss": 0
+  },
+  {
+   "plano": 7,
+   "ini": 11.0,
+   "fin": 12.8,
+   "escena": "Alberca de noche con flotadores, picado suave; luego el protagonista de espaldas.",
+   "texto": "Aquí nadie practica nada.",
+   "huss": 0
+  },
+  {
+   "plano": 8,
+   "ini": 12.8,
+   "fin": 13.5,
+   "escena": "Primer plano del protagonista con cara neutra.",
+   "texto": "¿Para qué?",
+   "huss": 0
+  },
+  {
+   "plano": 9,
+   "ini": 13.5,
+   "fin": 15.0,
+   "escena": "Calle de noche al nivel del piso, el coche rojo pasando cerca de la cámara, faroles encendidos.",
+   "texto": "Siempre hay otra fiesta.",
+   "huss": 0
+  },
+  {
+   "plano": 10,
+   "ini": 15.0,
+   "fin": 16.6,
+   "escena": "Picado sobre la cancha de la fiesta con un bloque azul (mesa) y luces; invitados bailando.",
+   "texto": "Mi mejor amigo va a todas las fiestas.",
+   "huss": 0
+  },
+  {
+   "plano": 11,
+   "ini": 16.6,
+   "fin": 18.2,
+   "escena": "Primer plano de Linda bailando con los brazos arriba frente a los banderines.",
+   "texto": "Mi vecina Linda va a todas las fiestas.",
+   "huss": 0
+  },
+  {
+   "plano": 12,
+   "ini": 18.2,
+   "fin": 20.0,
+   "escena": "La abuela bailando en el jardín junto a su porche blanco, brazos arriba, luna detrás.",
+   "texto": "Hasta la abuela se va a bailar los martes.",
+   "huss": 0
+  },
+  {
+   "plano": 13,
+   "ini": 20.0,
+   "fin": 21.0,
+   "escena": "Primer plano muy cerrado de la cara del protagonista, sonrisa de lado.",
+   "texto": "Pero yo no.",
+   "huss": 0
+  },
+  {
+   "plano": 14,
+   "ini": 21.0,
+   "fin": 27.0,
+   "escena": "Montaje de entrenamiento en la cancha de noche: pies botando el balón (), sombra en el piso, tiro al aro, el balón entra; de día (luz azul cielo) botando junto al poste con sombra marcada.    Termina con primer plano de su sonrisa.",
+   "texto": "Día tras día. ^ ^",
+   "huss": 4
+  },
+  {
+   "plano": 15,
+   "ini": 27.0,
+   "fin": 29.0,
+   "escena": "Toma aérea amplia del partido al atardecer: cancha azul, gradas llenas, casetita roja en primer plano, pueblo y colinas atrás. Dron girando lento.",
+   "texto": "Entonces llegó la fiesta más grande del año…",
+   "huss": 0
+  },
+  {
+   "plano": 16,
+   "ini": 29.0,
+   "fin": 31.0,
+   "escena": "Plano frontal de las gradas con el letrero amarillo; invitados levantándose.",
+   "texto": "…el partido de fiesta.",
+   "huss": 0
+  },
+  {
+   "plano": 17,
+   "ini": 31.0,
+   "fin": 32.2,
+   "escena": "Plano bajo de los pies de los invitados en la cancha amarilla-azul.",
+   "texto": "Todos llegaron con gorros de fiesta.",
+   "huss": 0
+  },
+  {
+   "plano": 18,
+   "ini": 32.2,
+   "fin": 33.4,
+   "escena": "Plano lateral: el protagonista caminando sobre la cancha junto a las gradas, banderines arriba.",
+   "texto": "Yo entré a la cancha.",
+   "huss": 0
+  },
+  {
+   "plano": 19,
+   "ini": 33.4,
+   "fin": 35.4,
+   "escena": "Primer plano del niño del gorro riéndose con ojos y boca enorme; público riéndose detrás.",
+   "texto": "^ ^ Todos se rieron del niño del gorro.",
+   "huss": 0
+  },
+  {
+   "plano": 20,
+   "ini": 35.4,
+   "fin": 36.6,
+   "escena": "Primer plano del protagonista con el balón en las manos.",
+   "texto": "Luego, me pasaron el balón.",
+   "huss": 0
+  },
+  {
+   "plano": 21,
+   "ini": 36.6,
+   "fin": 39.0,
+   "escena": "Corre botando hacia el aro (cámara siguiéndolo desde atrás), contrapicado del aro con el poste rojo, canasta.",
+   "texto": "",
+   "huss": 3
+  },
+  {
+   "plano": 22,
+   "ini": 39.0,
+   "fin": 40.0,
+   "escena": "Primer plano del marcador negro: en naranja y un amarillo enorme; la cámara se desliza a la izquierda hasta.",
+   "texto": "LOCAL 50 VISITA 0 Cincuenta puntos.",
+   "huss": 0
+  },
+  {
+   "plano": 23,
+   "ini": 40.0,
+   "fin": 40.8,
+   "escena": "Primer plano del protagonista, sonrisa de lado.",
+   "texto": "Yo solito.",
+   "huss": 0
+  },
+  {
+   "plano": 24,
+   "ini": 40.8,
+   "fin": 42.0,
+   "escena": "El niño rubio en la mesa roja de botanas deja de bailar, cara de sorpresa.",
+   "texto": "La música se paró.",
+   "huss": 0
+  },
+  {
+   "plano": 25,
+   "ini": 42.0,
+   "fin": 43.6,
+   "escena": "Gradas vacías y quietas, el niño del gorro con cara seria.",
+   "texto": "Todo el público se quedó callado.",
+   "huss": 0
+  },
+  {
+   "plano": 26,
+   "ini": 43.6,
+   "fin": 46.6,
+   "escena": "Kevin camina hacia la cámara entre un grupo de invitados preocupados, el letrero amarillo detrás.",
+   "texto": "Kevin se acercó y me preguntó: '¿cómo eres tan bueno?'",
+   "huss": 0
+  },
+  {
+   "plano": 27,
+   "ini": 46.6,
+   "fin": 49.6,
+   "escena": "Primer plano del protagonista con ojos felices y boca abierta.",
+   "texto": "^ ^ Le dije la verdad: mientras ustedes se iban de fiesta, yo practicaba.",
+   "huss": 0
+  },
+  {
+   "plano": 28,
+   "ini": 49.6,
+   "fin": 50.2,
+   "escena": "Fundido rápido a negro.",
+   "texto": "",
+   "huss": 0
+  },
+  {
+   "plano": 29,
+   "ini": 50.2,
+   "fin": 52.0,
+   "escena": "Plano bajo de la banqueta de noche, los tenis del protagonista caminando, faroles y casa azul al fondo.",
+   "texto": "La noche siguiente caminé por el pueblo… y algo estaba raro.",
+   "huss": 0
+  },
+  {
+   "plano": 30,
+   "ini": 52.0,
+   "fin": 53.8,
+   "escena": "Casa de fiesta vacía: sillas de colores solas, pizzas abandonadas en la mesa, globos quietos, sin música.",
+   "texto": "Ni música, ni luces de fiesta.",
+   "huss": 0
+  },
+  {
+   "plano": 31,
+   "ini": 53.8,
+   "fin": 54.8,
+   "escena": "Primer plano del protagonista con boca recta, extrañado.",
+   "texto": "Nada.",
+   "huss": 0
+  },
+  {
+   "plano": 32,
+   "ini": 54.8,
+   "fin": 58.8,
+   "escena": "Calle con la camioneta verde estacionada; en las ventanas de las casas aparecen siluetas negras moviéndose sobre fondo blanco iluminado. Luego el protagonista mirando, cara de sorpresa.",
+   "texto": "Y en cada ventana se oía…",
+   "huss": 2
+  },
+  {
+   "plano": 33,
+   "ini": 58.8,
+   "fin": 60.2,
+   "escena": "Kevin en su cuarto azul tocando la guitarra sobre el tapete amarillo.",
+   "texto": "Kevin practicaba guitarra.",
+   "huss": 0
+  },
+  {
+   "plano": 34,
+   "ini": 60.2,
+   "fin": 61.4,
+   "escena": "Linda en su cuarto dando golpes de karate junto al costal rojo, sobre las colchonetas rojas y azules.",
+   "texto": "Linda practicaba karate.",
+   "huss": 0
+  },
+  {
+   "plano": 35,
+   "ini": 61.4,
+   "fin": 62.8,
+   "escena": "La abuela haciendo lagartijas en la alfombra rosa, se le resbalan los lentes.",
+   "texto": "Mi abuela hacía lagartijas.",
+   "huss": 0
+  },
+  {
+   "plano": 36,
+   "ini": 62.8,
+   "fin": 64.2,
+   "escena": "Alberca vacía con los flotadores quietos.",
+   "texto": "Ya nadie va a las fiestas.",
+   "huss": 0
+  },
+  {
+   "plano": 37,
+   "ini": 64.2,
+   "fin": 65.2,
+   "escena": "Toma aérea del pueblo: todas las ventanas encendidas con siluetas, la cancha vacía abajo.",
+   "texto": "Todo el pueblo está entrenando.",
+   "huss": 0
+  },
+  {
+   "plano": 38,
+   "ini": 65.2,
+   "fin": 66.0,
+   "escena": "Primer plano del protagonista guiñando un ojo con sonrisa.",
+   "texto": "Y eso está genial.",
+   "huss": 0
+  },
+  {
+   "plano": 39,
+   "ini": 66.0,
+   "fin": 68.2,
+   "escena": "El protagonista sentado solo en una banca de madera de noche, cara de sorpresa con una lágrima azul, ventana con silueta detrás.",
+   "texto": "Ahora soy el único libre el viernes en la noche.",
+   "huss": 0
+  },
+  {
+   "plano": 40,
+   "ini": 68.2,
+   "fin": 69.2,
+   "escena": "El protagonista, ya con gorrito de fiesta amarillo, colgando foquitos sobre la cancha.",
+   "texto": "Así que hice mi propia fiesta.",
+   "huss": 0
+  },
+  {
+   "plano": 41,
+   "ini": 69.2,
+   "fin": 71.0,
+   "escena": "Primer plano de la pecera sobre la mesa redonda; las luces cambian de color.",
+   "texto": "El único invitado fue el pez del alcalde.",
+   "huss": 0
+  },
+  {
+   "plano": 42,
+   "ini": 71.0,
+   "fin": 72.8,
+   "escena": "El pez da vueltas dentro de la pecera como bailando; la mesa cambia de color rosa → azul → verde.",
+   "texto": "La verdad, baila muy bien.",
+   "huss": 0
+  },
+  {
+   "plano": 43,
+   "ini": 72.8,
+   "fin": 74.2,
+   "escena": "Plano medio del protagonista bailando con ojos, gorrito de fiesta y balón, foquitos arriba y la pecera junto a él.",
+   "texto": "^ ^",
+   "huss": 0
+  },
+  {
+   "plano": 44,
+   "ini": 74.2,
+   "fin": 75.0,
+   "escena": "Lanza el balón muy alto hacia la luna; contrapicado del balón subiendo.  Fundido a negro.",
+   "texto": "",
+   "huss": 1
+  }
+ ]
+}
