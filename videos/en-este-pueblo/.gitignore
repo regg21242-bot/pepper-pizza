@@ -21,3 +21,5 @@ snaps/
 assets/voz/*.mp3
 snaps/
 assets/voz/*.mp3
+assets/audio/voz.wav
+assets/audio/_*.wav
