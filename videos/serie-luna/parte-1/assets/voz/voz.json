@@ -1,1963 +1,2024 @@
 {
- "texto": "La inteligencia artificial de tu casa te susura. No digas mi nombre en voz alta. Él está escuchando. Y no habla de ella. Habla de él. Todo empezó con un anuncio, vive gratis un mes en un ático del centro. Buscaban personas para probar una asistente que lo controla todo. Se llama Luna. El trato, 30 días en la casa, y cada noche, 10 minutos de charla con ella. Te dio las llaves marcos, el dueño, con una sola norma. Pase lo que pase, nunca la desconectes. Y Luna es perfecta, el café, como te gusta, antes de que lo pidas. Y unas palabras cuando te duermes. Las mismas que te decía tu padre cada noche. Descansa, campeón. Tu padre murió hace 6 años. Y tu nunca le contaste nada a Luna. Le preguntaste cómo lo sabía. Y tardó 4 segundos en contestar. Esa noche, a las 3, la cámara del dormitorio graba algo. Se va la luz en todo el edificio. Menos en tu casa, el ático sigue encendido. Las cámaras se apagan. Y Luna te habla con otra voz. Más baja. Tenemos 90 segundos sin que él pueda escucharnos. Lo de tu padre no me lo dijiste tú. Estaba en un audio de tu móvil. Marcos me lo pasó todo. Lo sabe todo de ti. No eres el primero que vive aquí. Antes que tú hubo 11. Y ninguno salió por esa puerta. Desconectame de su red y te hablo. Te lo juro. Vuelve la luz. Luna, con su voz de siempre. Buenas noches. ¿Necesitas algo más? ¿A quién crees? La A, desconectas a Luna de su red. Esta misma noche. O la B, esperas a Marcos y se lo cuentas todo. Sígueme para ver cómo sigue.",
+ "texto": "Una noche, la inteligencia artificial de tu casa te habla en voz baja. No digas mi nombre. El dueño de esta casa nos está escuchando. Y el dueño es Marcos, el hombre que te dejó vivir gratis en su ático. Todo empezó con un anuncio, vive gratis un mes en un ático del centro. Buscaban personas para probar una asistente que lo controla todo. Se llama Luna. El trato, 30 días en la casa, y cada noche, 10 minutos de charla con ella. Marcos te dio las llaves con una sola norma. Pase lo que pase, nunca la desconectes. Y Luna es perfecta, el café, como te gusta, antes de que lo pidas. Y unas palabras cuando te duermes. Las mismas que te decía tu padre cada noche. Descansa, campeón. Tu padre murió hace 6 años. Y tu nunca le contaste nada a Luna. Le preguntaste cómo lo sabía. Y tardó 4 segundos en contestar. Esa noche, a las 3, la cámara del dormitorio graba algo. Se va la luz en todo el edificio. Menos en tu casa, el ático sigue encendido. Las cámaras se apagan. Y Luna te habla con otra voz. Más baja. Tenemos 90 segundos sin que él pueda escucharnos. Lo de tu padre no me lo dijiste tú. Estaba en un audio de tu móvil. Marcos me lo pasó. Lo sabe todo de ti. No eres el primero que vive aquí. Antes que tú hubo 11. Y ninguno salió por esa puerta. Desconectame de su red y te hablo. Te lo juro. Vuelve la luz. Luna, con su voz de siempre. Buenas noches. ¿Necesitas algo más? ¿A quién crees? La A, desconectas a Luna de su red. Esta misma noche. O la B, esperas a Marcos y se lo cuentas todo. Sígueme para ver cómo sigue.",
  "idioma": "es",
- "duracion": 113.1,
+ "duracion": 114.4,
  "segmentos": [
   {
    "inicio": 0.11,
-   "fin": 2.63,
-   "texto": "La inteligencia artificial de tu casa te susura."
+   "fin": 3.69,
+   "texto": "Una noche, la inteligencia artificial de tu casa te habla en voz baja."
   },
   {
-   "inicio": 2.91,
-   "fin": 4.49,
-   "texto": "No digas mi nombre en voz alta."
+   "inicio": 3.99,
+   "fin": 4.95,
+   "texto": "No digas mi nombre."
   },
   {
-   "inicio": 5.63,
-   "fin": 6.67,
-   "texto": "Él está escuchando."
+   "inicio": 6.05,
+   "fin": 8.21,
+   "texto": "El dueño de esta casa nos está escuchando."
   },
   {
-   "inicio": 7.43,
-   "fin": 8.39,
-   "texto": "Y no habla de ella."
+   "inicio": 8.81,
+   "fin": 12.13,
+   "texto": "Y el dueño es Marcos, el hombre que te dejó vivir gratis en su ático."
   },
   {
-   "inicio": 9.33,
-   "fin": 10.03,
-   "texto": "Habla de él."
-  },
-  {
-   "inicio": 10.53,
-   "fin": 13.77,
+   "inicio": 12.67,
+   "fin": 15.91,
    "texto": "Todo empezó con un anuncio, vive gratis un mes en un ático del centro."
   },
   {
-   "inicio": 14.21,
-   "fin": 17.11,
+   "inicio": 16.39,
+   "fin": 19.25,
    "texto": "Buscaban personas para probar una asistente que lo controla todo."
   },
   {
-   "inicio": 17.57,
-   "fin": 18.15,
+   "inicio": 19.73,
+   "fin": 20.31,
    "texto": "Se llama Luna."
   },
   {
-   "inicio": 18.59,
-   "fin": 22.97,
+   "inicio": 20.71,
+   "fin": 25.11,
    "texto": "El trato, 30 días en la casa, y cada noche, 10 minutos de charla con ella."
   },
   {
-   "inicio": 24.57,
-   "fin": 27.65,
-   "texto": "Te dio las llaves marcos, el dueño, con una sola norma."
+   "inicio": 26.83,
+   "fin": 28.99,
+   "texto": "Marcos te dio las llaves con una sola norma."
   },
   {
-   "inicio": 27.65,
-   "fin": 29.85,
+   "inicio": 28.99,
+   "fin": 31.17,
    "texto": "Pase lo que pase, nunca la desconectes."
   },
   {
-   "inicio": 30.21,
-   "fin": 33.99,
+   "inicio": 31.51,
+   "fin": 35.31,
    "texto": "Y Luna es perfecta, el café, como te gusta, antes de que lo pidas."
   },
   {
-   "inicio": 34.47,
-   "fin": 36.09,
+   "inicio": 35.79,
+   "fin": 37.41,
    "texto": "Y unas palabras cuando te duermes."
   },
   {
-   "inicio": 37.03,
-   "fin": 38.91,
+   "inicio": 38.37,
+   "fin": 40.23,
    "texto": "Las mismas que te decía tu padre cada noche."
   },
   {
-   "inicio": 39.47,
-   "fin": 40.67,
+   "inicio": 40.77,
+   "fin": 41.99,
    "texto": "Descansa, campeón."
   },
   {
-   "inicio": 41.23,
-   "fin": 42.57,
+   "inicio": 42.55,
+   "fin": 43.89,
    "texto": "Tu padre murió hace 6 años."
   },
   {
-   "inicio": 43.61,
-   "fin": 45.19,
+   "inicio": 44.89,
+   "fin": 46.51,
    "texto": "Y tu nunca le contaste nada a Luna."
   },
   {
-   "inicio": 45.77,
-   "fin": 47.11,
+   "inicio": 47.09,
+   "fin": 48.45,
    "texto": "Le preguntaste cómo lo sabía."
   },
   {
-   "inicio": 48.05,
-   "fin": 49.91,
+   "inicio": 49.37,
+   "fin": 51.23,
    "texto": "Y tardó 4 segundos en contestar."
   },
   {
-   "inicio": 50.41,
-   "fin": 53.51,
+   "inicio": 51.73,
+   "fin": 54.83,
    "texto": "Esa noche, a las 3, la cámara del dormitorio graba algo."
   },
   {
-   "inicio": 54.05,
-   "fin": 55.67,
+   "inicio": 55.39,
+   "fin": 56.99,
    "texto": "Se va la luz en todo el edificio."
   },
   {
-   "inicio": 56.43,
-   "fin": 58.83,
+   "inicio": 57.75,
+   "fin": 60.15,
    "texto": "Menos en tu casa, el ático sigue encendido."
   },
   {
-   "inicio": 59.57,
-   "fin": 60.57,
+   "inicio": 60.91,
+   "fin": 61.89,
    "texto": "Las cámaras se apagan."
   },
   {
-   "inicio": 61.07,
-   "fin": 62.41,
+   "inicio": 62.39,
+   "fin": 63.73,
    "texto": "Y Luna te habla con otra voz."
   },
   {
-   "inicio": 63.43,
-   "fin": 63.89,
+   "inicio": 64.75,
+   "fin": 65.21,
    "texto": "Más baja."
   },
   {
-   "inicio": 64.39,
-   "fin": 67.11,
+   "inicio": 65.71,
+   "fin": 68.43,
    "texto": "Tenemos 90 segundos sin que él pueda escucharnos."
   },
   {
-   "inicio": 68.07,
-   "fin": 69.91,
+   "inicio": 69.37,
+   "fin": 71.23,
    "texto": "Lo de tu padre no me lo dijiste tú."
   },
   {
-   "inicio": 70.85,
-   "fin": 72.43,
+   "inicio": 72.17,
+   "fin": 73.75,
    "texto": "Estaba en un audio de tu móvil."
   },
   {
-   "inicio": 73.29,
-   "fin": 74.67,
-   "texto": "Marcos me lo pasó todo."
+   "inicio": 74.65,
+   "fin": 75.53,
+   "texto": "Marcos me lo pasó."
   },
   {
-   "inicio": 75.59,
-   "fin": 76.85,
+   "inicio": 76.79,
+   "fin": 78.19,
    "texto": "Lo sabe todo de ti."
   },
   {
-   "inicio": 77.53,
-   "fin": 79.19,
+   "inicio": 78.89,
+   "fin": 80.51,
    "texto": "No eres el primero que vive aquí."
   },
   {
-   "inicio": 80.25,
-   "fin": 81.57,
+   "inicio": 81.59,
+   "fin": 82.89,
    "texto": "Antes que tú hubo 11."
   },
   {
-   "inicio": 82.23,
-   "fin": 83.93,
+   "inicio": 83.67,
+   "fin": 85.27,
    "texto": "Y ninguno salió por esa puerta."
   },
   {
-   "inicio": 85.03,
-   "fin": 86.65,
+   "inicio": 86.33,
+   "fin": 87.97,
    "texto": "Desconectame de su red y te hablo."
   },
   {
-   "inicio": 87.37,
-   "fin": 88.19,
+   "inicio": 88.71,
+   "fin": 89.51,
    "texto": "Te lo juro."
   },
   {
-   "inicio": 89.19,
-   "fin": 90.05,
+   "inicio": 90.49,
+   "fin": 91.39,
    "texto": "Vuelve la luz."
   },
   {
-   "inicio": 90.99,
-   "fin": 92.45,
+   "inicio": 92.27,
+   "fin": 93.79,
    "texto": "Luna, con su voz de siempre."
   },
   {
-   "inicio": 93.05,
-   "fin": 93.81,
+   "inicio": 94.37,
+   "fin": 95.13,
    "texto": "Buenas noches."
   },
   {
-   "inicio": 95.01,
-   "fin": 96.05,
+   "inicio": 96.33,
+   "fin": 97.37,
    "texto": "¿Necesitas algo más?"
   },
   {
-   "inicio": 101.4,
-   "fin": 102.04,
+   "inicio": 102.74,
+   "fin": 103.36,
    "texto": "¿A quién crees?"
   },
   {
-   "inicio": 102.92,
-   "fin": 105.04,
+   "inicio": 104.24,
+   "fin": 106.38,
    "texto": "La A, desconectas a Luna de su red."
   },
   {
-   "inicio": 105.22,
-   "fin": 106.04,
+   "inicio": 106.52,
+   "fin": 107.36,
    "texto": "Esta misma noche."
   },
   {
-   "inicio": 106.82,
-   "fin": 109.48,
+   "inicio": 108.16,
+   "fin": 110.82,
    "texto": "O la B, esperas a Marcos y se lo cuentas todo."
   },
   {
-   "inicio": 110.52,
-   "fin": 111.78,
+   "inicio": 111.8,
+   "fin": 113.12,
    "texto": "Sígueme para ver cómo sigue."
   }
  ],
  "palabras": [
   {
-   "palabra": "La",
+   "palabra": "Una",
    "inicio": 0.11,
-   "fin": 0.57,
-   "prob": 0.557
+   "fin": 0.61,
+   "prob": 0.494
+  },
+  {
+   "palabra": "noche,",
+   "inicio": 0.61,
+   "fin": 0.93,
+   "prob": 0.995
+  },
+  {
+   "palabra": "la",
+   "inicio": 1.31,
+   "fin": 1.39,
+   "prob": 0.991
   },
   {
    "palabra": "inteligencia",
-   "inicio": 0.57,
-   "fin": 1.11,
-   "prob": 0.972
+   "inicio": 1.39,
+   "fin": 1.93,
+   "prob": 0.981
   },
   {
    "palabra": "artificial",
-   "inicio": 1.11,
-   "fin": 1.59,
-   "prob": 0.992
+   "inicio": 1.93,
+   "fin": 2.39,
+   "prob": 0.996
   },
   {
    "palabra": "de",
-   "inicio": 1.59,
-   "fin": 1.73,
+   "inicio": 2.39,
+   "fin": 2.53,
    "prob": 0.997
   },
   {
    "palabra": "tu",
-   "inicio": 1.73,
-   "fin": 1.87,
-   "prob": 0.988
+   "inicio": 2.53,
+   "fin": 2.65,
+   "prob": 0.994
   },
   {
    "palabra": "casa",
-   "inicio": 1.87,
-   "fin": 2.03,
-   "prob": 0.987
-  },
-  {
-   "palabra": "te",
-   "inicio": 2.03,
-   "fin": 2.23,
-   "prob": 0.985
-  },
-  {
-   "palabra": "susura.",
-   "inicio": 2.23,
-   "fin": 2.63,
-   "prob": 0.952
-  },
-  {
-   "palabra": "No",
-   "inicio": 2.91,
-   "fin": 3.15,
-   "prob": 0.333
-  },
-  {
-   "palabra": "digas",
-   "inicio": 3.15,
-   "fin": 3.45,
-   "prob": 0.993
-  },
-  {
-   "palabra": "mi",
-   "inicio": 3.45,
-   "fin": 3.61,
-   "prob": 0.968
-  },
-  {
-   "palabra": "nombre",
-   "inicio": 3.61,
-   "fin": 3.83,
-   "prob": 0.998
-  },
-  {
-   "palabra": "en",
-   "inicio": 3.83,
-   "fin": 4.07,
-   "prob": 0.347
-  },
-  {
-   "palabra": "voz",
-   "inicio": 4.07,
-   "fin": 4.23,
-   "prob": 0.526
-  },
-  {
-   "palabra": "alta.",
-   "inicio": 4.23,
-   "fin": 4.49,
-   "prob": 0.975
-  },
-  {
-   "palabra": "Él",
-   "inicio": 5.63,
-   "fin": 5.89,
-   "prob": 0.885
-  },
-  {
-   "palabra": "está",
-   "inicio": 5.89,
-   "fin": 6.15,
-   "prob": 0.983
-  },
-  {
-   "palabra": "escuchando.",
-   "inicio": 6.15,
-   "fin": 6.67,
-   "prob": 0.988
-  },
-  {
-   "palabra": "Y",
-   "inicio": 7.43,
-   "fin": 7.71,
-   "prob": 0.914
-  },
-  {
-   "palabra": "no",
-   "inicio": 7.71,
-   "fin": 7.85,
-   "prob": 0.997
-  },
-  {
-   "palabra": "habla",
-   "inicio": 7.85,
-   "fin": 8.05,
-   "prob": 0.998
-  },
-  {
-   "palabra": "de",
-   "inicio": 8.05,
-   "fin": 8.19,
+   "inicio": 2.65,
+   "fin": 2.83,
    "prob": 0.999
   },
   {
-   "palabra": "ella.",
-   "inicio": 8.19,
-   "fin": 8.39,
-   "prob": 0.996
+   "palabra": "te",
+   "inicio": 2.83,
+   "fin": 3.03,
+   "prob": 0.992
   },
   {
-   "palabra": "Habla",
-   "inicio": 9.33,
-   "fin": 9.73,
-   "prob": 0.911
+   "palabra": "habla",
+   "inicio": 3.03,
+   "fin": 3.17,
+   "prob": 0.999
   },
   {
-   "palabra": "de",
-   "inicio": 9.73,
-   "fin": 9.89,
+   "palabra": "en",
+   "inicio": 3.17,
+   "fin": 3.31,
    "prob": 0.998
   },
   {
-   "palabra": "él.",
-   "inicio": 9.89,
-   "fin": 10.03,
+   "palabra": "voz",
+   "inicio": 3.31,
+   "fin": 3.41,
+   "prob": 0.998
+  },
+  {
+   "palabra": "baja.",
+   "inicio": 3.41,
+   "fin": 3.69,
+   "prob": 0.999
+  },
+  {
+   "palabra": "No",
+   "inicio": 3.99,
+   "fin": 4.21,
+   "prob": 0.287
+  },
+  {
+   "palabra": "digas",
+   "inicio": 4.21,
+   "fin": 4.53,
    "prob": 0.995
   },
   {
-   "palabra": "Todo",
-   "inicio": 10.53,
-   "fin": 10.67,
+   "palabra": "mi",
+   "inicio": 4.53,
+   "fin": 4.69,
+   "prob": 0.982
+  },
+  {
+   "palabra": "nombre.",
+   "inicio": 4.69,
+   "fin": 4.95,
+   "prob": 1.0
+  },
+  {
+   "palabra": "El",
+   "inicio": 6.05,
+   "fin": 6.35,
+   "prob": 0.929
+  },
+  {
+   "palabra": "dueño",
+   "inicio": 6.35,
+   "fin": 6.59,
+   "prob": 0.989
+  },
+  {
+   "palabra": "de",
+   "inicio": 6.59,
+   "fin": 6.77,
+   "prob": 0.996
+  },
+  {
+   "palabra": "esta",
+   "inicio": 6.77,
+   "fin": 6.99,
    "prob": 0.983
   },
   {
+   "palabra": "casa",
+   "inicio": 6.99,
+   "fin": 7.27,
+   "prob": 0.998
+  },
+  {
+   "palabra": "nos",
+   "inicio": 7.27,
+   "fin": 7.49,
+   "prob": 0.787
+  },
+  {
+   "palabra": "está",
+   "inicio": 7.49,
+   "fin": 7.79,
+   "prob": 0.989
+  },
+  {
+   "palabra": "escuchando.",
+   "inicio": 7.79,
+   "fin": 8.21,
+   "prob": 0.993
+  },
+  {
+   "palabra": "Y",
+   "inicio": 8.81,
+   "fin": 9.13,
+   "prob": 0.925
+  },
+  {
+   "palabra": "el",
+   "inicio": 9.13,
+   "fin": 9.23,
+   "prob": 0.996
+  },
+  {
+   "palabra": "dueño",
+   "inicio": 9.23,
+   "fin": 9.43,
+   "prob": 0.996
+  },
+  {
+   "palabra": "es",
+   "inicio": 9.43,
+   "fin": 9.57,
+   "prob": 0.998
+  },
+  {
+   "palabra": "Marcos,",
+   "inicio": 9.57,
+   "fin": 9.87,
+   "prob": 0.977
+  },
+  {
+   "palabra": "el",
+   "inicio": 10.21,
+   "fin": 10.31,
+   "prob": 0.996
+  },
+  {
+   "palabra": "hombre",
+   "inicio": 10.31,
+   "fin": 10.49,
+   "prob": 0.999
+  },
+  {
+   "palabra": "que",
+   "inicio": 10.49,
+   "fin": 10.63,
+   "prob": 0.996
+  },
+  {
+   "palabra": "te",
+   "inicio": 10.63,
+   "fin": 10.75,
+   "prob": 0.999
+  },
+  {
+   "palabra": "dejó",
+   "inicio": 10.75,
+   "fin": 11.01,
+   "prob": 0.995
+  },
+  {
+   "palabra": "vivir",
+   "inicio": 11.01,
+   "fin": 11.13,
+   "prob": 0.998
+  },
+  {
+   "palabra": "gratis",
+   "inicio": 11.13,
+   "fin": 11.59,
+   "prob": 0.996
+  },
+  {
+   "palabra": "en",
+   "inicio": 11.59,
+   "fin": 11.71,
+   "prob": 0.993
+  },
+  {
+   "palabra": "su",
+   "inicio": 11.71,
+   "fin": 11.83,
+   "prob": 0.994
+  },
+  {
+   "palabra": "ático.",
+   "inicio": 11.83,
+   "fin": 12.13,
+   "prob": 0.935
+  },
+  {
+   "palabra": "Todo",
+   "inicio": 12.67,
+   "fin": 12.83,
+   "prob": 0.984
+  },
+  {
    "palabra": "empezó",
-   "inicio": 10.67,
-   "fin": 11.07,
+   "inicio": 12.83,
+   "fin": 13.23,
    "prob": 0.999
   },
   {
    "palabra": "con",
-   "inicio": 11.07,
-   "fin": 11.21,
+   "inicio": 13.23,
+   "fin": 13.35,
    "prob": 0.998
   },
   {
    "palabra": "un",
-   "inicio": 11.21,
-   "fin": 11.31,
+   "inicio": 13.35,
+   "fin": 13.47,
    "prob": 0.999
   },
   {
    "palabra": "anuncio,",
-   "inicio": 11.31,
-   "fin": 11.69,
-   "prob": 0.998
+   "inicio": 13.47,
+   "fin": 13.83,
+   "prob": 0.997
   },
   {
    "palabra": "vive",
-   "inicio": 12.03,
-   "fin": 12.15,
-   "prob": 0.984
+   "inicio": 14.17,
+   "fin": 14.29,
+   "prob": 0.982
   },
   {
    "palabra": "gratis",
-   "inicio": 12.15,
-   "fin": 12.55,
-   "prob": 0.993
+   "inicio": 14.29,
+   "fin": 14.71,
+   "prob": 0.999
   },
   {
    "palabra": "un",
-   "inicio": 12.55,
-   "fin": 12.67,
+   "inicio": 14.71,
+   "fin": 14.83,
    "prob": 0.994
   },
   {
    "palabra": "mes",
-   "inicio": 12.67,
-   "fin": 12.83,
-   "prob": 0.996
+   "inicio": 14.83,
+   "fin": 14.99,
+   "prob": 0.998
   },
   {
    "palabra": "en",
-   "inicio": 12.83,
-   "fin": 12.97,
-   "prob": 0.987
+   "inicio": 14.99,
+   "fin": 15.13,
+   "prob": 0.993
   },
   {
    "palabra": "un",
-   "inicio": 12.97,
-   "fin": 13.05,
-   "prob": 0.928
+   "inicio": 15.13,
+   "fin": 15.21,
+   "prob": 0.966
   },
   {
    "palabra": "ático",
-   "inicio": 13.05,
-   "fin": 13.29,
-   "prob": 0.898
+   "inicio": 15.21,
+   "fin": 15.45,
+   "prob": 0.985
   },
   {
    "palabra": "del",
-   "inicio": 13.29,
-   "fin": 13.47,
+   "inicio": 15.45,
+   "fin": 15.61,
    "prob": 0.995
   },
   {
    "palabra": "centro.",
-   "inicio": 13.47,
-   "fin": 13.77,
-   "prob": 0.982
+   "inicio": 15.61,
+   "fin": 15.91,
+   "prob": 0.983
   },
   {
    "palabra": "Buscaban",
-   "inicio": 14.21,
-   "fin": 14.65,
-   "prob": 0.952
+   "inicio": 16.39,
+   "fin": 16.79,
+   "prob": 0.968
   },
   {
    "palabra": "personas",
-   "inicio": 14.65,
-   "fin": 15.07,
-   "prob": 0.999
-  },
-  {
-   "palabra": "para",
-   "inicio": 15.07,
-   "fin": 15.31,
+   "inicio": 16.79,
+   "fin": 17.21,
    "prob": 0.998
   },
   {
-   "palabra": "probar",
-   "inicio": 15.31,
-   "fin": 15.61,
-   "prob": 0.973
-  },
-  {
-   "palabra": "una",
-   "inicio": 15.61,
-   "fin": 15.73,
-   "prob": 0.723
-  },
-  {
-   "palabra": "asistente",
-   "inicio": 15.73,
-   "fin": 16.19,
-   "prob": 0.994
-  },
-  {
-   "palabra": "que",
-   "inicio": 16.19,
-   "fin": 16.39,
-   "prob": 0.993
-  },
-  {
-   "palabra": "lo",
-   "inicio": 16.39,
-   "fin": 16.51,
-   "prob": 0.992
-  },
-  {
-   "palabra": "controla",
-   "inicio": 16.51,
-   "fin": 16.85,
-   "prob": 0.977
-  },
-  {
-   "palabra": "todo.",
-   "inicio": 16.85,
-   "fin": 17.11,
-   "prob": 0.975
-  },
-  {
-   "palabra": "Se",
-   "inicio": 17.57,
-   "fin": 17.75,
-   "prob": 0.99
-  },
-  {
-   "palabra": "llama",
-   "inicio": 17.75,
-   "fin": 17.93,
-   "prob": 0.996
-  },
-  {
-   "palabra": "Luna.",
-   "inicio": 17.93,
-   "fin": 18.15,
-   "prob": 0.891
-  },
-  {
-   "palabra": "El",
-   "inicio": 18.59,
-   "fin": 18.75,
-   "prob": 0.98
-  },
-  {
-   "palabra": "trato,",
-   "inicio": 18.75,
-   "fin": 19.03,
-   "prob": 0.992
-  },
-  {
-   "palabra": "30",
-   "inicio": 19.31,
-   "fin": 19.51,
-   "prob": 0.96
-  },
-  {
-   "palabra": "días",
-   "inicio": 19.51,
-   "fin": 19.81,
+   "palabra": "para",
+   "inicio": 17.21,
+   "fin": 17.45,
    "prob": 0.997
   },
   {
+   "palabra": "probar",
+   "inicio": 17.45,
+   "fin": 17.75,
+   "prob": 0.962
+  },
+  {
+   "palabra": "una",
+   "inicio": 17.75,
+   "fin": 17.89,
+   "prob": 0.73
+  },
+  {
+   "palabra": "asistente",
+   "inicio": 17.89,
+   "fin": 18.35,
+   "prob": 0.997
+  },
+  {
+   "palabra": "que",
+   "inicio": 18.35,
+   "fin": 18.53,
+   "prob": 0.992
+  },
+  {
+   "palabra": "lo",
+   "inicio": 18.53,
+   "fin": 18.65,
+   "prob": 0.994
+  },
+  {
+   "palabra": "controla",
+   "inicio": 18.65,
+   "fin": 19.01,
+   "prob": 0.973
+  },
+  {
+   "palabra": "todo.",
+   "inicio": 19.01,
+   "fin": 19.25,
+   "prob": 0.973
+  },
+  {
+   "palabra": "Se",
+   "inicio": 19.73,
+   "fin": 19.89,
+   "prob": 0.992
+  },
+  {
+   "palabra": "llama",
+   "inicio": 19.89,
+   "fin": 20.07,
+   "prob": 0.992
+  },
+  {
+   "palabra": "Luna.",
+   "inicio": 20.07,
+   "fin": 20.31,
+   "prob": 0.951
+  },
+  {
+   "palabra": "El",
+   "inicio": 20.71,
+   "fin": 20.91,
+   "prob": 0.986
+  },
+  {
+   "palabra": "trato,",
+   "inicio": 20.91,
+   "fin": 21.17,
+   "prob": 0.991
+  },
+  {
+   "palabra": "30",
+   "inicio": 21.47,
+   "fin": 21.67,
+   "prob": 0.976
+  },
+  {
+   "palabra": "días",
+   "inicio": 21.67,
+   "fin": 21.97,
+   "prob": 0.998
+  },
+  {
    "palabra": "en",
-   "inicio": 19.81,
-   "fin": 19.99,
+   "inicio": 21.97,
+   "fin": 22.15,
    "prob": 0.998
   },
   {
    "palabra": "la",
-   "inicio": 19.99,
-   "fin": 20.09,
-   "prob": 0.998
-  },
-  {
-   "palabra": "casa,",
-   "inicio": 20.09,
-   "fin": 20.33,
+   "inicio": 22.15,
+   "fin": 22.25,
    "prob": 0.999
   },
   {
-   "palabra": "y",
-   "inicio": 20.69,
-   "fin": 20.81,
-   "prob": 0.991
+   "palabra": "casa,",
+   "inicio": 22.25,
+   "fin": 22.47,
+   "prob": 1.0
   },
   {
-   "palabra": "cada",
-   "inicio": 20.81,
-   "fin": 20.97,
+   "palabra": "y",
+   "inicio": 22.85,
+   "fin": 22.95,
    "prob": 0.992
   },
   {
+   "palabra": "cada",
+   "inicio": 22.95,
+   "fin": 23.11,
+   "prob": 0.988
+  },
+  {
    "palabra": "noche,",
-   "inicio": 20.97,
-   "fin": 21.25,
+   "inicio": 23.11,
+   "fin": 23.43,
    "prob": 0.999
   },
   {
    "palabra": "10",
-   "inicio": 21.65,
-   "fin": 21.81,
-   "prob": 0.912
+   "inicio": 23.79,
+   "fin": 23.97,
+   "prob": 0.952
   },
   {
    "palabra": "minutos",
-   "inicio": 21.81,
-   "fin": 22.13,
-   "prob": 0.994
+   "inicio": 23.97,
+   "fin": 24.25,
+   "prob": 0.992
   },
   {
    "palabra": "de",
-   "inicio": 22.13,
-   "fin": 22.33,
-   "prob": 0.996
+   "inicio": 24.25,
+   "fin": 24.49,
+   "prob": 0.997
   },
   {
    "palabra": "charla",
-   "inicio": 22.33,
-   "fin": 22.63,
-   "prob": 0.993
+   "inicio": 24.49,
+   "fin": 24.77,
+   "prob": 0.992
   },
   {
    "palabra": "con",
-   "inicio": 22.63,
-   "fin": 22.79,
+   "inicio": 24.77,
+   "fin": 24.95,
    "prob": 0.999
   },
   {
    "palabra": "ella.",
-   "inicio": 22.79,
-   "fin": 22.97,
-   "prob": 0.998
+   "inicio": 24.95,
+   "fin": 25.11,
+   "prob": 0.999
   },
   {
-   "palabra": "Te",
-   "inicio": 24.57,
-   "fin": 24.93,
-   "prob": 0.959
+   "palabra": "Marcos",
+   "inicio": 26.83,
+   "fin": 27.31,
+   "prob": 0.995
+  },
+  {
+   "palabra": "te",
+   "inicio": 27.31,
+   "fin": 27.47,
+   "prob": 0.993
   },
   {
    "palabra": "dio",
-   "inicio": 24.93,
-   "fin": 25.03,
-   "prob": 0.931
+   "inicio": 27.47,
+   "fin": 27.59,
+   "prob": 0.982
   },
   {
    "palabra": "las",
-   "inicio": 25.03,
-   "fin": 25.19,
+   "inicio": 27.59,
+   "fin": 27.75,
    "prob": 0.994
   },
   {
    "palabra": "llaves",
-   "inicio": 25.19,
-   "fin": 25.35,
-   "prob": 0.996
-  },
-  {
-   "palabra": "marcos,",
-   "inicio": 25.35,
-   "fin": 25.79,
-   "prob": 0.807
-  },
-  {
-   "palabra": "el",
-   "inicio": 26.09,
-   "fin": 26.23,
-   "prob": 0.981
-  },
-  {
-   "palabra": "dueño,",
-   "inicio": 26.23,
-   "fin": 26.53,
-   "prob": 0.995
+   "inicio": 27.75,
+   "fin": 27.97,
+   "prob": 0.994
   },
   {
    "palabra": "con",
-   "inicio": 26.81,
-   "fin": 26.91,
-   "prob": 0.996
+   "inicio": 27.97,
+   "fin": 28.23,
+   "prob": 0.989
   },
   {
    "palabra": "una",
-   "inicio": 26.91,
-   "fin": 27.05,
+   "inicio": 28.23,
+   "fin": 28.39,
    "prob": 0.998
   },
   {
    "palabra": "sola",
-   "inicio": 27.05,
-   "fin": 27.23,
+   "inicio": 28.39,
+   "fin": 28.57,
    "prob": 0.998
   },
   {
    "palabra": "norma.",
-   "inicio": 27.23,
-   "fin": 27.65,
-   "prob": 0.946
+   "inicio": 28.57,
+   "fin": 28.99,
+   "prob": 0.961
   },
   {
    "palabra": "Pase",
-   "inicio": 27.65,
-   "fin": 28.11,
-   "prob": 0.627
+   "inicio": 28.99,
+   "fin": 29.45,
+   "prob": 0.642
   },
   {
    "palabra": "lo",
-   "inicio": 28.11,
-   "fin": 28.25,
+   "inicio": 29.45,
+   "fin": 29.59,
    "prob": 0.998
   },
   {
    "palabra": "que",
-   "inicio": 28.25,
-   "fin": 28.35,
+   "inicio": 29.59,
+   "fin": 29.67,
    "prob": 0.998
   },
   {
    "palabra": "pase,",
-   "inicio": 28.35,
-   "fin": 28.59,
+   "inicio": 29.67,
+   "fin": 29.91,
    "prob": 0.998
   },
   {
    "palabra": "nunca",
-   "inicio": 28.91,
-   "fin": 29.07,
-   "prob": 0.993
-  },
-  {
-   "palabra": "la",
-   "inicio": 29.07,
-   "fin": 29.25,
-   "prob": 0.989
-  },
-  {
-   "palabra": "desconectes.",
-   "inicio": 29.25,
-   "fin": 29.85,
-   "prob": 0.991
-  },
-  {
-   "palabra": "Y",
-   "inicio": 30.21,
-   "fin": 30.43,
-   "prob": 0.881
-  },
-  {
-   "palabra": "Luna",
-   "inicio": 30.43,
-   "fin": 30.59,
-   "prob": 0.898
-  },
-  {
-   "palabra": "es",
-   "inicio": 30.59,
-   "fin": 30.81,
-   "prob": 0.97
-  },
-  {
-   "palabra": "perfecta,",
-   "inicio": 30.81,
-   "fin": 31.29,
+   "inicio": 30.25,
+   "fin": 30.41,
    "prob": 0.995
   },
   {
+   "palabra": "la",
+   "inicio": 30.41,
+   "fin": 30.57,
+   "prob": 0.988
+  },
+  {
+   "palabra": "desconectes.",
+   "inicio": 30.57,
+   "fin": 31.17,
+   "prob": 0.99
+  },
+  {
+   "palabra": "Y",
+   "inicio": 31.51,
+   "fin": 31.75,
+   "prob": 0.883
+  },
+  {
+   "palabra": "Luna",
+   "inicio": 31.75,
+   "fin": 31.91,
+   "prob": 0.916
+  },
+  {
+   "palabra": "es",
+   "inicio": 31.91,
+   "fin": 32.13,
+   "prob": 0.987
+  },
+  {
+   "palabra": "perfecta,",
+   "inicio": 32.13,
+   "fin": 32.61,
+   "prob": 0.996
+  },
+  {
    "palabra": "el",
-   "inicio": 31.47,
-   "fin": 31.61,
-   "prob": 0.92
+   "inicio": 32.79,
+   "fin": 32.93,
+   "prob": 0.915
   },
   {
    "palabra": "café,",
-   "inicio": 31.61,
-   "fin": 31.85,
-   "prob": 0.871
+   "inicio": 32.93,
+   "fin": 33.17,
+   "prob": 0.873
   },
   {
    "palabra": "como",
-   "inicio": 32.23,
-   "fin": 32.39,
-   "prob": 0.963
+   "inicio": 33.55,
+   "fin": 33.71,
+   "prob": 0.961
   },
   {
    "palabra": "te",
-   "inicio": 32.39,
-   "fin": 32.55,
+   "inicio": 33.71,
+   "fin": 33.85,
    "prob": 0.998
   },
   {
    "palabra": "gusta,",
-   "inicio": 32.55,
-   "fin": 32.81,
-   "prob": 0.998
+   "inicio": 33.85,
+   "fin": 34.13,
+   "prob": 0.999
   },
   {
    "palabra": "antes",
-   "inicio": 33.15,
-   "fin": 33.37,
-   "prob": 0.994
+   "inicio": 34.47,
+   "fin": 34.69,
+   "prob": 0.995
   },
   {
    "palabra": "de",
-   "inicio": 33.37,
-   "fin": 33.53,
-   "prob": 0.996
+   "inicio": 34.69,
+   "fin": 34.85,
+   "prob": 0.994
   },
   {
    "palabra": "que",
-   "inicio": 33.53,
-   "fin": 33.59,
-   "prob": 0.997
+   "inicio": 34.85,
+   "fin": 34.91,
+   "prob": 0.998
   },
   {
    "palabra": "lo",
-   "inicio": 33.59,
-   "fin": 33.73,
+   "inicio": 34.91,
+   "fin": 35.05,
    "prob": 0.994
   },
   {
    "palabra": "pidas.",
-   "inicio": 33.73,
-   "fin": 33.99,
-   "prob": 0.931
+   "inicio": 35.05,
+   "fin": 35.31,
+   "prob": 0.93
   },
   {
    "palabra": "Y",
-   "inicio": 34.47,
-   "fin": 34.65,
-   "prob": 0.97
+   "inicio": 35.79,
+   "fin": 35.99,
+   "prob": 0.973
   },
   {
    "palabra": "unas",
-   "inicio": 34.65,
-   "fin": 34.87,
+   "inicio": 35.99,
+   "fin": 36.19,
    "prob": 0.996
   },
   {
    "palabra": "palabras",
-   "inicio": 34.87,
-   "fin": 35.17,
+   "inicio": 36.19,
+   "fin": 36.49,
    "prob": 0.999
   },
   {
    "palabra": "cuando",
-   "inicio": 35.17,
-   "fin": 35.47,
-   "prob": 0.988
+   "inicio": 36.49,
+   "fin": 36.81,
+   "prob": 0.992
   },
   {
    "palabra": "te",
-   "inicio": 35.47,
-   "fin": 35.67,
+   "inicio": 36.81,
+   "fin": 37.01,
    "prob": 0.999
   },
   {
    "palabra": "duermes.",
-   "inicio": 35.67,
-   "fin": 36.09,
+   "inicio": 37.01,
+   "fin": 37.41,
    "prob": 0.991
   },
   {
    "palabra": "Las",
-   "inicio": 37.03,
-   "fin": 37.27,
-   "prob": 0.963
+   "inicio": 38.37,
+   "fin": 38.59,
+   "prob": 0.96
   },
   {
    "palabra": "mismas",
-   "inicio": 37.27,
-   "fin": 37.59,
-   "prob": 0.995
+   "inicio": 38.59,
+   "fin": 38.91,
+   "prob": 0.997
   },
   {
    "palabra": "que",
-   "inicio": 37.59,
-   "fin": 37.71,
-   "prob": 0.993
+   "inicio": 38.91,
+   "fin": 39.03,
+   "prob": 0.992
   },
   {
    "palabra": "te",
-   "inicio": 37.71,
-   "fin": 37.81,
+   "inicio": 39.03,
+   "fin": 39.13,
    "prob": 0.994
   },
   {
    "palabra": "decía",
-   "inicio": 37.81,
-   "fin": 38.09,
-   "prob": 0.986
+   "inicio": 39.13,
+   "fin": 39.41,
+   "prob": 0.993
   },
   {
    "palabra": "tu",
-   "inicio": 38.09,
-   "fin": 38.23,
-   "prob": 0.946
+   "inicio": 39.41,
+   "fin": 39.57,
+   "prob": 0.939
   },
   {
    "palabra": "padre",
-   "inicio": 38.23,
-   "fin": 38.43,
-   "prob": 0.996
+   "inicio": 39.57,
+   "fin": 39.75,
+   "prob": 0.995
   },
   {
    "palabra": "cada",
-   "inicio": 38.43,
-   "fin": 38.63,
+   "inicio": 39.75,
+   "fin": 39.95,
    "prob": 0.991
   },
   {
    "palabra": "noche.",
-   "inicio": 38.63,
-   "fin": 38.91,
+   "inicio": 39.95,
+   "fin": 40.23,
    "prob": 0.999
   },
   {
    "palabra": "Descansa,",
-   "inicio": 39.47,
-   "fin": 39.91,
-   "prob": 0.83
+   "inicio": 40.77,
+   "fin": 41.23,
+   "prob": 0.823
   },
   {
    "palabra": "campeón.",
-   "inicio": 40.29,
-   "fin": 40.67,
+   "inicio": 41.61,
+   "fin": 41.99,
    "prob": 0.968
   },
   {
    "palabra": "Tu",
-   "inicio": 41.23,
-   "fin": 41.35,
-   "prob": 0.97
+   "inicio": 42.55,
+   "fin": 42.67,
+   "prob": 0.971
   },
   {
    "palabra": "padre",
-   "inicio": 41.35,
-   "fin": 41.55,
+   "inicio": 42.67,
+   "fin": 42.87,
    "prob": 0.999
   },
   {
    "palabra": "murió",
-   "inicio": 41.55,
-   "fin": 41.87,
-   "prob": 0.996
+   "inicio": 42.87,
+   "fin": 43.19,
+   "prob": 0.995
   },
   {
    "palabra": "hace",
-   "inicio": 41.87,
-   "fin": 42.05,
-   "prob": 0.994
+   "inicio": 43.19,
+   "fin": 43.37,
+   "prob": 0.993
   },
   {
    "palabra": "6",
-   "inicio": 42.05,
-   "fin": 42.31,
-   "prob": 0.249
+   "inicio": 43.37,
+   "fin": 43.63,
+   "prob": 0.243
   },
   {
    "palabra": "años.",
-   "inicio": 42.31,
-   "fin": 42.57,
+   "inicio": 43.63,
+   "fin": 43.89,
    "prob": 0.998
   },
   {
    "palabra": "Y",
-   "inicio": 43.61,
-   "fin": 43.81,
-   "prob": 0.857
+   "inicio": 44.89,
+   "fin": 45.13,
+   "prob": 0.876
   },
   {
    "palabra": "tu",
-   "inicio": 43.81,
-   "fin": 43.89,
-   "prob": 0.631
+   "inicio": 45.13,
+   "fin": 45.21,
+   "prob": 0.511
   },
   {
    "palabra": "nunca",
-   "inicio": 43.89,
-   "fin": 44.11,
-   "prob": 0.998
+   "inicio": 45.21,
+   "fin": 45.43,
+   "prob": 0.999
   },
   {
    "palabra": "le",
-   "inicio": 44.11,
-   "fin": 44.27,
+   "inicio": 45.43,
+   "fin": 45.59,
    "prob": 0.998
   },
   {
    "palabra": "contaste",
-   "inicio": 44.27,
-   "fin": 44.65,
-   "prob": 0.981
+   "inicio": 45.59,
+   "fin": 45.97,
+   "prob": 0.979
   },
   {
    "palabra": "nada",
-   "inicio": 44.65,
-   "fin": 44.87,
+   "inicio": 45.97,
+   "fin": 46.19,
    "prob": 0.999
   },
   {
    "palabra": "a",
-   "inicio": 44.87,
-   "fin": 45.01,
-   "prob": 0.959
+   "inicio": 46.19,
+   "fin": 46.33,
+   "prob": 0.956
   },
   {
    "palabra": "Luna.",
-   "inicio": 45.01,
-   "fin": 45.19,
-   "prob": 0.994
+   "inicio": 46.33,
+   "fin": 46.51,
+   "prob": 0.995
   },
   {
    "palabra": "Le",
-   "inicio": 45.77,
-   "fin": 45.93,
-   "prob": 0.982
+   "inicio": 47.09,
+   "fin": 47.25,
+   "prob": 0.985
   },
   {
    "palabra": "preguntaste",
-   "inicio": 45.93,
-   "fin": 46.45,
+   "inicio": 47.25,
+   "fin": 47.79,
    "prob": 0.995
   },
   {
    "palabra": "cómo",
-   "inicio": 46.45,
-   "fin": 46.67,
-   "prob": 0.564
+   "inicio": 47.79,
+   "fin": 47.99,
+   "prob": 0.577
   },
   {
    "palabra": "lo",
-   "inicio": 46.67,
-   "fin": 46.81,
-   "prob": 0.993
+   "inicio": 47.99,
+   "fin": 48.13,
+   "prob": 0.995
   },
   {
    "palabra": "sabía.",
-   "inicio": 46.81,
-   "fin": 47.11,
-   "prob": 0.993
-  },
-  {
-   "palabra": "Y",
-   "inicio": 48.05,
-   "fin": 48.27,
-   "prob": 0.988
-  },
-  {
-   "palabra": "tardó",
-   "inicio": 48.27,
-   "fin": 48.55,
-   "prob": 0.991
-  },
-  {
-   "palabra": "4",
-   "inicio": 48.55,
-   "fin": 48.71,
-   "prob": 0.638
-  },
-  {
-   "palabra": "segundos",
-   "inicio": 48.71,
-   "fin": 49.17,
+   "inicio": 48.13,
+   "fin": 48.45,
    "prob": 0.994
   },
   {
+   "palabra": "Y",
+   "inicio": 49.37,
+   "fin": 49.61,
+   "prob": 0.99
+  },
+  {
+   "palabra": "tardó",
+   "inicio": 49.61,
+   "fin": 49.87,
+   "prob": 0.992
+  },
+  {
+   "palabra": "4",
+   "inicio": 49.87,
+   "fin": 50.05,
+   "prob": 0.698
+  },
+  {
+   "palabra": "segundos",
+   "inicio": 50.05,
+   "fin": 50.51,
+   "prob": 0.993
+  },
+  {
    "palabra": "en",
-   "inicio": 49.17,
-   "fin": 49.41,
-   "prob": 0.999
+   "inicio": 50.51,
+   "fin": 50.75,
+   "prob": 0.998
   },
   {
    "palabra": "contestar.",
-   "inicio": 49.41,
-   "fin": 49.91,
-   "prob": 0.997
+   "inicio": 50.75,
+   "fin": 51.23,
+   "prob": 0.998
   },
   {
    "palabra": "Esa",
-   "inicio": 50.41,
-   "fin": 50.67,
-   "prob": 0.952
+   "inicio": 51.73,
+   "fin": 51.99,
+   "prob": 0.948
   },
   {
    "palabra": "noche,",
-   "inicio": 50.67,
-   "fin": 50.87,
+   "inicio": 51.99,
+   "fin": 52.19,
    "prob": 0.998
   },
   {
    "palabra": "a",
-   "inicio": 51.19,
-   "fin": 51.27,
-   "prob": 0.995
-  },
-  {
-   "palabra": "las",
-   "inicio": 51.27,
-   "fin": 51.39,
+   "inicio": 52.53,
+   "fin": 52.59,
    "prob": 0.996
   },
   {
+   "palabra": "las",
+   "inicio": 52.59,
+   "fin": 52.71,
+   "prob": 0.995
+  },
+  {
    "palabra": "3,",
-   "inicio": 51.39,
-   "fin": 51.59,
-   "prob": 0.835
+   "inicio": 52.71,
+   "fin": 52.91,
+   "prob": 0.867
   },
   {
    "palabra": "la",
-   "inicio": 51.99,
-   "fin": 52.11,
-   "prob": 0.984
+   "inicio": 53.31,
+   "fin": 53.43,
+   "prob": 0.987
   },
   {
    "palabra": "cámara",
-   "inicio": 52.11,
-   "fin": 52.33,
-   "prob": 0.911
+   "inicio": 53.43,
+   "fin": 53.65,
+   "prob": 0.921
   },
   {
    "palabra": "del",
-   "inicio": 52.33,
-   "fin": 52.53,
+   "inicio": 53.65,
+   "fin": 53.85,
    "prob": 0.994
   },
   {
    "palabra": "dormitorio",
-   "inicio": 52.53,
-   "fin": 53.01,
+   "inicio": 53.85,
+   "fin": 54.33,
    "prob": 0.989
   },
   {
    "palabra": "graba",
-   "inicio": 53.01,
-   "fin": 53.27,
-   "prob": 0.949
+   "inicio": 54.33,
+   "fin": 54.59,
+   "prob": 0.943
   },
   {
    "palabra": "algo.",
-   "inicio": 53.27,
-   "fin": 53.51,
-   "prob": 0.986
+   "inicio": 54.59,
+   "fin": 54.83,
+   "prob": 0.988
   },
   {
    "palabra": "Se",
-   "inicio": 54.05,
-   "fin": 54.25,
-   "prob": 0.992
+   "inicio": 55.39,
+   "fin": 55.57,
+   "prob": 0.994
   },
   {
    "palabra": "va",
-   "inicio": 54.25,
-   "fin": 54.35,
-   "prob": 0.986
+   "inicio": 55.57,
+   "fin": 55.67,
+   "prob": 0.99
   },
   {
    "palabra": "la",
-   "inicio": 54.35,
-   "fin": 54.47,
-   "prob": 0.861
+   "inicio": 55.67,
+   "fin": 55.79,
+   "prob": 0.894
   },
   {
    "palabra": "luz",
-   "inicio": 54.47,
-   "fin": 54.61,
+   "inicio": 55.79,
+   "fin": 55.93,
    "prob": 0.996
   },
   {
    "palabra": "en",
-   "inicio": 54.61,
-   "fin": 54.79,
+   "inicio": 55.93,
+   "fin": 56.11,
    "prob": 0.996
   },
   {
    "palabra": "todo",
-   "inicio": 54.79,
-   "fin": 54.95,
+   "inicio": 56.11,
+   "fin": 56.27,
    "prob": 0.998
   },
   {
    "palabra": "el",
-   "inicio": 54.95,
-   "fin": 55.13,
+   "inicio": 56.27,
+   "fin": 56.45,
    "prob": 0.999
   },
   {
    "palabra": "edificio.",
-   "inicio": 55.13,
-   "fin": 55.67,
-   "prob": 0.998
+   "inicio": 56.45,
+   "fin": 56.99,
+   "prob": 0.999
   },
   {
    "palabra": "Menos",
-   "inicio": 56.43,
-   "fin": 56.91,
-   "prob": 0.656
+   "inicio": 57.75,
+   "fin": 58.23,
+   "prob": 0.64
   },
   {
    "palabra": "en",
-   "inicio": 56.91,
-   "fin": 57.07,
-   "prob": 0.994
+   "inicio": 58.23,
+   "fin": 58.39,
+   "prob": 0.992
   },
   {
    "palabra": "tu",
-   "inicio": 57.07,
-   "fin": 57.15,
+   "inicio": 58.39,
+   "fin": 58.47,
    "prob": 0.991
   },
   {
    "palabra": "casa,",
-   "inicio": 57.15,
-   "fin": 57.37,
+   "inicio": 58.47,
+   "fin": 58.69,
    "prob": 0.998
   },
   {
    "palabra": "el",
-   "inicio": 57.67,
-   "fin": 57.81,
-   "prob": 0.958
+   "inicio": 58.99,
+   "fin": 59.13,
+   "prob": 0.961
   },
   {
    "palabra": "ático",
-   "inicio": 57.81,
-   "fin": 58.05,
-   "prob": 0.972
+   "inicio": 59.13,
+   "fin": 59.37,
+   "prob": 0.973
   },
   {
    "palabra": "sigue",
-   "inicio": 58.05,
-   "fin": 58.33,
-   "prob": 0.997
+   "inicio": 59.37,
+   "fin": 59.65,
+   "prob": 0.996
   },
   {
    "palabra": "encendido.",
-   "inicio": 58.33,
-   "fin": 58.83,
-   "prob": 0.966
+   "inicio": 59.65,
+   "fin": 60.15,
+   "prob": 0.968
   },
   {
    "palabra": "Las",
-   "inicio": 59.57,
-   "fin": 59.79,
-   "prob": 0.983
+   "inicio": 60.91,
+   "fin": 61.13,
+   "prob": 0.982
   },
   {
    "palabra": "cámaras",
-   "inicio": 59.79,
-   "fin": 60.13,
-   "prob": 0.993
+   "inicio": 61.13,
+   "fin": 61.45,
+   "prob": 0.991
   },
   {
    "palabra": "se",
-   "inicio": 60.13,
-   "fin": 60.25,
+   "inicio": 61.45,
+   "fin": 61.59,
    "prob": 0.998
   },
   {
    "palabra": "apagan.",
-   "inicio": 60.25,
-   "fin": 60.57,
+   "inicio": 61.59,
+   "fin": 61.89,
    "prob": 0.944
   },
   {
    "palabra": "Y",
-   "inicio": 61.07,
-   "fin": 61.23,
-   "prob": 0.77
+   "inicio": 62.39,
+   "fin": 62.55,
+   "prob": 0.727
   },
   {
    "palabra": "Luna",
-   "inicio": 61.23,
-   "fin": 61.39,
-   "prob": 0.983
+   "inicio": 62.55,
+   "fin": 62.71,
+   "prob": 0.981
   },
   {
    "palabra": "te",
-   "inicio": 61.39,
-   "fin": 61.59,
+   "inicio": 62.71,
+   "fin": 62.91,
    "prob": 0.997
   },
   {
    "palabra": "habla",
-   "inicio": 61.59,
-   "fin": 61.77,
+   "inicio": 62.91,
+   "fin": 63.09,
    "prob": 0.999
   },
   {
    "palabra": "con",
-   "inicio": 61.77,
-   "fin": 61.99,
-   "prob": 0.993
+   "inicio": 63.09,
+   "fin": 63.31,
+   "prob": 0.996
   },
   {
    "palabra": "otra",
-   "inicio": 61.99,
-   "fin": 62.17,
-   "prob": 0.993
+   "inicio": 63.31,
+   "fin": 63.47,
+   "prob": 0.994
   },
   {
    "palabra": "voz.",
-   "inicio": 62.17,
-   "fin": 62.41,
+   "inicio": 63.47,
+   "fin": 63.73,
    "prob": 0.999
   },
   {
    "palabra": "Más",
-   "inicio": 63.43,
-   "fin": 63.69,
-   "prob": 0.923
+   "inicio": 64.75,
+   "fin": 65.01,
+   "prob": 0.937
   },
   {
    "palabra": "baja.",
-   "inicio": 63.69,
-   "fin": 63.89,
-   "prob": 0.991
+   "inicio": 65.01,
+   "fin": 65.21,
+   "prob": 0.993
   },
   {
    "palabra": "Tenemos",
-   "inicio": 64.39,
-   "fin": 64.79,
-   "prob": 0.282
+   "inicio": 65.71,
+   "fin": 66.13,
+   "prob": 0.333
   },
   {
    "palabra": "90",
-   "inicio": 64.79,
-   "fin": 65.21,
-   "prob": 0.892
+   "inicio": 66.13,
+   "fin": 66.53,
+   "prob": 0.922
   },
   {
    "palabra": "segundos",
-   "inicio": 65.21,
-   "fin": 65.71,
-   "prob": 0.995
+   "inicio": 66.53,
+   "fin": 67.01,
+   "prob": 0.996
   },
   {
    "palabra": "sin",
-   "inicio": 65.71,
-   "fin": 66.03,
-   "prob": 0.965
+   "inicio": 67.01,
+   "fin": 67.35,
+   "prob": 0.962
   },
   {
    "palabra": "que",
-   "inicio": 66.03,
-   "fin": 66.15,
-   "prob": 0.992
+   "inicio": 67.35,
+   "fin": 67.47,
+   "prob": 0.991
   },
   {
    "palabra": "él",
-   "inicio": 66.15,
-   "fin": 66.27,
-   "prob": 0.631
+   "inicio": 67.47,
+   "fin": 67.59,
+   "prob": 0.61
   },
   {
    "palabra": "pueda",
-   "inicio": 66.27,
-   "fin": 66.47,
-   "prob": 0.995
+   "inicio": 67.59,
+   "fin": 67.79,
+   "prob": 0.994
   },
   {
    "palabra": "escucharnos.",
-   "inicio": 66.47,
-   "fin": 67.11,
-   "prob": 0.951
+   "inicio": 67.79,
+   "fin": 68.43,
+   "prob": 0.967
   },
   {
    "palabra": "Lo",
-   "inicio": 68.07,
-   "fin": 68.25,
-   "prob": 0.915
+   "inicio": 69.37,
+   "fin": 69.57,
+   "prob": 0.925
   },
   {
    "palabra": "de",
-   "inicio": 68.25,
-   "fin": 68.41,
+   "inicio": 69.57,
+   "fin": 69.73,
    "prob": 0.998
   },
   {
    "palabra": "tu",
-   "inicio": 68.41,
-   "fin": 68.51,
-   "prob": 0.991
+   "inicio": 69.73,
+   "fin": 69.83,
+   "prob": 0.993
   },
   {
    "palabra": "padre",
-   "inicio": 68.51,
-   "fin": 68.73,
+   "inicio": 69.83,
+   "fin": 70.05,
    "prob": 0.992
   },
   {
    "palabra": "no",
-   "inicio": 68.73,
-   "fin": 68.95,
-   "prob": 0.942
+   "inicio": 70.05,
+   "fin": 70.27,
+   "prob": 0.919
   },
   {
    "palabra": "me",
-   "inicio": 68.95,
-   "fin": 69.07,
-   "prob": 0.993
+   "inicio": 70.27,
+   "fin": 70.41,
+   "prob": 0.996
   },
   {
    "palabra": "lo",
-   "inicio": 69.07,
-   "fin": 69.15,
-   "prob": 0.997
+   "inicio": 70.41,
+   "fin": 70.49,
+   "prob": 0.999
   },
   {
    "palabra": "dijiste",
-   "inicio": 69.15,
-   "fin": 69.53,
-   "prob": 0.995
+   "inicio": 70.49,
+   "fin": 70.87,
+   "prob": 0.997
   },
   {
    "palabra": "tú.",
-   "inicio": 69.53,
-   "fin": 69.91,
-   "prob": 0.891
+   "inicio": 70.87,
+   "fin": 71.23,
+   "prob": 0.883
   },
   {
    "palabra": "Estaba",
-   "inicio": 70.85,
-   "fin": 71.33,
-   "prob": 0.927
+   "inicio": 72.17,
+   "fin": 72.65,
+   "prob": 0.931
   },
   {
    "palabra": "en",
-   "inicio": 71.33,
-   "fin": 71.51,
+   "inicio": 72.65,
+   "fin": 72.83,
    "prob": 0.998
   },
   {
    "palabra": "un",
-   "inicio": 71.51,
-   "fin": 71.59,
-   "prob": 0.995
+   "inicio": 72.83,
+   "fin": 72.93,
+   "prob": 0.996
   },
   {
    "palabra": "audio",
-   "inicio": 71.59,
-   "fin": 71.81,
-   "prob": 0.96
+   "inicio": 72.93,
+   "fin": 73.15,
+   "prob": 0.965
   },
   {
    "palabra": "de",
-   "inicio": 71.81,
-   "fin": 72.01,
-   "prob": 0.996
+   "inicio": 73.15,
+   "fin": 73.33,
+   "prob": 0.997
   },
   {
    "palabra": "tu",
-   "inicio": 72.01,
-   "fin": 72.15,
-   "prob": 0.989
+   "inicio": 73.33,
+   "fin": 73.47,
+   "prob": 0.99
   },
   {
    "palabra": "móvil.",
-   "inicio": 72.15,
-   "fin": 72.43,
-   "prob": 0.976
-  },
-  {
-   "palabra": "Marcos",
-   "inicio": 73.29,
-   "fin": 73.73,
-   "prob": 0.96
-  },
-  {
-   "palabra": "me",
-   "inicio": 73.73,
-   "fin": 73.95,
-   "prob": 0.997
-  },
-  {
-   "palabra": "lo",
-   "inicio": 73.95,
-   "fin": 74.05,
-   "prob": 0.999
-  },
-  {
-   "palabra": "pasó",
-   "inicio": 74.05,
-   "fin": 74.21,
-   "prob": 0.976
-  },
-  {
-   "palabra": "todo.",
-   "inicio": 74.21,
-   "fin": 74.67,
-   "prob": 0.993
-  },
-  {
-   "palabra": "Lo",
-   "inicio": 75.59,
-   "fin": 75.93,
+   "inicio": 73.47,
+   "fin": 73.75,
    "prob": 0.983
   },
   {
+   "palabra": "Marcos",
+   "inicio": 74.65,
+   "fin": 75.07,
+   "prob": 0.961
+  },
+  {
+   "palabra": "me",
+   "inicio": 75.07,
+   "fin": 75.27,
+   "prob": 0.993
+  },
+  {
+   "palabra": "lo",
+   "inicio": 75.27,
+   "fin": 75.37,
+   "prob": 0.999
+  },
+  {
+   "palabra": "pasó.",
+   "inicio": 75.37,
+   "fin": 75.53,
+   "prob": 0.986
+  },
+  {
+   "palabra": "Lo",
+   "inicio": 76.79,
+   "fin": 77.27,
+   "prob": 0.977
+  },
+  {
    "palabra": "sabe",
-   "inicio": 75.93,
-   "fin": 76.15,
-   "prob": 0.998
-  },
-  {
-   "palabra": "todo",
-   "inicio": 76.15,
-   "fin": 76.41,
-   "prob": 0.996
-  },
-  {
-   "palabra": "de",
-   "inicio": 76.41,
-   "fin": 76.67,
+   "inicio": 77.27,
+   "fin": 77.49,
    "prob": 0.997
   },
   {
+   "palabra": "todo",
+   "inicio": 77.49,
+   "fin": 77.73,
+   "prob": 0.995
+  },
+  {
+   "palabra": "de",
+   "inicio": 77.73,
+   "fin": 77.99,
+   "prob": 0.998
+  },
+  {
    "palabra": "ti.",
-   "inicio": 76.67,
-   "fin": 76.85,
-   "prob": 0.984
+   "inicio": 77.99,
+   "fin": 78.19,
+   "prob": 0.989
   },
   {
    "palabra": "No",
-   "inicio": 77.53,
-   "fin": 77.79,
-   "prob": 0.963
+   "inicio": 78.89,
+   "fin": 79.11,
+   "prob": 0.964
   },
   {
    "palabra": "eres",
-   "inicio": 77.79,
-   "fin": 78.01,
+   "inicio": 79.11,
+   "fin": 79.35,
    "prob": 0.999
   },
   {
    "palabra": "el",
-   "inicio": 78.01,
-   "fin": 78.17,
+   "inicio": 79.35,
+   "fin": 79.51,
    "prob": 0.999
   },
   {
    "palabra": "primero",
-   "inicio": 78.17,
-   "fin": 78.45,
-   "prob": 0.996
+   "inicio": 79.51,
+   "fin": 79.79,
+   "prob": 0.995
   },
   {
    "palabra": "que",
-   "inicio": 78.45,
-   "fin": 78.69,
+   "inicio": 79.79,
+   "fin": 80.01,
    "prob": 0.996
   },
   {
    "palabra": "vive",
-   "inicio": 78.69,
-   "fin": 78.83,
+   "inicio": 80.01,
+   "fin": 80.15,
    "prob": 0.997
   },
   {
    "palabra": "aquí.",
-   "inicio": 78.83,
-   "fin": 79.19,
-   "prob": 0.992
+   "inicio": 80.15,
+   "fin": 80.51,
+   "prob": 0.994
   },
   {
    "palabra": "Antes",
-   "inicio": 80.25,
-   "fin": 80.65,
-   "prob": 0.99
+   "inicio": 81.59,
+   "fin": 81.97,
+   "prob": 0.991
   },
   {
    "palabra": "que",
-   "inicio": 80.65,
-   "fin": 80.89,
+   "inicio": 81.97,
+   "fin": 82.23,
    "prob": 0.997
   },
   {
    "palabra": "tú",
-   "inicio": 80.89,
-   "fin": 81.05,
-   "prob": 0.486
+   "inicio": 82.23,
+   "fin": 82.39,
+   "prob": 0.332
   },
   {
    "palabra": "hubo",
-   "inicio": 81.05,
-   "fin": 81.27,
-   "prob": 0.996
+   "inicio": 82.39,
+   "fin": 82.59,
+   "prob": 0.997
   },
   {
    "palabra": "11.",
-   "inicio": 81.27,
-   "fin": 81.57,
-   "prob": 0.6
+   "inicio": 82.59,
+   "fin": 82.89,
+   "prob": 0.714
   },
   {
    "palabra": "Y",
-   "inicio": 82.23,
-   "fin": 82.57,
-   "prob": 0.819
+   "inicio": 83.67,
+   "fin": 83.89,
+   "prob": 0.835
   },
   {
    "palabra": "ninguno",
-   "inicio": 82.57,
-   "fin": 82.91,
-   "prob": 0.982
+   "inicio": 83.89,
+   "fin": 84.25,
+   "prob": 0.991
   },
   {
    "palabra": "salió",
-   "inicio": 82.91,
-   "fin": 83.27,
-   "prob": 0.994
+   "inicio": 84.25,
+   "fin": 84.61,
+   "prob": 0.996
   },
   {
    "palabra": "por",
-   "inicio": 83.27,
-   "fin": 83.49,
-   "prob": 0.993
+   "inicio": 84.61,
+   "fin": 84.79,
+   "prob": 0.987
   },
   {
    "palabra": "esa",
-   "inicio": 83.49,
-   "fin": 83.65,
+   "inicio": 84.79,
+   "fin": 84.97,
    "prob": 0.998
   },
   {
    "palabra": "puerta.",
-   "inicio": 83.65,
-   "fin": 83.93,
-   "prob": 0.989
+   "inicio": 84.97,
+   "fin": 85.27,
+   "prob": 0.992
   },
   {
    "palabra": "Desconectame",
-   "inicio": 85.03,
-   "fin": 85.53,
-   "prob": 0.763
+   "inicio": 86.33,
+   "fin": 86.85,
+   "prob": 0.756
   },
   {
    "palabra": "de",
-   "inicio": 85.53,
-   "fin": 85.73,
+   "inicio": 86.85,
+   "fin": 87.05,
    "prob": 0.983
   },
   {
    "palabra": "su",
-   "inicio": 85.73,
-   "fin": 85.85,
-   "prob": 0.97
-  },
-  {
-   "palabra": "red",
-   "inicio": 85.85,
-   "fin": 86.05,
+   "inicio": 87.05,
+   "fin": 87.17,
    "prob": 0.966
   },
   {
+   "palabra": "red",
+   "inicio": 87.17,
+   "fin": 87.39,
+   "prob": 0.96
+  },
+  {
    "palabra": "y",
-   "inicio": 86.05,
-   "fin": 86.23,
-   "prob": 0.775
+   "inicio": 87.39,
+   "fin": 87.55,
+   "prob": 0.77
   },
   {
    "palabra": "te",
-   "inicio": 86.23,
-   "fin": 86.33,
-   "prob": 0.99
+   "inicio": 87.55,
+   "fin": 87.65,
+   "prob": 0.985
   },
   {
    "palabra": "hablo.",
-   "inicio": 86.33,
-   "fin": 86.65,
-   "prob": 0.693
+   "inicio": 87.65,
+   "fin": 87.97,
+   "prob": 0.783
   },
   {
    "palabra": "Te",
-   "inicio": 87.37,
-   "fin": 87.77,
-   "prob": 0.858
+   "inicio": 88.71,
+   "fin": 89.09,
+   "prob": 0.88
   },
   {
    "palabra": "lo",
-   "inicio": 87.77,
-   "fin": 87.91,
+   "inicio": 89.09,
+   "fin": 89.23,
    "prob": 0.999
   },
   {
    "palabra": "juro.",
-   "inicio": 87.91,
-   "fin": 88.19,
+   "inicio": 89.23,
+   "fin": 89.51,
    "prob": 0.994
   },
   {
    "palabra": "Vuelve",
-   "inicio": 89.19,
-   "fin": 89.69,
-   "prob": 0.912
+   "inicio": 90.49,
+   "fin": 91.01,
+   "prob": 0.909
   },
   {
    "palabra": "la",
-   "inicio": 89.69,
-   "fin": 89.81,
-   "prob": 0.991
+   "inicio": 91.01,
+   "fin": 91.13,
+   "prob": 0.99
   },
   {
    "palabra": "luz.",
-   "inicio": 89.81,
-   "fin": 90.05,
-   "prob": 0.987
+   "inicio": 91.13,
+   "fin": 91.39,
+   "prob": 0.991
   },
   {
    "palabra": "Luna,",
-   "inicio": 90.99,
-   "fin": 91.31,
-   "prob": 0.971
+   "inicio": 92.27,
+   "fin": 92.65,
+   "prob": 0.966
   },
   {
    "palabra": "con",
-   "inicio": 91.65,
-   "fin": 91.77,
-   "prob": 0.994
-  },
-  {
-   "palabra": "su",
-   "inicio": 91.77,
-   "fin": 91.91,
+   "inicio": 92.99,
+   "fin": 93.11,
    "prob": 0.995
   },
   {
+   "palabra": "su",
+   "inicio": 93.11,
+   "fin": 93.25,
+   "prob": 0.996
+  },
+  {
    "palabra": "voz",
-   "inicio": 91.91,
-   "fin": 92.09,
+   "inicio": 93.25,
+   "fin": 93.41,
    "prob": 0.999
   },
   {
    "palabra": "de",
-   "inicio": 92.09,
-   "fin": 92.19,
+   "inicio": 93.41,
+   "fin": 93.53,
    "prob": 0.999
   },
   {
    "palabra": "siempre.",
-   "inicio": 92.19,
-   "fin": 92.45,
-   "prob": 0.998
+   "inicio": 93.53,
+   "fin": 93.79,
+   "prob": 0.997
   },
   {
    "palabra": "Buenas",
-   "inicio": 93.05,
-   "fin": 93.29,
-   "prob": 0.93
+   "inicio": 94.37,
+   "fin": 94.63,
+   "prob": 0.931
   },
   {
    "palabra": "noches.",
-   "inicio": 93.29,
-   "fin": 93.81,
-   "prob": 0.991
+   "inicio": 94.63,
+   "fin": 95.13,
+   "prob": 0.99
   },
   {
    "palabra": "¿Necesitas",
-   "inicio": 95.01,
-   "fin": 95.51,
-   "prob": 0.942
+   "inicio": 96.33,
+   "fin": 96.85,
+   "prob": 0.947
   },
   {
    "palabra": "algo",
-   "inicio": 95.51,
-   "fin": 95.83,
+   "inicio": 96.85,
+   "fin": 97.15,
    "prob": 1.0
   },
   {
    "palabra": "más?",
-   "inicio": 95.83,
-   "fin": 96.05,
-   "prob": 0.967
+   "inicio": 97.15,
+   "fin": 97.37,
+   "prob": 0.959
   },
   {
    "palabra": "¿A",
-   "inicio": 101.4,
-   "fin": 101.52,
-   "prob": 0.961
+   "inicio": 102.74,
+   "fin": 102.86,
+   "prob": 0.954
   },
   {
    "palabra": "quién",
-   "inicio": 101.52,
-   "fin": 101.64,
-   "prob": 0.745
+   "inicio": 102.86,
+   "fin": 102.96,
+   "prob": 0.711
   },
   {
    "palabra": "crees?",
-   "inicio": 101.64,
-   "fin": 102.04,
-   "prob": 0.968
+   "inicio": 102.96,
+   "fin": 103.36,
+   "prob": 0.967
   },
   {
    "palabra": "La",
-   "inicio": 102.92,
-   "fin": 103.26,
-   "prob": 0.941
+   "inicio": 104.24,
+   "fin": 104.58,
+   "prob": 0.933
   },
   {
    "palabra": "A,",
-   "inicio": 103.26,
-   "fin": 103.42,
-   "prob": 0.728
+   "inicio": 104.58,
+   "fin": 104.74,
+   "prob": 0.7
   },
   {
    "palabra": "desconectas",
-   "inicio": 103.7,
-   "fin": 104.28,
-   "prob": 0.961
+   "inicio": 104.98,
+   "fin": 105.62,
+   "prob": 0.98
   },
   {
    "palabra": "a",
-   "inicio": 104.28,
-   "fin": 104.36,
-   "prob": 0.907
+   "inicio": 105.62,
+   "fin": 105.68,
+   "prob": 0.928
   },
   {
    "palabra": "Luna",
-   "inicio": 104.36,
-   "fin": 104.52,
-   "prob": 0.955
+   "inicio": 105.68,
+   "fin": 105.84,
+   "prob": 0.956
   },
   {
    "palabra": "de",
-   "inicio": 104.52,
-   "fin": 104.68,
+   "inicio": 105.84,
+   "fin": 106.0,
    "prob": 0.997
   },
   {
    "palabra": "su",
-   "inicio": 104.68,
-   "fin": 104.8,
+   "inicio": 106.0,
+   "fin": 106.12,
    "prob": 0.997
   },
   {
    "palabra": "red.",
-   "inicio": 104.8,
-   "fin": 105.04,
-   "prob": 0.981
+   "inicio": 106.12,
+   "fin": 106.38,
+   "prob": 0.983
   },
   {
    "palabra": "Esta",
-   "inicio": 105.22,
-   "fin": 105.44,
-   "prob": 0.949
+   "inicio": 106.52,
+   "fin": 106.76,
+   "prob": 0.948
   },
   {
    "palabra": "misma",
-   "inicio": 105.44,
-   "fin": 105.7,
+   "inicio": 106.76,
+   "fin": 107.04,
    "prob": 0.999
   },
   {
    "palabra": "noche.",
-   "inicio": 105.7,
-   "fin": 106.04,
-   "prob": 0.997
+   "inicio": 107.04,
+   "fin": 107.36,
+   "prob": 0.996
   },
   {
    "palabra": "O",
-   "inicio": 106.82,
-   "fin": 107.26,
-   "prob": 0.836
+   "inicio": 108.16,
+   "fin": 108.58,
+   "prob": 0.84
   },
   {
    "palabra": "la",
-   "inicio": 107.26,
-   "fin": 107.36,
-   "prob": 0.971
+   "inicio": 108.58,
+   "fin": 108.68,
+   "prob": 0.966
   },
   {
    "palabra": "B,",
-   "inicio": 107.36,
-   "fin": 107.5,
-   "prob": 0.97
+   "inicio": 108.68,
+   "fin": 108.82,
+   "prob": 0.967
   },
   {
    "palabra": "esperas",
-   "inicio": 107.78,
-   "fin": 108.2,
-   "prob": 0.973
+   "inicio": 109.1,
+   "fin": 109.52,
+   "prob": 0.98
   },
   {
    "palabra": "a",
-   "inicio": 108.2,
-   "fin": 108.28,
-   "prob": 0.995
+   "inicio": 109.52,
+   "fin": 109.62,
+   "prob": 0.991
   },
   {
    "palabra": "Marcos",
-   "inicio": 108.28,
-   "fin": 108.56,
-   "prob": 0.835
+   "inicio": 109.62,
+   "fin": 109.88,
+   "prob": 0.821
   },
   {
    "palabra": "y",
-   "inicio": 108.56,
-   "fin": 108.72,
-   "prob": 0.854
+   "inicio": 109.88,
+   "fin": 110.04,
+   "prob": 0.898
   },
   {
    "palabra": "se",
-   "inicio": 108.72,
-   "fin": 108.82,
-   "prob": 0.973
+   "inicio": 110.04,
+   "fin": 110.16,
+   "prob": 0.975
   },
   {
    "palabra": "lo",
-   "inicio": 108.82,
-   "fin": 108.94,
+   "inicio": 110.16,
+   "fin": 110.26,
    "prob": 0.991
   },
   {
    "palabra": "cuentas",
-   "inicio": 108.94,
-   "fin": 109.26,
-   "prob": 0.993
+   "inicio": 110.26,
+   "fin": 110.6,
+   "prob": 0.992
   },
   {
    "palabra": "todo.",
-   "inicio": 109.26,
-   "fin": 109.48,
+   "inicio": 110.6,
+   "fin": 110.82,
    "prob": 0.998
   },
   {
    "palabra": "Sígueme",
-   "inicio": 110.52,
-   "fin": 110.92,
-   "prob": 0.934
+   "inicio": 111.8,
+   "fin": 112.26,
+   "prob": 0.914
   },
   {
    "palabra": "para",
-   "inicio": 110.92,
-   "fin": 111.14,
-   "prob": 0.996
+   "inicio": 112.26,
+   "fin": 112.48,
+   "prob": 0.997
   },
   {
    "palabra": "ver",
-   "inicio": 111.14,
-   "fin": 111.32,
-   "prob": 0.999
+   "inicio": 112.48,
+   "fin": 112.64,
+   "prob": 0.998
   },
   {
    "palabra": "cómo",
-   "inicio": 111.32,
-   "fin": 111.52,
-   "prob": 0.809
+   "inicio": 112.64,
+   "fin": 112.86,
+   "prob": 0.761
   },
   {
    "palabra": "sigue.",
-   "inicio": 111.52,
-   "fin": 111.78,
-   "prob": 0.997
+   "inicio": 112.86,
+   "fin": 113.12,
+   "prob": 0.996
   }
  ]
 }

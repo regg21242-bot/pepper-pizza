@@ -1,304 +1,308 @@
 1
-00:00:00,110 --> 00:00:01,870
-La inteligencia artificial de tu
+00:00:00,110 --> 00:00:00,930
+Una noche,
 
 2
-00:00:01,870 --> 00:00:02,630
-casa te susurra:
+00:00:01,310 --> 00:00:02,650
+la inteligencia artificial de tu
 
 3
-00:00:02,910 --> 00:00:04,230
-No digas mi nombre en voz
+00:00:02,650 --> 00:00:03,690
+casa te habla en voz baja:
 
 4
-00:00:04,230 --> 00:00:04,490
-alta.
+00:00:03,990 --> 00:00:04,950
+No digas mi nombre.
 
 5
-00:00:05,630 --> 00:00:06,670
-Él está escuchando.
+00:00:06,050 --> 00:00:07,490
+El dueño de esta casa nos
 
 6
-00:00:07,430 --> 00:00:08,390
-Y no habla de ella.
+00:00:07,490 --> 00:00:08,210
+está escuchando.
 
 7
-00:00:09,330 --> 00:00:10,030
-Habla de él.
+00:00:08,810 --> 00:00:09,870
+Y el dueño es Marcos:
 
 8
-00:00:10,530 --> 00:00:11,690
-Todo empezó con un anuncio:
+00:00:10,210 --> 00:00:11,130
+el hombre que te dejó vivir
 
 9
-00:00:12,030 --> 00:00:13,050
-vive gratis un mes en un
+00:00:11,130 --> 00:00:12,130
+gratis en su ático.
 
 10
-00:00:13,050 --> 00:00:13,770
-ático del centro.
+00:00:12,670 --> 00:00:13,830
+Todo empezó con un anuncio:
 
 11
-00:00:14,210 --> 00:00:15,730
-Buscaban personas para probar una
+00:00:14,170 --> 00:00:15,210
+vive gratis un mes en un
 
 12
-00:00:15,730 --> 00:00:17,110
-asistente que lo controla todo.
+00:00:15,210 --> 00:00:15,910
+ático del centro.
 
 13
-00:00:17,570 --> 00:00:18,150
-Se llama Luna.
+00:00:16,390 --> 00:00:17,890
+Buscaban personas para probar una
 
 14
-00:00:18,590 --> 00:00:19,030
-El trato:
+00:00:17,890 --> 00:00:19,250
+asistente que lo controla todo.
 
 15
-00:00:19,310 --> 00:00:20,330
-treinta días en la casa,
+00:00:19,730 --> 00:00:20,310
+Se llama Luna.
 
 16
-00:00:20,690 --> 00:00:21,250
-y cada noche,
+00:00:20,710 --> 00:00:21,170
+El trato:
 
 17
-00:00:21,650 --> 00:00:22,970
-diez minutos de charla con ella.
+00:00:21,470 --> 00:00:22,470
+treinta días en la casa,
 
 18
-00:00:24,570 --> 00:00:25,790
-Te dio las llaves Marcos,
+00:00:22,850 --> 00:00:23,430
+y cada noche,
 
 19
-00:00:26,090 --> 00:00:26,530
-el dueño,
+00:00:23,790 --> 00:00:25,110
+diez minutos de charla con ella.
 
 20
-00:00:26,810 --> 00:00:27,650
-con una sola norma:
+00:00:26,830 --> 00:00:28,230
+Marcos te dio las llaves con
 
 21
-00:00:27,650 --> 00:00:28,590
-«Pase lo que pase,
+00:00:28,230 --> 00:00:28,990
+una sola norma:
 
 22
-00:00:28,910 --> 00:00:29,850
-nunca la desconectes».
+00:00:28,990 --> 00:00:29,910
+«Pase lo que pase,
 
 23
-00:00:30,210 --> 00:00:31,290
-Y Luna es perfecta:
+00:00:30,250 --> 00:00:31,170
+nunca la desconectes».
 
 24
-00:00:31,470 --> 00:00:31,850
-el café,
+00:00:31,510 --> 00:00:32,610
+Y Luna es perfecta:
 
 25
-00:00:32,230 --> 00:00:32,810
-como te gusta,
+00:00:32,790 --> 00:00:33,170
+el café,
 
 26
-00:00:33,150 --> 00:00:33,990
-antes de que lo pidas.
+00:00:33,550 --> 00:00:34,130
+como te gusta,
 
 27
-00:00:34,470 --> 00:00:36,090
-Y unas palabras cuando te duermes.
+00:00:34,470 --> 00:00:35,310
+antes de que lo pidas.
 
 28
-00:00:37,030 --> 00:00:38,230
-Las mismas que te decía tu
+00:00:35,790 --> 00:00:37,410
+Y unas palabras cuando te duermes.
 
 29
-00:00:38,230 --> 00:00:38,910
-padre cada noche:
+00:00:38,370 --> 00:00:39,570
+Las mismas que te decía tu
 
 30
-00:00:39,470 --> 00:00:39,910
-Descansa,
+00:00:39,570 --> 00:00:40,230
+padre cada noche:
 
 31
-00:00:40,290 --> 00:00:40,670
-campeón.
+00:00:40,770 --> 00:00:41,230
+Descansa,
 
 32
-00:00:41,230 --> 00:00:42,570
-Tu padre murió hace seis años.
+00:00:41,610 --> 00:00:41,990
+campeón.
 
 33
-00:00:43,610 --> 00:00:44,870
-Y tú nunca le contaste nada
+00:00:42,550 --> 00:00:43,890
+Tu padre murió hace seis años.
 
 34
-00:00:44,870 --> 00:00:45,190
-a Luna.
+00:00:44,890 --> 00:00:46,190
+Y tú nunca le contaste nada
 
 35
-00:00:45,770 --> 00:00:47,110
-Le preguntaste cómo lo sabía.
+00:00:46,190 --> 00:00:46,510
+a Luna.
 
 36
-00:00:48,050 --> 00:00:49,410
-Y tardó cuatro segundos en
+00:00:47,090 --> 00:00:48,450
+Le preguntaste cómo lo sabía.
 
 37
-00:00:49,410 --> 00:00:49,910
-contestar.
+00:00:49,370 --> 00:00:50,750
+Y tardó cuatro segundos en
 
 38
-00:00:50,410 --> 00:00:50,870
-Esa noche,
+00:00:50,750 --> 00:00:51,230
+contestar.
 
 39
-00:00:51,190 --> 00:00:51,590
-a las tres,
+00:00:51,730 --> 00:00:52,190
+Esa noche,
 
 40
-00:00:51,990 --> 00:00:53,510
-la cámara del dormitorio graba algo.
+00:00:52,530 --> 00:00:52,910
+a las tres,
 
 41
-00:00:54,050 --> 00:00:54,950
-Se va la luz en todo
+00:00:53,310 --> 00:00:54,830
+la cámara del dormitorio graba algo.
 
 42
-00:00:54,950 --> 00:00:55,670
-el edificio.
+00:00:55,390 --> 00:00:56,270
+Se va la luz en todo
 
 43
-00:00:56,430 --> 00:00:57,370
-Menos en tu casa:
+00:00:56,270 --> 00:00:56,990
+el edificio.
 
 44
-00:00:57,670 --> 00:00:58,830
-el ático sigue encendido.
+00:00:57,750 --> 00:00:58,690
+Menos en tu casa:
 
 45
-00:00:59,570 --> 00:01:00,570
-Las cámaras se apagan.
+00:00:58,990 --> 00:01:00,150
+el ático sigue encendido.
 
 46
-00:01:01,070 --> 00:01:02,170
-Y Luna te habla con otra
+00:01:00,910 --> 00:01:01,890
+Las cámaras se apagan.
 
 47
-00:01:02,170 --> 00:01:02,410
-voz.
+00:01:02,390 --> 00:01:03,470
+Y Luna te habla con otra
 
 48
-00:01:03,430 --> 00:01:03,890
-Más baja.
+00:01:03,470 --> 00:01:03,730
+voz.
 
 49
-00:01:04,390 --> 00:01:06,270
-Tenemos noventa segundos sin que él
+00:01:04,750 --> 00:01:05,210
+Más baja.
 
 50
-00:01:06,270 --> 00:01:07,110
-pueda escucharnos.
+00:01:05,710 --> 00:01:07,590
+Tenemos noventa segundos sin que él
 
 51
-00:01:08,070 --> 00:01:09,070
-Lo de tu padre no me
+00:01:07,590 --> 00:01:08,430
+pueda escucharnos.
 
 52
-00:01:09,070 --> 00:01:09,910
-lo dijiste tú.
+00:01:09,370 --> 00:01:10,410
+Lo de tu padre no me
 
 53
-00:01:10,850 --> 00:01:12,150
-Estaba en un audio de tu
+00:01:10,410 --> 00:01:11,230
+lo dijiste tú.
 
 54
-00:01:12,150 --> 00:01:12,430
-móvil.
+00:01:12,170 --> 00:01:13,470
+Estaba en un audio de tu
 
 55
-00:01:13,290 --> 00:01:14,670
-Marcos me lo pasó todo.
+00:01:13,470 --> 00:01:13,750
+móvil.
 
 56
-00:01:15,590 --> 00:01:16,850
-Lo sabe todo de ti.
+00:01:14,650 --> 00:01:16,790
+Marcos me lo pasó todo.
 
 57
-00:01:17,530 --> 00:01:18,830
-No eres el primero que vive
+00:01:16,790 --> 00:01:18,190
+Lo sabe todo de ti.
 
 58
-00:01:18,830 --> 00:01:19,190
-aquí.
+00:01:18,890 --> 00:01:20,150
+No eres el primero que vive
 
 59
-00:01:20,250 --> 00:01:21,570
-Antes que tú hubo once.
+00:01:20,150 --> 00:01:20,510
+aquí.
 
 60
-00:01:22,230 --> 00:01:23,930
-Y ninguno salió por esa puerta.
+00:01:21,590 --> 00:01:22,890
+Antes que tú hubo once.
 
 61
-00:01:25,030 --> 00:01:26,330
-Desconéctame de su red y te
+00:01:23,670 --> 00:01:25,270
+Y ninguno salió por esa puerta.
 
 62
-00:01:26,330 --> 00:01:26,650
-abro.
+00:01:26,330 --> 00:01:27,650
+Desconéctame de su red y te
 
 63
-00:01:27,370 --> 00:01:28,190
-Te lo juro.
+00:01:27,650 --> 00:01:27,970
+abro.
 
 64
-00:01:29,190 --> 00:01:30,050
-Vuelve la luz.
+00:01:28,710 --> 00:01:29,510
+Te lo juro.
 
 65
-00:01:30,990 --> 00:01:31,310
-Luna,
+00:01:30,490 --> 00:01:31,390
+Vuelve la luz.
 
 66
-00:01:31,650 --> 00:01:32,450
-con su voz de siempre:
+00:01:32,270 --> 00:01:32,650
+Luna,
 
 67
-00:01:33,050 --> 00:01:33,810
-Buenas noches.
+00:01:32,990 --> 00:01:33,790
+con su voz de siempre:
 
 68
-00:01:35,010 --> 00:01:36,050
-¿Necesitas algo más?
+00:01:34,370 --> 00:01:35,130
+Buenas noches.
 
 69
-00:01:41,400 --> 00:01:42,040
-¿A quién crees?
+00:01:36,330 --> 00:01:37,370
+¿Necesitas algo más?
 
 70
-00:01:42,920 --> 00:01:43,420
-La A:
+00:01:42,740 --> 00:01:43,360
+¿A quién crees?
 
 71
-00:01:43,700 --> 00:01:45,040
-desconectas a Luna de su red,
+00:01:44,240 --> 00:01:44,740
+La A:
 
 72
-00:01:45,220 --> 00:01:46,040
-esta misma noche.
+00:01:44,980 --> 00:01:46,380
+desconectas a Luna de su red,
 
 73
-00:01:46,820 --> 00:01:47,500
-O la B:
+00:01:46,520 --> 00:01:47,360
+esta misma noche.
 
 74
-00:01:47,780 --> 00:01:48,940
-esperas a Marcos y se lo
+00:01:48,160 --> 00:01:48,820
+O la B:
 
 75
-00:01:48,940 --> 00:01:49,480
-cuentas todo.
+00:01:49,100 --> 00:01:50,260
+esperas a Marcos y se lo
 
 76
-00:01:50,520 --> 00:01:51,780
+00:01:50,260 --> 00:01:50,820
+cuentas todo.
+
+77
+00:01:51,800 --> 00:01:53,120
 Sígueme para ver cómo sigue.
 

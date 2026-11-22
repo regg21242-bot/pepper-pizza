@@ -3,7 +3,7 @@
     #root { position: absolute; inset: 0; background: #05060C; overflow: hidden; font-family: Nunito, sans-serif; }
     #gl, #hud { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
   </style>
-  <div id="root" data-composition-id="film" data-start="0" data-duration="113.1" data-width="1080" data-height="1920">
+  <div id="root" data-composition-id="film" data-start="0" data-duration="114.4" data-width="1080" data-height="1920">
     <canvas id="gl" width="1080" height="1920" data-layout-ignore></canvas>
     <canvas id="hud" width="1080" height="1920" data-layout-ignore></canvas>
   </div>
@@ -16,10 +16,10 @@
     const W = 1080, H = 1920, V3 = (x, y, z) => new THREE.Vector3(x, y, z);
 
     /* ---------- tiempos (s): cortes de escena y momentos clave (tools/mezcla.py los lee) ---------- */
-    const T = { end: 113.1,
-      cortes: [0, 7.4, 10.3, 14.05, 17.45, 18.55, 23.2, 24.7, 27.85, 30.2, 34.4, 41.05, 45.6, 50.25, 53.95, 59.4, 60.95, 64.3, 67.85, 69.9, 73.2, 77.45, 82.25, 84.6, 89.1, 96.55, 101.3, 112.2],
-      fotoGris: 41.9, seg0: 48.4, ondas: 51.8, apagon: 54.6, camOff: 60.2, blanco: 62.9, t90: 65.4, arch0: 70.1, datos0: 73.4, sello: 75.9, suj0: 77.9, pip: 83.0, vuelve: 89.6,
-      notifMarcos: 96.9, abreChat: 97.6, cafe: 30.6, cartaA: 103.4, cartaB: 107.5, sigueme: 110.4, loop: 112.2 };
+    const T = { end: 114.4,
+      cortes: [0.0, 8.85, 12.45, 16.2, 19.6, 20.7, 25.35, 26.85, 29.17, 31.52, 35.72, 42.37, 46.92, 51.57, 55.27, 60.72, 62.27, 65.62, 69.17, 71.22, 74.52, 78.77, 83.57, 85.92, 90.42, 97.87, 102.62, 113.52],
+      fotoGris: 43.22, seg0: 49.72, ondas: 53.12, apagon: 55.92, camOff: 61.52, blanco: 64.22, t90: 66.72, arch0: 71.42, datos0: 74.72, sello: 77.22, suj0: 79.22, pip: 84.32, vuelve: 90.92,
+      notifMarcos: 98.22, abreChat: 98.92, cafe: 31.92, cartaA: 104.72, cartaB: 108.82, sigueme: 111.72, loop: 113.52 };
 
     const renderer = N.crearRender(document.getElementById('gl'), W, H); renderer.toneMappingExposure = 1.15;
     const PP = window.POST(renderer, W, H);

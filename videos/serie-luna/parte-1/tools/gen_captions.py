@@ -6,7 +6,7 @@ También acepta el JSON completo de transcribir.py (usa la clave "palabras").
 """
 import json, sys, re, html, argparse
 
-CLAVE = {"susurra", "escuchando", "él", "gratis", "ático", "todo", "luna", "treinta", "marcos", "nunca", "desconectes", "perfecta", "padre", "campeón", "seis", "cuatro", "tres", "luz", "encendido", "apagan", "baja", "noventa", "audio", "pasó", "once", "puerta", "juro", "siempre", "crees"}
+CLAVE = {"baja", "escuchando", "marcos", "gratis", "gratis", "ático", "todo", "luna", "treinta", "marcos", "nunca", "desconectes", "perfecta", "padre", "campeón", "seis", "cuatro", "tres", "luz", "encendido", "apagan", "baja", "noventa", "audio", "pasó", "once", "puerta", "juro", "siempre", "crees"}
 MAX_PAL = 6          # palabras por grupo (2 líneas máximo con letra de 66 px)
 PAUSA = 0.15
 
