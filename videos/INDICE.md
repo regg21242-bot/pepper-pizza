@@ -4,7 +4,7 @@ Todos son verticales (1080×1920), con la voz de Álvaro, música, efectos y sub
 
 | Carpeta | Título | Dura | Peso | Estilo | Estado |
 |---|---|---|---|---|---|
-| `serie-luna/parte-1` | La inteligencia artificial de tu casa te habla bajito · Parte 1 (historia interactiva A/B; voces Álvaro + Elvira; `luna-parte-1-ligero.mp4` = 18 MB, subtítulos `luna-parte-1.srt`) | 113 s | 41 MB | 3D oscuro: altavoz, ático y ciudad nocturna (HyperFrames + Three.js) | ✅ nuevo (loop) |
+| `serie-luna/parte-1` | La inteligencia artificial de tu casa te habla bajito · Parte 1 (historia interactiva A/B; voz de Álvaro en todo; `luna-parte-1-ligero.mp4` = 18 MB, subtítulos `luna-parte-1.srt`) | 113 s | 41 MB | 3D oscuro: altavoz, ático y ciudad nocturna (HyperFrames + Three.js) | ✅ nuevo (loop) |
 | `serie-ferry/parte-1` | Tu ferry llega a puerto a su hora, pero el móvil dice que han pasado siete años · Parte 1 (historia interactiva A/B, voz en español de España; `ferry-parte-1-ligero.mp4` = 15 MB, subtítulos `ferry-parte-1.srt`) | 96 s | 34 MB | 3D low-poly nocturno (HyperFrames + Three.js) | ✅ nuevo (loop) |
 | `serie-alerta/parte-1` | Alerta a las 3 a.m.: «NO ENCIENDAS NINGUNA LUZ» · Parte 1 (historia interactiva A/B; `alerta-parte-1-ligero.mp4` = 14 MB, subtítulos `alerta-parte-1.srt`; primer plano del refri y pasillo azul estilo referencia; persona dormida y calle hasta el fondo) | 88 s | 49 MB | 3D low-poly de noche, colonia costera (HyperFrames + Three.js) | ✅ nuevo (loop) |
 | `wifi-ubicacion` | ¿Tu celular sabe dónde estás sin GPS? (serie «Nunca te lo explicaron»; `wifi-ubicacion-ligero.mp4` = 9.5 MB, subtítulos `wifi-ubicacion.srt`) | 58 s | 32 MB | 3D ciudad en una sola escena, cámara continua (HyperFrames + Three.js) | ✅ nuevo (loop) |
