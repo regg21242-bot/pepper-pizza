@@ -1,0 +1,56 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>@font-face{font-family:'Fredoka';font-weight:700;src:url(../assets/fonts/fredoka-700.woff2) format('woff2')} html,body{margin:0;background:#000}</style>
+<script src="../assets/lib/three.min.js"></script>
+<script src="../assets/lib/personajes.js"></script>
+</head><body>
+<canvas id="gl"></canvas><canvas id="out"></canvas>
+<script>
+// Foto de perfil de noche (estilo calcomanía). tools/perfil_noche.html#nombre=EL%20GORRITAS&circulo=1
+const Q = new URLSearchParams(location.hash.slice(1)), NOMBRE = Q.get('nombre') || '', CIRC = Q.get('circulo') === '1';
+const W = 1080, gl = document.getElementById('gl'); gl.width = gl.height = W;
+const R = new THREE.WebGLRenderer({ canvas: gl, antialias: true, alpha: true, preserveDrawingBuffer: true }); R.setPixelRatio(1); R.setSize(W, W, false); R.setClearColor(0x000000, 0);
+R.outputEncoding = THREE.sRGBEncoding; R.toneMapping = THREE.LinearToneMapping; R.toneMappingExposure = .95;
+// números pseudoaleatorios fijos
+let sem = 11; const rnd = () => { sem = (sem * 16807) % 2147483647; return (sem - 1) / 2147483646; };
+(async () => { try {
+  await document.fonts.load('700 100px Fredoka');
+  const P = window.PUEBLO_P, s = new THREE.Scene();
+  s.add(new THREE.HemisphereLight('#EAF0FF', '#2A3470', .8));
+  const sol = new THREE.DirectionalLight('#FFF6E6', 1.15); sol.position.set(-2, 3, 4); s.add(sol);
+  const luna = new THREE.DirectionalLight('#BFD0FF', .7); luna.position.set(3, 3, -2); s.add(luna);
+  const a = P.crear('prota'); a.cara('feliz'); a.pose(0, 'quieto'); s.add(a);
+  const U = a.userData, bd = U.brazos[1], bi = U.brazos[0];
+  bd.rotation.set(-.15, 0, 2.55); bi.rotation.set(-.1, 0, -.12); U.cabeza.rotation.set(.04, -.1, -.08); a.rotation.y = .18;
+  const cam = new THREE.PerspectiveCamera(30, 1, .1, 50); cam.position.set(.0, 1.2, 6.3); cam.lookAt(.12, 1.2, 0);
+  R.render(s, cam);
+  const o = document.getElementById('out'); o.width = o.height = W; const x = o.getContext('2d');
+  // cielo
+  const cg = x.createLinearGradient(0, 0, 0, W); cg.addColorStop(0, '#141C4E'); cg.addColorStop(.6, '#2C3C86'); cg.addColorStop(1, '#3F56A8'); x.fillStyle = cg; x.fillRect(0, 0, W, W);
+  for (let i = 0; i < 140; i++) { x.fillStyle = `rgba(255,255,255,${.35 + rnd() * .6})`; const r = rnd() * 2.6 + .8; x.beginPath(); x.arc(rnd() * W, rnd() * W * .62, r, 0, 7); x.fill(); }
+  const est = (cx, cy, r, c) => { x.beginPath(); for (let i = 0; i < 10; i++) { const rr = i % 2 ? r * .45 : r, t = -Math.PI / 2 + i * Math.PI / 5; x.lineTo(cx + Math.cos(t) * rr, cy + Math.sin(t) * rr); } x.closePath(); x.fillStyle = c; x.fill(); };
+  est(215, 260, 34, '#FFFFFF'); est(330, 150, 22, '#FFFFFF'); est(640, 170, 26, '#FFFFFF'); est(470, 105, 14, '#FFFFFF'); est(145, 470, 18, '#FFFFFF'); est(850, 790, 40, '#FFE04A');
+  // luna
+  x.save(); x.shadowColor = 'rgba(255,250,220,.9)'; x.shadowBlur = 60; x.fillStyle = '#FFFBEA'; x.beginPath(); x.arc(840, 200, 62, 0, 7); x.fill(); x.restore();
+  // casas al fondo
+  const casa = (cx, base, w, h, col, techo) => { x.fillStyle = col; x.fillRect(cx - w / 2, base - h, w, h); x.fillStyle = techo; x.beginPath(); x.moveTo(cx - w / 2 - 14, base - h); x.lineTo(cx, base - h - w * .38); x.lineTo(cx + w / 2 + 14, base - h); x.fill();
+    for (let r = 0; r < Math.floor(h / 70); r++) for (let c = 0; c < Math.floor(w / 62); c++) { const on = rnd() > .35; x.fillStyle = on ? '#FFE9A0' : '#28305E'; x.fillRect(cx - w / 2 + 18 + c * 62, base - h + 22 + r * 70, 28, 34); } };
+  casa(120, 760, 230, 230, '#5A4A78', '#3E3258'); casa(370, 740, 200, 170, '#7C5A62', '#5A3E48'); casa(700, 745, 210, 200, '#6A6A8E', '#47476A'); casa(960, 760, 240, 300, '#8A7E5E', '#5E5640');
+  // arbustos y suelo
+  x.fillStyle = '#2E5A3A'; for (const [bx, by, br] of [[40, 790, 80], [250, 800, 70], [560, 795, 85], [800, 800, 75], [1040, 790, 90]]) { x.beginPath(); x.arc(bx, by, br, 0, 7); x.fill(); }
+  const sg = x.createLinearGradient(0, 780, 0, W); sg.addColorStop(0, '#3A6A44'); sg.addColorStop(1, '#244A30'); x.fillStyle = sg; x.fillRect(0, 790, W, W - 790);
+  // personaje con borde blanco de calcomanía
+  const st = document.createElement('canvas'); st.width = st.height = W; const sx = st.getContext('2d');
+  for (let i = 0; i < 48; i++) { const t = i / 48 * Math.PI * 2; sx.drawImage(gl, Math.cos(t) * 16, Math.sin(t) * 16); }
+  sx.globalCompositeOperation = 'source-in'; sx.fillStyle = '#FFFFFF'; sx.fillRect(0, 0, W, W);
+  x.save(); x.shadowColor = 'rgba(0,0,0,.35)'; x.shadowBlur = 24; x.shadowOffsetY = 10; x.drawImage(st, 0, 0); x.restore();
+  x.drawImage(gl, 0, 0);
+  if (NOMBRE) { x.font = `700 ${NOMBRE.length > 11 ? 70 : 78}px Fredoka`; x.textAlign = 'center'; x.lineJoin = 'round'; const y = W - 150;
+    x.lineWidth = 18; x.strokeStyle = '#14141A'; x.strokeText(NOMBRE, W / 2, y); x.fillStyle = '#FFD23A'; x.fillText(NOMBRE, W / 2, y); }
+  let fin = o;
+  if (CIRC) { const c = document.createElement('canvas'); c.width = c.height = W; const cx = c.getContext('2d');
+    cx.fillStyle = '#D9D9D9'; cx.beginPath(); cx.arc(W / 2, W / 2, W / 2 - 4, 0, 7); cx.fill(); cx.fillStyle = '#FFFFFF'; cx.beginPath(); cx.arc(W / 2, W / 2, W / 2 - 34, 0, 7); cx.fill();
+    cx.save(); cx.beginPath(); cx.arc(W / 2, W / 2, W / 2 - 52, 0, 7); cx.clip(); cx.drawImage(o, 0, 0); cx.restore(); fin = c; }
+  window.__png = fin.toDataURL('image/png'); } catch (e) { console.error(e.stack); window.__png = ''; }
+window.__listo = true; })();
+</script></body></html>
