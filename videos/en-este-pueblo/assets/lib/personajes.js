@@ -20,7 +20,7 @@
       if (inflado) { const ex = 1 - Math.pow(Math.abs(v.y) / (h / 2), 2), ey = 1 - Math.pow(Math.abs(v.x) / (w / 2), 2), ez = 1 - Math.pow(Math.abs(v.z) / (d / 2), 2); v.x += Math.sign(v.x) * inflado * Math.max(0, ex * ez); v.z += Math.sign(v.z) * inflado * Math.max(0, ex * ey); }
       p.setXYZ(i, v.x, v.y, v.z);
       // UV frontal plana; las caras de atrás van a una esquina "lisa" de la textura (0.02, 0.02)
-      { const cu = q => Math.min(.995, Math.max(.005, q)), pu = cu((v.x + w / 2) / w), pv = cu((v.y + h / 2) / h); if (frente || v.z > 0) uv.setXY(i, pu, pv); else uv.setXY(i, pu > .5 ? .995 : .005, pv); } // sin costuras: los lados toman la orilla del frente
+      { const cu = q => Math.min(.995, Math.max(.005, q)), pu = cu((v.x + w / 2) / w), pv = cu((v.y + h / 2) / h); if (frente || v.z > 0) uv.setXY(i, pu, pv); else uv.setXY(i, pu, .005); }   // atrás: fila de abajo del lienzo (color base), sin rayas // sin costuras: los lados toman la orilla del frente
     }
     g.computeVertexNormals(); return g;
   }
@@ -63,6 +63,15 @@
   const telaEstrellas = (texto, seed) => tela(C.azul, (x, w, h) => { estrellas(x, w, h, seed, texto === 'pierna' ? 16 : 40, texto === 'pierna' ? 12 : 10);
     if (texto === 'sudadera') { x.textAlign = 'center'; x.fillStyle = C.amarillo; x.strokeStyle = '#1A2A80'; x.lineWidth = 6; x.font = 'bold 56px "DejaVu Serif", Georgia, serif'; x.strokeText('¡en este pueblo!', w / 2, h * .5); x.fillText('¡en este pueblo!', w / 2, h * .5); x.font = 'italic bold 26px "DejaVu Serif", Georgia, serif'; x.strokeText('más allá de las reglas', w / 2, h * .58); x.fillText('más allá de las reglas', w / 2, h * .58); }
     if (texto === 'pierna') { x.save(); x.translate(w / 2, h / 2); x.rotate(Math.PI / 2); x.textAlign = 'center'; x.fillStyle = C.amarillo; x.font = 'bold 84px "DejaVu Serif", Georgia, serif'; x.fillText('en este pueblo', 0, 30); x.restore(); } });
+
+  function tronquito(x, cx, cy, s) { x.save(); x.translate(cx, cy);
+    x.fillStyle = '#9A6640'; x.beginPath(); x.roundRect(-s * .42, -s * .5, s * .84, s * 1.05, s * .16); x.fill();
+    x.strokeStyle = 'rgba(60,30,10,.45)'; x.lineWidth = s * .035; for (const k of [-.24, .02, .26]) { x.beginPath(); x.moveTo(s * k, -s * .2); x.lineTo(s * k + s * .02, s * .45); x.stroke(); }
+    x.fillStyle = '#E9C890'; x.beginPath(); x.ellipse(0, -s * .5, s * .42, s * .13, 0, 0, 7); x.fill(); x.strokeStyle = '#B98A55'; x.lineWidth = s * .03; x.beginPath(); x.ellipse(0, -s * .5, s * .22, s * .065, 0, 0, 7); x.stroke();
+    x.fillStyle = '#141414'; for (const e of [-.15, .15]) { x.beginPath(); x.arc(s * e, -s * .12, s * .06, 0, 7); x.fill(); }
+    x.strokeStyle = '#141414'; x.lineWidth = s * .045; x.lineCap = 'round'; x.beginPath(); x.arc(0, s * .02, s * .13, .3, Math.PI - .3); x.stroke();
+    x.strokeStyle = '#7A4A2A'; x.lineWidth = s * .07; x.beginPath(); x.moveTo(s * .4, s * .15); x.lineTo(s * .7, -s * .25); x.stroke();
+    x.fillStyle = '#5DB36A'; x.beginPath(); x.ellipse(s * .74, -s * .33, s * .12, s * .06, -.7, 0, 7); x.fill(); x.restore(); }
 
   // ---------- piezas de pelo y gorros ----------
   const bola = (r, m, x, y, z, sx = 1, sy = 1, sz = 1) => { const o = M(new THREE.SphereGeometry(r, 18, 14), m, x, y, z); o.scale.set(sx, sy, sz); return o; };
@@ -185,9 +194,11 @@
   // ---------- catálogo ----------
   const lisa = (col) => sm(col);
   const CAT = {
-    prota: () => { const tT = telaEstrellas('sudadera', 7), tM = telaEstrellas('manga', 11), tP = telaEstrellas('pierna', 3), tP2 = telaEstrellas('manga', 5);
-      return avatar({ matTorso: sm('#FFFFFF', { map: tT }), matManga: sm('#FFFFFF', { map: tM }), matPiernaD: sm('#FFFFFF', { map: tP }), matPiernaI: sm('#FFFFFF', { map: tP2 }), zapato: '#F4F4F4',
-        ropa: (t, z) => { capucha(t, C.azul); cordones(t, C.amarillo, z + .02); bolsilloCanguro(t, '#1C38B0', z); }, gorro: gorroTejido, gorroY: 0, expr: 'lado' }); },
+    prota: () => { const tT = tela(C.azul, (x, w, h) => tronquito(x, w * .74, h * .3, w * .17));
+      return avatar({ matTorso: sm('#FFFFFF', { map: tT }), torso: C.azul, manga: C.azul, pierna: '#1B2F9A', zapato: '#F4F4F4',
+        ropa: (t, z) => { capucha(t, C.azul); cordones(t, C.amarillo, z + .02); bolsilloCanguro(t, '#1C38B0', z); t.add(M(rbox(1.63, .16, .83, .06), sm(C.amarillo), 0, -.69, 0)); },   // orilla amarilla
+        extra: (g, U) => U.brazos.forEach(b => b.add(M(rbox(.77, .15, .77, .05), sm(C.amarillo), 0, -1.1, 0))),          // puños amarillos
+        gorro: gorroTejido, gorroY: 0, expr: 'lado' }); },
     linda: (o = {}) => avatar({ torso: '#9C6BC7', pierna: '#8D8F96', zapato: '#7A7C84', suela: '#5A5C64', pelo: 'chongo', colPelo: '#8B5A2B', ropa: (t, z) => { cuelloV(t, '#FFFFFF', z); botones(t, '#FFFFFF', 0, [.2, -.15], z + .01); },
       gorro: o.sinGorro ? null : () => gorroFiesta('#8B5A2B'), gorroY: 1.1, gorroX: .15, gorroRot: -.18, expr: 'feliz', caraOpts: { lentes: true } }),
     abuela: (o = {}) => avatar({ torso: '#B89AD6', manga: '#B89AD6', pierna: '#C79BC6', zapato: '#E3A9C8', suela: '#C882A8', pelo: 'ondas', colPelo: '#D6D6D9', ropa: (t, z) => { tirantes(t, '#C79BC6', z); botones(t, '#FFFFFF', .3, [.32], z + .04); botones(t, '#FFFFFF', -.3, [.32], z + .04); },
@@ -209,7 +220,7 @@
     pecera,
   };
   const PALETAS = {
-    prota: [C.azul, C.amarillo, C.piel, C.rosa, C.celeste, '#FFFFFF', '#E07A28'], linda: ['#9C6BC7', '#8B5A2B', '#8D8F96', C.piel, C.rojo, C.negro], abuela: ['#C79BC6', '#B89AD6', '#D6D6D9', '#E3A9C8', '#7CC36A', C.piel],
+    prota: [C.azul, C.amarillo, '#1B2F9A', C.piel, '#9A6640', '#FFFFFF', '#E07A28'], linda: ['#9C6BC7', '#8B5A2B', '#8D8F96', C.piel, C.rojo, C.negro], abuela: ['#C79BC6', '#B89AD6', '#D6D6D9', '#E3A9C8', '#7CC36A', C.piel],
     nino_gorro: ['#E07A2E', '#7FCB8C', '#7CC36A', '#7F8FB0', C.piel, C.rojo], kevin: ['#E34B3E', C.kevin, '#6F7C96', '#3D6BD8', '#FFFFFF'], rubio: ['#F3D06B', '#F2A33A', '#9FC4E8', '#7FAAD8', C.piel],
     invitados: ['#5DB36A', '#F4F4F4', C.rosa, '#F2D35B', '#F2E2B8', '#8A5A3C', C.kevin], alcalde: ['#F4F6FA', '#14141A', C.rosa], pecera: ['#F2A33A', '#F7C04A', C.celeste, '#D9C9A6', '#F4F4F2', '#141416'] };
   window.PUEBLO_P = { crear: (k, o) => CAT[k](o), CAT, avatar, balon, pecera, gorroFiesta, dibujaCara, rbox, sm, M, tex, estrellita, ESC, PALETAS, C };
