@@ -41,10 +41,10 @@ L.forEach(([k, nom, exprs], i) => {
     vista(crear(k), ang, cam, cx + 15 + j * 325, cy + 80, 320, 600); X.fillStyle = '#AEB6D8'; X.font = '22px "DejaVu Sans", sans-serif'; X.fillText(nv, cx + 25 + j * 325, cy + 670);
   });
   // cabezas con cada expresión (3D)
-  const cabY = (3.1 + .475 * 1.25) * E, n = Math.max(1, exprs.length), hw = Math.min(160, 960 / n);
+  const cabY = k === 'alcalde' ? 3.3 * E : (3.1 + .475 * 1.25) * E, n = Math.max(1, exprs.length), hw = Math.min(160, 960 / n);
   if (k === 'pecera') { const cam = new THREE.PerspectiveCamera(30, 960 / 300, .05, 20); cam.position.set(.15, 1.18, .95); cam.lookAt(0, 1.13, 0); vista(crear(k), .3, cam, cx + 20, cy + 690, 960, 300); X.fillStyle = '#AEB6D8'; X.font = '22px "DejaVu Sans", sans-serif'; X.fillText('acercamiento', cx + 28, cy + 980); }
   exprs.forEach((e, j) => { const o = crear(k); o.cara(e); const tgt = k === 'invitados' ? new THREE.Vector3(0, cabY, 0) : new THREE.Vector3(0, cabY + .03, 0);
-    const cam = new THREE.PerspectiveCamera(30, hw / 230, .05, 20); cam.position.set(tgt.x, tgt.y + .06, tgt.z + (k === 'invitados' ? 1.5 : 1.4)); cam.lookAt(tgt);
+    const cam = new THREE.PerspectiveCamera(30, hw / 230, .05, 20); cam.position.set(tgt.x, tgt.y + .06, tgt.z + (k === 'invitados' ? 1.5 : k === 'alcalde' ? 1.2 : 1.4)); cam.lookAt(tgt);
     if (k === 'invitados') o.children.forEach((a, q) => { if (q !== 1) a.visible = false; });
     vista(o, 0, cam, cx + 20 + j * (hw + 4), cy + 690, hw, 230); X.fillStyle = '#AEB6D8'; X.font = '20px "DejaVu Sans", sans-serif'; X.fillText(e, cx + 26 + j * (hw + 4), cy + 944); });
   // tirita de colores

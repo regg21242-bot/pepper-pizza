@@ -185,7 +185,13 @@
     invitado_verde: () => avatar({ piel: C.kevin, torso: '#5DB36A', pierna: '#6A7A6A', pelo: 'corto', colPelo: '#5A3A22', gorro: () => gorroFiesta(C.celeste), gorroY: .7, gorroRot: .1, expr: 'feliz' }),
     invitado_blanco: () => avatar({ torso: '#F4F4F4', matTorso: sm('#FFFFFF', { map: tela('#F4F4F4', (x, w, h) => estrellita(x, w / 2, h * .42, 120, C.rosa)) }), manga: '#F4F4F4', pierna: '#7A5A3A', pelo: 'corto', colPelo: '#6A4028', gorro: () => gorroFiesta(C.amarillo), gorroY: .7, gorroRot: -.1, expr: 'feliz' }),
     invitada_amarilla: () => avatar({ piel: '#8A5A3C', torso: '#F2D35B', pierna: '#6A7A6A', pelo: 'rizos', colPelo: '#F2E2B8', gorro: () => gorroFiesta('#F28DB2'), gorroY: 1.0, gorroRot: .1, expr: 'feliz' }),
-    alcalde: () => avatar({ piel: '#F4F6FA', torso: '#F4F6FA', manga: '#F4F6FA', pierna: '#F4F6FA', zapato: '#E6E9EF', suela: '#D0D4DC', redondo: true, gorro: sombreroCopa, gorroY: .47, expr: 'lado', ropa: (t, z) => botones(t, '#14141A', 0, [.3, -.1], z + .01) }),
+    alcalde: () => { const g = new THREE.Group(), s = new THREE.Group(); s.scale.setScalar(ESC); g.add(s); const b = sm('#F4F6FA', { roughness: .55 });
+      s.add(M(rbox(2.0, 1.6, 1.8, .7, .08), b, 0, .8, 0)); s.add(M(rbox(1.5, 1.3, 1.4, .55, .06), b, 0, 2.15, 0));
+      for (const sx of [-1, 1]) { const br = M(rbox(.5, 1.0, .5, .2), b, sx * 1.0, 2.2, 0); br.rotation.z = sx * .5; s.add(br); }
+      botones(s, '#14141A', 0, [2.4, 2.05], .72);
+      const cab = new THREE.Group(); cab.position.y = 3.3; s.add(cab); const cc = document.createElement('canvas'); cc.width = FW; cc.height = FH; const ct = new THREE.CanvasTexture(cc); ct.encoding = THREE.sRGBEncoding;
+      cab.add(M(rbox(1.1, 1.0, 1.0, .32, .05, 8), sm('#FFFFFF', { map: ct, roughness: .55 }))); const h = sombreroCopa(); h.position.y = .46; cab.add(h);
+      let ac = null; g.cara = (e) => { if (e === ac) return; ac = e; dibujaCara(cc.getContext('2d'), e, { piel: '#F4F6FA' }); ct.needsUpdate = true; }; g.cara('lado'); g.pose = () => {}; g.userData = { cabeza: cab }; return g; },
     pecera,
   };
   const PALETAS = {
