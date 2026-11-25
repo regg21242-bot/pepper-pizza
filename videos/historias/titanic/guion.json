@@ -1,0 +1,46 @@
+{
+ "titulo": "Imagina que despiertas en el Titanic",
+ "musica": "oscuro",
+ "cola": 2.6,
+ "lineas": [
+  {
+   "t": "Imagina que te despiertas a las *once cuarenta* de la noche… y tu cama tiembla."
+  },
+  {
+   "t": "Estás en el *Titanic*. El barco que, según todos… no se podía hundir."
+  },
+  {
+   "t": "Sales al pasillo. Nadie corre. La orquesta sigue tocando."
+  },
+  {
+   "t": "Pero abajo, el agua ya está entrando… en *cinco* compartimentos."
+  },
+  {
+   "t": "Hay botes salvavidas… pero solo para *mil ciento setenta y ocho* personas."
+  },
+  {
+   "t": "Y a bordo van más de *dos mil*.",
+   "pausa": 0.5
+  },
+  {
+   "t": "A las dos veinte de la mañana… el Titanic desaparece bajo el mar."
+  },
+  {
+   "t": "El agua está a *dos grados bajo cero*."
+  },
+  {
+   "t": "Solo sobreviven unas *setecientas* personas."
+  },
+  {
+   "t": "Si hubieras estado ahí… ¿te subes al primer bote, o esperas?"
+  }
+ ],
+ "descripcion": "Son las 11:40 p.m. y tu cama tiembla… estás en el Titanic 🚢 ¿Qué harías tú?",
+ "hashtags": [
+  "#titanic",
+  "#historia",
+  "#imagina",
+  "#pov",
+  "#datoscuriosos"
+ ]
+}

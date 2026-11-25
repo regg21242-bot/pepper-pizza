@@ -25,7 +25,7 @@
     const finM = new THREE.ShaderMaterial({ uniforms: { tC: { value: rtD.texture }, tB: { value: rtB1.texture }, tA: { value: rtA.texture }, fade: { value: 0 }, zoom: { value: 0 }, verde: { value: 0 }, mv: { value: new THREE.Vector2() }, bloom: { value: .9 }, rojo: { value: 0 }, oscuro: { value: 0 }, grano: { value: 0 } }, vertexShader: VS,
       fragmentShader: `uniform sampler2D tC, tB, tA; uniform float fade, zoom, verde, bloom, rojo, oscuro, grano; uniform vec2 mv; varying vec2 vUv;
         float h(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
-        void main(){ vec3 c = vec3(0.); for (int i = 0; i < 24; i++) { float s = float(i) / 23. - .5; c += texture2D(tC, vUv + mv * s - (vUv - .5) * zoom * (s + .5)).rgb; } c /= 24.;
+        void main(){ vec3 c = vec3(0.); if (abs(mv.x) + abs(mv.y) + abs(zoom) < 1e-6) { c = texture2D(tC, vUv).rgb; } else { for (int i = 0; i < 24; i++) { float s = float(i) / 23. - .5; c += texture2D(tC, vUv + mv * s - (vUv - .5) * zoom * (s + .5)).rgb; } c /= 24.; }
           c += texture2D(tB, vUv).rgb * bloom; vec3 ca = texture2D(tA, vUv).rgb; if (!(ca.r == ca.r) || !(ca.g == ca.g) || !(ca.b == ca.b)) ca = vec3(0.); c = mix(c, clamp(ca, 0., 64.), fade);
           float L = dot(c, vec3(.3, .55, .15)); c = mix(c, vec3(L * 1.9 + .02, L * .28, L * .32), rojo * .85);
           if (verde > 0.) { float Lv = dot(c, vec3(.3, .55, .15)); Lv = pow(Lv, 1.8) * .62; vec3 g = vec3(Lv * .32, Lv * 1.55 + .02, Lv * .36); g *= .82 + .18 * sin(vUv.y * 1920. * 1.6); g += (h(vUv * 777. + grano * 3.) - .5) * .06; c = mix(c, g, verde); }

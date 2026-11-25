@@ -1,0 +1,47 @@
+{
+ "titulo": "En este pueblo todos despiertan a las 3 a.m.",
+ "musica": "misterio",
+ "cola": 2.6,
+ "lineas": [
+  {
+   "t": "En este pueblo, todos se despiertan a las *tres de la mañana*."
+  },
+  {
+   "t": "No hay alarma. No hay ruido. Simplemente… abren los ojos."
+  },
+  {
+   "t": "Se levantan, se asoman por la ventana… y se quedan mirando la calle."
+  },
+  {
+   "t": "Quince minutos. Sin hablar. Luego vuelven a dormir… como si nada."
+  },
+  {
+   "t": "Yo pensaba que era una leyenda. Hasta que me mudé aquí."
+  },
+  {
+   "t": "La primera noche, me desperté a las tres… y todo el pueblo estaba en la ventana."
+  },
+  {
+   "t": "Pero no miraban la calle.",
+   "pausa": 0.6
+  },
+  {
+   "t": "Me miraban *a mí*."
+  },
+  {
+   "t": "Al día siguiente, el vecino me dijo: \"Tranquilo. Mañana ya vas a mirar *con nosotros*.\""
+  },
+  {
+   "t": "¿Tú te quedarías en este pueblo… o te irías esa misma noche?"
+  }
+ ],
+ "descripcion": "En este pueblo todos se despiertan a las 3:00 a.m.… y nadie sabe por qué 👀 Espera al final.",
+ "hashtags": [
+  "#historias",
+  "#terror",
+  "#misterio",
+  "#enestepueblo",
+  "#animacion",
+  "#creepy"
+ ]
+}

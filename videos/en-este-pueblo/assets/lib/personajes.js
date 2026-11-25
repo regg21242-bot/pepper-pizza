@@ -50,6 +50,10 @@
       case 'recta': ojo(ex[0]); ojo(ex[1]); x.lineWidth = W * .03; x.beginPath(); x.moveTo(W * .4, H * .7); x.lineTo(W * .6, H * .7); x.stroke(); break;
       case 'seria': ojo(ex[0]); ojo(ex[1]); ceja(ex[0], -3); ceja(ex[1], 3); x.lineWidth = W * .03; x.beginPath(); x.moveTo(W * .41, H * .71); x.lineTo(W * .59, H * .7); x.stroke(); break;
       case 'sonrisa': ojo(ex[0]); ojo(ex[1]); sonrisa(0); break;
+      case 'dormido': for (const cx of ex) { x.lineWidth = W * .03; x.beginPath(); x.moveTo(cx - W * .07, ey + H * .01); x.quadraticCurveTo(cx, ey + H * .07, cx + W * .07, ey + H * .01); x.stroke(); } x.lineWidth = W * .028; x.beginPath(); x.moveTo(W * .44, H * .72); x.lineTo(W * .56, H * .72); x.stroke(); break;
+      case 'vacio': for (const cx of ex) { x.fillStyle = '#FFFFFF'; x.beginPath(); x.arc(cx, ey, W * .085, 0, 7); x.fill(); x.lineWidth = W * .016; x.stroke(); x.fillStyle = C.negro; x.beginPath(); x.arc(cx, ey, W * .022, 0, 7); x.fill(); } x.lineWidth = W * .026; x.beginPath(); x.moveTo(W * .42, H * .72); x.lineTo(W * .58, H * .72); x.stroke(); break;
+      case 'miedo': for (const cx of ex) { x.lineWidth = W * .022; x.fillStyle = '#FFFFFF'; x.beginPath(); x.arc(cx, ey, W * .08, 0, 7); x.fill(); x.stroke(); x.fillStyle = C.negro; x.beginPath(); x.arc(cx, ey + H * .01, W * .026, 0, 7); x.fill(); }
+        ceja(ex[0], 9, -H * .03); ceja(ex[1], -9, -H * .03); x.lineWidth = W * .028; x.beginPath(); for (let i = 0; i <= 8; i++) x.lineTo(W * .38 + i * W * .03, H * .74 + (i % 2 ? -H * .02 : H * .02)); x.stroke(); break;
       default: ojo(ex[0]); ojo(ex[1]); sonrisa(1);   // 'lado'
     }
     if (expr === 'sorpresa_lagrima') { x.fillStyle = '#4AA8FF'; const tx = ex[1] + W * .07, ty = ey + W * .09; x.beginPath(); x.moveTo(tx, ty); x.quadraticCurveTo(tx + W * .04, ty + H * .09, tx, ty + H * .11); x.quadraticCurveTo(tx - W * .04, ty + H * .09, tx, ty); x.fill(); }
