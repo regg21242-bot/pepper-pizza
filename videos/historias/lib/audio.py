@@ -11,7 +11,7 @@ n2f = lambda m: 440 * 2 ** ((m - 69) / 12)
 class Mezcla:
     def __init__(s):
         s.mus = np.zeros((N, 2)); s.fx = np.zeros((N, 2)); s.T = T; s.SR = SR; s.rs = rs
-        s.cortes = [l['corte'] for l in T['lineas']][1:]; s.marca = min(DUR - 1.6, T['voz_fin'] + .55)
+        s.cortes = [l['corte'] for l in T['lineas']][1:]; s.marca = DUR + 5 if G.get('estilo') == 'alerta' else min(DUR - 1.6, T['voz_fin'] + .55)
     def add(s, buf, sig, t0, g=1.0, pan=0.0):
         i = int(t0 * SR)
         if i < 0 or i >= N or len(sig) == 0: return
@@ -92,7 +92,8 @@ class Mezcla:
         voz = np.zeros(N); voz[:min(N, len(v))] = v[:N]
         envv = s.lp(np.abs(voz), int(SR * .05)) * 2.2; duck = 1 - .72 * np.clip(envv / .06, 0, 1); duck = s.lp(duck, int(SR * .12))
         # la música termina en el cierre con una caída suave
-        fade = np.ones(N); i0 = int(s.marca * SR); fade[i0:] = np.linspace(1, .55, N - i0)
+        fade = np.ones(N); i0 = int(s.marca * SR)
+        if i0 < N: fade[i0:] = np.linspace(1, .55, N - i0)
         mezcla = s.mus * (duck * fade)[:, None] * .9 + s.fx * .8 + voz[:, None] * 1.0
         pk = np.max(np.abs(mezcla)); mezcla = mezcla / max(pk, 1e-9) * .89
         tmp = 'build/premezcla.wav'
@@ -104,7 +105,7 @@ class Mezcla:
 
 A = Mezcla(); A.musica(G.get('musica', 'oscuro'))
 for c in A.cortes: A.efecto(A.golpe(), c - .02, .55); A.efecto(A.whoosh(), c - .3, .35)
-A.efecto(A.subida(1.0), A.marca - 1.0, .4); A.efecto(A.campana(660), A.marca + .05, .35); A.efecto(A.campana(990), A.marca + .25, .2)
+if G.get('estilo') != 'alerta': A.efecto(A.subida(1.0), A.marca - 1.0, .4); A.efecto(A.campana(660), A.marca + .05, .35); A.efecto(A.campana(990), A.marca + .25, .2)
 if os.path.exists('efectos.py'):
     sys.path.insert(0, os.getcwd()); import efectos; efectos.efectos(A)
 A.guardar()

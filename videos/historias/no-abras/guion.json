@@ -1,0 +1,24 @@
+{
+ "titulo": "No abras la puerta · Parte 1",
+ "estilo": "alerta",
+ "musica": "oscuro",
+ "rate": "+8%",
+ "pitch": "-4Hz",
+ "cola": 4.5,
+ "lineas": [
+  {"t": "Son las *tres de la mañana*… y alguien toca tu puerta. Tres veces."},
+  {"t": "Del otro lado escuchas la voz de *tu mamá*: \"Mijo, ábreme. Se me olvidaron las llaves.\""},
+  {"t": "Te levantas medio dormido… y en eso vibra tu celular."},
+  {"t": "Es un mensaje… de tu mamá. Y dice: *no abras*. Yo sigo en casa de tu tía."},
+  {"t": "Vuelven a tocar. Tres veces. \"Mijo… hace mucho frío. Ábreme.\""},
+  {"t": "Te asomas por la mirilla. El pasillo está oscuro… pero alcanzas a ver *su suéter*. El mismo de siempre."},
+  {"t": "Le marcas a tu mamá. Y del otro lado de la puerta… *suena un celular*.", "pausa": 0.5},
+  {"t": "Te contesta. En tu oído… y detrás de la puerta. *Al mismo tiempo*."},
+  {"t": "\"¿Por qué no me abres, mijo?\""},
+  {"t": "Las luces del pasillo se apagan. Una por una. *Hasta la tuya*."},
+  {"t": "Y la manija… empieza a girar. Despacito."},
+  {"t": "¿Qué haces? La *A*: abres la puerta y le ves la cara. O la *B*: corres a tu cuarto y te encierras. Comenta A o B. Sígueme para la parte dos."}
+ ],
+ "descripcion": "Son las 3 a.m. y tu mamá toca la puerta… pero te acaba de escribir que sigue en casa de tu tía 😨 ¿A o B?",
+ "hashtags": ["#historias", "#terror", "#3am", "#pov", "#elige", "#creepy"]
+}

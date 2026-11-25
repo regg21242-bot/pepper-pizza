@@ -12,8 +12,9 @@
   const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v)), ease = (k) => { k = clamp(k); return k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; };
   const FUENTE = 'Fredoka', MARCA = 'El Pancho Huss';
   // ---------- tomas ----------
-  const L = T.lineas, FIN = T.fin, MARCA_INI = Math.min(FIN - 1.6, T.voz_fin + .55);
-  const tomas = L.map((l, i) => ({ ini: l.corte, fin: i + 1 < L.length ? L[i + 1].corte : MARCA_INI }));
+  const ALERTA = window.ESTILO === 'alerta';
+  const L = T.lineas, FIN = T.fin, MARCA_INI = ALERTA ? FIN + 99 : Math.min(FIN - 1.6, T.voz_fin + .55);
+  const tomas = L.map((l, i) => ({ ini: l.corte, fin: i + 1 < L.length ? L[i + 1].corte : Math.min(MARCA_INI, FIN) }));
   let actual = null;
   function liberar(e) { if (!e) return; e.scene.traverse(o => { if (o.geometry) o.geometry.dispose(); }); }
   function armar(i) { if (actual && actual.i === i) return actual; if (actual) liberar(actual.e); const e = window.TOMAS[i](window.K); const cam = new THREE.PerspectiveCamera(50, W / H, .05, 1500); actual = { i, e, cam }; return actual; }
@@ -22,10 +23,22 @@
   // ---------- subtítulos: grupos de 2–3 palabras, palabra activa en amarillo ----------
   const PAL = []; L.forEach((l, li) => l.palabras.forEach(p => PAL.push({ a: p[0], b: p[1], w: p[2], hl: p[3], li })));
   const GRUPOS = []; let g = [];
-  PAL.forEach((p, k) => { g.push(p); const sig = PAL[k + 1]; const corta = /[.,;:!?…"]$/.test(p.w) || g.length >= 3 || !sig || sig.li !== p.li || (g.length >= 2 && sig.w.length > 9);
+  PAL.forEach((p, k) => { g.push(p); const sig = PAL[k + 1]; const corta = /[.,;:!?…"]$/.test(p.w) || g.length >= (ALERTA ? 4 : 3) || !sig || sig.li !== p.li || (g.length >= 2 && sig.w.length > 9);
     if (corta) { GRUPOS.push(g); g = []; } });
   GRUPOS.forEach((G, k) => { G.ini = G[0].a; const sig = GRUPOS[k + 1]; G.fin = sig && sig[0].a - G[G.length - 1].b < .5 ? sig[0].a : G[G.length - 1].b + .3; });
+  function subtitulosAlerta(t) {
+    const G = GRUPOS.find(G => t >= G.ini && t < G.fin); if (!G) return;
+    const pop = clamp((t - G.ini) / .15); let size = 66; x.font = `700 ${size}px ${FUENTE}`; const txt = G.map(p => p.w.replace(/\*/g, ''));
+    let anchos = txt.map(w => x.measureText(w).width), esp = size * .32, tot = anchos.reduce((a, b) => a + b, 0) + esp * (txt.length - 1);
+    if (tot > 900) { size = Math.floor(size * 900 / tot); x.font = `700 ${size}px ${FUENTE}`; anchos = txt.map(w => x.measureText(w).width); esp = size * .32; tot = anchos.reduce((a, b) => a + b, 0) + esp * (txt.length - 1); }
+    x.save(); x.globalAlpha = pop; x.translate(W / 2, 236 - 10 * (1 - pop)); x.textBaseline = 'middle'; let px = -tot / 2, act = -1; G.forEach((p, k) => { if (t >= p.a - .02) act = k; });
+    G.forEach((p, k) => { const w = anchos[k]; const dicho = t >= p.a - .02;
+      if (k === act || p.hl) { x.save(); x.beginPath(); x.roundRect(px - 12, -size * .62, w + 24, size * 1.24, 12); x.fillStyle = p.hl ? 'rgba(255,255,255,.95)' : 'rgba(255,255,255,.14)'; x.fill(); x.lineWidth = 3; x.strokeStyle = 'rgba(255,255,255,.95)'; x.stroke(); x.restore(); }
+      x.shadowColor = 'rgba(0,0,0,.7)'; x.shadowBlur = 14; x.shadowOffsetY = 3; x.fillStyle = p.hl ? '#0B0B18' : (dicho ? '#FFFFFF' : 'rgba(255,255,255,.55)'); if (p.hl) x.shadowColor = 'transparent';
+      x.fillText(txt[k], px, 0); x.shadowColor = 'transparent'; px += w + esp; });
+    x.restore(); }
   function subtitulos(t) {
+    if (ALERTA) return subtitulosAlerta(t);
     const G = GRUPOS.find(G => t >= G.ini && t < G.fin); if (!G) return;
     const pop = clamp((t - G.ini) / .12), s = .82 + .18 * (1 - Math.pow(1 - pop, 3)) + .04 * Math.sin(pop * Math.PI);
     let size = 104; x.font = `700 ${size}px ${FUENTE}`; const txt = G.map(p => p.w); let anchos = txt.map(w => x.measureText(w).width), esp = size * .36, tot = anchos.reduce((a, b) => a + b, 0) + esp * (txt.length - 1);
@@ -39,7 +52,7 @@
   // ---------- marca ----------
   const img = new Image(); img.src = window.MARCA_IMG;
   function marcaChica() { x.save(); x.globalAlpha = .82; x.font = `700 34px ${FUENTE}`; x.textBaseline = 'middle'; x.lineJoin = 'round'; x.lineWidth = 8; x.strokeStyle = 'rgba(0,0,0,.6)';
-    const tx = '@' + MARCA.replace(/ /g, ''); x.strokeText(tx, 44, 200); x.fillStyle = '#FFFFFF'; x.fillText(tx, 44, 200); x.restore(); }
+    const tx = '@' + MARCA.replace(/ /g, ''); const yy = ALERTA ? 1800 : 200; if (ALERTA) x.globalAlpha = .55; x.strokeText(tx, 44, yy); x.fillStyle = '#FFFFFF'; x.fillText(tx, 44, yy); x.restore(); }
   function cierre(t) { const k = clamp((t - MARCA_INI) / .45); x.fillStyle = `rgba(8,10,22,${.94 * k})`; x.fillRect(0, 0, W, H); if (k <= 0) return;
     const e = 1 - Math.pow(1 - k, 3), r = 250 * (.7 + .3 * e); x.save(); x.globalAlpha = k; x.translate(W / 2, 820);
     x.beginPath(); x.arc(0, 0, r + 14, 0, 7); x.fillStyle = '#FFE135'; x.fill(); x.save(); x.beginPath(); x.arc(0, 0, r, 0, 7); x.clip(); if (img.complete) x.drawImage(img, -r * 1.08, -r * 1.08, r * 2.16, r * 2.16); x.restore();
