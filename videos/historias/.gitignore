@@ -1,3 +1,5 @@
 */build/
 build.log
 __pycache__/
+# render sin comprimir (los finales van en finales/)
+*/*.mp4
