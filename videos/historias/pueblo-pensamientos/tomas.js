@@ -6,7 +6,7 @@
     for (let i = 0; i < 5; i++) { const a = K.arbol(1 + (i % 2) * .2); a.position.set((i % 2 ? 1 : -1) * 5.6, 0, 1 - i * 8); s.add(a); }
     return s; }
   // persona con burbuja encima
-  function conBurbuja(K, s, a, texto, o = {}) { const b = K.burbuja(texto, { tam: o.tam || 1.3 }); b.position.set(o.dx || .55, o.y || 2.45, 0); a.add(b); return b; }
+  function conBurbuja(K, s, a, texto, o = {}) { const b = K.burbuja(texto, { tam: o.tam || 1.3 }); b.position.set(o.dx ?? .55, o.y ?? 2.45, 0); a.add(b); return b; }
   const caminar = (a, t, v, z0, dir = 1) => { a.position.z = z0 - dir * t * v; a.pose(t, 'caminar'); };
   function salon(K) { const s = K.escena('#0E1018'); K.cuarto(s, { pared: '#D8C8A0', w: 8, d: 8, h: 3.2, piso: K.mat('#FFFFFF', { map: K.rep(K.TEX.pisoMadera, 2, 2), roughness: .8 }) }); K.hemi(s, '#FFF4E0', '#6A5A48', 1.1); K.sol(s, { i: .9, dir: [6, 10, 8], r: 8 });
     s.add(K.caja(3.6, 1.6, .08, K.mat('#24402E', { roughness: .9 }), 0, 1.8, -3.92, .02)); s.add(K.caja(3.7, .08, .2, K.mat('#9A6A42'), 0, .98, -3.85, .02));
@@ -40,7 +40,7 @@
       return { scene: s, cam: K.cam([0, 1.95, 4.4], [0, 2.0, .9], 42), cam2: K.cam([0, 1.95, 3.8], [0, 2.0, .9], 40), anima: (t) => { const n = Math.min(etapas.length - 1, Math.floor(t / .5)); etapas.forEach((b, i) => b.visible = i === n); a.userData.cabeza.rotation.z = .05 * Math.sin(t * 2); } }; },
     // 5 — un niño al que nadie puede escuchar: todos tienen burbuja menos él
     (K) => { const s = pueblo(K); const n = K.persona({ expr: 'recta', avatar: NINO }); n.position.set(0, 0, 0); s.add(n); const gente = [];
-      [[-2.2, 1.5, .6, '¿?'], [2.3, 1.2, -.7, '¿Qué estará pensando?'], [-1.6, -2.2, .3, '…'], [1.8, -2.6, -.4, 'No oigo nada']].forEach(([x, z, ry, tx], i) => { const a = K.persona({ i: 40 + i * 5, expr: 'preocupado' }); a.position.set(x, 0, z); a.rotation.y = Math.atan2(-x, -z); s.add(a); conBurbuja(K, s, a, tx, { tam: 1.2, dx: 0 }); gente.push(a); });
+      [[-2.2, 1.5, .6, '¿?'], [2.3, 1.2, -.7, '¿Qué estará pensando?'], [-1.6, -2.2, .3, '…'], [1.8, -2.6, -.4, 'No oigo nada']].forEach(([x, z, ry, tx], i) => { const a = K.persona({ i: 40 + i * 5, expr: 'preocupado' }); a.position.set(x, 0, z); a.rotation.y = Math.atan2(-x, -z); s.add(a); conBurbuja(K, s, a, tx, { tam: 1.0, dx: 0 }); gente.push(a); });
       return { scene: s, cam: K.cam([0, 3.2, 7.5], [0, 1.3, 0], 46), cam2: K.cam([0, 2.6, 5.5], [0, 1.4, 0], 42), anima: (t) => { n.pose(t, 'quieto'); gente.forEach(a => a.pose(t, 'quieto')); } }; },
     // 6 — la gente le tiene miedo: se alejan y murmuran
     (K) => { const s = pueblo(K); const n = K.persona({ expr: 'recta', avatar: NINO }); n.position.set(0, 0, -2); s.add(n); const g = [];
@@ -50,7 +50,7 @@
     // 7 — el protagonista le pregunta (en una banca del parque)
     (K) => { const s = pueblo(K, { tarde: true }); const bn = K.caja(2.2, .1, .6, K.mat('#9A6A42'), 0, .5, 0, .02); s.add(bn); s.add(K.caja(2.2, .5, .08, K.mat('#9A6A42'), 0, .85, -.28, .02));
       const n = K.persona({ expr: 'recta', avatar: NINO }); n.position.set(.55, .5, .1); n.pose(0, 'sentado'); s.add(n); const p = K.prota('lado'); p.position.set(-.6, .5, .1); p.pose(0, 'sentado'); p.rotation.y = .35; s.add(p);
-      conBurbuja(K, s, p, '¿Qué piensas todo el tiempo?', { tam: 1.3, dx: 0, y: 1.8 });
+      conBurbuja(K, s, p, '¿Qué piensas todo el tiempo?', { tam: 1.2, dx: .5, y: 1.8 });
       return { scene: s, cam: K.cam([0, 1.6, 4.8], [0, 1.4, 0], 44), cam2: K.cam([0, 1.6, 4.2], [0, 1.4, 0], 42), anima: (t) => { p.pose(t, 'sentado'); n.pose(t, 'sentado'); } }; },
     // 8 — "Nada. Por eso soy el único que es libre."
     (K) => { const s = pueblo(K, { tarde: true }); s.add(K.caja(2.2, .1, .6, K.mat('#9A6A42'), 0, .5, 0, .02)); s.add(K.caja(2.2, .5, .08, K.mat('#9A6A42'), 0, .85, -.28, .02));
