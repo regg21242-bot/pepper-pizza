@@ -3,10 +3,11 @@
    Tiempos en window.T (tiempos.js, generado por voz.py con Whisper). */
 (function () {
   const W = 1080, H = 1920, THREE = window.THREE, T = window.T, FPS = 30;
-  const gl = document.createElement('canvas'); gl.width = W; gl.height = H;
-  const R = new THREE.WebGLRenderer({ canvas: gl, antialias: false, preserveDrawingBuffer: true }); R.setPixelRatio(1); R.setSize(W, H, false);
+  const BAJA = location.search.includes('baja'), GW = BAJA ? W / 2 : W, GH = BAJA ? H / 2 : H;
+  const gl = document.createElement('canvas'); gl.width = GW; gl.height = GH;
+  const R = new THREE.WebGLRenderer({ canvas: gl, antialias: false, preserveDrawingBuffer: true }); R.setPixelRatio(1); R.setSize(GW, GH, false);
   R.outputEncoding = THREE.sRGBEncoding; R.toneMapping = THREE.ACESFilmicToneMapping; R.toneMappingExposure = .9; R.shadowMap.enabled = true; R.shadowMap.type = THREE.PCFSoftShadowMap;
-  const PP = window.POST(R, W, H);
+  const PP = window.POST(R, GW, GH);
   const out = document.getElementById('c'); out.width = W; out.height = H; const x = out.getContext('2d');
   const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v)), sine = (k) => -(Math.cos(Math.PI * clamp(k)) - 1) / 2;
   const E = T.escenas, FIN = T.fin;
@@ -58,7 +59,7 @@
     if (e.sacudida) { const s = e.sacudida(tl); A.cam.position.x += Math.sin(tg * 91) * s * .01; A.cam.position.y += Math.cos(tg * 73) * s * .008; }
     const po = Object.assign({ focus: dist, ap: .06, bloom: .9, umbral: .75, grano: tg }, typeof e.post === 'function' ? e.post(tl, k) : (e.post || {}));
     PP.render(e.scene, A.cam, po);
-    x.drawImage(gl, 0, 0);
+    x.drawImage(gl, 0, 0, W, H);
     if (e.ca) aberracion(typeof e.ca === 'function' ? e.ca(tl) : e.ca);
     const v = x.createRadialGradient(W / 2, H * .5, H * .26, W / 2, H * .5, H * .74); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,.65)'); x.fillStyle = v; x.fillRect(0, 0, W, H);
     grano(tg);

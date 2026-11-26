@@ -66,5 +66,36 @@
       post: { ap: .05, bloom: 1.0 } };
   };
 
+
+  // ===== ESCENA 12 — Los vecinos se apagan (prueba) =====
+  S[11] = (Q, tq) => {
+    const NB = 0x2A3350, s = Q.escena({ fondo: NB, niebla: .03, nieblaColor: NB });
+    const dg = new THREE.SphereGeometry(80, 32, 16), col = [], cH = new THREE.Color(NB), cT = new THREE.Color(0x0B0F1C);
+    for (let i = 0; i < dg.attributes.position.count; i++) { const y = dg.attributes.position.getY(i) / 80; const cc = cH.clone().lerp(cT, clamp(y * 1.6)); col.push(cc.r, cc.g, cc.b); }
+    dg.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); const domo = new THREE.Mesh(dg, new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.BackSide, fog: true, depthWrite: false, depthTest: false })); domo.renderOrder = -10; s.add(domo);
+    const st = Q.estrellas(160, 70); s.add(st);
+    const f = Q.fachada({ pisos: 7 }); f.position.set(0, 0, -14); s.add(f);
+    const suelo = new THREE.Mesh(new THREE.PlaneGeometry(80, 60), Q.mat(0x161a24, { roughness: .6 })); suelo.rotation.x = -Math.PI / 2; s.add(suelo);
+    const luna = new THREE.DirectionalLight(Q.P.luna, 1.0); luna.position.set(-15, 30, 20); s.add(luna); s.add(new THREE.HemisphereLight(0x4a5a9a, 0x0b0f1c, .45));
+    const fa = Q.farola({ lado: 1, i: 5 }); fa.position.set(-6.5, 0, -8.5); s.add(fa);
+    // 14 encendidas: 11 cálidas y 3 de TV, en orden de apagado (de abajo hacia arriba, siguiendo el paneo)
+    const V = f.userData.ventanas.slice().sort((a, b) => a.p - b.p || a.c - b.c);
+    let sem = 3; const r = () => { sem = (sem * 16807) % 2147483647; return sem / 2147483647; };
+    const elegidas = []; const porPiso = [2, 2, 2, 2, 2, 2, 2];
+    for (let p = 0; p < 7; p++) { const cand = V.filter(v => v.p === p).sort(() => r() - .5).slice(0, porPiso[p]); elegidas.push(...cand); }
+    const tv = new Set([2, 7, 11]); elegidas.forEach((v, i) => f.userData.prender(v, tv.has(i) ? 'tv' : 'a'));
+    const T0 = window.EV.apagados12;
+    return { scene: s,
+      cam: (tl, k) => [[0, 1.6, 9], [0, 4 + 13.5 * k, -14], 50],
+      anima(tl, tg) {
+        elegidas.forEach((v, i) => { const t = T0[i]; if (tg >= t) { if (v.encendida) f.userData.apagar(v); return; }
+          if (!v.encendida) f.userData.prender(v, v.tipo || 'a');
+          const pre = t - tg; let k = 1; if (pre < 2 / 30) k = pre < 1 / 30 ? .35 : 1.25; // parpadeo 2 cuadros antes
+          if (v.tipo === 'tv') k *= .8 + .2 * Math.sin(tg * 23 + i); f.userData.brillo(v, k); });
+        // la farola se queda prendida (azul noche + niebla); al final solo luna
+      },
+      post: { ap: .02, bloom: 1.0 } };
+  };
+
   window.ESCENAS = S;
 })();

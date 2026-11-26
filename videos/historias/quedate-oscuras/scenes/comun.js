@@ -299,6 +299,43 @@
     g.userData = { refri: rf, franja, puertaRefri: piv, spot: sl, LZ0, LZ1, KD }; return g;
   }
 
-  window.Q = { P, mat, brilla, aditivo, cajaGeo, caja, esfera, cil, textura, halo, conoLuz, escena, luzSombra, polvo, moverPolvo, personaje, mano, celular, pantallaA, pantallaB, pantallaC,
+
+  // =============== FACHADA DE ENFRENTE (escenas 3, 12, 14) ===============
+  // Edificio que mira a +z, centrado en x=0, con 5 columnas x 7 pisos de ventanas. Cada ventana es su propia malla (para encender/apagar).
+  function texCortina(tipo) { return textura(128, 200, (x, w, h) => {
+    if (tipo === 'tv') { const g = x.createRadialGradient(w * .5, h * .55, 5, w * .5, h * .55, h * .7); g.addColorStop(0, '#b9c6ff'); g.addColorStop(1, '#5a6bb8'); x.fillStyle = g; x.fillRect(0, 0, w, h); x.fillStyle = 'rgba(20,25,60,.55)'; x.fillRect(0, h * .78, w, h * .22); return; }
+    const g = x.createRadialGradient(w * .5, h * .4, 5, w * .5, h * .4, h * .75); g.addColorStop(0, '#FFF1D0'); g.addColorStop(1, '#E8B870'); x.fillStyle = g; x.fillRect(0, 0, w, h);
+    x.fillStyle = 'rgba(120,70,30,.55)'; x.beginPath(); x.moveTo(0, 0); x.lineTo(w * .34, 0); x.quadraticCurveTo(w * .2, h * .5, w * .3, h); x.lineTo(0, h); x.fill();
+    x.beginPath(); x.moveTo(w, 0); x.lineTo(w * .7, 0); x.quadraticCurveTo(w * .84, h * .5, w * .74, h); x.lineTo(w, h); x.fill();
+    x.fillStyle = 'rgba(90,50,20,.35)'; x.fillRect(0, 0, w, 10); }); }
+  function fachada(o = {}) {
+    semilla = o.semilla || 23; const g = new THREE.Group(), PISOS = o.pisos || 7, COL = 5, AN = 14, ALTO = PISOS * 3 + .8;
+    g.add(caja(AN, ALTO, 6, mat(o.color || P.ladrillo, { roughness: .92 }), [0, ALTO / 2, -3], { r: .08, sombra: false }));
+    // vecinos a los lados
+    g.add(caja(10, ALTO - 3, 6, mat(P.grisAzul, { roughness: .92 }), [-12.2, (ALTO - 3) / 2, -3.4], { r: .08, sombra: false }));
+    g.add(caja(10, ALTO + 3, 6, mat(P.ladrillo2, { roughness: .92 }), [12.2, (ALTO + 3) / 2, -3.4], { r: .08, sombra: false }));
+    const corn = mat(0x2b2328, { roughness: .8 }); for (let p = 1; p < PISOS; p++) g.add(caja(AN + .3, .16, .3, corn, [0, p * 3 + .2, .1], { r: .04, sombra: false }));
+    g.add(caja(AN + .6, .45, .5, corn, [0, ALTO - .1, .1], { r: .06, sombra: false }));
+    const hueso = mat(P.hueso, { roughness: .7 }), negro = mat(0x0b0b0f, { roughness: .5, metalness: .3 }), apagado = new THREE.MeshBasicMaterial({ color: 0x07080e });
+    const ventanas = [];
+    const tCal = [texCortina('a'), texCortina('a')], tTv = texCortina('tv');
+    for (let p = 0; p < PISOS; p++) for (let c = 0; c < COL; c++) {
+      const x = (c - (COL - 1) / 2) * 2.5, y = p * 3 + 1.9; if (p === 0 && c === 2) { g.add(caja(1.6, 2.4, .2, mat(0x1d1512), [x, 1.2, .05])); continue; }
+      const vg = new THREE.Group(); vg.position.set(x, y, 0); g.add(vg);
+      vg.add(caja(1.2, 1.75, .14, hueso, [0, 0, .02], { r: .03, sombra: false })); vg.add(caja(1.5, .12, .3, hueso, [0, -.95, .12], { r: .03, sombra: false }));
+      const vid = new THREE.Mesh(new THREE.PlaneGeometry(.98, 1.52), apagado); vid.position.z = .1; vg.add(vid);
+      vg.add(caja(.05, 1.52, .06, hueso, [0, 0, .12], { sombra: false })); vg.add(caja(.98, .05, .06, hueso, [0, .2, .12], { sombra: false }));
+      if (p > 0 && (c === 1 || c === 3) && p % 2 === 1) { vg.add(caja(1.9, .12, .7, mat(0x2a2d38), [0, -1.0, .38], { r: .03, sombra: false })); vg.add(caja(1.9, .04, .04, negro, [0, -.12, .72], { sombra: false }));
+        for (let b = 0; b < 15; b++) vg.add(caja(.025, .85, .025, negro, [-.92 + b * .131, -.55, .72], { sombra: false })); }
+      const hal = halo(0xFFD9A0, 2.4, 0, [0, 0, .4]); vg.add(hal);
+      ventanas.push({ vid, hal, p, c, x, y, encendida: false });
+    }
+    const off = (v) => { v.vid.material = apagado; v.hal.material.opacity = 0; v.encendida = false; };
+    function prender(v, tipo, k = 1) { const m = new THREE.MeshBasicMaterial({ map: tipo === 'tv' ? tTv : tCal[v.c % 2], fog: true }); m.color.setScalar(1.35 * k); v.vid.material = m; v.hal.material.color.set(tipo === 'tv' ? 0x8fa2ff : 0xFFD9A0); v.hal.material.opacity = .28 * k; v.encendida = true; v.tipo = tipo; }
+    function brillo(v, k) { if (!v.encendida) return; v.vid.material.color.setScalar(1.35 * k); v.hal.material.opacity = .28 * k; }
+    g.userData = { ventanas, prender, apagar: off, brillo, ALTO }; return g;
+  }
+
+  window.Q = { P, fachada, mat, brilla, aditivo, cajaGeo, caja, esfera, cil, textura, halo, conoLuz, escena, luzSombra, polvo, moverPolvo, personaje, mano, celular, pantallaA, pantallaB, pantallaC,
     reloj, texReloj, buro, cama, ventanaCruz, recamara, hilera, colorVentana, auto, farola, perro, estrellas, calle, pasillo, rnd, SW, SH };
 })();
