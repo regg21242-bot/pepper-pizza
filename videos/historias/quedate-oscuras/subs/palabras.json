@@ -1,0 +1,1986 @@
+{
+"palabras": [
+{
+"w": "Te",
+"hl": false,
+"esc": 0,
+"a_edge": 0.33,
+"b_edge": 0.509,
+"a": 0.0,
+"b": 0.56,
+"src": "whisper"
+},
+{
+"w": "despierta",
+"hl": false,
+"esc": 0,
+"a_edge": 0.522,
+"b_edge": 1.031,
+"a": 0.56,
+"b": 1.08,
+"src": "whisper"
+},
+{
+"w": "una",
+"hl": false,
+"esc": 0,
+"a_edge": 1.044,
+"b_edge": 1.209,
+"a": 1.08,
+"b": 1.26,
+"src": "whisper"
+},
+{
+"w": "alerta",
+"hl": true,
+"esc": 0,
+"a_edge": 1.223,
+"b_edge": 1.594,
+"a": 1.26,
+"b": 1.66,
+"src": "whisper"
+},
+{
+"w": "en",
+"hl": false,
+"esc": 0,
+"a_edge": 1.607,
+"b_edge": 1.731,
+"a": 1.66,
+"b": 1.78,
+"src": "whisper"
+},
+{
+"w": "tu",
+"hl": false,
+"esc": 0,
+"a_edge": 1.745,
+"b_edge": 1.855,
+"a": 1.78,
+"b": 1.92,
+"src": "whisper"
+},
+{
+"w": "celular.",
+"hl": false,
+"esc": 0,
+"a_edge": 1.868,
+"b_edge": 2.487,
+"a": 1.92,
+"b": 2.3,
+"src": "whisper"
+},
+{
+"w": "Solo",
+"hl": false,
+"esc": 1,
+"a_edge": 3.007,
+"b_edge": 3.474,
+"a": 3.04,
+"b": 3.46,
+"src": "whisper"
+},
+{
+"w": "dice:",
+"hl": false,
+"esc": 1,
+"a_edge": 3.488,
+"b_edge": 3.914,
+"a": 3.46,
+"b": 3.8,
+"src": "whisper"
+},
+{
+"w": "«Quédate",
+"hl": false,
+"esc": 1,
+"a_edge": 4.202,
+"b_edge": 4.559,
+"a": 3.8,
+"b": 4.56,
+"src": "whisper"
+},
+{
+"w": "a",
+"hl": false,
+"esc": 1,
+"a_edge": 4.573,
+"b_edge": 4.6,
+"a": 4.56,
+"b": 4.68,
+"src": "whisper"
+},
+{
+"w": "oscuras».",
+"hl": true,
+"esc": 1,
+"a_edge": 4.614,
+"b_edge": 5.383,
+"a": 4.68,
+"b": 6.04,
+"src": "whisper"
+},
+{
+"w": "Y",
+"hl": false,
+"esc": 2,
+"a_edge": 5.903,
+"b_edge": 6.082,
+"a": 6.04,
+"b": 6.16,
+"src": "whisper"
+},
+{
+"w": "no",
+"hl": false,
+"esc": 2,
+"a_edge": 6.095,
+"b_edge": 6.26,
+"a": 6.16,
+"b": 6.3,
+"src": "whisper"
+},
+{
+"w": "suena",
+"hl": false,
+"esc": 2,
+"a_edge": 6.274,
+"b_edge": 6.604,
+"a": 6.3,
+"b": 6.6,
+"src": "whisper"
+},
+{
+"w": "solo",
+"hl": false,
+"esc": 2,
+"a_edge": 6.617,
+"b_edge": 6.892,
+"a": 6.6,
+"b": 6.88,
+"src": "whisper"
+},
+{
+"w": "el",
+"hl": false,
+"esc": 2,
+"a_edge": 6.906,
+"b_edge": 7.002,
+"a": 6.88,
+"b": 7.08,
+"src": "whisper"
+},
+{
+"w": "tuyo.",
+"hl": true,
+"esc": 2,
+"a_edge": 7.016,
+"b_edge": 7.565,
+"a": 7.08,
+"b": 7.42,
+"src": "whisper"
+},
+{
+"w": "Suenan",
+"hl": false,
+"esc": 2,
+"a_edge": 8.086,
+"b_edge": 8.635,
+"a": 8.14,
+"b": 8.6,
+"src": "whisper"
+},
+{
+"w": "todos.",
+"hl": false,
+"esc": 2,
+"a_edge": 8.649,
+"b_edge": 9.254,
+"a": 8.6,
+"b": 8.98,
+"src": "whisper"
+},
+{
+"w": "Y",
+"hl": false,
+"esc": 3,
+"a_edge": 9.774,
+"b_edge": 9.982,
+"a": 9.88,
+"b": 10.06,
+"src": "whisper"
+},
+{
+"w": "de",
+"hl": false,
+"esc": 3,
+"a_edge": 9.997,
+"b_edge": 10.116,
+"a": 10.06,
+"b": 10.18,
+"src": "whisper"
+},
+{
+"w": "repente…",
+"hl": false,
+"esc": 3,
+"a_edge": 10.131,
+"b_edge": 10.726,
+"a": 10.18,
+"b": 10.58,
+"src": "whisper"
+},
+{
+"w": "silencio.",
+"hl": true,
+"esc": 3,
+"a_edge": 10.994,
+"b_edge": 11.857,
+"a": 11.08,
+"b": 11.64,
+"src": "whisper"
+},
+{
+"w": "Son",
+"hl": false,
+"esc": 4,
+"a_edge": 12.827,
+"b_edge": 13.129,
+"a": 12.88,
+"b": 13.14,
+"src": "whisper"
+},
+{
+"w": "las",
+"hl": false,
+"esc": 4,
+"a_edge": 13.143,
+"b_edge": 13.335,
+"a": 13.14,
+"b": 13.34,
+"src": "whisper"
+},
+{
+"w": "3:17.",
+"hl": true,
+"esc": 4,
+"a_edge": 13.349,
+"b_edge": 13.582,
+"a": 13.349,
+"b": 13.582,
+"src": "edge"
+},
+{
+"w": "Abres",
+"hl": false,
+"esc": 5,
+"a_edge": 14.941,
+"b_edge": 15.367,
+"a": 15.04,
+"b": 15.38,
+"src": "whisper"
+},
+{
+"w": "el",
+"hl": false,
+"esc": 5,
+"a_edge": 15.381,
+"b_edge": 15.477,
+"a": 15.38,
+"b": 15.54,
+"src": "whisper"
+},
+{
+"w": "mensaje.",
+"hl": false,
+"esc": 5,
+"a_edge": 15.49,
+"b_edge": 16.205,
+"a": 15.54,
+"b": 16.02,
+"src": "whisper"
+},
+{
+"w": "Hay",
+"hl": false,
+"esc": 5,
+"a_edge": 16.725,
+"b_edge": 17.055,
+"a": 16.86,
+"b": 17.06,
+"src": "whisper"
+},
+{
+"w": "reglas.",
+"hl": true,
+"esc": 5,
+"a_edge": 17.068,
+"b_edge": 17.755,
+"a": 17.06,
+"b": 17.5,
+"src": "whisper"
+},
+{
+"w": "Afuera,",
+"hl": false,
+"esc": 6,
+"a_edge": 18.275,
+"b_edge": 18.824,
+"a": 18.34,
+"b": 18.84,
+"src": "whisper"
+},
+{
+"w": "la",
+"hl": false,
+"esc": 6,
+"a_edge": 19.099,
+"b_edge": 19.223,
+"a": 19.18,
+"b": 19.28,
+"src": "whisper"
+},
+{
+"w": "ciudad.",
+"hl": false,
+"esc": 6,
+"a_edge": 19.237,
+"b_edge": 19.676,
+"a": 19.28,
+"b": 19.56,
+"src": "whisper"
+},
+{
+"w": "Ni",
+"hl": false,
+"esc": 6,
+"a_edge": 20.197,
+"b_edge": 20.527,
+"a": 20.26,
+"b": 20.58,
+"src": "whisper"
+},
+{
+"w": "un",
+"hl": false,
+"esc": 6,
+"a_edge": 20.54,
+"b_edge": 20.664,
+"a": 20.58,
+"b": 20.72,
+"src": "whisper"
+},
+{
+"w": "auto.",
+"hl": false,
+"esc": 6,
+"a_edge": 20.678,
+"b_edge": 21.227,
+"a": 20.72,
+"b": 21.0,
+"src": "whisper"
+},
+{
+"w": "Ni",
+"hl": false,
+"esc": 6,
+"a_edge": 21.747,
+"b_edge": 22.077,
+"a": 21.78,
+"b": 22.12,
+"src": "whisper"
+},
+{
+"w": "un",
+"hl": false,
+"esc": 6,
+"a_edge": 22.09,
+"b_edge": 22.228,
+"a": 22.12,
+"b": 22.3,
+"src": "whisper"
+},
+{
+"w": "alma.",
+"hl": true,
+"esc": 6,
+"a_edge": 22.242,
+"b_edge": 22.763,
+"a": 22.3,
+"b": 22.52,
+"src": "whisper"
+},
+{
+"w": "Nada.",
+"hl": true,
+"esc": 6,
+"a_edge": 23.283,
+"b_edge": 23.874,
+"a": 23.4,
+"b": 23.72,
+"src": "whisper"
+},
+{
+"w": "«No",
+"hl": false,
+"esc": 7,
+"a_edge": 24.844,
+"b_edge": 25.119,
+"a": 24.8,
+"b": 25.16,
+"src": "whisper"
+},
+{
+"w": "enciendas",
+"hl": false,
+"esc": 7,
+"a_edge": 25.132,
+"b_edge": 25.668,
+"a": 25.16,
+"b": 25.6,
+"src": "whisper"
+},
+{
+"w": "ninguna",
+"hl": false,
+"esc": 7,
+"a_edge": 25.682,
+"b_edge": 26.067,
+"a": 25.6,
+"b": 26.02,
+"src": "whisper"
+},
+{
+"w": "luz.»",
+"hl": true,
+"esc": 7,
+"a_edge": 26.08,
+"b_edge": 26.506,
+"a": 26.02,
+"b": 26.34,
+"src": "whisper"
+},
+{
+"w": "«No",
+"hl": false,
+"esc": 8,
+"a_edge": 27.027,
+"b_edge": 27.288,
+"a": 27.08,
+"b": 27.34,
+"src": "whisper"
+},
+{
+"w": "te",
+"hl": false,
+"esc": 8,
+"a_edge": 27.302,
+"b_edge": 27.398,
+"a": 27.34,
+"b": 27.46,
+"src": "whisper"
+},
+{
+"w": "asomes",
+"hl": false,
+"esc": 8,
+"a_edge": 27.412,
+"b_edge": 27.865,
+"a": 27.46,
+"b": 27.76,
+"src": "whisper"
+},
+{
+"w": "por",
+"hl": false,
+"esc": 8,
+"a_edge": 27.879,
+"b_edge": 28.03,
+"a": 27.76,
+"b": 28.06,
+"src": "whisper"
+},
+{
+"w": "la",
+"hl": false,
+"esc": 8,
+"a_edge": 28.044,
+"b_edge": 28.126,
+"a": 28.06,
+"b": 28.2,
+"src": "whisper"
+},
+{
+"w": "ventana.»",
+"hl": true,
+"esc": 8,
+"a_edge": 28.14,
+"b_edge": 28.799,
+"a": 28.2,
+"b": 28.6,
+"src": "whisper"
+},
+{
+"w": "«Y",
+"hl": false,
+"esc": 9,
+"a_edge": 29.319,
+"b_edge": 29.484,
+"a": 29.18,
+"b": 29.54,
+"src": "whisper"
+},
+{
+"w": "si",
+"hl": false,
+"esc": 9,
+"a_edge": 29.498,
+"b_edge": 29.635,
+"a": 29.54,
+"b": 29.68,
+"src": "whisper"
+},
+{
+"w": "tocan",
+"hl": false,
+"esc": 9,
+"a_edge": 29.649,
+"b_edge": 30.02,
+"a": 29.68,
+"b": 30.02,
+"src": "whisper"
+},
+{
+"w": "tres",
+"hl": false,
+"esc": 9,
+"a_edge": 30.033,
+"b_edge": 30.294,
+"a": 30.02,
+"b": 30.3,
+"src": "whisper"
+},
+{
+"w": "veces…»",
+"hl": true,
+"esc": 9,
+"a_edge": 30.308,
+"b_edge": 30.94,
+"a": 30.3,
+"b": 30.68,
+"src": "whisper"
+},
+{
+"w": "«…no",
+"hl": false,
+"esc": 9,
+"a_edge": 31.91,
+"b_edge": 32.253,
+"a": 31.78,
+"b": 32.28,
+"src": "whisper"
+},
+{
+"w": "abras.»",
+"hl": false,
+"esc": 9,
+"a_edge": 32.267,
+"b_edge": 32.858,
+"a": 32.28,
+"b": 32.68,
+"src": "whisper"
+},
+{
+"w": "«Esto",
+"hl": false,
+"esc": 10,
+"a_edge": 33.378,
+"b_edge": 33.776,
+"a": 33.4,
+"b": 33.8,
+"src": "whisper"
+},
+{
+"w": "no",
+"hl": false,
+"esc": 10,
+"a_edge": 33.79,
+"b_edge": 33.969,
+"a": 33.8,
+"b": 34.0,
+"src": "whisper"
+},
+{
+"w": "es",
+"hl": false,
+"esc": 10,
+"a_edge": 33.982,
+"b_edge": 34.12,
+"a": 34.0,
+"b": 34.18,
+"src": "whisper"
+},
+{
+"w": "un",
+"hl": false,
+"esc": 10,
+"a_edge": 34.134,
+"b_edge": 34.257,
+"a": 34.18,
+"b": 34.32,
+"src": "whisper"
+},
+{
+"w": "simulacro.»",
+"hl": true,
+"esc": 10,
+"a_edge": 34.271,
+"b_edge": 35.095,
+"a": 34.32,
+"b": 34.9,
+"src": "whisper"
+},
+{
+"w": "Uno",
+"hl": false,
+"esc": 11,
+"a_edge": 35.615,
+"b_edge": 35.917,
+"a": 35.72,
+"b": 35.92,
+"src": "whisper"
+},
+{
+"w": "por",
+"hl": false,
+"esc": 11,
+"a_edge": 35.931,
+"b_edge": 36.096,
+"a": 35.92,
+"b": 36.16,
+"src": "whisper"
+},
+{
+"w": "uno,",
+"hl": false,
+"esc": 11,
+"a_edge": 36.11,
+"b_edge": 36.371,
+"a": 36.16,
+"b": 36.38,
+"src": "whisper"
+},
+{
+"w": "los",
+"hl": false,
+"esc": 11,
+"a_edge": 36.632,
+"b_edge": 36.783,
+"a": 36.74,
+"b": 36.84,
+"src": "whisper"
+},
+{
+"w": "vecinos",
+"hl": false,
+"esc": 11,
+"a_edge": 36.796,
+"b_edge": 37.25,
+"a": 36.84,
+"b": 37.22,
+"src": "whisper"
+},
+{
+"w": "se",
+"hl": false,
+"esc": 11,
+"a_edge": 37.263,
+"b_edge": 37.36,
+"a": 37.22,
+"b": 37.42,
+"src": "whisper"
+},
+{
+"w": "apagan…",
+"hl": true,
+"esc": 11,
+"a_edge": 37.373,
+"b_edge": 37.95,
+"a": 37.42,
+"b": 37.78,
+"src": "whisper"
+},
+{
+"w": "hasta",
+"hl": false,
+"esc": 11,
+"a_edge": 38.921,
+"b_edge": 39.292,
+"a": 38.56,
+"b": 39.28,
+"src": "whisper"
+},
+{
+"w": "que",
+"hl": false,
+"esc": 11,
+"a_edge": 39.306,
+"b_edge": 39.47,
+"a": 39.28,
+"b": 39.5,
+"src": "whisper"
+},
+{
+"w": "todo",
+"hl": false,
+"esc": 11,
+"a_edge": 39.484,
+"b_edge": 39.745,
+"a": 39.5,
+"b": 39.72,
+"src": "whisper"
+},
+{
+"w": "queda",
+"hl": false,
+"esc": 11,
+"a_edge": 39.759,
+"b_edge": 40.034,
+"a": 39.72,
+"b": 40.02,
+"src": "whisper"
+},
+{
+"w": "a",
+"hl": false,
+"esc": 11,
+"a_edge": 40.047,
+"b_edge": 40.089,
+"a": 40.047,
+"b": 40.089,
+"src": "edge"
+},
+{
+"w": "oscuras.",
+"hl": true,
+"esc": 11,
+"a_edge": 40.102,
+"b_edge": 40.899,
+"a": 40.089,
+"b": 40.56,
+"src": "whisper"
+},
+{
+"w": "Tú",
+"hl": false,
+"esc": 12,
+"a_edge": 41.419,
+"b_edge": 41.657,
+"a": 41.44,
+"b": 41.7,
+"src": "whisper"
+},
+{
+"w": "aguantas.",
+"hl": true,
+"esc": 12,
+"a_edge": 41.672,
+"b_edge": 42.431,
+"a": 41.7,
+"b": 42.1,
+"src": "whisper"
+},
+{
+"w": "Entonces,",
+"hl": false,
+"esc": 13,
+"a_edge": 44.001,
+"b_edge": 44.77,
+"a": 43.84,
+"b": 44.56,
+"src": "whisper"
+},
+{
+"w": "en",
+"hl": false,
+"esc": 13,
+"a_edge": 44.99,
+"b_edge": 45.1,
+"a": 45.02,
+"b": 45.16,
+"src": "whisper"
+},
+{
+"w": "el",
+"hl": false,
+"esc": 13,
+"a_edge": 45.114,
+"b_edge": 45.224,
+"a": 45.16,
+"b": 45.28,
+"src": "whisper"
+},
+{
+"w": "edificio",
+"hl": false,
+"esc": 13,
+"a_edge": 45.237,
+"b_edge": 45.732,
+"a": 45.28,
+"b": 45.8,
+"src": "whisper"
+},
+{
+"w": "de",
+"hl": false,
+"esc": 13,
+"a_edge": 45.746,
+"b_edge": 45.828,
+"a": 45.8,
+"b": 45.9,
+"src": "whisper"
+},
+{
+"w": "enfrente…",
+"hl": false,
+"esc": 13,
+"a_edge": 45.842,
+"b_edge": 46.474,
+"a": 45.9,
+"b": 46.28,
+"src": "whisper"
+},
+{
+"w": "alguien",
+"hl": false,
+"esc": 13,
+"a_edge": 47.444,
+"b_edge": 47.952,
+"a": 47.48,
+"b": 47.92,
+"src": "whisper"
+},
+{
+"w": "prende",
+"hl": false,
+"esc": 13,
+"a_edge": 47.966,
+"b_edge": 48.282,
+"a": 47.92,
+"b": 48.34,
+"src": "whisper"
+},
+{
+"w": "una",
+"hl": false,
+"esc": 13,
+"a_edge": 48.296,
+"b_edge": 48.433,
+"a": 48.34,
+"b": 48.48,
+"src": "whisper"
+},
+{
+"w": "linterna.",
+"hl": true,
+"esc": 13,
+"a_edge": 48.447,
+"b_edge": 49.175,
+"a": 48.48,
+"b": 49.02,
+"src": "whisper"
+},
+{
+"w": "Un",
+"hl": false,
+"esc": 14,
+"a_edge": 49.695,
+"b_edge": 49.983,
+"a": 49.82,
+"b": 50.02,
+"src": "whisper"
+},
+{
+"w": "perro",
+"hl": false,
+"esc": 14,
+"a_edge": 49.997,
+"b_edge": 50.299,
+"a": 50.02,
+"b": 50.34,
+"src": "whisper"
+},
+{
+"w": "empieza",
+"hl": false,
+"esc": 14,
+"a_edge": 50.313,
+"b_edge": 50.766,
+"a": 50.34,
+"b": 50.62,
+"src": "whisper"
+},
+{
+"w": "a",
+"hl": false,
+"esc": 14,
+"a_edge": 50.78,
+"b_edge": 50.808,
+"a": 50.62,
+"b": 50.9,
+"src": "whisper"
+},
+{
+"w": "ladrar.",
+"hl": true,
+"esc": 14,
+"a_edge": 50.821,
+"b_edge": 51.398,
+"a": 50.9,
+"b": 51.18,
+"src": "whisper"
+},
+{
+"w": "Y",
+"hl": false,
+"esc": 15,
+"a_edge": 51.919,
+"b_edge": 52.112,
+"a": 51.96,
+"b": 52.2,
+"src": "whisper"
+},
+{
+"w": "la",
+"hl": false,
+"esc": 15,
+"a_edge": 52.127,
+"b_edge": 52.261,
+"a": 52.2,
+"b": 52.34,
+"src": "whisper"
+},
+{
+"w": "luz…",
+"hl": false,
+"esc": 15,
+"a_edge": 52.276,
+"b_edge": 52.604,
+"a": 52.34,
+"b": 52.62,
+"src": "whisper"
+},
+{
+"w": "se",
+"hl": false,
+"esc": 15,
+"a_edge": 52.871,
+"b_edge": 53.02,
+"a": 52.62,
+"b": 53.1,
+"src": "whisper"
+},
+{
+"w": "apaga.",
+"hl": true,
+"esc": 15,
+"a_edge": 53.035,
+"b_edge": 53.69,
+"a": 53.1,
+"b": 53.46,
+"src": "whisper"
+},
+{
+"w": "El",
+"hl": false,
+"esc": 15,
+"a_edge": 54.66,
+"b_edge": 54.883,
+"a": 54.2,
+"b": 54.92,
+"src": "whisper"
+},
+{
+"w": "perro…",
+"hl": false,
+"esc": 15,
+"a_edge": 54.898,
+"b_edge": 55.345,
+"a": 54.92,
+"b": 55.34,
+"src": "whisper"
+},
+{
+"w": "también.",
+"hl": true,
+"esc": 15,
+"a_edge": 55.612,
+"b_edge": 56.297,
+"a": 55.34,
+"b": 55.96,
+"src": "whisper"
+},
+{
+"w": "Tu",
+"hl": false,
+"esc": 16,
+"a_edge": 57.267,
+"b_edge": 57.514,
+"a": 57.26,
+"b": 57.54,
+"src": "whisper"
+},
+{
+"w": "celular",
+"hl": false,
+"esc": 16,
+"a_edge": 57.528,
+"b_edge": 57.995,
+"a": 57.54,
+"b": 57.96,
+"src": "whisper"
+},
+{
+"w": "se",
+"hl": false,
+"esc": 16,
+"a_edge": 58.009,
+"b_edge": 58.132,
+"a": 57.96,
+"b": 58.18,
+"src": "whisper"
+},
+{
+"w": "ilumina.",
+"hl": true,
+"esc": 16,
+"a_edge": 58.146,
+"b_edge": 58.764,
+"a": 58.18,
+"b": 58.62,
+"src": "whisper"
+},
+{
+"w": "Otra",
+"hl": false,
+"esc": 16,
+"a_edge": 59.734,
+"b_edge": 60.105,
+"a": 59.54,
+"b": 60.16,
+"src": "whisper"
+},
+{
+"w": "alerta.",
+"hl": true,
+"esc": 16,
+"a_edge": 60.119,
+"b_edge": 60.668,
+"a": 60.16,
+"b": 60.62,
+"src": "whisper"
+},
+{
+"w": "«Se",
+"hl": false,
+"esc": 16,
+"a_edge": 61.188,
+"b_edge": 61.49,
+"a": 61.188,
+"b": 61.49,
+"src": "edge"
+},
+{
+"w": "guía",
+"hl": false,
+"esc": 16,
+"a_edge": 61.504,
+"b_edge": 61.779,
+"a": 61.504,
+"b": 61.779,
+"src": "edge"
+},
+{
+"w": "por",
+"hl": false,
+"esc": 16,
+"a_edge": 61.792,
+"b_edge": 61.957,
+"a": 61.8,
+"b": 62.0,
+"src": "whisper"
+},
+{
+"w": "la",
+"hl": false,
+"esc": 16,
+"a_edge": 61.971,
+"b_edge": 62.053,
+"a": 62.0,
+"b": 62.14,
+"src": "whisper"
+},
+{
+"w": "luz.»",
+"hl": true,
+"esc": 16,
+"a_edge": 62.067,
+"b_edge": 62.507,
+"a": 62.14,
+"b": 62.42,
+"src": "whisper"
+},
+{
+"w": "Y",
+"hl": false,
+"esc": 17,
+"a_edge": 63.027,
+"b_edge": 63.233,
+"a": 63.06,
+"b": 63.3,
+"src": "whisper"
+},
+{
+"w": "entonces",
+"hl": false,
+"esc": 17,
+"a_edge": 63.247,
+"b_edge": 63.81,
+"a": 63.3,
+"b": 63.66,
+"src": "whisper"
+},
+{
+"w": "lo",
+"hl": false,
+"esc": 17,
+"a_edge": 63.824,
+"b_edge": 63.934,
+"a": 63.66,
+"b": 64.0,
+"src": "whisper"
+},
+{
+"w": "ves.",
+"hl": false,
+"esc": 17,
+"a_edge": 63.947,
+"b_edge": 64.497,
+"a": 64.0,
+"b": 64.26,
+"src": "whisper"
+},
+{
+"w": "Al",
+"hl": false,
+"esc": 17,
+"a_edge": 65.467,
+"b_edge": 65.714,
+"a": 65.56,
+"b": 65.76,
+"src": "whisper"
+},
+{
+"w": "fondo",
+"hl": false,
+"esc": 17,
+"a_edge": 65.728,
+"b_edge": 66.003,
+"a": 65.76,
+"b": 66.0,
+"src": "whisper"
+},
+{
+"w": "del",
+"hl": false,
+"esc": 17,
+"a_edge": 66.016,
+"b_edge": 66.154,
+"a": 66.0,
+"b": 66.22,
+"src": "whisper"
+},
+{
+"w": "pasillo…",
+"hl": true,
+"esc": 17,
+"a_edge": 66.168,
+"b_edge": 66.813,
+"a": 66.22,
+"b": 66.64,
+"src": "whisper"
+},
+{
+"w": "…dejaste",
+"hl": false,
+"esc": 18,
+"a_edge": 67.334,
+"b_edge": 67.938,
+"a": 67.42,
+"b": 67.96,
+"src": "whisper"
+},
+{
+"w": "el",
+"hl": false,
+"esc": 18,
+"a_edge": 67.952,
+"b_edge": 68.035,
+"a": 67.96,
+"b": 68.1,
+"src": "whisper"
+},
+{
+"w": "refri",
+"hl": true,
+"esc": 18,
+"a_edge": 68.048,
+"b_edge": 68.323,
+"a": 68.1,
+"b": 68.36,
+"src": "whisper"
+},
+{
+"w": "abierto.",
+"hl": false,
+"esc": 18,
+"a_edge": 68.337,
+"b_edge": 68.982,
+"a": 68.36,
+"b": 68.72,
+"src": "whisper"
+},
+{
+"w": "Y",
+"hl": false,
+"esc": 19,
+"a_edge": 69.503,
+"b_edge": 69.709,
+"a": 69.56,
+"b": 69.78,
+"src": "whisper"
+},
+{
+"w": "en",
+"hl": false,
+"esc": 19,
+"a_edge": 69.723,
+"b_edge": 69.819,
+"a": 69.78,
+"b": 69.9,
+"src": "whisper"
+},
+{
+"w": "la",
+"hl": false,
+"esc": 19,
+"a_edge": 69.833,
+"b_edge": 69.915,
+"a": 69.9,
+"b": 70.0,
+"src": "whisper"
+},
+{
+"w": "escalera…",
+"hl": true,
+"esc": 19,
+"a_edge": 69.929,
+"b_edge": 70.533,
+"a": 70.0,
+"b": 70.52,
+"src": "whisper"
+},
+{
+"w": "algo",
+"hl": false,
+"esc": 19,
+"a_edge": 70.863,
+"b_edge": 71.138,
+"a": 70.84,
+"b": 71.16,
+"src": "whisper"
+},
+{
+"w": "está",
+"hl": false,
+"esc": 19,
+"a_edge": 71.151,
+"b_edge": 71.399,
+"a": 71.16,
+"b": 71.44,
+"src": "whisper"
+},
+{
+"w": "subiendo.",
+"hl": false,
+"esc": 19,
+"a_edge": 71.412,
+"b_edge": 72.154,
+"a": 71.44,
+"b": 71.94,
+"src": "whisper"
+},
+{
+"w": "Para",
+"hl": false,
+"esc": 20,
+"a_edge": 72.674,
+"b_edge": 72.99,
+"a": 72.674,
+"b": 72.99,
+"src": "edge"
+},
+{
+"w": "cerrarlo,",
+"hl": false,
+"esc": 20,
+"a_edge": 73.004,
+"b_edge": 73.622,
+"a": 73.0,
+"b": 73.64,
+"src": "whisper"
+},
+{
+"w": "tienes",
+"hl": false,
+"esc": 20,
+"a_edge": 73.897,
+"b_edge": 74.226,
+"a": 74.06,
+"b": 74.18,
+"src": "whisper"
+},
+{
+"w": "que",
+"hl": false,
+"esc": 20,
+"a_edge": 74.24,
+"b_edge": 74.336,
+"a": 74.18,
+"b": 74.38,
+"src": "whisper"
+},
+{
+"w": "cruzar",
+"hl": false,
+"esc": 20,
+"a_edge": 74.35,
+"b_edge": 74.707,
+"a": 74.38,
+"b": 74.72,
+"src": "whisper"
+},
+{
+"w": "el",
+"hl": false,
+"esc": 20,
+"a_edge": 74.721,
+"b_edge": 74.817,
+"a": 74.72,
+"b": 74.88,
+"src": "whisper"
+},
+{
+"w": "pasillo…",
+"hl": true,
+"esc": 20,
+"a_edge": 74.831,
+"b_edge": 75.407,
+"a": 74.88,
+"b": 75.34,
+"src": "whisper"
+},
+{
+"w": "y",
+"hl": false,
+"esc": 20,
+"a_edge": 75.723,
+"b_edge": 75.751,
+"a": 75.34,
+"b": 75.82,
+"src": "whisper"
+},
+{
+"w": "la",
+"hl": false,
+"esc": 20,
+"a_edge": 75.765,
+"b_edge": 75.875,
+"a": 75.82,
+"b": 75.94,
+"src": "whisper"
+},
+{
+"w": "madera",
+"hl": false,
+"esc": 20,
+"a_edge": 75.888,
+"b_edge": 76.218,
+"a": 75.94,
+"b": 76.22,
+"src": "whisper"
+},
+{
+"w": "cruje",
+"hl": true,
+"esc": 20,
+"a_edge": 76.232,
+"b_edge": 76.575,
+"a": 76.22,
+"b": 76.62,
+"src": "whisper"
+},
+{
+"w": "a",
+"hl": false,
+"esc": 20,
+"a_edge": 76.589,
+"b_edge": 76.63,
+"a": 76.62,
+"b": 76.74,
+"src": "whisper"
+},
+{
+"w": "cada",
+"hl": false,
+"esc": 20,
+"a_edge": 76.644,
+"b_edge": 76.877,
+"a": 76.74,
+"b": 76.9,
+"src": "whisper"
+},
+{
+"w": "paso.",
+"hl": false,
+"esc": 20,
+"a_edge": 76.891,
+"b_edge": 77.427,
+"a": 76.9,
+"b": 77.24,
+"src": "whisper"
+},
+{
+"w": "Si",
+"hl": false,
+"esc": 21,
+"a_edge": 77.947,
+"b_edge": 78.263,
+"a": 78.06,
+"b": 78.3,
+"src": "whisper"
+},
+{
+"w": "te",
+"hl": false,
+"esc": 21,
+"a_edge": 78.277,
+"b_edge": 78.4,
+"a": 78.3,
+"b": 78.46,
+"src": "whisper"
+},
+{
+"w": "mueves,",
+"hl": false,
+"esc": 21,
+"a_edge": 78.414,
+"b_edge": 78.895,
+"a": 78.46,
+"b": 78.78,
+"src": "whisper"
+},
+{
+"w": "te",
+"hl": false,
+"esc": 21,
+"a_edge": 79.156,
+"b_edge": 79.279,
+"a": 79.2,
+"b": 79.34,
+"src": "whisper"
+},
+{
+"w": "oye.",
+"hl": true,
+"esc": 21,
+"a_edge": 79.293,
+"b_edge": 79.746,
+"a": 79.34,
+"b": 79.58,
+"src": "whisper"
+},
+{
+"w": "Si",
+"hl": false,
+"esc": 21,
+"a_edge": 80.716,
+"b_edge": 81.004,
+"a": 80.6,
+"b": 81.04,
+"src": "whisper"
+},
+{
+"w": "no",
+"hl": false,
+"esc": 21,
+"a_edge": 81.018,
+"b_edge": 81.156,
+"a": 81.04,
+"b": 81.2,
+"src": "whisper"
+},
+{
+"w": "te",
+"hl": false,
+"esc": 21,
+"a_edge": 81.169,
+"b_edge": 81.279,
+"a": 81.2,
+"b": 81.34,
+"src": "whisper"
+},
+{
+"w": "mueves…",
+"hl": false,
+"esc": 21,
+"a_edge": 81.293,
+"b_edge": 81.76,
+"a": 81.34,
+"b": 81.72,
+"src": "whisper"
+},
+{
+"w": "te",
+"hl": false,
+"esc": 21,
+"a_edge": 82.007,
+"b_edge": 82.103,
+"a": 82.06,
+"b": 82.2,
+"src": "whisper"
+},
+{
+"w": "ve.",
+"hl": true,
+"esc": 21,
+"a_edge": 82.117,
+"b_edge": 82.474,
+"a": 82.2,
+"b": 82.32,
+"src": "whisper"
+},
+{
+"w": "¿Qué",
+"hl": false,
+"esc": 22,
+"a_edge": 82.994,
+"b_edge": 83.227,
+"a": 83.12,
+"b": 83.26,
+"src": "whisper"
+},
+{
+"w": "haces?",
+"hl": true,
+"esc": 22,
+"a_edge": 83.241,
+"b_edge": 83.832,
+"a": 83.26,
+"b": 83.58,
+"src": "whisper"
+},
+{
+"w": "A:",
+"hl": true,
+"esc": 22,
+"a_edge": 84.802,
+"b_edge": 85.063,
+"a": 84.802,
+"b": 85.063,
+"src": "edge"
+},
+{
+"w": "cruzas",
+"hl": false,
+"esc": 22,
+"a_edge": 85.461,
+"b_edge": 85.86,
+"a": 85.58,
+"b": 85.86,
+"src": "whisper"
+},
+{
+"w": "gateando.",
+"hl": false,
+"esc": 22,
+"a_edge": 85.873,
+"b_edge": 86.629,
+"a": 85.86,
+"b": 86.4,
+"src": "whisper"
+},
+{
+"w": "B:",
+"hl": true,
+"esc": 22,
+"a_edge": 87.149,
+"b_edge": 87.561,
+"a": 87.149,
+"b": 87.561,
+"src": "edge"
+},
+{
+"w": "te",
+"hl": false,
+"esc": 22,
+"a_edge": 87.946,
+"b_edge": 88.056,
+"a": 87.94,
+"b": 88.14,
+"src": "whisper"
+},
+{
+"w": "tapas",
+"hl": false,
+"esc": 22,
+"a_edge": 88.069,
+"b_edge": 88.44,
+"a": 88.14,
+"b": 88.46,
+"src": "whisper"
+},
+{
+"w": "y",
+"hl": false,
+"esc": 22,
+"a_edge": 88.454,
+"b_edge": 88.509,
+"a": 88.46,
+"b": 88.58,
+"src": "whisper"
+},
+{
+"w": "esperas.",
+"hl": false,
+"esc": 22,
+"a_edge": 88.523,
+"b_edge": 89.237,
+"a": 88.58,
+"b": 89.14,
+"src": "whisper"
+},
+{
+"w": "Comenta.",
+"hl": true,
+"esc": 23,
+"a_edge": 89.757,
+"b_edge": 90.361,
+"a": 89.9,
+"b": 90.26,
+"src": "whisper"
+},
+{
+"w": "Lo",
+"hl": false,
+"esc": 23,
+"a_edge": 90.881,
+"b_edge": 91.169,
+"a": 91.02,
+"b": 91.24,
+"src": "whisper"
+},
+{
+"w": "que",
+"hl": false,
+"esc": 23,
+"a_edge": 91.183,
+"b_edge": 91.307,
+"a": 91.24,
+"b": 91.36,
+"src": "whisper"
+},
+{
+"w": "más",
+"hl": false,
+"esc": 23,
+"a_edge": 91.321,
+"b_edge": 91.513,
+"a": 91.36,
+"b": 91.52,
+"src": "whisper"
+},
+{
+"w": "se",
+"hl": false,
+"esc": 23,
+"a_edge": 91.527,
+"b_edge": 91.623,
+"a": 91.52,
+"b": 91.7,
+"src": "whisper"
+},
+{
+"w": "vote,",
+"hl": false,
+"esc": 23,
+"a_edge": 91.636,
+"b_edge": 92.062,
+"a": 91.636,
+"b": 92.062,
+"src": "edge"
+},
+{
+"w": "pasa",
+"hl": false,
+"esc": 23,
+"a_edge": 92.337,
+"b_edge": 92.639,
+"a": 92.32,
+"b": 92.64,
+"src": "whisper"
+},
+{
+"w": "en",
+"hl": false,
+"esc": 23,
+"a_edge": 92.653,
+"b_edge": 92.708,
+"a": 92.64,
+"b": 92.78,
+"src": "whisper"
+},
+{
+"w": "la",
+"hl": false,
+"esc": 23,
+"a_edge": 92.722,
+"b_edge": 92.832,
+"a": 92.78,
+"b": 92.88,
+"src": "whisper"
+},
+{
+"w": "parte",
+"hl": false,
+"esc": 23,
+"a_edge": 92.845,
+"b_edge": 93.175,
+"a": 92.88,
+"b": 93.14,
+"src": "whisper"
+},
+{
+"w": "2.",
+"hl": true,
+"esc": 23,
+"a_edge": 93.189,
+"b_edge": 93.683,
+"a": 93.189,
+"b": 93.683,
+"src": "edge"
+},
+{
+"w": "Sígueme",
+"hl": true,
+"esc": 23,
+"a_edge": 94.203,
+"b_edge": 94.766,
+"a": 94.38,
+"b": 94.78,
+"src": "whisper"
+},
+{
+"w": "para",
+"hl": false,
+"esc": 23,
+"a_edge": 94.78,
+"b_edge": 94.972,
+"a": 94.78,
+"b": 95.0,
+"src": "whisper"
+},
+{
+"w": "verlo.",
+"hl": false,
+"esc": 23,
+"a_edge": 94.986,
+"b_edge": 95.494,
+"a": 95.0,
+"b": 95.4,
+"src": "whisper"
+}
+],
+"escenas": [
+{
+"n": 1,
+"ini_voz": 0.3,
+"primera": 0.0,
+"ultima": 2.3,
+"corte": 0.0
+},
+{
+"n": 2,
+"ini_voz": 2.977,
+"primera": 3.04,
+"ultima": 6.04,
+"corte": 2.92
+},
+{
+"n": 3,
+"ini_voz": 5.873,
+"primera": 6.04,
+"ultima": 8.98,
+"corte": 5.92
+},
+{
+"n": 4,
+"ini_voz": 9.744,
+"primera": 9.88,
+"ultima": 11.64,
+"corte": 9.76
+},
+{
+"n": 5,
+"ini_voz": 12.797,
+"primera": 12.88,
+"ultima": 13.582,
+"corte": 12.76
+},
+{
+"n": 6,
+"ini_voz": 14.911,
+"primera": 15.04,
+"ultima": 17.5,
+"corte": 14.92
+},
+{
+"n": 7,
+"ini_voz": 18.245,
+"primera": 18.34,
+"ultima": 23.72,
+"corte": 18.22
+},
+{
+"n": 8,
+"ini_voz": 24.814,
+"primera": 24.8,
+"ultima": 26.34,
+"corte": 24.68
+},
+{
+"n": 9,
+"ini_voz": 26.997,
+"primera": 27.08,
+"ultima": 28.6,
+"corte": 26.96
+},
+{
+"n": 10,
+"ini_voz": 29.289,
+"primera": 29.18,
+"ultima": 32.68,
+"corte": 29.06
+},
+{
+"n": 11,
+"ini_voz": 33.348,
+"primera": 33.4,
+"ultima": 34.9,
+"corte": 33.28
+},
+{
+"n": 12,
+"ini_voz": 35.585,
+"primera": 35.72,
+"ultima": 40.56,
+"corte": 35.6
+},
+{
+"n": 13,
+"ini_voz": 41.389,
+"primera": 41.44,
+"ultima": 42.1,
+"corte": 41.32
+},
+{
+"n": 14,
+"ini_voz": 43.971,
+"primera": 43.84,
+"ultima": 49.02,
+"corte": 43.72
+},
+{
+"n": 15,
+"ini_voz": 49.665,
+"primera": 49.82,
+"ultima": 51.18,
+"corte": 49.7
+},
+{
+"n": 16,
+"ini_voz": 51.889,
+"primera": 51.96,
+"ultima": 55.96,
+"corte": 51.84
+},
+{
+"n": 17,
+"ini_voz": 57.237,
+"primera": 57.26,
+"ultima": 62.42,
+"corte": 57.14
+},
+{
+"n": 18,
+"ini_voz": 62.997,
+"primera": 63.06,
+"ultima": 66.64,
+"corte": 62.94
+},
+{
+"n": 19,
+"ini_voz": 67.304,
+"primera": 67.42,
+"ultima": 68.72,
+"corte": 67.3
+},
+{
+"n": 20,
+"ini_voz": 69.473,
+"primera": 69.56,
+"ultima": 71.94,
+"corte": 69.44
+},
+{
+"n": 21,
+"ini_voz": 72.644,
+"primera": 72.674,
+"ultima": 77.24,
+"corte": 72.554
+},
+{
+"n": 22,
+"ini_voz": 77.917,
+"primera": 78.06,
+"ultima": 82.32,
+"corte": 77.94
+},
+{
+"n": 23,
+"ini_voz": 82.964,
+"primera": 83.12,
+"ultima": 89.14,
+"corte": 83.0
+},
+{
+"n": 24,
+"ini_voz": 89.727,
+"primera": 89.9,
+"ultima": 95.4,
+"corte": 89.78
+}
+],
+"voz_fin": 95.634,
+"fin": 101.634
+}
