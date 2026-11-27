@@ -59,9 +59,12 @@
     if (e.sacudida) { const s = e.sacudida(tl); A.cam.position.x += Math.sin(tg * 91) * s * .01; A.cam.position.y += Math.cos(tg * 73) * s * .008; }
     const po = Object.assign({ focus: dist, ap: .06, bloom: .9, umbral: .75, grano: tg }, typeof e.post === 'function' ? e.post(tl, k) : (e.post || {}));
     PP.render(e.scene, A.cam, po);
-    x.drawImage(gl, 0, 0, W, H);
+    // gradación tipo referencia: menos saturación, más luz, negros levantados (azul-gris)
+    const gr = Object.assign({ sat: .72, luz: 1.22, con: .92, piso: '#1a1c26' }, e.grade || {});
+    x.filter = `saturate(${gr.sat}) brightness(${gr.luz}) contrast(${gr.con})`; x.drawImage(gl, 0, 0, W, H); x.filter = 'none';
+    if (gr.piso) { x.save(); x.globalCompositeOperation = 'screen'; x.fillStyle = gr.piso; x.fillRect(0, 0, W, H); x.restore(); }
     if (e.ca) aberracion(typeof e.ca === 'function' ? e.ca(tl) : e.ca);
-    const v = x.createRadialGradient(W / 2, H * .5, H * .26, W / 2, H * .5, H * .74); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,.65)'); x.fillStyle = v; x.fillRect(0, 0, W, H);
+    const v = x.createRadialGradient(W / 2, H * .5, H * .26, W / 2, H * .5, H * .74); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,.5)'); x.fillStyle = v; x.fillRect(0, 0, W, H);
     grano(tg);
     if (e.encima) e.encima(x, tl, tg, k);
     if (e.entrada === 'fundido' && tl < 7 / FPS) { x.fillStyle = `rgba(0,0,0,${1 - tl / (7 / FPS)})`; x.fillRect(0, 0, W, H); }

@@ -122,7 +122,7 @@
   // =============== RECÁMARA ===============
   function texReloj(txt, puntos = true) { return textura(256, 110, (x) => { x.fillStyle = '#050505'; x.fillRect(0, 0, 256, 110); x.font = '800 86px Inter'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.shadowColor = '#FF2A2A'; x.shadowBlur = 18; x.fillStyle = '#FF2A2A';
     const [h, m] = txt.split(':'); x.fillText(h, 78, 58); x.fillText(m, 172, 58); if (puntos) { x.fillRect(110, 34, 11, 11); x.fillRect(110, 66, 11, 11); } }); }
-  function reloj() { const g = new THREE.Group(); g.add(caja(.2, .09, .07, mat(0x111114, { roughness: .5 }), null, { r: .02 }));
+  function reloj() { const g = new THREE.Group(); g.add(caja(.2, .09, .07, mat(0x16161a, { roughness: .5 }), null, { r: .02 })); g.add(caja(.21, .02, .08, mat(0xc9ccd4, { roughness: .5 }), [0, .052, 0], { r: .008 }));
     const tex = texReloj('3:17'); const m = new THREE.MeshBasicMaterial({ map: tex, fog: false }); m.color.setScalar(2.4); const s = new THREE.Mesh(new THREE.PlaneGeometry(.17, .068), m); s.position.z = .0355; g.add(s);
     const l = new THREE.PointLight(0xff2020, .6, 1.2, 2); l.position.set(0, 0, .1); g.add(l); g.userData = { tex, m, l, puntos(on) { const t2 = texReloj('3:17', on); m.map = t2; } }; return g; }
   function buro() { const g = new THREE.Group(), madera = mat(0x3a2418, { roughness: .7 });
@@ -245,7 +245,7 @@
   const texAjedrez = () => { const t = textura(256, 256, (x) => { for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) { x.fillStyle = (i + j) % 2 ? '#15161c' : '#e8e8ec'; x.fillRect(i * 64, j * 64, 64, 64); } }); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.magFilter = THREE.NearestFilter; return t; };
   /* Pasillo a lo largo de -z: desde la puerta de la recámara (z=+3) hasta la cocina (z<-3). Refri al fondo a la derecha, mirando +z, puerta izquierda entreabierta. */
   function pasillo(o = {}) {
-    const g = new THREE.Group(), AW = 1.5, LZ0 = 3.2, LZ1 = -3.0, pared = mat(0x161c33, { roughness: .9 }), madera = mat(0x7d7f9c, { roughness: .65, metalness: .0 });
+    const g = new THREE.Group(), AW = 1.5, LZ0 = 3.2, LZ1 = -3.0, pared = mat(0x2c2a30, { roughness: .9 }), madera = mat(0x8a8296, { roughness: .65, metalness: .0 });
     const td = texDuela(); td.repeat.set(1.5, 3); madera.map = td;
     const piso = new THREE.Mesh(new THREE.PlaneGeometry(AW, LZ0 - LZ1), madera); piso.rotation.x = -Math.PI / 2; piso.position.z = (LZ0 + LZ1) / 2; piso.receiveShadow = true; g.add(piso);
     for (const s of [-1, 1]) { const p = new THREE.Mesh(new THREE.PlaneGeometry(LZ0 - LZ1, 2.7), pared); p.rotation.y = -s * Math.PI / 2; p.position.set(s * AW / 2, 1.35, (LZ0 + LZ1) / 2); p.receiveShadow = true; g.add(p);
@@ -287,11 +287,11 @@
     const texF = textura(64, 512, (x, w, h) => { const gg = x.createLinearGradient(0, 0, 0, h); gg.addColorStop(0, 'rgba(255,255,255,0)'); gg.addColorStop(.5, 'rgba(255,255,255,.35)'); gg.addColorStop(1, 'rgba(255,255,255,1)'); x.fillStyle = gg; x.fillRect(0, 0, w, h);
       const s = x.createLinearGradient(0, 0, w, 0); s.addColorStop(0, 'rgba(0,0,0,1)'); s.addColorStop(.3, 'rgba(0,0,0,0)'); s.addColorStop(.7, 'rgba(0,0,0,0)'); s.addColorStop(1, 'rgba(0,0,0,1)'); x.globalCompositeOperation = 'destination-out'; x.fillStyle = s; x.fillRect(0, 0, w, h); });
     const fg = new THREE.BufferGeometry(); const zA = LZ1 - KD + .86, zB = LZ0 - .2, xA = .6, xB = .12;
-    fg.setAttribute('position', new THREE.Float32BufferAttribute([xA - .04, .006, zA, xA + .04, .006, zA, xB - .16, .006, zB, xB + .16, .006, zB], 3)); fg.setAttribute('uv', new THREE.Float32BufferAttribute([0, 1, 1, 1, 0, 0, 1, 0], 2)); fg.setIndex([0, 2, 1, 1, 2, 3]);
-    const franja = new THREE.Mesh(fg, new THREE.MeshBasicMaterial({ color: new THREE.Color(P.refri).multiplyScalar(1.8), map: texF, transparent: true, opacity: .9, blending: THREE.AdditiveBlending, depthWrite: false, fog: false })); g.add(franja);
+    fg.setAttribute('position', new THREE.Float32BufferAttribute([xA - .04, .006, zA, xA + .04, .006, zA, xB - .07, .006, zB, xB + .07, .006, zB], 3)); fg.setAttribute('uv', new THREE.Float32BufferAttribute([0, 1, 1, 1, 0, 0, 1, 0], 2)); fg.setIndex([0, 2, 1, 1, 2, 3]);
+    const franja = new THREE.Mesh(fg, new THREE.MeshBasicMaterial({ color: new THREE.Color(P.refri).multiplyScalar(.9), map: texF, transparent: true, opacity: .9, blending: THREE.AdditiveBlending, depthWrite: false, fog: false })); g.add(franja);
     // luz de luna rasante desde la ventana de la cocina
     const luna = new THREE.DirectionalLight(0xa3abd0, .5); luna.position.set(-2.5, 3.2, LZ1 - KD - 2); luna.target.position.set(.3, 0, 1.5); luzSombra(luna, 2048, 5); g.add(luna, luna.target);
-    const amb = new THREE.HemisphereLight(0x5a5f90, 0x1a1d33, .9); g.add(amb);
+    const amb = new THREE.HemisphereLight(0x8a88a8, 0x3a3640, 1.0); g.add(amb);
     // marco de la puerta de la recámara (primer plano) y la puerta abierta con manija dorada
     g.add(caja(.12, 2.4, .16, hueso, [-AW / 2 + .02, 1.2, LZ0])); g.add(caja(.12, 2.4, .16, hueso, [AW / 2 - .02, 1.2, LZ0])); g.add(caja(AW + .1, .12, .16, hueso, [0, 2.4, LZ0]));
     const pu = new THREE.Group(); pu.position.set(-AW / 2 + .06, 0, LZ0 + .05); g.add(pu); pu.add(caja(.85, 2.25, .05, mat(0x2A1E18, { roughness: .6 }), [-.43, 1.13, 0])); pu.rotation.y = 1.25;

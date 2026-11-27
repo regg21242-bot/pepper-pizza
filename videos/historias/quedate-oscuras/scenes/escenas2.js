@@ -63,8 +63,8 @@
     const r = Q.reloj(); r.scale.setScalar(3); r.rotation.set(-.05, -.42, 0); s.add(r);
     const cuerpo = Q.caja(.62, .08, .3, Q.mat(0xcfd3dc, { roughness: .6 }), [0, .17, -.02], { r: .02 }); r.add(cuerpo); cuerpo.scale.setScalar(1 / 3);
     const buro = Q.caja(2, .1, 1, Q.mat(0x5a1a1e), [0, -.19, 0]); s.add(buro);
-    return { scene: s, cam: [[.28, .12, 1.15], [.0, 0, 0], 42], cam2: [[.24, .1, .98], [.0, 0, 0], 42], entrada: 'fundido',
-      anima(tl) { r.userData.puntos(Math.floor(tl) % 2 === 0); }, post: { ap: .05, bloom: 1.3, umbral: .7 } };
+    return { scene: s, cam: [[.32, .42, 1.1], [.0, .02, 0], 42], cam2: [[.28, .38, .95], [.0, .02, 0], 42], entrada: 'fundido',
+      anima(tl) {}, post: { ap: .05, bloom: 1.3, umbral: .7 } };
   };
   // ===== 6 / 11 / 17 — celular de reglas en estudio gris claro =====
   function reglas(Q, o) {
@@ -84,7 +84,7 @@
   // ===== 8 — lámpara del buró (apagada) con el reloj =====
   S[7] = (Q) => {
     const s = cuartoOscuro(Q, { amb: .5 }); const b = Q.buro(); s.add(b); const pared = new THREE.Mesh(new THREE.PlaneGeometry(4, 3), Q.mat(0x1b2440)); pared.position.set(0, 1.2, -.3); s.add(pared);
-    const luna = new THREE.DirectionalLight(0x6F86D6, .6); luna.position.set(2, 3, 2); s.add(luna);
+    const luna = new THREE.DirectionalLight(0xd8d4cc, .9); luna.position.set(2, 3, 2); s.add(luna); pared.material.color.set(0x262c44);
     const m = Q.mano(); m.position.set(.25, .62, .35); s.add(m);
     return { scene: s, cam: [[.25, .75, .75], [-.06, .72, -.05], 45], cam2: [[.22, .74, .62], [-.08, .74, -.05], 45],
       anima(tl, tg, k) { m.position.set(.3 - .2 * clamp(k * 1.6), .6 + .1 * clamp(k * 1.6), .3 - .2 * clamp(k * 1.6)); }, post: { ap: .08, bloom: 1.1 } };
@@ -100,15 +100,15 @@
       post: { ap: .03, bloom: 1.0 } };
   };
   // ===== 10 — puerta de la recámara, plano bajo, luz azul por debajo =====
-  function puertaBaja(Q) { const s = cuartoOscuro(Q, { amb: .8 }); const lu = new THREE.DirectionalLight(0x6F86D6, .5); lu.position.set(2, 3, 3); s.add(lu); const P = Q.P;
-    const pared = new THREE.Mesh(new THREE.PlaneGeometry(6, 4), Q.mat(0x141a2c)); pared.position.z = -.06; s.add(pared);
-    const hueso = Q.mat(0xbfc3c9); s.add(Q.caja(.1, 2.2, .12, hueso, [-.5, 1.1, 0])); s.add(Q.caja(.1, 2.2, .12, hueso, [.5, 1.1, 0])); s.add(Q.caja(1.1, .1, .12, hueso, [0, 2.2, 0]));
-    const pu = Q.caja(.9, 2.12, .05, Q.mat(0x2A1E18, { roughness: .6 }), [0, 1.08, 0]); s.add(pu); const man = Q.caja(.14, .025, .03, Q.mat(P.dorado, { metalness: .8, roughness: .25 }), [.33, 1.0, .05], { r: .01 }); s.add(man);
-    const raya = new THREE.Mesh(new THREE.PlaneGeometry(.88, .012), Q.brilla(0x8fb0ff, 3)); raya.position.set(0, .006, .03); s.add(raya);
+  function puertaBaja(Q) { const s = cuartoOscuro(Q, { amb: .6 }); s.add(new THREE.HemisphereLight(0xc8c8d0, 0x505058, 1.2)); const lu = new THREE.DirectionalLight(0x6F86D6, .5); lu.position.set(2, 3, 3); s.add(lu); const P = Q.P;
+    const pared = new THREE.Mesh(new THREE.PlaneGeometry(6, 4), Q.mat(0x4a4c58)); pared.position.z = -.06; s.add(pared);
+    const hueso = Q.mat(0xe0e0e0); s.add(Q.caja(.1, 2.2, .12, hueso, [-.5, 1.1, 0])); s.add(Q.caja(.1, 2.2, .12, hueso, [.5, 1.1, 0])); s.add(Q.caja(1.1, .1, .12, hueso, [0, 2.2, 0]));
+    const pu = Q.caja(.9, 2.12, .05, Q.mat(0x6e4c38, { roughness: .6 }), [0, 1.08, 0]); s.add(pu); const man = Q.caja(.14, .025, .03, Q.mat(P.dorado, { metalness: .8, roughness: .25 }), [.33, 1.0, .05], { r: .01 }); s.add(man);
+    const raya = new THREE.Mesh(new THREE.PlaneGeometry(.88, .012), Q.brilla(0xdfeee6, 3)); raya.position.set(0, .006, .03); s.add(raya);
     const charco = new THREE.Mesh(new THREE.PlaneGeometry(1.2, .6), new THREE.MeshBasicMaterial({ map: Q.textura(64, 64, (x) => { const g = x.createRadialGradient(32, 0, 0, 32, 0, 60); g.addColorStop(0, 'rgba(140,170,255,.9)'); g.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64); }), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
     charco.rotation.x = -Math.PI / 2; charco.position.set(0, .004, .3); s.add(charco);
-    const piso = new THREE.Mesh(new THREE.PlaneGeometry(6, 4), Q.mat(0x2a2d4a, { roughness: .5 })); piso.rotation.x = -Math.PI / 2; piso.position.z = 1.5; s.add(piso);
-    const l = new THREE.SpotLight(0x8fb0ff, 3, 3, 1.2, .9); l.position.set(0, .02, -.3); l.target.position.set(0, 0, 1); s.add(l, l.target);
+    const piso = new THREE.Mesh(new THREE.PlaneGeometry(6, 4), Q.mat(0x6a7a70, { roughness: .5 })); piso.rotation.x = -Math.PI / 2; piso.position.z = 1.5; s.add(piso);
+    const l = new THREE.SpotLight(0xd8eee0, 4, 3, 1.2, .9); l.position.set(0, .02, -.3); l.target.position.set(0, 0, 1); s.add(l, l.target);
     return { s, man }; }
   S[9] = (Q, tq) => { const D = puertaBaja(Q); const tNo = (window.T.palabras.find(p => p[4] === 9 && /no/i.test(p[2]) && p[0] > tq.ini + 1) || [tq.fin])[0];
     return { scene: D.s, cam: [[.1, .35, 2.6], [0, .8, 0], 45], cam2: [[.08, .3, 1.9], [0, .75, 0], 45], post: { ap: .04, bloom: 1.1 },
@@ -133,14 +133,14 @@
         const dir = new THREE.Vector3(Math.sin(-.6 + a), -.75, Math.cos(-.6 + a) * .9 + .3).normalize(); C.cono.quaternion.setFromUnitVectors(new THREE.Vector3(0, -1, 0), dir); C.sl.target.position.copy(C.pos).addScaledVector(dir, 10); },
       post: { ap: .02, bloom: 1.2 } }; };
   // ===== 15 — el perro ladra hacia la luz =====
-  S[14] = (Q, tq) => { const C = calleOscura(Q); C.cono.visible = C.hal.visible = true; C.sl.intensity = 3; C.cono.material.opacity = .16;
+  S[14] = (Q, tq) => { const C = calleOscura(Q); C.cono.visible = C.hal.visible = true; C.sl.intensity = 1.2; C.cono.material.opacity = .1; C.cono.children[0].material.opacity = .08;
     const dir = new THREE.Vector3(.2, -.75, .7).normalize(); C.cono.quaternion.setFromUnitVectors(new THREE.Vector3(0, -1, 0), dir); C.sl.target.position.copy(C.pos).addScaledVector(dir, 10);
-    const dog = Q.perro(); dog.scale.setScalar(1.3); dog.position.set(1.0, 0, 3.4); dog.rotation.y = -Math.PI / 2 - .5; C.s.add(dog); const a = Q.auto(0x3b4458); a.position.set(3.2, 0, 2.5); C.s.add(a);
+    const dog = Q.perro(); dog.scale.setScalar(1.0); dog.position.set(.6, 0, 1.5); dog.rotation.y = -Math.PI / 2 - .5; C.s.add(dog); const a = Q.auto(0x3b4458); a.position.set(3.2, 0, 2.5); C.s.add(a);
     const tl0 = (window.T.palabras.find(p => p[4] === 14 && /ladrar/i.test(p[2])) || [tq.ini + 1])[0];
-    return { scene: C.s, cam: [[2.6, .7, 6.2], [0, 1.6, 0], 46], cam2: [[2.5, .7, 5.8], [0, 1.7, 0], 46],
+    return { scene: C.s, cam: [[2.8, .9, 7.5], [0, 2.2, 0], 46], cam2: [[2.7, .9, 7.1], [0, 2.3, 0], 46],
       anima(tl, tg) { const b = tg - tl0; dog.userData.pose(b < 0 ? 0 : [1, 2, 0][Math.floor(b * 7) % 3]); }, post: { ap: .03, bloom: 1.1 } }; };
   // ===== 16 — lámpara de techo, grietas y polvo; el reflejo de la linterna se apaga =====
-  S[15] = (Q, tq) => { const s = Q.escena({ fondo: 0x080b14, niebla: .05, nieblaColor: 0x0c1020 }); s.add(new THREE.HemisphereLight(0x8a90a8, 0x707890, .7)); const vl = new THREE.PointLight(0x6F86D6, 1.5, 6, 1.5); vl.position.set(1.4, .6, 1.2); s.add(vl);
+  S[15] = (Q, tq) => { const s = Q.escena({ fondo: 0x080b14, niebla: .05, nieblaColor: 0x0c1020 }); s.add(new THREE.HemisphereLight(0x9a9a9e, 0x6a6a70, .8)); const vl = new THREE.PointLight(0xc8ccd8, 1.2, 6, 1.5); vl.position.set(1.4, .6, 1.2); s.add(vl);
     const techo = new THREE.Mesh(new THREE.PlaneGeometry(6, 6), Q.mat(0x9aa2c0, { roughness: .95 })); techo.rotation.x = Math.PI / 2; techo.position.y = 2.6; s.add(techo);
     const gr = new THREE.Mesh(new THREE.PlaneGeometry(3, 3), new THREE.MeshBasicMaterial({ transparent: true, map: Q.textura(512, 512, (x) => { x.strokeStyle = 'rgba(5,5,10,.9)'; x.lineWidth = 2; let sem = 7; const r = () => { sem = (sem * 16807) % 2147483647; return sem / 2147483647; };
       function rama(px, py, a, l, n) { if (n <= 0 || l < 6) return; const qx = px + Math.cos(a) * l, qy = py + Math.sin(a) * l; x.beginPath(); x.moveTo(px, py); x.lineTo(qx, qy); x.lineWidth = n * .32; x.stroke(); rama(qx, qy, a + (r() - .5) * .9, l * .8, n - 1); if (r() < .45) rama(qx, qy, a + (r() - .5) * 2, l * .6, n - 2); }
@@ -157,7 +157,7 @@
     return { scene: s, cam: [[.0, 1.3, 4.6], [0, 1.0, -4], 46], cam2: [[.0, 1.28, 4.25], [0, 1.0, -4], 46], post: { ap: .04, bloom: 1.0 } }; };
   // ===== 19 — close-up del refri entreabierto y tilt hacia el piso =====
   S[18] = (Q) => { const s = Q.escena({ fondo: 0x05070e, niebla: .015, nieblaColor: 0x1b2440 }); const p = Q.pasillo(); s.add(p); const kl = new THREE.PointLight(0x8fa2d8, 1.2, 4, 2); kl.position.set(-.4, 2, -4.3); s.add(kl); const rz = p.userData.LZ1 - p.userData.KD + .45;
-    return { scene: s, cam: (tl, k) => [[-.55, 1.3 - .5 * k, rz + 1.9 - .2 * k], [.5, 1.0 - .9 * k, rz + .35 + 1.0 * k], 44], post: { ap: .06, bloom: 1.25, umbral: .7 } }; };
+    return { scene: s, cam: (tl, k) => [[-.35, 1.25 - .45 * k, -3.4], [.55, 1.0 - .4 * k, rz + .4 + .5 * k], 44], post: { ap: .06, bloom: 1.25, umbral: .7 } }; };
   // ===== 20 — CAM 4 · ESCALERA =====
   S[19] = (Q, tq) => { const s = Q.escena({ fondo: 0x0a0a0a }); s.add(new THREE.HemisphereLight(0xffffff, 0x222222, .6)); const l = new THREE.PointLight(0xffffff, 2, 8); l.position.set(0, 3.5, 1); s.add(l);
     const con = Q.mat(0x8a8a8a, { roughness: .95 }); for (let i = 0; i < 10; i++) s.add(Q.caja(1.4, .18, .3, con, [0, .09 + i * .18, -i * .3], { r: .01 }));
