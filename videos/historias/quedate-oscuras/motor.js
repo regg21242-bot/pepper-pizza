@@ -67,8 +67,11 @@
     if (e.entrada === 'fundido' && tl < 7 / FPS) { x.fillStyle = `rgba(0,0,0,${1 - tl / (7 / FPS)})`; x.fillRect(0, 0, W, H); }
     if (e.salida === 'fundido' && dur - tl < 7 / FPS) { x.fillStyle = `rgba(0,0,0,${1 - (dur - tl) / (7 / FPS)})`; x.fillRect(0, 0, W, H); }
     if (e.flash) e.flash(x, tl);
+    if (e.salidaNegro && dur - tl < e.salidaNegro / FPS) { x.fillStyle = '#000'; x.fillRect(0, 0, W, H); }
+    marca();
     subtitulos(tg);
   }
+  function marca() { x.save(); x.font = '600 34px Inter'; x.textAlign = 'center'; x.fillStyle = 'rgba(255,255,255,.55)'; x.shadowColor = 'rgba(0,0,0,.5)'; x.shadowBlur = 6; x.fillText('@ElPanchoHuss', (W - 140) / 2 + 70, 1500); x.restore(); }
   // grano animado (sutil, 0.04)
   const gc = document.createElement('canvas'); gc.width = 270; gc.height = 480; const gx = gc.getContext('2d'); const gimg = gx.createImageData(270, 480);
   function grano(t) { let s = Math.floor(t * FPS) * 9301 + 49297; for (let i = 0; i < gimg.data.length; i += 4) { s = (s * 16807) % 2147483647; const v = (s & 255); gimg.data[i] = gimg.data[i + 1] = gimg.data[i + 2] = v; gimg.data[i + 3] = 255; }

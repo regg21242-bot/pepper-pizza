@@ -120,8 +120,8 @@
   }
 
   // =============== RECÁMARA ===============
-  function texReloj(txt, puntos = true) { return textura(256, 110, (x) => { x.fillStyle = '#050505'; x.fillRect(0, 0, 256, 110); x.font = '700 92px "JetBrains Mono"'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.shadowColor = '#FF2A2A'; x.shadowBlur = 18; x.fillStyle = '#FF2A2A';
-    const [h, m] = txt.split(':'); x.fillText(h, 62, 58); x.fillText(m, 172, 58); if (puntos) { x.fillRect(118, 34, 12, 12); x.fillRect(118, 68, 12, 12); } }); }
+  function texReloj(txt, puntos = true) { return textura(256, 110, (x) => { x.fillStyle = '#050505'; x.fillRect(0, 0, 256, 110); x.font = '800 86px Inter'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.shadowColor = '#FF2A2A'; x.shadowBlur = 18; x.fillStyle = '#FF2A2A';
+    const [h, m] = txt.split(':'); x.fillText(h, 78, 58); x.fillText(m, 172, 58); if (puntos) { x.fillRect(110, 34, 11, 11); x.fillRect(110, 66, 11, 11); } }); }
   function reloj() { const g = new THREE.Group(); g.add(caja(.2, .09, .07, mat(0x111114, { roughness: .5 }), null, { r: .02 }));
     const tex = texReloj('3:17'); const m = new THREE.MeshBasicMaterial({ map: tex, fog: false }); m.color.setScalar(2.4); const s = new THREE.Mesh(new THREE.PlaneGeometry(.17, .068), m); s.position.z = .0355; g.add(s);
     const l = new THREE.PointLight(0xff2020, .6, 1.2, 2); l.position.set(0, 0, .1); g.add(l); g.userData = { tex, m, l, puntos(on) { const t2 = texReloj('3:17', on); m.map = t2; } }; return g; }
