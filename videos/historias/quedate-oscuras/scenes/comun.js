@@ -80,7 +80,7 @@
     x.fillStyle = '#C81E26'; x.font = '900 170px Inter'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('!', 0, 30); x.restore(); x.textBaseline = 'alphabetic';
     x.save(); x.font = '700 30px Inter'; x.letterSpacing = '3px'; x.textAlign = 'center'; x.fillStyle = 'rgba(255,255,255,.92)'; x.fillText('ALERTA DE EMERGENCIA', SW / 2, 720); x.restore();
     const pul = .6 + .4 * (.5 + .5 * Math.sin(t * Math.PI * 2));
-    x.save(); x.shadowColor = `rgba(255,255,255,${pul})`; x.shadowBlur = 40 * pul; textoCentrado(x, 'QUÉDATE A', 840, '900 74px Inter', '#fff'); x.shadowColor = `rgba(255,255,255,${pul})`; x.shadowBlur = 40 * pul; textoCentrado(x, 'OSCURAS', 930, '900 92px Inter', '#fff'); x.restore();
+    x.save(); x.shadowColor = `rgba(255,255,255,${.6 * pul})`; x.shadowBlur = 16 * pul; textoCentrado(x, "QUÉDATE A", 840, '900 74px Inter', '#fff'); x.shadowColor = `rgba(255,255,255,${.6 * pul})`; x.shadowBlur = 16 * pul; textoCentrado(x, "OSCURAS", 930, '900 92px Inter', '#fff'); x.restore();
     rr(x, SW / 2 - 150, 1080, 300, 86, 43); x.lineWidth = 4; x.strokeStyle = '#fff'; x.stroke(); x.fillStyle = 'rgba(255,255,255,.08)'; x.fill(); textoCentrado(x, 'ACEPTAR', 1136, '700 36px Inter', '#fff');
   }
   function fondoB(x) { const g = x.createLinearGradient(0, 0, 0, SH); g.addColorStop(0, '#0C1030'); g.addColorStop(1, '#1E2A7A'); x.fillStyle = g; x.fillRect(0, 0, SW, SH);
@@ -334,6 +334,8 @@
     const off = (v) => { v.vid.material = apagado; v.hal.material.opacity = 0; v.encendida = false; };
     function prender(v, tipo, k = 1) { const m = new THREE.MeshBasicMaterial({ map: tipo === 'tv' ? tTv : tCal[v.c % 2], fog: true }); m.color.setScalar(1.35 * k); v.vid.material = m; v.hal.material.color.set(tipo === 'tv' ? 0x8fa2ff : 0xFFD9A0); v.hal.material.opacity = .28 * k; v.encendida = true; v.tipo = tipo; }
     function brillo(v, k) { if (!v.encendida) return; v.vid.material.color.setScalar(1.35 * k); v.hal.material.opacity = .28 * k; }
+    // bajante de agua (tubo vertical) entre columnas, como en la referencia
+    if (o.tubo !== false) { const tb = cil(.09, .09, ALTO, mat(0x6a6e78, { roughness: .5, metalness: .3 }), [1.25, ALTO / 2, .35], 12); tb.castShadow = false; g.add(tb); for (let p = 0; p < PISOS; p++) g.add(caja(.3, .08, .3, mat(0x5a5e68), [1.25, p * 3 + 1, .3], { sombra: false })); }
     g.userData = { ventanas, prender, apagar: off, brillo, ALTO }; return g;
   }
 

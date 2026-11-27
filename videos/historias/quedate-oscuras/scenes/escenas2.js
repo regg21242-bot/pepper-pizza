@@ -14,7 +14,7 @@
   function celFlotante(Q, s, o = {}) {
     const g = new THREE.Group(); s.add(g); const c = Q.celular({ luz: o.luz == null ? .6 : o.luz, color: o.color || 0xff3b3b, brillo: o.brillo || 1.7 }); g.add(c);
     g.rotation.set(o.rx || -.12, o.ry || .28, o.rz || -.18);
-    return { g, c, mover(tg) { g.rotation.y = (o.ry || .28) + Math.sin(tg * .7) * .21 * .5; g.rotation.x = (o.rx || -.12) + Math.sin(tg * .5 + 1) * .1 * .5; g.position.y = Math.sin(tg * 2 * Math.PI * .3) * .006; } };
+    return { g, c, mover(tg) { g.rotation.y = (o.ry || .28) + Math.sin(tg * .7) * .06; g.rotation.x = (o.rx || -.12) + Math.sin(tg * .5 + 1) * .03; g.position.y = Math.sin(tg * 2 * Math.PI * .3) * .006; } };
   }
   const flashAlerta = (color = '255,60,60') => (x, tl) => { const f = Math.floor(tl * FPS); if (f < 3) { x.fillStyle = f === 0 ? 'rgba(255,255,255,.85)' : `rgba(${color},${.55 - f * .15})`; x.fillRect(0, 0, 1080, 1920); }
     if (f >= 2 && f < 6) { const d = 14 - f * 2; x.save(); x.globalCompositeOperation = 'screen'; x.globalAlpha = .5; x.drawImage(x.canvas, d, 0); x.drawImage(x.canvas, -d, 0); x.restore();
@@ -27,15 +27,15 @@
 
   // ===== 2 — La alerta: celular flotando en niebla rosada =====
   S[1] = (Q) => {
-    const s = estudio(Q, '#c98e8f', 0x6e3a40, 0x9a5c60, .7); const C = celFlotante(Q, s, { brillo: 1.9, luz: 1.2, rx: -.18, ry: .35, rz: -.32 });
-    return { scene: s, cam: [[0, 0, .36], [0, 0, 0], 40], cam2: [[0, 0, .29], [0, .005, 0], 40],
-      anima(tl, tg) { C.mover(tg); C.c.userData.pinta(x => Q.pantallaA(x, tl)); }, post: { ap: .0, bloom: 1.2, umbral: .72 }, ca: .0015 };
+    const s = estudio(Q, '#c98e8f', 0x6e3a40, 0x9a5c60, .7); const C = celFlotante(Q, s, { brillo: 1.9, luz: 1.2, rx: -.04, ry: .1, rz: -.05 });
+    return { scene: s, cam: [[0, 0, .33], [0, 0, 0], 40], cam2: [[0, 0, .28], [0, 0, 0], 40],
+      anima(tl, tg) { C.mover(tg); C.c.userData.pinta(x => Q.pantallaA(x, tl)); }, post: { ap: .0, bloom: 1.0, umbral: .82 }, ca: .001 };
   };
   // ===== 3 — No suena solo el tuyo: fachada con ventanas rojas en cascada =====
   function fachadaRoja(Q, o = {}) {
     const s = Q.escena({ fondo: 0x120a14, niebla: .028, nieblaColor: 0x1a0f1c }); domo(Q, s, 0x1d1424, 0x0B0F1C);
-    const f = Q.fachada({ pisos: 7, color: 0x5a3a44 }); f.position.set(0, 0, -12); s.add(f);
-    s.add(new THREE.HemisphereLight(0x6a3a50, 0x0b0f1c, .35)); const l = new THREE.DirectionalLight(0x8a6aa0, .35); l.position.set(-10, 20, 20); s.add(l);
+    const f = Q.fachada({ pisos: 7, color: 0x6a4650 }); f.position.set(0, 0, -12); s.add(f);
+    s.add(new THREE.HemisphereLight(0x9a7a98, 0x1b1424, 1.0)); const l = new THREE.DirectionalLight(0x9a8ab8, .8); l.position.set(-10, 20, 20); s.add(l);
     const rojo = new THREE.MeshBasicMaterial({ color: new THREE.Color(0xE0262B).multiplyScalar(1.5), fog: true });
     const V = f.userData.ventanas; let sem = 9; const r = () => { sem = (sem * 16807) % 2147483647; return sem / 2147483647; };
     V.forEach(v => { v.ret = r() * 1.2; v.hal.material.color.set(0xff3b3b); });
@@ -43,7 +43,7 @@
   }
   S[2] = (Q) => {
     const F = fachadaRoja(Q);
-    return { scene: F.s, cam: (tl, k) => [[7.5, 2.5, 3], [0, 6 + 8 * k, -12], 46],
+    return { scene: F.s, cam: (tl, k) => [[4.5 - 2 * k, 4 + 5 * k, -3.5], [0, 6 + 6 * k, -12], 46],
       anima(tl) { F.pintar(tl); }, post: { ap: .02, bloom: 1.1 } };
   };
   // ===== 4 — Y de repente… silencio: tu ventana con cruz roja que se apaga de golpe =====
@@ -68,18 +68,19 @@
   };
   // ===== 6 / 11 / 17 — celular de reglas en estudio gris claro =====
   function reglas(Q, o) {
-    const s = estudio(Q, '#e4e6ec', 0x8d919c, 0xb5b9c3, 1.0); const C = celFlotante(Q, s, { brillo: 1.5, luz: .4, color: 0x6a6aff, rx: -.1, ry: -.3, rz: .12 });
+    const s = estudio(Q, '#e4e6ec', 0x8d919c, 0xb5b9c3, 1.0); const C = celFlotante(Q, s, { brillo: 1.5, luz: .4, color: 0x6a6aff, rx: -.05, ry: -.08, rz: .03 });
     return { s, C };
   }
   S[5] = (Q, tq) => { const R = reglas(Q); const d = tq.fin - tq.ini;
-    return { scene: R.s, cam: [[0, 0, .4], [0, 0, 0], 40], cam2: [[0, -.005, .3], [0, -.006, 0], 40],
+    return { scene: R.s, cam: [[0, 0, .34], [0, 0, 0], 40], cam2: [[0, 0, .29], [0, 0, 0], 40],
       anima(tl, tg) { R.C.mover(tg); R.C.c.userData.pinta(x => Q.pantallaB(x, { lineas: clamp(tl / (d * .8)) * 5.2 })); }, post: { ap: 0, bloom: .9, umbral: .8 } }; };
   S[10] = (Q) => { const R = reglas(Q);
-    return { scene: R.s, cam: [[0, .02, .3], [0, .01, 0], 40], cam2: [[0, -.012, .22], [0, -.02, 0], 40],
+    return { scene: R.s, cam: [[0, 0, .31], [0, 0, 0], 40], cam2: [[0, 0, .27], [0, 0, 0], 40],
       anima(tl, tg) { R.C.mover(tg); R.C.c.userData.pinta(x => Q.pantallaB(x, { foco: tl > .2 ? 4 : null })); }, post: { ap: 0, bloom: .9, umbral: .8 } }; };
-  S[16] = (Q) => { const R = reglas(Q);
-    return { scene: R.s, cam: [[0, 0, .38], [0, 0, 0], 40], cam2: [[0, .01, .28], [0, .01, 0], 40], flash: flashAlerta('255,255,255'), sacudida: sacudon,
-      anima(tl, tg) { R.C.mover(tg); R.C.c.userData.pinta(x => Q.pantallaC(x, { flip: clamp((tl - .3) / .25), k: clamp((tl - .6) / (10 / FPS)) })); }, post: { ap: 0, bloom: 1.0, umbral: .78 } }; };
+  S[16] = (Q, tq) => { const R = reglas(Q); const tIl = (window.T.palabras.find(p => p[4] === 16 && /ilumina/i.test(p[2])) || [tq.ini + .6])[0] - tq.ini;
+    return { scene: R.s, cam: (tl) => { const k = clamp((tl - tIl - .2) / 1.4), e = k * k * (3 - 2 * k); return [[0, .32 * (1 - e), .5 - .2 * e], [0, 0, 0], 40]; }, flash: (x, tl) => { if (tl >= tIl) flashAlerta('255,255,255')(x, tl - tIl); }, sacudida: (tl) => Math.abs(tl - tIl) < 4 / FPS ? 1 : 0,
+      anima(tl, tg) { const k = clamp((tl - tIl - .2) / 1.4), e = k * k * (3 - 2 * k); R.C.g.rotation.set(-1.25 * (1 - e) - .05 * e, -.5 * (1 - e) - .08 * e, .03); R.C.g.position.y = 0;
+        if (tl < tIl) R.C.c.userData.pinta(x => { x.fillStyle = '#050507'; x.fillRect(0, 0, 600, 1300); }); else R.C.c.userData.pinta(x => Q.pantallaC(x, { flip: clamp((tl - tIl - .3) / .25), k: clamp((tl - tIl - .6) / (10 / FPS)) })); }, post: { ap: 0, bloom: 1.0, umbral: .8 } }; };
 
   // ===== 8 — lámpara del buró (apagada) con el reloj =====
   S[7] = (Q) => {
@@ -120,9 +121,9 @@
     return { scene: D.s, cam: [[-.6, 1.1, 3.0], [-.2, .9, 0], 45], cam2: [[-.55, 1.08, 2.8], [-.2, .9, 0], 45], anima(tl, tg) { Q.moverPolvo(pol, tg, .006); }, post: { ap: .05, bloom: 1.0, oscuro: .25 } }; };
   // ===== 14 — la linterna en el edificio de enfrente =====
   function calleOscura(Q) { const NB = 0x1c2340, s = Q.escena({ fondo: NB, niebla: .035, nieblaColor: NB }); domo(Q, s, 0x232b48, 0x0B0F1C);
-    const f = Q.fachada({ pisos: 7, color: 0x3B4256 }); f.position.set(-2, 0, -10); f.rotation.y = .5; s.add(f); s.add(Q.estrellas(120, 65));
+    const f = Q.fachada({ pisos: 7, color: 0x5a3a40 }); f.position.set(-2, 0, -10); f.rotation.y = .5; s.add(f); s.add(Q.estrellas(120, 65));
     const suelo = new THREE.Mesh(new THREE.PlaneGeometry(80, 80), Q.mat(0x12151d, { roughness: .6 })); suelo.rotation.x = -Math.PI / 2; s.add(suelo);
-    s.add(new THREE.HemisphereLight(0x4a5a9a, 0x0b0f1c, .6)); const ln = new THREE.DirectionalLight(Q.P.luna, .9); ln.position.set(-10, 25, 15); s.add(ln);
+    s.add(new THREE.HemisphereLight(0x7a86b8, 0x141828, 1.05)); const ln = new THREE.DirectionalLight(Q.P.luna, 1.2); ln.position.set(-10, 25, 15); s.add(ln);
     const v = f.userData.ventanas.find(v => v.p === 3 && v.c === 2); const pos = new THREE.Vector3(v.x, v.y, .3); f.localToWorld(pos);
     const cono = Q.conoLuz(0xffffff, 16, 2.2, .38); const cono2 = Q.conoLuz(0xffffff, 16, .9, .3); cono.add(cono2); cono.position.copy(pos); s.add(cono); const hal = Q.halo(0xffffff, 2.6, 1); hal.position.copy(pos); s.add(hal);
     const sl = new THREE.SpotLight(0xffffff, 0, 30, .18, .5, 1.2); sl.position.copy(pos); s.add(sl, sl.target);
@@ -160,7 +161,7 @@
     return { scene: s, cam: (tl, k) => [[-.35, 1.25 - .45 * k, -3.4], [.55, 1.0 - .4 * k, rz + .4 + .5 * k], 44], post: { ap: .06, bloom: 1.25, umbral: .7 } }; };
   // ===== 20 — CAM 4 · ESCALERA =====
   S[19] = (Q, tq) => { const s = Q.escena({ fondo: 0x0a0a0a }); s.add(new THREE.HemisphereLight(0xffffff, 0x222222, .6)); const l = new THREE.PointLight(0xffffff, 2, 8); l.position.set(0, 3.5, 1); s.add(l);
-    const con = Q.mat(0x8a8a8a, { roughness: .95 }); for (let i = 0; i < 10; i++) s.add(Q.caja(1.4, .18, .3, con, [0, .09 + i * .18, -i * .3], { r: .01 }));
+    const con = Q.mat(0x4a4a4a, { roughness: .95 }); for (let i = 0; i < 10; i++) s.add(Q.caja(1.4, .18, .3, con, [0, .09 + i * .18, -i * .3], { r: .01 }));
     s.add(Q.caja(.05, 2.8, 4, Q.mat(0x6e6e6e), [-.75, 1.2, -1.4])); const bar = Q.mat(0x111111); for (let i = 0; i < 10; i++) s.add(Q.caja(.025, .9, .025, bar, [.72, .5 + i * .18, -i * .3])); s.add(Q.caja(.04, .04, 3.2, bar, [.72, 1.2, -1.4], { rot: [-.54, 0, 0] }));
     const puerta = Q.caja(.9, 2.1, .06, Q.mat(0x3a3a3a), [-.2, 2.9, -3.4]); s.add(puerta);
     const num = new THREE.Mesh(new THREE.PlaneGeometry(.3, .15), new THREE.MeshBasicMaterial({ map: Q.textura(128, 64, (x) => { x.fillStyle = '#ddd'; x.font = '800 48px Inter'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('4B', 64, 34); }), transparent: true })); num.position.set(-.2, 3.6, -3.36); s.add(num);
@@ -170,7 +171,7 @@
   };
   function camSeguridad(tq) { const dur = tq.fin - tq.ini; return (x, tl, tg) => {
     const W = 1080, H = 1920, img = x.getImageData(0, 0, W, H), d = img.data; let sem = Math.floor(tl * 12) * 7919 + 13;
-    for (let i = 0; i < d.length; i += 4) { const L = d[i] * .3 + d[i + 1] * .59 + d[i + 2] * .11; sem = (sem * 1103515245 + 12345) & 0x7fffffff; let v = (L - 128) * 1.6 + 118 + ((sem >> 16) % 80 - 40) * .5; const y = (i / 4 / W) | 0; if (y % 4 === 0) v *= .85; d[i] = d[i + 1] = d[i + 2] = v; }
+    for (let i = 0; i < d.length; i += 4) { const L = d[i] * .3 + d[i + 1] * .59 + d[i + 2] * .11; sem = (sem * 1103515245 + 12345) & 0x7fffffff; let v = (L - 128) * 1.35 + 78 + ((sem >> 16) % 80 - 40) * .5; const y = (i / 4 / W) | 0; if (y % 4 === 0) v *= .85; d[i] = d[i + 1] = d[i + 2] = v; }
     x.putImageData(img, 0, 0); x.strokeStyle = '#fff'; x.lineWidth = 6; const m = W * .08, L = 70;
     [[m, m + 120, 1, 1], [W - m, m + 120, -1, 1], [m, H - m - 300, 1, -1], [W - m, H - m - 300, -1, -1]].forEach(([a, b, sx, sy]) => { x.beginPath(); x.moveTo(a, b + sy * L); x.lineTo(a, b); x.lineTo(a + sx * L, b); x.stroke(); });
     x.font = '700 44px "JetBrains Mono"'; x.fillStyle = '#fff'; x.fillText('REC', m + 70, m + 190); if (Math.floor(tg) % 2 === 0) { x.fillStyle = '#ff2a2a'; x.beginPath(); x.arc(m + 40, m + 175, 16, 0, 7); x.fill(); }
@@ -181,6 +182,44 @@
   // ===== 22 — plano bajo de la duela con la línea del refri =====
   S[21] = (Q) => { const s = Q.escena({ fondo: 0x05070e, niebla: .03, nieblaColor: 0x1b2440 }); const p = Q.pasillo(); s.add(p);
     return { scene: s, cam: [[.12, .12, 1.6], [.15, .02, -2], 40], cam2: [[.12, .11, 1.35], [.15, .02, -2], 40], post: { ap: .12, bloom: 1.1 } }; };
+
+  // ===== calle con niebla baja (como la referencia): edificios a los lados, un auto al centro, lámparas naranjas en la pared =====
+  function calleNiebla(Q, o = {}) {
+    const NB = 0x2a3354, s = Q.escena({ fondo: 0x0d1222, niebla: .045, nieblaColor: NB }); domo(Q, s, 0x2a3354, 0x0B0F1C);
+    const c = Q.calle({ semilla: 17 }); s.add(c);
+    s.add(new THREE.HemisphereLight(0x7a86b8, 0x101420, .9)); const ln = new THREE.DirectionalLight(Q.P.luna, .7); ln.position.set(-15, 30, -10); s.add(ln);
+    // pocas ventanas prendidas (cálidas)
+    let sem = 21; const r = () => { sem = (sem * 16807) % 2147483647; return sem / 2147483647; }; const cal = new THREE.Color(Q.P.ventCalida).multiplyScalar(1.3);
+    for (const h of [c.userData.L, c.userData.R]) h.userData.ventanas.forEach(v => { if (r() < .06) Q.colorVentana(h, v.i, cal); });
+    // lámparas de pared naranjas (sin cono)
+    for (const [x, z] of [[-4.1, -6], [4.1, -11], [-4.1, -19], [4.1, -27]]) { s.add(Q.halo(Q.P.sodio, 1.6, .55, [x, 3.2, z])); const pl = new THREE.PointLight(Q.P.sodio, 1.6, 7, 2); pl.position.set(x * .95, 3.1, z); s.add(pl); s.add(new THREE.Mesh(new THREE.SphereGeometry(.09, 12, 8), Q.brilla(Q.P.sodio, 2.5)).translateX(x).translateY(3.2).translateZ(z)); }
+    // auto en medio de la calle, de espaldas, con calaveras rojas encendidas
+    const a = Q.auto(0x2c3244); a.position.set(o.autoX || .3, 0, o.autoZ || -10); s.add(a);
+    for (const sx of [-.6, .6]) { const h = Q.halo(0xff2a2a, .7, .5); h.position.set(a.position.x + sx, .8, a.position.z + 2.2); s.add(h); }
+    // niebla baja: capas translúcidas sobre el piso
+    const tNb = Q.textura(256, 256, (x, w, h) => { const g = x.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2); g.addColorStop(0, 'rgba(255,255,255,.55)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0, 0, w, h); });
+    const capas = []; for (let i = 0; i < 10; i++) { const m = new THREE.Mesh(new THREE.PlaneGeometry(14, 9), new THREE.MeshBasicMaterial({ map: tNb, color: 0x8a96c8, transparent: true, opacity: .22, depthWrite: false, fog: false }));
+      m.rotation.x = -Math.PI / 2; m.position.set((i % 3 - 1) * 4, .25 + (i % 4) * .22, -2 - i * 3.2); s.add(m); capas.push(m); }
+    return { s, c, a, capas, mover(tg) { capas.forEach((m, i) => { m.position.x = ((i % 3) - 1) * 4 + Math.sin(tg * .15 + i) * 1.2; }); } };
+  }
+  S[6] = (Q) => { const C = calleNiebla(Q);
+    return { scene: C.s, cam: [[.1, 1.5, 6], [.2, 1.3, -30], 50], cam2: [[.1, 1.5, 5.2], [.2, 1.3, -30], 50], anima(tl, tg) { C.mover(tg); }, post: { ap: .02, bloom: 1.0 } }; };
+  // ===== 15 — un perro ladra: la calle con niebla (el perro no se ve) =====
+  S[14] = (Q) => { const C = calleNiebla(Q, { autoZ: -7, autoX: -.4 });
+    return { scene: C.s, cam: [[1.4, 1.2, 4], [-.5, 1.6, -30], 52], cam2: [[1.3, 1.2, 3.4], [-.5, 1.6, -30], 52], anima(tl, tg) { C.mover(tg); }, post: { ap: .02, bloom: 1.0 } }; };
+  // ===== 16 — la luz de la linterna se apaga (mismo edificio), luego la calle en silencio =====
+  S[15] = (Q, tq) => { const C = calleOscura(Q); const tOff = (window.T.palabras.find(p => p[4] === 15 && /apaga/i.test(p[2])) || [tq.ini + 1.5])[0];
+    const dir = new THREE.Vector3(Math.sin(-.2), -.75, Math.cos(-.2) * .9 + .3).normalize(); C.cono.quaternion.setFromUnitVectors(new THREE.Vector3(0, -1, 0), dir); C.sl.target.position.copy(C.pos).addScaledVector(dir, 10);
+    return { scene: C.s, cam: (tl, k) => [[1.3 - .4 * k, 1.4, 6], [C.pos.x, C.pos.y - 2, C.pos.z], 48],
+      anima(tl, tg) { const on = tg < tOff || (tg - tOff < .12 && Math.floor((tg - tOff) * 30) % 2 === 1); C.cono.visible = C.hal.visible = on; C.sl.intensity = on ? 6 : 0; }, post: { ap: .02, bloom: 1.2 } }; };
+  // ===== 4 — Y de repente… silencio: fachada de cerca, ventanas prendidas que se apagan de golpe =====
+  S[3] = (Q, tq) => { const s = Q.escena({ fondo: 0x0d1222, niebla: .02, nieblaColor: 0x1b2440 }); domo(Q, s, 0x232b48, 0x0B0F1C);
+    const f = Q.fachada({ pisos: 7, color: 0x6a6070 }); f.position.set(0, 0, -12); s.add(f);
+    s.add(new THREE.HemisphereLight(0x8a92c0, 0x141828, 1.1)); const ln = new THREE.DirectionalLight(Q.P.luna, 1.0); ln.position.set(-8, 20, 15); s.add(ln);
+    const V = f.userData.ventanas.filter(v => (v.c === 1 || v.c === 2) && (v.p === 2 || v.p === 3)); V.forEach((v, i) => f.userData.prender(v, i % 3 === 1 ? 'tv' : 'a'));
+    const tOff = (window.T.palabras.find(p => p[4] === 3 && /silencio/i.test(p[2])) || [tq.ini + 1.5])[0];
+    return { scene: s, cam: (tl, k) => [[-1.25, 8.2 + .6 * k, -4.3], [-1.25, 8.9 + .6 * k, -12], 50],
+      anima(tl, tg) { V.forEach((v, i) => { if (tg >= tOff - .06 * i) { if (v.encendida) f.userData.apagar(v); } else if (!v.encendida) f.userData.prender(v, i % 3 === 1 ? 'tv' : 'a'); }); }, post: { ap: .02, bloom: 1.0 } }; };
   // ===== 23 / 24 — el pasillo desde la puerta + tarjetas A/B + píldora =====
   const G = () => window.GUION || {};
   function tarjetas(x, tl, tA, tB, tPill, tg) {
@@ -202,5 +241,5 @@
     return { scene: s, cam: [[.0, 1.3, 4.6], [0, 1.0, -4], 46], cam2: [[.0, 1.3, 4.45], [0, 1.0, -4], 46], encima: (x, tl, tg) => tarjetas(x, tl, tA, tB, tP, tg), post: { ap: .04, bloom: 1.0, oscuro: .2 },
       salidaNegro: 2 }; };
   // alerta en escena 1 y 2: flash al arrancar
-  const s0 = S[0]; S[0] = (Q, tq) => { const e = s0(Q, tq); e.flash = flashAlerta(); return e; };
+
 })();

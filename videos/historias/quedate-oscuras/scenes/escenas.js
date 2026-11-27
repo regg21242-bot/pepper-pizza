@@ -99,9 +99,9 @@
     for (let i = 0; i < dg.attributes.position.count; i++) { const y = dg.attributes.position.getY(i) / 80; const cc = cH.clone().lerp(cT, clamp(y * 1.6)); col.push(cc.r, cc.g, cc.b); }
     dg.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); const domo = new THREE.Mesh(dg, new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.BackSide, fog: true, depthWrite: false, depthTest: false })); domo.renderOrder = -10; s.add(domo);
     const st = Q.estrellas(160, 70); s.add(st);
-    const f = Q.fachada({ pisos: 7 }); f.position.set(0, 0, -14); s.add(f);
+    const f = Q.fachada({ pisos: 7, color: 0x7a3a40 }); f.position.set(0, 0, -14); s.add(f);
     const suelo = new THREE.Mesh(new THREE.PlaneGeometry(80, 60), Q.mat(0x161a24, { roughness: .6 })); suelo.rotation.x = -Math.PI / 2; s.add(suelo);
-    const luna = new THREE.DirectionalLight(Q.P.luna, 1.0); luna.position.set(-15, 30, 20); s.add(luna); s.add(new THREE.HemisphereLight(0x4a5a9a, 0x0b0f1c, .45));
+    const luna = new THREE.DirectionalLight(Q.P.luna, 1.3); luna.position.set(-15, 30, 20); s.add(luna); s.add(new THREE.HemisphereLight(0x8a92c0, 0x141828, 1.1));
     const fa = Q.farola({ lado: 1, i: 5 }); fa.position.set(-6.5, 0, -8.5); s.add(fa);
     // 14 encendidas: 11 cálidas y 3 de TV, en orden de apagado (de abajo hacia arriba, siguiendo el paneo)
     const V = f.userData.ventanas.slice().sort((a, b) => a.p - b.p || a.c - b.c);
