@@ -13,19 +13,44 @@
     return { hemi, amb, vent };
   }
 
-  // ===== ESCENA 1 — Despertar =====
+  // ===== ESCENA 1 — Despertar (como la referencia: cabeza de lado en la almohada, cobija esponjosa, celular brillando encima) =====
   S[0] = (Q) => {
-    const s = Q.escena({ fondo: 0x1a0306, niebla: .015, nieblaColor: 0x3a0a0e });
-    const rc = Q.recamara({ pared: 0x3a0d12 }); s.add(rc); const L = luzRoja(Q, s);
-    const yo = Q.personaje(); yo.position.set(-.93, .83, -.1); yo.rotation.set(0, 1.0, 1.3); s.add(yo);
-    const cel = Q.celular({ luz: 1.0, color: 0xff5a4c, brillo: 2.1 }); cel.scale.setScalar(1.5); cel.rotation.set(-Math.PI / 2 + .1, 0, 0); const celG = new THREE.Group(); celG.add(cel); celG.position.set(-.42, .752, .1); celG.rotation.y = Math.PI / 2 - .55; s.add(celG);
-    const pol = Q.polvo(160, [3, 2.4, 2.5], 0xff9a9a, .01); pol.position.set(-.5, .3, 0); s.add(pol);
+    const s = Q.escena({ fondo: 0x2a0a10 });
+    // textura "felpa" moteada para almohada y cobija
+    const felpa = (base) => Q.textura(256, 256, (x, w, h) => { x.fillStyle = base; x.fillRect(0, 0, w, h); let r = 7; const R = () => { r = (r * 16807) % 2147483647; return r / 2147483647; };
+      for (let i = 0; i < 260; i++) { const cx = R() * w, cy = R() * h, rad = 6 + R() * 22; const g = x.createRadialGradient(cx, cy, 0, cx, cy, rad); const d = R() < .5; g.addColorStop(0, d ? 'rgba(90,20,30,.16)' : 'rgba(255,230,230,.12)'); g.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = g; x.fillRect(cx - rad, cy - rad, rad * 2, rad * 2); } });
+    const tFel = felpa('#df928b'); tFel.wrapS = tFel.wrapT = THREE.RepeatWrapping; tFel.repeat.set(2, 2);
+    const mCob = Q.mat(0xdc8f89, { roughness: .97 }), mAlm = Q.mat(0xf4ccc7, { roughness: .97 });
+    // pared, cabecera y piso
+    const pared = new THREE.Mesh(new THREE.PlaneGeometry(12, 6), Q.mat(0x4a1420, { roughness: .95 })); pared.position.set(0, 2, -2.2); pared.receiveShadow = true; s.add(pared);
+    s.add(Q.caja(2.6, 1.6, .14, Q.mat(0x2a0a12, { roughness: .8 }), [0, .9, -1.75], { r: .05 }));
+    const piso = new THREE.Mesh(new THREE.PlaneGeometry(12, 12), Q.mat(0x2a0c10)); piso.rotation.x = -Math.PI / 2; s.add(piso);
+    // colchón
+    s.add(Q.caja(2.5, .42, 3.6, Q.mat(0xd9a8a6, { roughness: .95 }), [0, .21, 0], { r: .12, seg: 5 }));
+    // almohada esponjosa
+    s.add(Q.caja(1.45, .42, .85, mAlm, [-.25, .6, -1.08], { r: .19, seg: 8 }));
+    // cabeza de lado sobre la almohada (arriba de la cabeza hacia la izquierda, oreja arriba, cara hacia la cámara)
+    const yo = Q.personaje(); yo.scale.setScalar(1.65); yo.position.set(-.5, 1.06, -1.05); yo.rotation.set(-.15, .35, -Math.PI / 2 + .1); s.add(yo);
+    // cobija grande y esponjosa (tapa el cuerpo), con el borde de arriba doblado
+    s.add(Q.caja(2.4, .3, 2.1, mCob, [.05, .5, .55], { r: .15, seg: 8 }));
+    const dob = new THREE.Mesh(new THREE.CapsuleGeometry(.16, 2.0, 10, 28), mCob); dob.rotation.z = Math.PI / 2; dob.scale.set(1, .55, .8); dob.position.set(.05, .69, -.36); dob.castShadow = dob.receiveShadow = true;
+    // bulto del cuerpo bajo la cobija (primer plano izquierdo, desenfocado)
+    const bul = new THREE.Mesh(new THREE.SphereGeometry(.5, 32, 20), mCob); bul.scale.set(.75, .6, 1.5); bul.position.set(-.42, .72, 1.25); bul.castShadow = bul.receiveShadow = true; s.add(bul);
+    // celular acostado sobre la cobija
+    const cel = Q.celular({ luz: 1.4, color: 0xff5a4c, brillo: 2.3 }); cel.scale.setScalar(2.4); cel.rotation.set(-Math.PI / 2, 0, 0);
+    const celG = new THREE.Group(); celG.add(cel); celG.position.set(.32, .656, .12); celG.rotation.y = -.35; s.add(celG);
+    // luz: roja general, llave rosada desde el frente, toque morado arriba a la izquierda
+    s.add(new THREE.HemisphereLight(0x6a3a7a, 0x5a1018, .55)); s.add(new THREE.AmbientLight(0x8a1a22, .35));
+    const key = new THREE.SpotLight(0xff9080, 1.35, 12, .8, .7, 1.2); key.position.set(2.6, 2.8, 1.6); key.target.position.set(-.1, .6, -.6); Q.luzSombra(key, 2048); s.add(key, key.target);
+    const rel = new THREE.PointLight(0xff4a4a, .8, 4, 2); rel.position.set(-1.4, 1.4, -.4); s.add(rel); const mor = new THREE.PointLight(0x7a5aff, .45, 5, 2); mor.position.set(-1.6, 2.2, -1.4); s.add(mor);
+    const pol = Q.polvo(140, [3, 2.2, 3], 0xffb0b0, .012); pol.position.set(0, .5, -.3); s.add(pol);
     return { scene: s,
-      cam: [[.55, 1.9, .9], [-.8, .86, -.06], 36], cam2: [[.2, 1.6, .62], [-.7, .86, -.02], 36],
-      anima(tl, tg) { cel.userData.pinta(x => Q.pantallaA(x, tl)); const vib = (Math.floor(tl * 4) % 2 === 0) ? 1 : 0; cel.position.x = Math.sin(tl * 2 * Math.PI * 20) * .002 * vib; cel.position.z = Math.cos(tl * 2 * Math.PI * 20) * .0015 * vib;
-        // parpadeo lento al abrir los ojos (6 cuadros) cerca de 1.2 s
+      cam: [[1.1, 2.0, 2.0], [-.22, .78, -.75], 38], cam2: [[.85, 1.72, 1.3], [.15, .68, -.1], 38],
+      anima(tl, tg) { cel.userData.pinta(x => Q.pantallaA(x, tl)); const vib = (Math.floor(tl * 4) % 2 === 0) ? 1 : 0; cel.position.x = Math.sin(tl * 2 * Math.PI * 20) * .003 * vib; cel.position.y = Math.cos(tl * 2 * Math.PI * 20) * .002 * vib;
+        // ojos cerrados y se abren cerca de 1.2 s
         const a = clamp((tl - 1.1) / .2); yo.userData.ojo(tl < 1.1 ? .08 : a); Q.moverPolvo(pol, tg); },
-      post: { ap: .05, bloom: 1.25, umbral: .7 }, ca: .0015,
+      post: { ap: .05, bloom: 1.1, umbral: .72 }, ca: .0012,
+      grade: { sat: .78, luz: 1.12, con: .95, piso: '#1a0c12' },
       sacudida: (tl) => tl < 4 / 30 ? 1 : 0 };
   };
 

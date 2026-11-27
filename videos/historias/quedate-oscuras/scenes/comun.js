@@ -56,6 +56,7 @@
     const ojos = [], negro = mat(0x0a0a0e, { roughness: .3 });
     for (const sx of [-1, 1]) { const o = esfera(.019, negro, [sx * .055, .0, .148], [1, 1.15, .45]); cab.add(o); ojos.push(o); }
     for (const sx of [-1, 1]) { const m = new THREE.Mesh(new THREE.CircleGeometry(.03, 24), new THREE.MeshStandardMaterial({ color: 0xff3a3a, transparent: true, opacity: .75, roughness: .9 })); m.position.set(sx * .085, -.045, .135); m.lookAt(sx * .3, -.2, .6); cab.add(m); }
+    cab.add(esfera(.022, piel, [0, -.03, .155], [1, .9, .8]));
     const boca = new THREE.Mesh(new THREE.TorusGeometry(.012, .0035, 6, 16, Math.PI), negro); boca.position.set(0, -.07, .148); boca.rotation.z = Math.PI; cab.add(boca);
     g.userData = { cab, ojos, ojo(k) { ojos.forEach(o => o.scale.y = Math.max(.08, 1.15 * k)); } };
     return g;
