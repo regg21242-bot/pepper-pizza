@@ -49,11 +49,11 @@
   // ===== 4 — Y de repente… silencio: tu ventana con cruz roja que se apaga de golpe =====
   S[3] = (Q, tq) => {
     const s = Q.escena({ fondo: 0x0a0b14 }); const pared = new THREE.Mesh(new THREE.PlaneGeometry(6, 5), Q.mat(0x2a1a22, { roughness: .9 })); pared.position.z = -.08; s.add(pared);
-    const v = Q.ventanaCruz({ w: 1.1, h: 1.35, color: 0xE0262B, k: 2.0 }); s.add(v); const amb = new THREE.HemisphereLight(0xff5a5a, 0x100406, .5); s.add(amb);
+    const v = Q.ventanaCruz({ w: 1.1, h: 1.35, color: 0xE0262B, k: 1.0 }); s.add(v); const amb = new THREE.HemisphereLight(0xff5a5a, 0x100406, .5); s.add(amb);
     const luz = new THREE.PointLight(0xff3030, 3, 4, 2); luz.position.set(0, 0, .8); s.add(luz);
     const tOff = (window.T.palabras.find(p => p[4] === 3 && /silencio/i.test(p[2])) || [tq.ini + 1.5])[0];
-    return { scene: s, cam: [[0, -.05, 2.6], [0, 0, 0], 45], cam2: [[0, -.04, 2.35], [0, 0, 0], 45],
-      anima(tl, tg) { const on = tg < tOff; v.userData.vid.color.set(on ? 0xE0262B : 0x2b3866).multiplyScalar(on ? 2.0 : .7); luz.color.set(on ? 0xff3030 : 0x6F86D6); luz.intensity = on ? 3 : .8; amb.color.set(on ? 0xff5a5a : 0x3a4a8a); pared.material.color.set(on ? 0x2a1a22 : 0x141a2c); },
+    return { scene: s, cam: [[0, -.15, 3.7], [0, 0, 0], 45], cam2: [[0, -.12, 3.4], [0, 0, 0], 45],
+      anima(tl, tg) { const on = tg < tOff; v.userData.vid.color.set(on ? 0xE0262B : 0x2b3866).multiplyScalar(on ? 1.0 : .35); luz.color.set(on ? 0xff3030 : 0x6F86D6); luz.intensity = on ? 1.5 : .5; amb.color.set(on ? 0xff5a5a : 0x3a4a8a); pared.material.color.set(on ? 0x2a1a22 : 0x141a2c); },
       post: { ap: .02, bloom: 1.1 }, ca: (tl) => .0015 };
   };
   // ===== 5 — Son las 3:17: reloj gigante =====
@@ -91,11 +91,11 @@
   };
   // ===== 9 — ventana con cortina y luna detrás =====
   S[8] = (Q) => {
-    const s = cuartoOscuro(Q, { amb: .5 }); const v = Q.ventanaCruz({ w: 1.1, h: 1.35, color: 0x5a6aa8, k: .55 }); s.add(v);
+    const s = cuartoOscuro(Q, { amb: .5 }); const v = Q.ventanaCruz({ w: 1.1, h: 1.35, color: 0x3a4878, k: .3 }); s.add(v);
     const pared = new THREE.Mesh(new THREE.PlaneGeometry(6, 5), Q.mat(0x161c33)); pared.position.z = -.08; s.add(pared);
-    const cort = new THREE.Mesh(new THREE.PlaneGeometry(.75, 1.7, 30, 8), new THREE.MeshStandardMaterial({ color: 0x9aa0c8, roughness: .95, transparent: true, opacity: .78, side: THREE.DoubleSide })); cort.position.set(-.3, -.05, .12); s.add(cort);
+    const cort = new THREE.Mesh(new THREE.PlaneGeometry(.75, 1.7, 30, 8), new THREE.MeshStandardMaterial({ color: 0x9aa0c8, roughness: .95, transparent: true, opacity: .6, side: THREE.DoubleSide })); cort.position.set(-.3, -.05, .12); s.add(cort);
     const base = cort.geometry.attributes.position.array.slice(); const luz = new THREE.DirectionalLight(0x8fa2ff, .7); luz.position.set(0, .5, -2); s.add(luz); s.add(new THREE.PointLight(0x6F86D6, .8, 3).translateZ(1));
-    return { scene: s, cam: [[.15, 0, 2.4], [0, 0, 0], 45], cam2: [[.12, 0, 2.15], [0, 0, 0], 45],
+    return { scene: s, cam: [[.2, -.1, 3.6], [0, 0, 0], 45], cam2: [[.16, -.08, 3.3], [0, 0, 0], 45],
       anima(tl) { const a = cort.geometry.attributes.position; for (let i = 0; i < a.count; i++) a.array[i * 3 + 2] = base[i * 3 + 2] + Math.sin(base[i * 3] * 14 + tl * 1.4) * .025 * (1 - (base[i * 3 + 1] + .85) / 1.7); a.needsUpdate = true; },
       post: { ap: .03, bloom: 1.0 } };
   };
@@ -124,7 +124,7 @@
     const suelo = new THREE.Mesh(new THREE.PlaneGeometry(80, 80), Q.mat(0x12151d, { roughness: .6 })); suelo.rotation.x = -Math.PI / 2; s.add(suelo);
     s.add(new THREE.HemisphereLight(0x4a5a9a, 0x0b0f1c, .6)); const ln = new THREE.DirectionalLight(Q.P.luna, .9); ln.position.set(-10, 25, 15); s.add(ln);
     const v = f.userData.ventanas.find(v => v.p === 3 && v.c === 2); const pos = new THREE.Vector3(v.x, v.y, .3); f.localToWorld(pos);
-    const cono = Q.conoLuz(0xffffff, 16, 2.6, .16); cono.position.copy(pos); s.add(cono); const hal = Q.halo(0xffffff, 1.6, .9); hal.position.copy(pos); s.add(hal);
+    const cono = Q.conoLuz(0xffffff, 16, 2.2, .38); const cono2 = Q.conoLuz(0xffffff, 16, .9, .3); cono.add(cono2); cono.position.copy(pos); s.add(cono); const hal = Q.halo(0xffffff, 2.6, 1); hal.position.copy(pos); s.add(hal);
     const sl = new THREE.SpotLight(0xffffff, 0, 30, .18, .5, 1.2); sl.position.copy(pos); s.add(sl, sl.target);
     return { s, f, cono, hal, sl, pos }; }
   S[13] = (Q, tq) => { const C = calleOscura(Q); const tOn = (window.T.palabras.find(p => p[4] === 13 && /linterna/i.test(p[2])) || [tq.ini + 2])[0] - .5;
@@ -133,7 +133,7 @@
         const dir = new THREE.Vector3(Math.sin(-.6 + a), -.75, Math.cos(-.6 + a) * .9 + .3).normalize(); C.cono.quaternion.setFromUnitVectors(new THREE.Vector3(0, -1, 0), dir); C.sl.target.position.copy(C.pos).addScaledVector(dir, 10); },
       post: { ap: .02, bloom: 1.2 } }; };
   // ===== 15 — el perro ladra hacia la luz =====
-  S[14] = (Q, tq) => { const C = calleOscura(Q); C.cono.visible = C.hal.visible = true; C.sl.intensity = 5;
+  S[14] = (Q, tq) => { const C = calleOscura(Q); C.cono.visible = C.hal.visible = true; C.sl.intensity = 3; C.cono.material.opacity = .16;
     const dir = new THREE.Vector3(.2, -.75, .7).normalize(); C.cono.quaternion.setFromUnitVectors(new THREE.Vector3(0, -1, 0), dir); C.sl.target.position.copy(C.pos).addScaledVector(dir, 10);
     const dog = Q.perro(); dog.scale.setScalar(1.3); dog.position.set(1.0, 0, 3.4); dog.rotation.y = -Math.PI / 2 - .5; C.s.add(dog); const a = Q.auto(0x3b4458); a.position.set(3.2, 0, 2.5); C.s.add(a);
     const tl0 = (window.T.palabras.find(p => p[4] === 14 && /ladrar/i.test(p[2])) || [tq.ini + 1])[0];
