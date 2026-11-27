@@ -2,3 +2,5 @@ audio/
 __pycache__/
 previews/previa.log
 previews/previa_completa.mp4
+previews/render_final.log
+final/*.mp4
